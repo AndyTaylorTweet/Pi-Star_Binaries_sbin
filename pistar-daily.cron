@@ -1,0 +1,35 @@
+#!/bin/bash
+# Host Files Update
+/usr/local/sbin/HostFilesUpdate.sh
+
+# Update the Dashboard from GIT
+git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin master
+
+# Stop all the services...
+systemctl stop mmdvmhost.service > /dev/null 2>&1
+systemctl stop dstarrepeater.service > /dev/null 2>&1
+sleep 2
+systemctl stop ircddbgateway.service > /dev/null 2>&1
+systemctl stop ysfgateway.service > /dev/null 2>&1
+systemctl stop ysfparrot.service > /dev/null 2>&1
+systemctl stop p25gateway.service > /dev/null 2>&1
+systemctl stop p25parrot.service > /dev/null 2>&1
+systemctl stop timeserver.service > /dev/null 2>&1
+
+# Update the Binaries
+git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
+
+# Purge the logs older than 2 days
+rm -f $(ls -t /var/log/pi-star/*.log | sed -e '1,2d')
+
+# Start all the services...
+systemctl start ircddbgateway.service > /dev/null 2>&1
+systemctl start ysfgateway.service > /dev/null 2>&1
+systemctl start ysfparrot.service > /dev/null 2>&1
+systemctl start p25gateway.service > /dev/null 2>&1
+systemctl start p25parrot.service > /dev/null 2>&1
+systemctl start timeserver.service > /dev/null 2>&1
+systemctl start mmdvmhost.service > /dev/null 2>&1
+systemctl start dstarrepeater.service > /dev/null 2>&1
+
+exit 0
