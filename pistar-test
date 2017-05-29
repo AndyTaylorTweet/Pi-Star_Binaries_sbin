@@ -1,0 +1,47 @@
+#!/usr/bin/python
+
+###############################################################################
+#                                                                             #
+#                         Pi-Star Service Watchdog                            #
+#                                                                             #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#   The service watchdog will monitor the D-Star Services, restarting them    #
+#       after any kind of failures - somthing that seems to happen alot       #
+#                       when using the G4KLX software                         #
+#                                                                             #
+###############################################################################
+
+import subprocess
+import time
+import os
+
+time.sleep(120) #Assumiing the Pi has just started up, let the services settle...
+
+while True: #Main loop
+	checkprocirc = subprocess.Popen('pgrep' + ' ircddbgatewayd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	if not checkprocirc.stdout.readlines():
+		os.system('/usr/local/sbin/ircddbgateway.service start')
+		time.sleep(10) #Give the service time to start before we move on
+
+	checkprocdstar = subprocess.Popen('pgrep' + ' dstarrepeaterd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	if not checkprocdstar.stdout.readlines():
+		os.system('/usr/local/sbin/dstarrepeater.service start')
+		time.sleep(10) #Give the service time to start before we move on
+
+	checkprocstarnet = subprocess.Popen('pgrep' + ' MMDVMHost', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	if not checkprocstarnet.stdout.readlines():
+		os.system('/usr/local/sbin/mmdvmhost.service start')
+		time.sleep(10) #Give the service time to start before we move on
+
+	checkproctime = subprocess.Popen('pgrep' + ' timeserverd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	if not checkproctime.stdout.readlines():
+		os.system('/usr/local/sbin/timeserver.service start')
+		time.sleep(10) #Give the service time to start before we move on
+
+#	checkprockeeper = subprocess.Popen('pgrep' + ' pistar-keeper', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+#	if not checkprockeeper.stdout.readlines():
+#		os.system('service pistar-keeper start')
+#		time.sleep(10) #Give the service time to start before we move on
+
+	time.sleep(300) #Time to wait between service checks

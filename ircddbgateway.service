@@ -1,0 +1,100 @@
+#!/bin/bash
+#########################################################
+#                                                       #
+#            ircDDBGateway Service Handler              #
+#                                                       #
+# Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
+#               By Andy Taylor (MW0MWZ)                 #
+#                                                       #
+#                     Version 1.0                       #
+#                                                       #
+#########################################################
+
+# Service Config
+DAEMON=ircddbgatewayd
+DAEMON_PATH=/usr/local/bin/
+DAEMON_OPTS="-daemon"
+CONFIG=/etc/ircddbgateway
+PGREP=/usr/bin/pgrep
+KILL=/bin/kill
+SLEEP=/bin/sleep
+ipVar=`hostname -I | cut -d' ' -f1`
+LOGDIR=/var/log/pi-star
+
+# Pre-flight checks...
+test -x ${DAEMON_PATH}${DAEMON} || exit 1
+test -r $CONFIG || exit 1
+
+if [ -f /etc/dstar-radio.mmdvmhost ]; then
+	# Running MMDVMHost Mode, check that D-Star Network is enabled
+	if [ `sed -n '/\[D-Star Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
+           exit 1;
+	fi
+fi
+
+# Verify the logging directory exists, if not create it and setup the ownership / permissions
+if [ ! -d $LOGDIR ]; then
+  mkdir -p $LOGDIR
+  chown root:root $LOGDIR
+  chmod 775 $LOGDIR
+fi
+
+case "$1" in
+	start)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
+			exit 1;
+		else
+			# Wait for an IP address
+			until [ "$ipVar" != " " ]; do
+				sleep 10
+				ipVar=`hostname -I`
+			done
+			# Dump the logs
+			/bin/rm -rf /var/log/pi-star/Links.log
+
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
+			exit 0;
+		fi
+		;;
+
+	stop)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL `${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			exit 1;
+		fi
+		;;
+
+	restart)
+		if [ `$PGREP $DAEMON` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL `${PGREP} ${DAEMON}`
+			$SLEEP 3
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON is started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		fi
+		;;
+
+	status)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is running as PID "`${PGREP} ${DAEMON}`
+		else
+			echo -e "$DAEMON is not running"
+		fi
+		;;
+
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		exit 1
+esac

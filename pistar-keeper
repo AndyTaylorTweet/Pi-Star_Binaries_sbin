@@ -1,0 +1,199 @@
+#!/usr/bin/python
+
+###############################################################################
+#                                                                             #
+#                       Pi-Star Auto Repeater Keeper                          #
+#                                                                             #
+#    Version 1.3, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#    This was origionally developed to help a fellow repeater keeper to       #
+#  keep to his licence conditions on his "intermittent" NoV automatically     #
+#                                                                             #
+# The idea is that the auto-keeper sets the gateway to "locked mode" when the #
+#       keeper leaves the proximity, or when the keeper is sleeping.          #
+#                                                                             #
+###############################################################################
+
+
+import bluetooth
+import datetime
+import time
+import linecache
+import os
+import ConfigParser
+
+# Read the config;
+config = ConfigParser.RawConfigParser()
+config.read('/etc/pistar-keeper')
+
+# If not enabled, die;
+isEnabled = config.get('enable', 'enabled')
+if (isEnabled != 'true'):
+	quit()
+
+# Substitute variables from config
+band = config.get('radio', 'band')
+lockedModeCall = config.get('locked', 'call')
+unlockedModeCall = config.get('unlocked', 'call')
+ircddbLocked = config.get('locked', 'ircddb')
+ircddbUnlocked = config.get('unlocked', 'ircddb')
+ircddbPass = config.get('unlocked', 'ircddbpass')
+keeperBT = config.get('keeper', 'bluetooth_mac')
+onTime = datetime.time(06, 10)
+offTime = datetime.time(22, 30)
+lockedModeCallPad = lockedModeCall.ljust(7)
+unlockedModeCallPad = unlockedModeCall.ljust(7)
+mode = ""
+
+while True:
+	# Try and enumerate the device on the MAC address - relyable BT Detection.
+	result = bluetooth.lookup_name(keeperBT.rstrip('\n'), timeout=5)
+	if (result != None):
+		# Write to the Log - Sucsess
+		log = open("/var/log/pi-star/pistar-keeper.log", "a")
+		log.write (time.strftime("%Y-%m-%d %H:%M:%S:", time.gmtime()) + " Keeper Proximity: Bluetooth - " + keeperBT.rstrip('\n') + "\n");
+		log.close()
+	else:
+		# Write to the Log - Failure
+		log = open("/var/log/pi-star/pistar-keeper.log", "a")
+		log.write (time.strftime("%Y-%m-%d %H:%M:%S:", time.gmtime()) + " Keeper Proximity: NONE\n");
+		log.close()
+
+	# Time Based Lock - Node Lock when the keeper is sleeping
+	nodecall = linecache.getline("/etc/dstarrepeater", 1)
+	now = datetime.datetime.now().time()
+	if now >= onTime and now <= offTime:
+		# Awake Time - work out if the keeper is near
+		with open("/var/log/pi-star/pistar-keeper.log", 'r') as log:
+			nrlines = sum(1 for _ in log)
+			log.close()
+			if (nrlines != None):
+				# Get the last two lines
+				lastbutoneline = linecache.getline("/var/log/pi-star/pistar-keeper.log", nrlines -1)
+				lastline = linecache.getline("/var/log/pi-star/pistar-keeper.log", nrlines)
+
+				# Work out if there was no keeper nearby for 2 cycles
+				if lastbutoneline[39:43] == "NONE" and lastline[39:43] == "NONE":
+					if nodecall[9:16] != lockedModeCallPad:
+						mode = "lock"
+				else:
+					if nodecall[9:16] != unlockedModeCallPad:
+						mode = "unlock"
+
+
+	else:
+		# Sleep time, Node Lock
+		if nodecall[9:16] != lockedModeCallPad:
+			mode = "lock"
+
+	#Empty the linecache
+	linecache.clearcache()
+
+	# Process the lock / unlock of the node
+	if  mode != "":
+		linkLog = "/var/log/pi-star/Links.log";			# The log that we are reading
+		linkLogLines = open(linkLog,"r");			# Open the file so we can read it
+		linkLogLine = (linkLogLines.read());			# Just the first line
+		linkLogLines.close();					# Close the file, we're done with it
+		if linkLogLine.find("Refl:") >= 10:			# If the file has anything in it, proceed
+			startPos = linkLogLine.find("Refl:") + 6;	# Start of the field we want
+			endPos = linkLogLine.find("Refl:") + 14;	# End of the field we want
+			linkedRef = linkLogLine[startPos:endPos];	# Here we actually grab the field.
+
+		if mode == "lock":
+			mode = ""
+			#print "locking"
+			# Stop the Services
+			os.system(r'systemctl stop timeserver.service')
+			os.system(r'systemctl stop dstarrepeater.service')
+			os.system(r'systemctl stop mmdvmhost.service')
+			os.system(r'systemctl stop ircddbgateway.service')
+			time.sleep(5)
+
+			# D-Star Repeater Config
+			os.system(r'sed -i "/callsign=/c\callsign=' + lockedModeCallPad + band +'" /etc/dstarrepeater')
+			os.system(r'sed -i "/gateway=/c\gateway=' + lockedModeCallPad + 'G" /etc/dstarrepeater')
+			os.system(r'sed -i "/beaconText=/c\beaconText=' + lockedModeCallPad + band +'" /etc/dstarrepeater')
+			os.system(r'sed -i "/restriction=/c\restriction=1" /etc/dstarrepeater')
+
+			# MMDVMHost Config
+			os.system(r'sed -i "/SelfOnly=/c\SelfOnly=1" /etc/mmdvmhost')
+			os.system(r'sed -i "s/' + unlockedModeCall + '/' + lockedModeCall + '/g" /etc/mmdvmhost')
+
+			# ircDDBGateway Config
+			os.system(r'sed -i "/gatewayCallsign=/c\gatewayCallsign=' + lockedModeCall  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/dplusLogin=/c\dplusLogin=' + lockedModeCall  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/ircddbUsername=/c\ircddbUsername=' + lockedModeCall  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/ircddbHostname=/c\ircddbHostname=' + ircddbLocked  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/ircddbPassword=/c\ircddbPassword=" /etc/ircddbgateway')
+
+			# Dashboard Config
+			os.system(r'sed -i "/callsign=/c\$callsign=\'' + lockedModeCall  + '\';" /var/www/dashboard/config/ircddblocal.php')
+
+			# TimeServer Config
+			os.system(r'sed -i "/callsign=/c\callsign=' + lockedModeCall  + '" /etc/timeserver')
+
+			# Start Services
+			os.system(r'systemctl start timeserver.service')
+			os.system(r'systemctl start dstarrepeater.service')
+			os.system(r'systemctl start mmdvmhost.service')
+			os.system(r'systemctl start ircddbgateway.service')
+
+			# Write to the Log - Sucsess
+			keeperlog = open("/var/pistar-keeper/pistar-keeper.log", "a")
+			keeperlog.write (time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + " - " + unlockedModeCall + " closing down.\r\n");
+			keeperlog.close()
+
+			time.sleep(45)
+			os.system(r'sudo remotecontrold "' + lockedModeCallPad + band + '" link never "' + linkedRef + '"')
+
+		if mode == "unlock":
+			mode = ""
+			#print "unlocking"
+			# Stop the Services
+			os.system(r'systemctl stop timeserver.service')
+			os.system(r'systemctl stop dstarrepeater.service')
+			os.system(r'systemctl stop mmdvmhost.service')
+			os.system(r'systemctl stop ircddbgateway.service')
+			time.sleep(5)
+
+			# D-Star Repeater Config
+			os.system(r'sed -i "/callsign=/c\callsign=' + unlockedModeCallPad + band +'" /etc/dstarrepeater')
+			os.system(r'sed -i "/gateway=/c\gateway=' + unlockedModeCallPad + 'G" /etc/dstarrepeater')
+			os.system(r'sed -i "/beaconText=/c\beaconText=' + unlockedModeCallPad + band +'" /etc/dstarrepeater')
+			os.system(r'sed -i "/restriction=/c\restriction=0" /etc/dstarrepeater')
+
+			# MMDVMHost Config
+			os.system(r'sed -i "/SelfOnly=/c\SelfOnly=0" /etc/mmdvmhost')
+			os.system(r'sed -i "s/' + lockedModeCall + '/' + unlockedModeCall + '/g" /etc/mmdvmhost')
+
+			# ircDDBGateway Config
+			os.system(r'sed -i "/gatewayCallsign=/c\gatewayCallsign=' + unlockedModeCall  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/ircddbUsername=/c\ircddbUsername=' + unlockedModeCall  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/dplusLogin=/c\dplusLogin=' + unlockedModeCall  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/ircddbHostname=/c\ircddbHostname=' + ircddbUnlocked  + '" /etc/ircddbgateway')
+			os.system(r'sed -i "/ircddbPassword=/c\ircddbPassword=' + ircddbPass + '" /etc/ircddbgateway')
+
+			# Dashboard Config
+			os.system(r'sed -i "/callsign=/c\$callsign=\'' + unlockedModeCall  + '\';" /var/www/dashboard/config/ircddblocal.php')
+
+			# TimeServer Config
+			os.system(r'sed -i "/callsign=/c\callsign=' + unlockedModeCall  + '" /etc/timeserver')
+
+			# Start Services
+			os.system(r'systemctl start timeserver.service')
+			os.system(r'systemctl start dstarrepeater.service')
+			os.system(r'systemctl start mmdvmhost.service')
+			os.system(r'systemctl start ircddbgateway.service')
+
+			# Write to the Log - Sucsess
+			keeperlog = open("/var/pistar-keeper/pistar-keeper.log", "a")
+			keeperlog.write (time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + " - " + unlockedModeCall + " going into service.\r\n");
+			keeperlog.close()
+
+			time.sleep(45)
+			os.system(r'sudo remotecontrold "' + unlockedModeCallPad + band + '" link never "' + linkedRef + '"')
+
+	# This is the check time, too low and it will use CPU and Battery on your phone of course
+	# 5 mins workes well (300 secs)
+	time.sleep(300)

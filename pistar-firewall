@@ -1,0 +1,272 @@
+#!/bin/bash
+########################################################################################
+#                                                                                      #
+#             This is a basic firewall script written by Andy Taylor (MW0MWZ)          #
+#                                                                                      #
+#            There are two purposes to this script; 1. Keeping your Pi-Star safe       #
+#                 and just as important, 2. Prioritising the voice traffic.            #
+#                                                                                      #
+########################################################################################
+
+printf "Setup sysctl options...\n"
+#
+# Set some basics
+#
+#DROP ICMP echo-requests sent to broadcast/multi-cast addresses.
+echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+#DROP source routed packets
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
+#Enable TCP SYN cookies
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+#Do not ACCEPT ICMP redirect
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects
+#Don't send ICMP redirect
+echo 0 >/proc/sys/net/ipv4/conf/all/send_redirects
+#Enable source spoofing protection
+echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter
+#Log impossible (martian) packets
+echo 1 > /proc/sys/net/ipv4/conf/all/log_martians
+
+
+printf "Setting IPv4 Rules...\n"
+#
+#IPv4 Firewall Rules
+#
+#Flush all existing chains
+iptables --flush
+
+#Allow traffic on loopback
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+#Creating default policies
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+
+#Allow previously established connections to continue uninterupted
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+#Allow Outbound System Ports (for updates mostly)
+iptables -A OUTPUT -p tcp --dport 21 -j ACCEPT #			FTP (Updates)
+iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT #			SSH (Used by GIT)
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT #			DNS (DNS Domain Lookups)
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT #			HTTP (Updates)
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT #			NTP (Network Time)
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT #			HTTPS (Updates)
+iptables -A OUTPUT -p tcp --dport 9418 -j ACCEPT #			GIT Port (Used by GIT)
+
+#Allow Outbound D-Star Control Ports
+iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT #			DNS (DNS Zone Transfer - Used by xreflector.net)
+iptables -A OUTPUT -p tcp --dport 9007 -j ACCEPT #			ircDDB Servers (Callsign Routing)
+iptables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #			D-PRS Position Info
+iptables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #			D-Plus Outbound Links
+
+#Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
+iptables -A OUTPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Outbound Voice
+iptables -A OUTPUT -p udp --dport 30001 -j ACCEPT #			DExtra Outbound Voice
+iptables -A OUTPUT -p udp --dport 30051 -j ACCEPT #			DCS Outbound Voice
+iptables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT #		CCS Voice
+iptables -A OUTPUT -p udp --dport 40000 -j ACCEPT #			Icom G2 Callsign Routing
+
+iptables -t mangle -A POSTROUTING -p udp --dport 20001 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 30001 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 30051 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 40000 -j DSCP --set-dscp 46
+
+#Allow Outbound DMR Ports
+iptables -A OUTPUT -p udp --dport 55555 -j ACCEPT #			DMR+ Networking
+iptables -A OUTPUT -p udp --dport 62031 -j ACCEPT #			DMR (BrandMeister) Networking
+iptables -t mangle -A POSTROUTING -p udp --dport 55555 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
+
+#Allow Outbound YSFGateway / P25Gateway Ports
+iptables -A OUTPUT -p udp --dport 41000 -j ACCEPT #			P25 Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 41000 -j DSCP --set-dscp 46
+iptables -A OUTPUT -p udp --dport 42000:43000 -j ACCEPT #               YSF Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 42000:43000 -j DSCP --set-dscp 46
+
+#Allow Inbound Services
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT #				SSH
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT #				HTTP Allow the D-Star Portal Access
+iptables -A INPUT -p tcp --dport 445 -j ACCEPT #			SMB Access
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT #			HTTP Allow the Raspicontrol Portal Access
+iptables -A INPUT -p udp --dport 10022 -j ACCEPT #			D-Star ircDDBGateway remote
+
+#Allow Local Network Name Resolution
+iptables -A OUTPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #	AVAHI Daemon (Name Resolution)
+iptables -A INPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #	AVAHI Daemon (Name Resolution)
+iptables -A OUTPUT -p udp --dport 137:138 -j ACCEPT #			NETBIOS Name Resolution Broadcast Out
+iptables -A INPUT -p udp --dport 137:138 -j ACCEPT #			NETBIOS Name Resolution Broadcast In
+iptables -A INPUT -p tcp --dport 139 -j ACCEPT #			NETBIOS TCP Session In
+
+#ALlow some DHCP related chatter
+iptables -A INPUT -p udp --dport 68 -j ACCEPT #				UDP directed DHCP Packets
+iptables -A OUTPUT -p udp --dport 67:68 -j ACCEPT #			DHCP Packets
+
+#Allow uPnP Firewall Configuration
+iptables -A OUTPUT -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT #		uPnP Packets
+iptables -A INPUT -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT #		uPnP Packets
+iptables -A INPUT -p udp -s 192.168.0.0/16 --sport 1900 -j ACCEPT #		uPnP Packets
+iptables -A INPUT -p udp -s 172.16.0.0/12 --sport 1900 -j ACCEPT #		uPnP Packets
+iptables -A INPUT -p udp -s 10.0.0.0/8 --sport 1900 -j ACCEPT #			uPnP Packets
+iptables -A OUTPUT -p tcp -d 192.168.0.0/16 --dport 1025:65535 -j ACCEPT #	uPnP Packets
+iptables -A OUTPUT -p tcp -d 172.16.0.0/12 --dport 1025:65535 -j ACCEPT #	uPnP Packets
+iptables -A OUTPUT -p tcp -d 10.0.0.0/8 --dport 1025:65535 -j ACCEPT #		uPnP Packets
+
+#Allow ICMP Ping
+iptables -A INPUT -p icmp --icmp-type 8 -s 0/0 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT #	Allow ICMP echo-request in
+iptables -A OUTPUT -p icmp --icmp-type 8 -d 0/0 -m state --state NEW -j ACCEPT #			Allow ICMP echo-request out
+iptables -A OUTPUT -p icmp --icmp-type 0 -d 0/0 -m state --state ESTABLISHED,RELATED -j ACCEPT #	Allow ICMP echo-reply out
+
+#Allow Inbound D-Star Voice Ports
+iptables -A INPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Linking
+iptables -A INPUT -p udp --dport 30001 -j ACCEPT #			DExtra Linking
+iptables -A INPUT -p udp --dport 30051 -j ACCEPT #			DCS Linking
+iptables -A INPUT -p udp --dport 30061:30064 -j ACCEPT #		CCS
+iptables -A INPUT -p udp --dport 40000 -j ACCEPT #			Icom G2 Callsign Routing
+
+#Allow Inbound YSF Gateway Ports
+iptables -A INPUT -p udp --sport 42000:43000 --dport 1024:65535 -j ACCEPT #	YSF Gateway Routing
+iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gateway Routing
+
+#Allow Inbound P25 Gateway Ports
+iptables -A INPUT -p udp --sport 41000 --dport 32768-60999 -j ACCEPT #		P25 Gateway Routing
+
+#Set up logging for incoming traffic.
+iptables -N LOGNDROP
+iptables -A INPUT -j LOGNDROP
+iptables -A LOGNDROP -j LOG
+iptables -A LOGNDROP -j DROP
+
+#Save our firewall rules
+iptables-save > /etc/iptables.rules
+
+#Give the user some output
+iptables --list
+
+
+printf "\nSetting IPv6 Rules...\n"
+#
+# IPv6 Rules Start here
+#
+#Flush existing chains
+ip6tables -F
+ip6tables -X
+
+#Set the default policy
+ip6tables -P INPUT   DROP
+ip6tables -P OUTPUT  DROP
+
+#Filter all packets that have RH0 headers:
+ip6tables -A INPUT -m rt --rt-type 0 -j DROP
+ip6tables -A OUTPUT -m rt --rt-type 0 -j DROP
+
+#Allow anything on the local link
+ip6tables -A INPUT -i lo -j ACCEPT
+ip6tables -A OUTPUT -o lo -j ACCEPT
+
+#Allow Link-Local addresses
+ip6tables -A INPUT -s fe80::/10 -j ACCEPT
+ip6tables -A OUTPUT -s fe80::/10 -j ACCEPT
+
+#Allow multicast
+ip6tables -A INPUT -d ff00::/8 -j ACCEPT
+ip6tables -A OUTPUT -d ff00::/8 -j ACCEPT
+
+#Allow ICMP
+ip6tables -A INPUT -p icmpv6 -j ACCEPT
+ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
+
+#Allow Outbound System Ports (for updates mostly)
+ip6tables -A OUTPUT -p tcp --dport 21 -j ACCEPT #			FTP (Updates)
+ip6tables -A OUTPUT -p tcp --dport 22 -j ACCEPT #			SSH (Used by GIT)
+ip6tables -A OUTPUT -p udp --dport 53 -j ACCEPT #			DNS (DNS Domain Lookups)
+ip6tables -A OUTPUT -p tcp --dport 80 -j ACCEPT #			HTTP (Updates)
+ip6tables -A OUTPUT -p udp --dport 123 -j ACCEPT #			NTP (Network Time)
+ip6tables -A OUTPUT -p tcp --dport 443 -j ACCEPT #			HTTPS (Updates)
+ip6tables -A OUTPUT -p tcp --dport 9418 -j ACCEPT #			GIT Port (Used by GIT)
+ip6tables -A OUTPUT -p tcp --dport 53 -j ACCEPT #			DNS (DNS Zone Transfer - Used by xreflector.net)
+
+#Allow Inbound Services
+ip6tables -A INPUT -p tcp --dport 22 -j ACCEPT #			SSH
+ip6tables -A INPUT -p tcp --dport 80 -j ACCEPT #			HTTP Allow the D-Star Portal Access
+ip6tables -A INPUT -p tcp --dport 445 -j ACCEPT #			SMB Access
+ip6tables -A INPUT -p udp --dport 10022 -j ACCEPT #			D-Star ircDDBGateway remote
+
+#Allow Local Network Name Resolution
+ip6tables -A OUTPUT -p udp -d ff00::/8 --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
+ip6tables -A INPUT -p udp -d ff00::/8 --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
+ip6tables -A OUTPUT -p udp --dport 137 -j ACCEPT #			NETBIOS Name Resolution Broadcast Out
+ip6tables -A INPUT -p udp --dport 137 -j ACCEPT #			NETBIOS Name Resolution Broadcast In
+ip6tables -A OUTPUT -p udp --dport 138 -j ACCEPT #			NETBIOS Datagram Out
+ip6tables -A INPUT -p udp --dport 138 -j ACCEPT #			NETBIOS Datagram In
+ip6tables -A INPUT -p tcp --dport 139 -j ACCEPT #			NETBIOS TCP Session In
+
+#Allow uPnP Firewall Configuration
+ip6tables -A OUTPUT -p udp --dport 1900 -j ACCEPT #			uPnP Packets
+ip6tables -A INPUT -p udp --sport 1900 -j ACCEPT #			uPnP Packets
+ip6tables -A OUTPUT -p udp --dport 48958 -j ACCEPT #			uPnP Packets
+
+#Allow Outbound D-Star Control Ports
+ip6tables -A OUTPUT -p tcp --dport 53 -j ACCEPT #			DNS Zone Transfer - Used by xreflector.net
+ip6tables -A OUTPUT -p tcp --dport 9007 -j ACCEPT #			ircDDB Servers (Callsign Routing)
+ip6tables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #			D-PRS Position Info
+ip6tables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #			D-Plus Outbound Links
+
+#Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
+ip6tables -A OUTPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Outbound Links
+ip6tables -A OUTPUT -p udp --dport 30001 -j ACCEPT #			DExtra Outbound Links
+ip6tables -A OUTPUT -p udp --dport 30051 -j ACCEPT #			DCS Outbound Links
+ip6tables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT #		CCS
+ip6tables -A OUTPUT -p udp --dport 40000 -j ACCEPT #			Icom G2 Callsign Routing
+
+ip6tables -t mangle -A POSTROUTING -p udp --dport 20001 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 30001 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 30051 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 40000 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 55555 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
+
+#Allow Outbound DMR Voice Ports
+ip6tables -A OUTPUT -p udp --dport 55555 -j ACCEPT #			DMR+ Networking
+ip6tables -A OUTPUT -p udp --dport 62031 -j ACCEPT #			DMR (BrandMeister) Networking
+
+#Allow Outbound YSF / P25 Voice Ports
+ip6tables -A OUTPUT -p udp --dport 42000:43000 -j ACCEPT #		YSF Networking
+ip6tables -t mangle -A POSTROUTING -p udp --dport 42000:43000 -j DSCP --set-dscp 46
+
+#Allow Inbound D-Star Voice Ports
+ip6tables -A INPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Linking
+ip6tables -A INPUT -p udp --dport 30001 -j ACCEPT #			DExtra Linking
+ip6tables -A INPUT -p udp --dport 30051 -j ACCEPT #			DCS Linking
+ip6tables -A INPUT -p udp --dport 30061:30064 -j ACCEPT #		CCS
+ip6tables -A INPUT -p udp --dport 40000 -j ACCEPT #			Icom G2 Callsign Routing
+
+#Allow Inbound YSF Gateway Ports
+ip6tables -A INPUT -p udp --sport 42000:43000 --dport 1024:65535 -j ACCEPT #	YSF Gateway Routing
+ip6tables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gateway Routing
+
+#Allow Inbound P25 Gateway Ports
+ip6tables -A INPUT -p udp --sport 41000 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
+
+#Allow active sessions
+ip6tables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip6tables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+#Set up logging for incoming traffic.
+ip6tables -N LOGNDROP
+ip6tables -A INPUT -j LOGNDROP
+ip6tables -A LOGNDROP -j LOG
+ip6tables -A LOGNDROP -j DROP
+
+#Save settings
+ip6tables-save > /etc/ip6tables.rules
+
+#List rules
+ip6tables --list
+
+#echo a blank line
+printf "\n"
