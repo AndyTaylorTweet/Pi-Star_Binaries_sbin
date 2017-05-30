@@ -28,10 +28,16 @@ test -r $CONFIG || exit 1
 # if dstarrepeater is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
+# Make sure DMR Networking is on
 if [ `sed -n '/\[DMR Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
 	exit 1;
 fi
 
+# Make sure I am supposed to be used
+if [ `sed -n '/\[DMR Network\]/{n;p;n;p;}' /etc/mmdvmhost | sed '1d' | awk -F = '{print $2}'` != 172.0.0.1 ]; then
+	exit 1;
+fi
+	
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
