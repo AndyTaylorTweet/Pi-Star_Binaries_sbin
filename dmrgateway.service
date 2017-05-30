@@ -65,7 +65,7 @@ case "$1" in
 	stop)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			$KILL `${PGREP} ${DAEMON}`
+			$KILL -9 `${PGREP} ${DAEMON}`
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
@@ -76,7 +76,7 @@ case "$1" in
 	restart)
 		if [ `$PGREP $DAEMON` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			$KILL `${PGREP} ${DAEMON}`
+			$KILL -9 `${PGREP} ${DAEMON}`
 			$SLEEP 3
 			runuser -l $USER -c "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
