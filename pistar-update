@@ -37,6 +37,10 @@ main_function() {
 	echo "Updating DV Binaries..."
 	git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
 	echo "Done"
+	
+	echo "Updating Pi-Star Binaries..."
+	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
+	echo "Done"
 
 	echo "Updating Hostfiles..."
 	/usr/local/sbin/HostFilesUpdate.sh
