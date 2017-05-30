@@ -97,11 +97,10 @@ curl --fail -s http://www.mw0mwz.co.uk/pi-star/APRS_Hosts.txt > ${APRSHOSTS}
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/DCS_Hosts.txt > ${DCSHOSTS}
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/DMR_Hosts.txt > ${DMRHOSTS}
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/DPlus_Hosts.txt > ${DPlusHOSTS}
-curl --fail -s http://www.mw0mwz.co.uk/pi-star/DExtra_Hosts.txt >> ${DExtraHOSTS}
-#curl --fail -s http://www.mw0mwz.co.uk/pi-star/DExtra_Hosts.txt >> ${DPlusHOSTS}
+curl --fail -s http://www.mw0mwz.co.uk/pi-star/DExtra_Hosts.txt >> ${DPlusHOSTS}
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/DMRIds.dat > ${DMRIDFILE}
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/P25_Hosts.txt > ${P25HOSTS}
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/YSF_Hosts.txt > ${YSFHOSTS}
-#curl --fail -s http://www.mw0mwz.co.uk/pi-star/USTrust_Hosts.txt > ${DExtraHOSTS}
+curl --fail -s http://www.mw0mwz.co.uk/pi-star/USTrust_Hosts.txt > ${DExtraHOSTS}
 
 exit 0
