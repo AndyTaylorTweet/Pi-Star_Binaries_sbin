@@ -27,10 +27,12 @@ main_function() {
 	echo "Done"
 
 	echo "Stopping Services..."
+	systemctl stop dmrgateway.service > /dev/null 2>&1
 	systemctl stop mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
 	systemctl stop dstarrepeater.service > /dev/null 2>&1
 	systemctl stop ircddbgateway.service > /dev/null 2>&1
 	systemctl stop ysfgateway.service > /dev/null 2>&1
+	systemctl stop p25gateway.service > /dev/null 2>&1
 	systemctl stop timeserver.service > /dev/null 2>&1
 	echo "Done"
 
@@ -52,11 +54,14 @@ main_function() {
 	echo "Done"
 
 	echo "Starting Services..."
-	systemctl start mmdvmhost.service > /dev/null 2>&1
+	systemctl start dmrgateway.service > /dev/null 2>&1
 	systemctl start dstarrepeater.service > /dev/null 2>&1
 	systemctl start ircddbgateway.service > /dev/null 2>&1
 	systemctl start ysfgateway.service > /dev/null 2>&1
+	systemctl start p25gateway.service > /dev/null 2>&1
 	systemctl start timeserver.service > /dev/null 2>&1
+	systemctl start dstarrepeater.service > /dev/null 2>&1
+	systemctl start mmdvmhost.service > /dev/null 2>&1
 	echo "Done"
 
 	echo "Updates complete, sleeping for a few seconds before making the disk Read-Only"
