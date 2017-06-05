@@ -13,7 +13,7 @@
 # Service Config
 DAEMON=timercontrold
 DAEMON_PATH=/usr/local/bin/
-DAEMON_OPTS="-daemon"
+DAEMON_OPTS="-daemon -logdir"
 CONFIG=/etc/timercontrol
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
@@ -44,7 +44,7 @@ case "$1" in
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 			exit 1;
 		else
-			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} ${LOGDIR}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
 		fi
@@ -66,12 +66,12 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
-			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} ${LOGDIR}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} ${LOGDIR}
 			echo -e "$DAEMON is started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		fi
