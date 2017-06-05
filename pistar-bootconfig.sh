@@ -50,6 +50,9 @@ mv -f /tmp/config_restore/config.php /var/www/dashboard/config/ 2>&1
 mv -f /tmp/config_restore/wpa_supplicant.conf /etc/wpa_supplicant/ 2>&1
 mv -f /tmp/config_restore/* /etc/ 2>&1
 
+#Set the Timezone
+timedatectl set-timezone `grep date /var/www/dashboard/config/config.php | grep -o "'.*'" | sed "s/'//g"`
+
 # Clean up
 rm -rf /boot/Pi-Star_Config_*.zip 2>&1
 
