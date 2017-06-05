@@ -1,34 +1,16 @@
-#! /bin/bash
-
-###############################################################################
-#
-# HostsFilesUpdate.sh
-#
-# Copyright (C) 2016 by Tony Corbett G0WFV
-# Adapted by Andy Taylor MW0MWZ on 16-Feb-2017 with all crdeit
-# to G0WFV for the orignal script.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-#
-###############################################################################
-#
-#                              CONFIGURATION
-#
-# Full path to Host Files
-#
-###############################################################################
+#!/bin/bash
+#########################################################
+#                                                       #
+#              HostFilesUpdate.sh Updater               #
+#                                                       #
+# Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
+#               By Andy Taylor (MW0MWZ)                 #
+#                                                       #
+#                     Version 2.0                       #
+#                                                       #
+#  Based on the updaters writted by Tony Corbett G0WFV  #
+#                                                       #
+#########################################################
 
 APRSHOSTS=/usr/local/etc/APRSHosts.txt
 DCSHOSTS=/usr/local/etc/DCS_Hosts.txt
@@ -39,14 +21,8 @@ DPlusHOSTS=/usr/local/etc/DPlus_Hosts.txt
 P25HOSTS=/usr/local/etc/P25Hosts.txt
 YSFHOSTS=/usr/local/etc/YSFHosts.txt
 
-# How many DCSHosts files do you want backed up (0 = do not keep backups)
+# How many backups
 FILEBACKUP=1
-
-###############################################################################
-#
-# Do not edit below here
-#
-###############################################################################
 
 # Check we are root
 if [ "$(id -u)" != "0" ]
