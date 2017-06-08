@@ -506,8 +506,6 @@ echo ""
 #cp /usr/local/src/pi-star/shadow $CLONE/etc/shadow
 #cp /usr/local/src/pi-star/.Remote\ Control $CLONE/root/.Remote\ Control
 mkdir -p $CLONE/var/log
-rm -rf $CLONE/etc/dstar-radio.*
-touch $CLONE/etc/dstar-radio.dstarrepeater
 
 #
 # Clean the disk (full the partition with zeros to help with later compression)
