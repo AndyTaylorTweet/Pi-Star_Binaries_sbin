@@ -132,7 +132,7 @@ iptables -A INPUT -p udp --sport 42000:43000 --dport 1024:65535 -j ACCEPT #	YSF 
 iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gateway Routing
 
 #Allow Inbound P25 Gateway Ports
-iptables -A INPUT -p udp --sport 41000 --dport 32768-60999 -j ACCEPT #		P25 Gateway Routing
+iptables -A INPUT -p udp --sport 41000 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
 
 #Set up logging for incoming traffic.
 iptables -N LOGNDROP
