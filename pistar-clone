@@ -175,6 +175,11 @@ unmount_or_abort()
 DST_ROOT_PARTITION=/dev/${DST_DISK}2
 DST_BOOT_PARTITION=/dev/${DST_DISK}1
 
+if [[ ${DST_DISK} == *"mmcblk"* ]]; then
+  DST_ROOT_PARTITION=/dev/${DST_DISK}p2
+  DST_BOOT_PARTITION=/dev/${DST_DISK}p1
+fi
+
 # Check that none of the destination partitions are busy (mounted).
 #
 DST_ROOT_CURMOUNT=`fgrep "$DST_ROOT_PARTITION " /etc/mtab | cut -f 2 -d ' ' `
