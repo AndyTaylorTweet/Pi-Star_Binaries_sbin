@@ -24,8 +24,8 @@ echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects
 echo 0 >/proc/sys/net/ipv4/conf/all/send_redirects
 #Enable source spoofing protection
 echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter
-#Log impossible (martian) packets
-echo 1 > /proc/sys/net/ipv4/conf/all/log_martians
+#Dont Log impossible (martian) packets
+echo 0 > /proc/sys/net/ipv4/conf/all/log_martians
 
 
 printf "Setting IPv4 Rules...\n"
@@ -134,11 +134,11 @@ iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gatew
 #Allow Inbound P25 Gateway Ports
 iptables -A INPUT -p udp --sport 41000 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
 
-#Set up logging for incoming traffic.
-iptables -N LOGNDROP
-iptables -A INPUT -j LOGNDROP
-iptables -A LOGNDROP -j LOG
-iptables -A LOGNDROP -j DROP
+#Set up debug logging for incoming traffic.
+#iptables -N LOGNDROP
+#iptables -A INPUT -j LOGNDROP
+#iptables -A LOGNDROP -j LOG
+#iptables -A LOGNDROP -j DROP
 
 #Save our firewall rules
 iptables-save > /etc/iptables.rules
@@ -256,11 +256,11 @@ ip6tables -A INPUT -p udp --sport 41000 --dport 32768:60999 -j ACCEPT #		P25 Gat
 ip6tables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 ip6tables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-#Set up logging for incoming traffic.
-ip6tables -N LOGNDROP
-ip6tables -A INPUT -j LOGNDROP
-ip6tables -A LOGNDROP -j LOG
-ip6tables -A LOGNDROP -j DROP
+#Set up debug logging for incoming traffic.
+#ip6tables -N LOGNDROP
+#ip6tables -A INPUT -j LOGNDROP
+#ip6tables -A LOGNDROP -j LOG
+#ip6tables -A LOGNDROP -j DROP
 
 #Save settings
 ip6tables-save > /etc/ip6tables.rules
