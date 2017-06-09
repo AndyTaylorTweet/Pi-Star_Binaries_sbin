@@ -135,10 +135,10 @@ iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gatew
 iptables -A INPUT -p udp --sport 41000 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
 
 #Set up debug logging for incoming traffic.
-#iptables -N LOGNDROP
-#iptables -A INPUT -j LOGNDROP
+iptables -N LOGNDROP
+iptables -A INPUT -j LOGNDROP
 #iptables -A LOGNDROP -j LOG
-#iptables -A LOGNDROP -j DROP
+iptables -A LOGNDROP -j DROP
 
 #Save our firewall rules
 iptables-save > /etc/iptables.rules
@@ -257,10 +257,10 @@ ip6tables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 ip6tables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 #Set up debug logging for incoming traffic.
-#ip6tables -N LOGNDROP
-#ip6tables -A INPUT -j LOGNDROP
+ip6tables -N LOGNDROP
+ip6tables -A INPUT -j LOGNDROP
 #ip6tables -A LOGNDROP -j LOG
-#ip6tables -A LOGNDROP -j DROP
+ip6tables -A LOGNDROP -j DROP
 
 #Save settings
 ip6tables-save > /etc/ip6tables.rules
