@@ -15,6 +15,7 @@ systemctl stop ysfgateway.service > /dev/null 2>&1
 systemctl stop ysfparrot.service > /dev/null 2>&1
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
+systemctl stop dmrgateway.service > /dev/null 2>&1
 systemctl stop timeserver.service > /dev/null 2>&1
 
 # Update the Binaries
@@ -28,6 +29,7 @@ rm -f $(ls -t /var/log/pi-star/*.log | sed -e '1,3d')
 
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
+systemctl start dmrgateway.service > /dev/null 2>&1
 systemctl start ysfgateway.service > /dev/null 2>&1
 systemctl start ysfparrot.service > /dev/null 2>&1
 systemctl start p25gateway.service > /dev/null 2>&1
