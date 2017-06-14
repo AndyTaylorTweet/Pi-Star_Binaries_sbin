@@ -25,7 +25,7 @@ git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
 git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
 
 # Purge the logs older than 2 days
-rm -f $(find /var/log/pi-star/*.log -type f -mtime +1 -print)
+rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
 
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
