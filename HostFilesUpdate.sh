@@ -16,9 +16,9 @@
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Check that the network is UP and die if its not
-while [ `expr length ${ipVar}` == "0" ]; do
+if [ `expr length ${ipVar}` == "0" ]; then
 	exit 0
-done
+fi
 
 APRSHOSTS=/usr/local/etc/APRSHosts.txt
 DCSHOSTS=/usr/local/etc/DCS_Hosts.txt
