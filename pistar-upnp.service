@@ -23,7 +23,7 @@ test -x ${DAEMON_PATH}${DAEMON} || exit 1
 
 # Check that the network is UP
 if [ $ipVar = " " ]; then
-	exit 1
+	exit 1;
 fi
 
 case "$1" in
