@@ -6,11 +6,18 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.0                       #
+#                     Version 2.2                       #
 #                                                       #
 #  Based on the updaters writted by Tony Corbett G0WFV  #
 #                                                       #
 #########################################################
+
+# Pull the IP Address to a variable
+ipVar=`hostname -I | cut -d' ' -f1`
+# Check that the network is UP and die if its not
+if [ "$ipVar" == " " ]; then
+	exit 1;
+fi
 
 APRSHOSTS=/usr/local/etc/APRSHosts.txt
 DCSHOSTS=/usr/local/etc/DCS_Hosts.txt
