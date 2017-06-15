@@ -21,13 +21,13 @@ ipVar=`hostname -I | cut -d' ' -f1`
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 
+# Check that the network is UP
 if [ $ipVar = " " ]; then
 	exit 1
 fi
 
 case "$1" in
 	start)
-		# Now Run the scripts
 #		$DAEMON -a $ipVar 22 22 TCP > /dev/null 2>&1 &
 #		$DAEMON -a $ipVar 80 80 TCP > /dev/null 2>&1 &
 #		$DAEMON -a $ipVar 10022 10022 UDP > /dev/null 2>&1 &
