@@ -22,7 +22,7 @@ ipVar=`hostname -I | cut -d' ' -f1`
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 
 # Check that the network is UP
-if [ $ipVar == " " ]; then
+if [ "$ipVar" == " " ]; then
 	exit 1;
 fi
 
