@@ -16,7 +16,7 @@
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Check that the network is UP and die if its not
-if [ "$(expr length ${ipVar})" = 0 ]; then
+if [ "$(expr length ${ipVar})" == "0" ]; then
 	exit 0
 fi
 
