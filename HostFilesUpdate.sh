@@ -15,7 +15,7 @@
 # Pull the IP Address to a variable
 ipVar=`hostname -I | cut -d' ' -f1`
 # Check that the network is UP and die if its not
-if [ $ipVar != " " ]; then
+if [ "$ipVar" != " " ]; then
 
 	APRSHOSTS=/usr/local/etc/APRSHosts.txt
 	DCSHOSTS=/usr/local/etc/DCS_Hosts.txt
