@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.1                       #
+#                     Version 1.2                       #
 #                                                       #
 #########################################################
 
@@ -21,9 +21,9 @@ ipVar=`hostname -I | cut -d' ' -f1`
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 
-# Check that the network is UP
-if [ "$ipVar" == " " ]; then
-	exit 1;
+# Check that the network is UP and die if its not
+if [ "$(expr length `hostname -I | cut -d' ' -f1`x)" == "1" ]; then
+	exit 0
 fi
 
 case "$1" in
