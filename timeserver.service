@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.0                       #
+#                     Version 1.1                       #
 #                                                       #
 #########################################################
 
@@ -18,6 +18,8 @@ CONFIG=/etc/timeserver
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
+USER=root
+GROUP=root
 LOGDIR=/var/log/pi-star
 
 # Pre-flight checks...
@@ -39,7 +41,7 @@ fi
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
-  chown root:root $LOGDIR
+  chown ${USER}:${GROUP} $LOGDIR
   chmod 775 $LOGDIR
 fi
 
