@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.0                       #
+#                     Version 1.1                       #
 #                                                       #
 #########################################################
 
@@ -18,6 +18,8 @@ LOGDIR=/var/log/pi-star
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
+USER=root
+GROUP=root
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Pre-flight checks...
@@ -34,7 +36,7 @@ fi
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
-  chown root:root $LOGDIR
+  chown ${USER}:${GROUP} $LOGDIR
   chmod 775 $LOGDIR
 fi
 
@@ -49,7 +51,7 @@ case "$1" in
 				sleep 10
 				ipVar=`hostname -I`
 			done
-			runuser -l $USER -c "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &"
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
 		fi
@@ -71,7 +73,7 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
-			runuser -l $USER -c "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &"
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else
