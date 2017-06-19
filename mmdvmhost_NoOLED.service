@@ -77,7 +77,7 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
-			runuser -l $USER -c ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"
+			runuser -l $USER -c "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else
