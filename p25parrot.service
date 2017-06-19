@@ -51,7 +51,7 @@ case "$1" in
 				sleep 10
 				ipVar=`hostname -I`
 			done
-			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
 		fi
@@ -78,7 +78,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			runuser -l $USER -c "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &"
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
 			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		fi
