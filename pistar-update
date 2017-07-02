@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 2.4, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 2.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
@@ -16,7 +16,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 main_function() {
-	#Make the disk writable
+	# Make the disk writable
 	mount -o remount,rw /
 	mount -o remount,rw /boot
 
@@ -65,10 +65,12 @@ main_function() {
 	echo "Done"
 
 	echo "Updates complete, sleeping for a few seconds before making the disk Read-Only"
-	#Make the disk read-only
+	# Make the disk read-only
 	sleep 3
 	mount -o remount,ro /
 	mount -o remount,ro /boot
+	# Tell the user we are done
+	echo "Finnished"
 	}
 
 if [ -t 1 ]; then
