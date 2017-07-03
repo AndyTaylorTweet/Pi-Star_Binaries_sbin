@@ -6,9 +6,9 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.2                       #
+#                     Version 2.3                       #
 #                                                       #
-#  Based on the updaters writted by Tony Corbett G0WFV  #
+#   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
 #########################################################
 
