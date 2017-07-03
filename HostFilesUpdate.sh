@@ -78,6 +78,6 @@ curl --fail -o ${DExtraHOSTS} -s http://www.mw0mwz.co.uk/pi-star/DExtra_Hosts.tx
 curl --fail -o ${DMRIDFILE} -s http://www.mw0mwz.co.uk/pi-star/DMRIds.dat
 curl --fail -o ${P25HOSTS} -s http://www.mw0mwz.co.uk/pi-star/P25_Hosts.txt
 curl --fail -o ${YSFHOSTS} -s http://www.mw0mwz.co.uk/pi-star/YSF_Hosts.txt
-curl --fail -s http://www.mw0mwz.co.uk/pi-star/USTrust_Hosts.txt >> ${DPlusHOSTS}
+curl --fail -s http://www.mw0mwz.co.uk/pi-star/USTrust_Hosts.txt >> ${DExtraHOSTS}
 
 exit 0
