@@ -24,20 +24,20 @@ test -x ${DAEMON_OPTS} || exit 1
 
 case "$1" in
 	start)
-		if [ `${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
-			echo -e "pistar-watchdog is already running as PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+		if [ `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
+			echo -e "pistar-watchdog is already running as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 			exit 1;
 		else
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
-			echo -e "pistar-watchdog started as PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+			echo -e "pistar-watchdog started as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 			exit 0;
 		fi
 		;;
 
 	stop)
-		if [ `${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
-			echo -e "Killing pistar-watchdog PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
-			$KILL `${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+		if [ `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
+			echo -e "Killing pistar-watchdog PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+			$KILL `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 			exit 0;
 		else
 			echo -e "pistar-watchdog is not running"
@@ -46,24 +46,24 @@ case "$1" in
 		;;
 
 	restart)
-		if [ `${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
-			echo -e "Killing pistar-watchdog PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
-			$KILL `${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+		if [ `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
+			echo -e "Killing pistar-watchdog PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+			$KILL `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 			$SLEEP 3
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
-			echo -e "pistar-watchdog re-started as PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+			echo -e "pistar-watchdog re-started as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 			exit 0;
 		else
 			echo -e "pistar-watchdog is not running"
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
-			echo -e "pistar-watchdog is started as PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+			echo -e "pistar-watchdog is started as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 			exit 0;
 		fi
 		;;
 
 	status)
-		if [ `${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
-			echo -e "pistar-watchdog is running as PID "`${PGREP} -f "${DAEON_PATH}${DAEMON} ${DAEMON_OPTS}"`
+		if [ `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
+			echo -e "pistar-watchdog is running as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
 		else
 			echo -e "pistar-watchdog is not running"
 		fi
