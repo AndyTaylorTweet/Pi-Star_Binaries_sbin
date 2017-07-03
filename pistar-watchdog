@@ -75,7 +75,7 @@ while True: #Main loop
 		os.system('/bin/systemctl start p25parrot.service')
 		time.sleep(10) #Give the service time to start before we move on
 
-	checkprocremote = subprocess.Popen('pgrep' + ' -f /usr/local/sbin/pistar-remote', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	checkprocremote = subprocess.Popen('pgrep' + ' -f' + ' /usr/local/sbin/pistar-remote', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	if not checkprocremote.stdout.readlines():
 		os.system('/bin/systemctl stop pistar-remote.service')
 		time.sleep(2) #Give the service time to stop before we move on
