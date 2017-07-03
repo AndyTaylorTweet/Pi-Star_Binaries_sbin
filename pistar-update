@@ -70,7 +70,7 @@ main_function() {
 	mount -o remount,ro /
 	mount -o remount,ro /boot
 	# Tell the user we are done
-	echo "Finnished"
+	echo "Finished"
 	}
 
 if [ -t 1 ]; then
