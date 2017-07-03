@@ -16,7 +16,7 @@ import subprocess
 import time
 import os
 
-time.sleep(5) #Assumiing the Pi has just started up, let the services settle...
+time.sleep(120) #Assumiing the Pi has just started up, let the services settle...
 
 while True: #Main loop
 	checkprocirc = subprocess.Popen('pgrep' + ' ircddbgatewayd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
