@@ -1,0 +1,120 @@
+#!/usr/bin/python
+
+###############################################################################
+#                                                                             #
+#                        Pi-Star Auto Remote Control                          #
+#                                                                             #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#  This Python script is desiged to look for specific things in the logs for  #
+#       MMDVMHost and act on those to give RF control over the repeater.      #
+#                                                                             #
+###############################################################################
+
+import datetime
+import time
+import linecache
+import os
+import subprocess
+import ConfigParser
+
+# Read the config;
+config = ConfigParser.RawConfigParser()
+config.read('/etc/pistar-remote')
+
+# Read the MMDVMHost config;
+mmdvmConfig = ConfigParser.RawConfigParser()
+mmdvmConfig.read('/etc/mmdvmhost')
+
+# If not enabled, die;
+isEnabled = config.get('enable', 'enabled')
+if (isEnabled != 'true'):
+	quit()
+
+# Substitute variables from config
+mmdvmLogPath = mmdvmConfig.get('Log', 'FilePath')
+mmdvmFileRoot = mmdvmConfig.get('Log', 'FileRoot')
+keeperCall = config.get('keeper', 'callsign')
+dmrstop = config.get('dmr', 'svckill')
+dmrrestart = config.get('dmr', 'scvrestart')
+dmrreboot = config.get('dmr', 'reboot')
+dstarstop = config.get('d-star', 'svckill')
+dstarrestart = config.get('d-star', 'svcrestart')
+dstarreboot = config.get('d-star', 'reboot')
+dstarmodule = mmdvmConfig.get('General', 'Callsign') + ' ' + mmdvmConfig.get('D-Star', 'Module')
+
+while True:
+	# Check that the process is running, if its not there is no point in trying to stop it.
+	checkproc = subprocess.Popen('pgrep' + ' MMDVMHost', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	if checkproc.stdout.readlines():
+
+		# This is the main loop that keeps waiting, we dont want to hammer the logs too often, every 30 secs should be enough.
+		utcnow = datetime.datetime.utcnow()
+		datenow = utcnow.strftime('%Y-%m-%d')
+		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
+		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
+		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
+		currentLog = mmdvmLogPath + '/' + mmdvmFileRoot + '-' + datenow + '.log'
+
+		# Open the MMDVMHost Log
+		logfile = open(currentLog, 'r')
+		loglist = logfile.readlines()
+		logfile.close()
+
+		# Parse the log lines
+		for line in loglist:
+			# We only care about logs in the last 60 secs
+			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
+
+				# DMR Stop MMDVMHost
+				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
+				if str('received RF voice header from ' + keeperCall + ' to ' + dmrstop) in line:
+					# Kill the Services
+					os.system(r'systemctl stop mmdvmhost.timer')
+					os.system(r'systemctl stop pistar-watchdog.timer')
+					os.system(r'systemctl stop mmdvmhost.service')
+					os.system(r'systemctl stop pistar-watchdog.service')
+
+				# DMR Restart MMDVMHost
+				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
+				if str('received RF voice header from ' + keeperCall + ' to ' + dmrrestart) in line:
+					# Restart the Services
+					os.system(r'systemctl restart mmdvmhost.service')
+					os.system(r'systemctl restart dmrgateway.service')
+
+				# DMR Restart the OS
+				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
+				if str('received RF voice header from ' + keeperCall + ' to ' + dmrreboot) in line:
+					# Restart the OS
+					os.system(r'shutdown -r now')
+
+				# D-Star Stop MMDVMHost
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarstop) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Shutting down at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+                                        os.system(r'systemctl stop mmdvmhost.timer')
+                                        os.system(r'systemctl stop pistar-watchdog.timer')
+                                        os.system(r'systemctl stop mmdvmhost.service')
+                                        os.system(r'systemctl stop pistar-watchdog.service')
+
+				# D-Star Restart MMDVMHost
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarrestart) in line:
+					# Restart the Services
+					os.system(r'texttransmit -text "Restarting services at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+                                        os.system(r'systemctl restart ircddbgateway.service')
+                                        os.system(r'systemctl restart mmdvmhost.service')
+
+				# D-Star Stop MMDVMHost
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarreboot) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+					os.system(r'shutdown -r now')
+
+		# This is the 30 second sleep before the next pass.
+		time.sleep(30)
