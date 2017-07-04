@@ -1,0 +1,115 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+#                        Pi-Star Partition Expander                           #
+#                                                                             #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#    This script will expand your root file system to fill the SD Card        #
+#                                                                             #
+###############################################################################
+
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+get_init_sys() {
+	if command -v systemctl > /dev/null && systemctl | grep -q '\-\.mount'; then
+		SYSTEMD=1
+	elif [ -f /etc/init.d/cron ] && [ ! -h /etc/init.d/cron ]; then
+		SYSTEMD=0
+	else
+		echo "Error - Unrecognised init system"
+		return 1
+	fi
+	}
+
+do_expand_rootfs() {
+	get_init_sys
+	if [ $SYSTEMD -eq 1 ]; then
+		ROOT_PART=$(mount | sed -n 's|^/dev/\(.*\) on / .*|\1|p')
+	else
+		if ! [ -h /dev/root ]; then
+			echo "Error - dont know how to expand this filesystem"
+			return 0
+		fi
+		ROOT_PART=$(readlink /dev/root)
+	fi
+
+	PART_NUM=${ROOT_PART#mmcblk0p}
+	if [ "$PART_NUM" = "$ROOT_PART" ]; then
+		echo "$ROOT_PART is not an SD card. Don't know how to expand"
+		return 0
+	fi
+
+	if [ "$PART_NUM" -ne 2 ]; then
+		echo "Your partition layout is not currently supported by this tool, or your root filesystem is already expanded."
+		return 0
+	fi
+
+	LAST_PART_NUM=$(parted /dev/mmcblk0 -ms unit s p | tail -n 1 | cut -f 1 -d:)
+	if [ $LAST_PART_NUM -ne $PART_NUM ]; then
+		echo "$ROOT_PART is not the last partition. Don't know how to expand"
+		return 0
+	fi
+
+	# Get the starting offset of the root partition
+	PART_START=$(parted /dev/mmcblk0 -ms unit s p | grep "^${PART_NUM}" | cut -f 2 -d: | sed 's/[^0-9]//g')
+	[ "$PART_START" ] || return 1
+	# Return value will likely be error for fdisk as it fails to reload the
+	# partition table because the root fs is mounted
+	fdisk /dev/mmcblk0 <<EOF
+p
+d
+$PART_NUM
+n
+p
+$PART_NUM
+$PART_START
+
+p
+w
+EOF
+
+	# now set up an init.d script
+	cat <<EOF > /etc/init.d/resize2fs_once &&
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          resize2fs_once
+# Required-Start:
+# Required-Stop:
+# Default-Start: 3
+# Default-Stop:
+# Short-Description: Resize the root filesystem to fill partition
+# Description:
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+case "\$1" in
+  start)
+    log_daemon_msg "Starting resize2fs_once" &&
+    resize2fs /dev/$ROOT_PART &&
+    update-rc.d resize2fs_once remove &&
+    rm /etc/init.d/resize2fs_once &&
+    log_end_msg \$?
+    ;;
+  *)
+    echo "Usage: \$0 start" >&2
+    exit 3
+    ;;
+esac
+EOF
+	chmod +x /etc/init.d/resize2fs_once &&
+	update-rc.d resize2fs_once defaults &&
+	}
+
+# Check if this is a Systemd based OS (It should be)
+get_init_sys
+# Expand the partition and create the boot service to expand the filesystem
+do_expand_rootfs
+# Finished, so tell the user
+echo "Partition expansion has been completed, please reboot to expand the filesystem to fill it"
+
+exit 0
