@@ -90,6 +90,8 @@ EOF
 case "\$1" in
   start)
     log_daemon_msg "Starting resize2fs_once" &&
+    mount -o remount,rw /boot &&
+    mount -o remount,rw / &&
     resize2fs /dev/$ROOT_PART &&
     update-rc.d resize2fs_once remove &&
     rm /etc/init.d/resize2fs_once &&
@@ -105,10 +107,20 @@ EOF
 	update-rc.d resize2fs_once defaults &&
 	}
 
+# Make the disks RW
+mount -o remount,rw /boot
+mount -o remount,rw /
+
 # Check if this is a Systemd based OS (It should be)
 get_init_sys
+
 # Expand the partition and create the boot service to expand the filesystem
 do_expand_rootfs
+
+# Remount read-only
+mount -o remount,ro /boot
+mount -o remount,ro /
+
 # Finished, so tell the user
 echo "Partition expansion has been completed, please reboot to expand the filesystem to fill it"
 
