@@ -41,6 +41,7 @@ main_function() {
 	echo "Done"
 	
 	echo "Updating Pi-Star Binaries..."
+	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git update-index --assume-unchanged pistar-upnp.service
 	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
 	echo "Done"
 
