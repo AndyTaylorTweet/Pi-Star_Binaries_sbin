@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.0                       #
+#                     Version 1.1                       #
 #                                                       #
 #########################################################
 
@@ -21,6 +21,16 @@ SLEEP=/bin/sleep
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -x ${DAEMON_OPTS} || exit 1
+
+# if dstarrepeater is configured or running, dont start this daemon!
+! test -r /etc/dstar-radio.dstarrepeater || exit 1
+test -r /etc/dstar-radio.mmdvmhost || exit 1
+
+# check if dstarrepeaterd is running, dont start MMDVMHost if it is.
+if [ `$PGREP "dstarrepeaterd"` ]; then
+  echo "Service 'dstarrepeaterd' is already running, cannot start $DAEMON"
+  exit 1;
+fi
 
 case "$1" in
 	start)
