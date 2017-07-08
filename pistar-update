@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 2.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 2.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
@@ -55,7 +55,7 @@ main_function() {
 	echo "Done"
 
 	echo "Updating PiStar-Firewall..."
-	pistar-firewall
+	pistar-firewall > /dev/null 2>&1
 	echo "Done"
 
 	echo "Starting Services..."
