@@ -54,6 +54,10 @@ main_function() {
 	git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin master
 	echo "Done"
 
+	echo "Updating PiStar-Firewall..."
+	pistar-firewall
+	echo "Done"
+
 	echo "Starting Services..."
 	systemctl start dmrgateway.service > /dev/null 2>&1
 	systemctl start dstarrepeater.service > /dev/null 2>&1
@@ -70,6 +74,7 @@ main_function() {
 	sleep 3
 	mount -o remount,ro /
 	mount -o remount,ro /boot
+	
 	# Tell the user we are done
 	echo "Finished"
 	}
