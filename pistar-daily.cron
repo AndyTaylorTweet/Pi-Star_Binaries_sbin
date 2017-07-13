@@ -39,4 +39,11 @@ systemctl start mmdvmhost.service > /dev/null 2>&1
 systemctl start dstarrepeater.service > /dev/null 2>&1
 systemctl start pistar-watchdog.service > /dev/null 2>&1
 
+# Fix nginx unit file
+if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
+  sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
+	systemctl daemon-reload
+	systemctl restart nginx.service
+fi
+
 exit 0
