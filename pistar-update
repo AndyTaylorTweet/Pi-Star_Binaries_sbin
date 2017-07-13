@@ -25,6 +25,15 @@ main_function() {
 	apt-get upgrade -y
 	apt-get clean
 	echo "Done"
+	
+	echo "Checking nginx config"
+	if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
+		sudo sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
+		sudo systemctl daemon-reload
+		sudo systemctl restart nginx.service
+		echo "nginx config has been repaired - please re-run pistar-update"
+		exit 1
+	fi
 
 	echo "Stopping Services..."
 	systemctl stop dmrgateway.service > /dev/null 2>&1
