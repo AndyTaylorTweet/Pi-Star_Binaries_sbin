@@ -28,9 +28,9 @@ main_function() {
 	
 	echo "Checking nginx config"
 	if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
-		sudo sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
-		sudo systemctl daemon-reload
-		sudo systemctl restart nginx.service
+		sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
+		systemctl daemon-reload
+		systemctl restart nginx.service
 		echo "nginx config has been repaired - please re-run pistar-update"
 		exit 1
 	fi
