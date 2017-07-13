@@ -115,6 +115,9 @@ while True:
 					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -r now')
+					
+				# YSF (from YSFGateway)
+				# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 99999
 
 		# This is the 30 second sleep before the next pass.
 		time.sleep(30)
