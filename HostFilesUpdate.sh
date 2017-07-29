@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.3                       #
+#                     Version 2.4                       #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -79,5 +79,10 @@ curl --fail -o ${DMRIDFILE} -s http://www.mw0mwz.co.uk/pi-star/DMRIds.dat
 curl --fail -o ${P25HOSTS} -s http://www.mw0mwz.co.uk/pi-star/P25_Hosts.txt
 curl --fail -o ${YSFHOSTS} -s http://www.mw0mwz.co.uk/pi-star/YSF_Hosts.txt
 curl --fail -s http://www.mw0mwz.co.uk/pi-star/USTrust_Hosts.txt >> ${DExtraHOSTS}
+
+# If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
+if [ -f "/root/DMR_Hosts.txt" ]; then
+	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
+fi
 
 exit 0
