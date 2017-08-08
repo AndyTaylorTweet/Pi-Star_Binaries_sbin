@@ -97,6 +97,23 @@ if config.has_option('ysf', 'shutdown'):
 else:
 	ysfshutdown = str(999999999999)
 
+# P25 Control Options
+if config.has_option('p25', 'svckill'):
+        p25stop = config.get('p25', 'svckill')
+else:
+        p25stop = str(999999999999)
+if config.has_option('p25', 'svcrestart'):
+        p25restart = config.get('p25', 'svcrestart')
+else:
+        p25restart = str(999999999999)
+if config.has_option('p25', 'reboot'):
+        p25reboot = config.get('p25', 'reboot')
+else:
+        p25reboot = str(999999999999)
+if config.has_option('p25', 'shutdown'):
+        p25shutdown = config.get('p25', 'shutdown')
+else:
+        p25shutdown = str(999999999999)
 
 # Now run the loop
 while True:
@@ -150,6 +167,34 @@ while True:
 				if str('received RF voice header from ' + keeperCall + ' to ' + dmrshutdown) in line:
 					# Shutdown the OS
 					os.system(r'shutdown -h now')
+					
+				# P25 Stop MMDVMHost
+                                # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
+                                if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25stop) in line:
+                                        # Kill the Services
+                                        os.system(r'systemctl stop mmdvmhost.timer')
+                                        os.system(r'systemctl stop pistar-watchdog.timer')
+                                        os.system(r'systemctl stop mmdvmhost.service')
+                                        os.system(r'systemctl stop pistar-watchdog.service')
+
+                                # P25 Restart MMDVMHost
+                                # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
+                                if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25restart) in line:
+                                        # Restart the Services
+                                        os.system(r'systemctl restart mmdvmhost.service')
+                                        os.system(r'systemctl restart dmrgateway.service')
+
+                                # P25 Restart the OS
+                                # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
+                                if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25reboot) in line:
+                                        # Restart the OS
+                                        os.system(r'shutdown -r now')
+
+                                # P25 Shutdown the OS
+                                # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
+                                if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25shutdown) in line:
+                                        # Shutdown the OS
+                                        os.system(r'shutdown -h now')
 
 				# D-Star Stop MMDVMHost
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
