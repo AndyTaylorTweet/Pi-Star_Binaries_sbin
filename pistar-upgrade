@@ -52,16 +52,16 @@ main_function() {
 		fi
 	;;
 	3.4.2)
-		Message="You are already running the lastest version..."
-
-		#if [ ! -z "${pistarHardware}" ]; then
-		#	Message="Already running latest release"
-		#	sed -i 's/3.4.2/3.4.3/g' /etc/pistar-release
-		#	sed -i 's/3.4.2/3.4.3/g' /etc/motd
-		#else
-		#	Message="In-place upgrades from 3.4.2 are not supported..."
-		#fi
+		if [ ! -z "${pistarHardware}" ]; then
+			Message="Already running latest release"
+			sed -i 's/3.4.2/3.4.3/g' /etc/pistar-release
+			sed -i 's/3.4.2/3.4.3/g' /etc/motd
+		else
+			Message="In-place upgrades from 3.4.2 are not supported..."
+		fi
 	;;
+	3.4.3)
+		Message="You are already running the lastest version..."
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"
 	;;
