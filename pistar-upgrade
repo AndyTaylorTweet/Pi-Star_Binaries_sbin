@@ -1,0 +1,87 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                        Pi-Star Auto Upgrade Tool                           #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#        Make it simple to upgrade to the current version of Pi-Star.        #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+main_function() {
+	# Get the current Modem
+	if [ -f /etc/dstar-radio.mmdvmhost ]; then
+		pistarModem=$(awk -F "=" '/Hardware/ {print $2}' /etc/dstar-radio.mmdvmhost)
+	elif [ -f /etc/dstar-radio.dstarrepeater ]; then
+		pistarModem=$(awk -F "=" '/Hardware/ {print $2}' /etc/dstar-radio.dstarrepeater)
+	else
+		pistarModem=Unknown
+	fi
+
+	# Get the Pi-Star Version Info
+	pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
+	# Get the hardware type, this may be important later (RPi | NanoPi | OdroidXU4)
+	pistarHardware=$(awk -F "= " '/Hardware/ {print $2}' /etc/pistar-release)
+
+	# Make the disk writable
+	mount -o remount,rw /
+	mount -o remount,rw /boot
+
+	echo "Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
+
+	case ${pistarCurVersion} in
+	3.4.1)
+		if [ ! -z "${pistarHardware}" ]; then
+			Message="Upgraded from ${pistarCurVersion} to 3.4.2..."
+			echo "Installing extra software..."
+			apt-get install -y stm32flash
+			echo "Cleaning up unused files..."
+	                rm -f /usr/local/etc/config_clean.zip
+			echo "Bumping the version information..."
+        	        sed -i 's/3.4.1/3.4.2/g' /etc/pistar-release
+                	sed -i 's/3.4.1/3.4.2/g' /etc/motd
+		else
+			Message="In-place upgrades from 3.4.1 are not supported..."
+		fi
+	;;
+	3.4.2)
+		Message="You are already running the lastest version..."
+
+		#if [ ! -z "${pistarHardware}" ]; then
+		#	Message="Already running latest release"
+		#	sed -i 's/3.4.2/3.4.3/g' /etc/pistar-release
+		#	sed -i 's/3.4.2/3.4.3/g' /etc/motd
+		#else
+		#	Message="In-place upgrades from 3.4.2 are not supported..."
+		#fi
+	;;
+	*)
+		Message="Somthing went very wrong, I cant tell what version I am running"
+	;;
+	esac
+
+	echo $Message
+	echo "Sleeping a few seconds before making the disk Read-Only..."
+	sleep 3
+	mount -o remount,ro /
+        mount -o remount,ro /boot
+	echo "Completed..."
+
+	}
+
+if [ -t 1 ]; then
+  # run via terminal, only output to screen
+  main_function
+else
+  # if not run via terminal, log everything into a log file
+  main_function 2>&1 >> /var/log/pi-star/pi-star_upgrade.log
+fi
+
+exit 0
