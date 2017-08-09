@@ -72,7 +72,7 @@ main_function() {
 	sleep 3
 	mount -o remount,ro /
         mount -o remount,ro /boot
-	echo "Completed..."
+	echo "Finished"
 
 	}
 
