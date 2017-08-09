@@ -53,7 +53,7 @@ main_function() {
 	;;
 	3.4.2)
 		if [ ! -z "${pistarHardware}" ]; then
-			Message="Already running latest release"
+			Message="Upgrading to Pi-Star 3.4.3"
 			sed -i 's/3.4.2/3.4.3/g' /etc/pistar-release
 			sed -i 's/3.4.2/3.4.3/g' /etc/motd
 		else
