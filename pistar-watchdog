@@ -4,7 +4,7 @@
 #                                                                             #
 #                         Pi-Star Service Watchdog                            #
 #                                                                             #
-#    Version 1.4, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #   The service watchdog will monitor the D-Star Services, restarting them    #
 #       after any kind of failures - somthing that seems to happen alot       #
@@ -15,10 +15,102 @@
 import subprocess
 import time
 import os
+import linecache
+import datetime
 
 time.sleep(120) #Assumiing the Pi has just started up, let the services settle...
 
 while True: #Main loop
+	# Get the current status
+	dstarrepeater = "/etc/dstar-radio.dstarrepeater"
+	mmdvmhost = "/etc/dstar-radio.mmdvmhost"
+
+	# Check the D-Star Specific Services
+	if os.path.isfile(dstarrepeater):
+		checkprocdstar = subprocess.Popen('pgrep' + ' dstarrepeaterd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocdstar.stdout.readlines():
+			os.system('/bin/systemctl stop dstarrepeater.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start dstarrepeater.service')
+			time.sleep(10) #Give the service time to start before we move on
+
+		# At this point it's a safe bet that the service is running, now look for signs of DVAP failure.
+		utcnow = datetime.datetime.utcnow()
+		datenow = utcnow.strftime('%Y-%m-%d')
+		dateminus300sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
+		logstampnowminus300sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
+		currentLog = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+
+		# Open the MMDVMHost Log
+		logfile = open(currentLog, 'r')
+		loglist = logfile.readlines()
+		logfile.close()
+
+		# Parse the log lines
+		for line in loglist:
+			# We only care about logs in the last 60 secs
+			if line[3:22] >= logstampnowminus300sec and line[3:22] <= logstampnow:
+				# Now we look for DVAP failure lines
+				if (str('Bad DVAP header') in line) or (str('Cannot open the D-Star modem') in line):
+					os.system('/bin/systemctl stop dstarrepeater.service')
+		                        time.sleep(2) #Give the service time to stop before we move on
+                		        os.system('/bin/systemctl start dstarrepeater.service')
+                        		time.sleep(10) #Give the service time to start before we move on
+
+
+	# Check the MMDVMHost Specific Services
+	if os.path.isfile(mmdvmhost):
+		checkprocmmdvm = subprocess.Popen('pgrep' + ' MMDVMHost', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocmmdvm.stdout.readlines():
+			os.system('/bin/systemctl stop mmdvmhost.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start mmdvmhost.service')
+			time.sleep(10) #Give the service time to start before we move on
+		
+		checkprocdmrgateway = subprocess.Popen('pgrep' + ' DMRGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocdmrgateway.stdout.readlines():
+			os.system('/bin/systemctl stop dmrgateway.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start dmrgateway.service')
+			time.sleep(10) #Give the service time to start before we move on
+
+		checkprocysfgateway = subprocess.Popen('pgrep' + ' YSFGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocysfgateway.stdout.readlines():
+			os.system('/bin/systemctl stop ysfgateway.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start ysfgateway.service')
+			time.sleep(10) #Give the service time to start before we move on
+
+		checkprocp25gateway = subprocess.Popen('pgrep' + ' P25Gateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocp25gateway.stdout.readlines():
+			os.system('/bin/systemctl stop p25gateway.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start p25gateway.service')
+			time.sleep(10) #Give the service time to start before we move on
+
+		checkprocysfparrot = subprocess.Popen('pgrep' + ' YSFParrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocysfparrot.stdout.readlines():
+			os.system('/bin/systemctl stop ysfparrot.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start ysfparrot.service')
+			time.sleep(10) #Give the service time to start before we move on
+
+		checkprocp25parrot = subprocess.Popen('pgrep' + ' P25Parrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocp25parrot.stdout.readlines():
+			os.system('/bin/systemctl stop p25parrot.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start p25parrot.service')
+			time.sleep(10) #Give the service time to start before we move on
+
+		checkprocremote = subprocess.check_output(['/usr/local/sbin/pistar-remote.service', 'status'])
+	        if "not" in checkprocremote:
+			os.system('/bin/systemctl stop pistar-remote.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start pistar-remote.service')
+			time.sleep(10) #Give the service time to start before we move on
+		
+	# Check the services that can be used by all systems
 	checkprocirc = subprocess.Popen('pgrep' + ' ircddbgatewayd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	if not checkprocirc.stdout.readlines():
 		os.system('/bin/systemctl stop ircddbgateway.service')
@@ -26,62 +118,6 @@ while True: #Main loop
 		os.system('/bin/systemctl start ircddbgateway.service')
 		time.sleep(10) #Give the service time to start before we move on
 
-	checkprocdstar = subprocess.Popen('pgrep' + ' dstarrepeaterd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocdstar.stdout.readlines():
-		os.system('/bin/systemctl stop dstarrepeater.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start dstarrepeater.service')
-		time.sleep(10) #Give the service time to start before we move on
-
-	checkprocmmdvm = subprocess.Popen('pgrep' + ' MMDVMHost', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocmmdvm.stdout.readlines():
-		os.system('/bin/systemctl stop mmdvmhost.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start mmdvmhost.service')
-		time.sleep(10) #Give the service time to start before we move on
-		
-	checkprocdmrgateway = subprocess.Popen('pgrep' + ' DMRGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocdmrgateway.stdout.readlines():
-		os.system('/bin/systemctl stop dmrgateway.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start dmrgateway.service')
-		time.sleep(10) #Give the service time to start before we move on
-
-	checkprocysfgateway = subprocess.Popen('pgrep' + ' YSFGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocysfgateway.stdout.readlines():
-		os.system('/bin/systemctl stop ysfgateway.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start ysfgateway.service')
-		time.sleep(10) #Give the service time to start before we move on
-
-	checkprocp25gateway = subprocess.Popen('pgrep' + ' P25Gateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocp25gateway.stdout.readlines():
-		os.system('/bin/systemctl stop p25gateway.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start p25gateway.service')
-		time.sleep(10) #Give the service time to start before we move on
-
-	checkprocysfparrot = subprocess.Popen('pgrep' + ' YSFParrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocysfparrot.stdout.readlines():
-		os.system('/bin/systemctl stop ysfparrot.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start ysfparrot.service')
-		time.sleep(10) #Give the service time to start before we move on
-
-	checkprocp25parrot = subprocess.Popen('pgrep' + ' P25Parrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	if not checkprocp25parrot.stdout.readlines():
-		os.system('/bin/systemctl stop p25parrot.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start p25parrot.service')
-		time.sleep(10) #Give the service time to start before we move on
-
-	checkprocremote = subprocess.check_output(['/usr/local/sbin/pistar-remote.service', 'status'])
-        if "not" in checkprocremote:
-		os.system('/bin/systemctl stop pistar-remote.service')
-		time.sleep(2) #Give the service time to stop before we move on
-		os.system('/bin/systemctl start pistar-remote.service')
-		time.sleep(10) #Give the service time to start before we move on
-		
 	checkproctime = subprocess.Popen('pgrep' + ' timeserverd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	if not checkproctime.stdout.readlines():
 		os.system('/bin/systemctl stop timeserver.service')
