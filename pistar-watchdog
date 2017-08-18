@@ -56,7 +56,7 @@ while True: #Main loop
 					os.system('/bin/systemctl stop dstarrepeater.service')
 		                        time.sleep(30) # Give the DVAP time to recover
                 		        os.system('/bin/systemctl start dstarrepeater.service')
-                        		time.sleep(10) #Give the service time to start before we move on
+                        		time.sleep(300) #Give the service time to start before we move on
 
 
 	# Check the MMDVMHost Specific Services
