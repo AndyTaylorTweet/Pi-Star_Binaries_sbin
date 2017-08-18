@@ -18,7 +18,7 @@ import os
 import linecache
 import datetime
 
-time.sleep(120) #Assumiing the Pi has just started up, let the services settle...
+time.sleep(90) #Assumiing the Pi has just started up, let the services settle...
 
 while True: #Main loop
 	# Get the current status
@@ -56,7 +56,7 @@ while True: #Main loop
 					os.system('/bin/systemctl stop dstarrepeater.service')
 		                        time.sleep(30) # Give the DVAP time to recover
                 		        os.system('/bin/systemctl start dstarrepeater.service')
-                        		time.sleep(300) #Give the service time to start before we move on
+                        		time.sleep(270) #Give the service time to start before we move on
 
 
 	# Check the MMDVMHost Specific Services
