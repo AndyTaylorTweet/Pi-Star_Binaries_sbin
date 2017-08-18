@@ -54,7 +54,7 @@ while True: #Main loop
 				# Now we look for DVAP failure lines
 				if (str('Bad DVAP header') in line) or (str('Cannot open the D-Star modem') in line):
 					os.system('/bin/systemctl stop dstarrepeater.service')
-		                        time.sleep(2) #Give the service time to stop before we move on
+		                        time.sleep(30) # Give the DVAP time to recover
                 		        os.system('/bin/systemctl start dstarrepeater.service')
                         		time.sleep(10) #Give the service time to start before we move on
 
