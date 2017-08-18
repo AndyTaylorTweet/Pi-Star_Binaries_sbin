@@ -62,28 +62,28 @@ main_function() {
 	;;
 	3.4.3)
 		# Check to see if the USB Max Current setting is in place or not...
-		#if grep -Fxq "max_usb_current" /boot/config.txt
-		#	then
-    		#	# It's already there, just version bump
-		#	if [ ! -z "${pistarHardware}" ]; then
-		#		Message="Upgraded from ${pistarCurVersion} to 3.4.4..."
-		#		#sed -i 's/3.4.3/3.4.4/g' /etc/pistar-release
-		#		#sed -i 's/3.4.3/3.4.4/g' /etc/motd
-		#	else
-		#		Message="In-place upgrades from 3.4.3 are not supported..."
-		#	fi
-		#else
-		#	# Add the config lines and then version bump
-		#	echo "Updating boot config to add high current USB support"
-		#	echo -e "\n# Increase USB Current\nmax_usb_current=1" >> /boot/config.txt
-		#	if [ ! -z "${pistarHardware}" ]; then
-		#		Message="Upgraded from ${pistarCurVersion} to 3.4.4..."
-		#		#sed -i 's/3.4.3/3.4.4/g' /etc/pistar-release
-		#		#sed -i 's/3.4.3/3.4.4/g' /etc/motd
-		#	else
-		#		Message="In-place upgrades from 3.4.3 are not supported..."
-		#	fi
-		#fi
+		if grep -Fxq "max_usb_current=1" /boot/config.txt
+			then
+    			# It's already there, just version bump
+			if [ ! -z "${pistarHardware}" ]; then
+				Message="Upgraded from ${pistarCurVersion} to 3.4.4..."
+				sed -i 's/3.4.3/3.4.4/g' /etc/pistar-release
+				sed -i 's/3.4.3/3.4.4/g' /etc/motd
+			else
+				Message="In-place upgrades from 3.4.3 are not supported..."
+			fi
+		else
+			# Add the config lines and then version bump
+			echo "Updating boot config to add high current USB support"
+			echo -e "\n# Increase USB Current\nmax_usb_current=1" >> /boot/config.txt
+			if [ ! -z "${pistarHardware}" ]; then
+				Message="Upgraded from ${pistarCurVersion} to 3.4.4..."
+				sed -i 's/3.4.3/3.4.4/g' /etc/pistar-release
+				sed -i 's/3.4.3/3.4.4/g' /etc/motd
+			else
+				Message="In-place upgrades from 3.4.3 are not supported..."
+			fi
+		fi
 	;;
 	3.4.4)
 		Message="You are already running the lastest version..."
