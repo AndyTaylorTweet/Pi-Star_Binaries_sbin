@@ -39,7 +39,7 @@ while True: #Main loop
 		datenow = utcnow.strftime('%Y-%m-%d')
 		dateminus300sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
-		logstampnowminus300sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
+		logstampnowminus300sec = dateminus300sec.strftime('%Y-%m-%d %H:%M:%S')
 		currentLog = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
 
 		# Open the MMDVMHost Log
