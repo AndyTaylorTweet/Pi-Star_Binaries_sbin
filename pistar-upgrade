@@ -62,7 +62,8 @@ main_function() {
 	;;
 	3.4.3)
 		# Check to see if the USB Max Current setting is in place or not...
-		if [ grep -Fxq "max_usb_current=1" /boot/config.txt ]; then
+		if grep -Fxq "max_usb_current=1" /boot/config.txt
+			then
     			# It's already there, just version bump
 			if [ ! -z "${pistarHardware}" ]; then
 				Message="Upgraded from ${pistarCurVersion} to 3.4.4..."
