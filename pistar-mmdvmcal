@@ -7,6 +7,7 @@
 #     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
 #                                                                            #
 #                 Make it simple to run MMDVMCal on Pi-Star.                 #
+#                      Orrigional suggestion by "mrickey"                    #
 #                                                                            #
 ##############################################################################
 #
@@ -25,7 +26,7 @@ systemctl stop mmdvmhost.timer
 systemctl stop mmdvmhost
 
 # Run MMDVMCal
-
+/usr/local/bin/MMDVMCal $1
 
 # Set the disk back to RO on MMDVMCal exit
 mount -o remount,rw /
