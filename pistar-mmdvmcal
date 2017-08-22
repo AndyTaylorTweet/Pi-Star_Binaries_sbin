@@ -16,23 +16,26 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+# Get the modem port from /etc/mmdvmhost
+mmdvmModem=$(grep -m 1 'Port' /etc/mmdvmhost | awk -F "=" '/Port/ {print $2}')
+
 # Make the disk RW
-mount -o remount,rw /
+#mount -o remount,rw /
 
 # Stop the services
-systemctl stop pistar-watchdog.timer
-systemctl stop pistar-watchdog
-systemctl stop mmdvmhost.timer
-systemctl stop mmdvmhost
+#systemctl stop pistar-watchdog.timer
+#systemctl stop pistar-watchdog
+#systemctl stop mmdvmhost.timer
+#systemctl stop mmdvmhost
 
 # Run MMDVMCal
-/usr/local/bin/MMDVMCal $1
+echo '/usr/local/bin/MMDVMCal ${mmdvmModem}'
 
 # Set the disk back to RO on MMDVMCal exit
-mount -o remount,rw /
+#mount -o remount,rw /
 
 # Start the services
-systemctl start pistar-watchdog.timer
-systemctl start pistar-watchdog
-systemctl start mmdvmhost.timer
-systemctl start mmdvmhost
+#systemctl start pistar-watchdog.timer
+#systemctl start pistar-watchdog
+#systemctl start mmdvmhost.timer
+#systemctl start mmdvmhost
