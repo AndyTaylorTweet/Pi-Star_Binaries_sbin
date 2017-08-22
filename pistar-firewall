@@ -33,7 +33,10 @@ printf "Setting IPv4 Rules...\n"
 #IPv4 Firewall Rules
 #
 #Flush all existing chains
+iptables -t nat -F
+iptables -t mangle -F
 iptables --flush
+iptables -X
 
 #Allow traffic on loopback
 iptables -A INPUT -i lo -j ACCEPT
@@ -156,7 +159,9 @@ printf "\nSetting IPv6 Rules...\n"
 # IPv6 Rules Start here
 #
 #Flush existing chains
-ip6tables -F
+ip6tables -t nat -F
+ip6tables -t mangle -F
+ip6tables --flush
 ip6tables -X
 
 #Set the default policy
