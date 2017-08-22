@@ -88,6 +88,12 @@ main_function() {
 	3.4.4)
 		Message="You are already running the lastest version..."
 	;;
+	3.5.0-Beta)
+		Message="You are already running the lastest version..."
+	;;
+	3.5.0)
+		Message="You are already running the lastest version..."
+	;;
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"
 	;;
