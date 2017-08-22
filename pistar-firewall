@@ -205,8 +205,8 @@ ip6tables -A INPUT -p tcp --dport 445 -j ACCEPT #			SMB Access
 ip6tables -A INPUT -p udp --dport 10022 -j ACCEPT #			D-Star ircDDBGateway remote
 
 #Allow Local Network Name Resolution
-ip6tables -A OUTPUT -p udp -d ff00::/8 --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
-ip6tables -A INPUT -p udp -d ff00::/8 --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
+ip6tables -A OUTPUT -p udp -d ff02::fb --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
+ip6tables -A INPUT -p udp -d ff02::fb --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
 ip6tables -A OUTPUT -p udp --dport 137 -j ACCEPT #			NETBIOS Name Resolution Broadcast Out
 ip6tables -A INPUT -p udp --dport 137 -j ACCEPT #			NETBIOS Name Resolution Broadcast In
 ip6tables -A OUTPUT -p udp --dport 138 -j ACCEPT #			NETBIOS Datagram Out
