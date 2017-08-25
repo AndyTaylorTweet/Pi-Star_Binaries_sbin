@@ -17,7 +17,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Get the modem port from /etc/mmdvmhost
-mmdvmModem=$(grep -m 1 'Port' /etc/mmdvmhost | awk -F "=" '/Port/ {print $2}')
+mmdvmModem=$(grep -m 1 'Port=' /etc/mmdvmhost | awk -F "=" '/Port/ {print $2}')
 
 # Output some feedback to the terminal
 echo "Stopping Pi-Star Services..."
