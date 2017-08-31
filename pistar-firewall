@@ -20,12 +20,6 @@ iptables --flush
 iptables -X
 ipset -X insideLan
 
-# Set an ip list for later use
-ipset -N insideLan iphash
-ipset -A insideLan 192.168.0.0/16
-ipset -A insideLan 172.16.0.0/12
-ipset -A insideLan 10.0.0.0/8
-
 # Allow traffic on loopback
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A OUTPUT -o lo -j ACCEPT
