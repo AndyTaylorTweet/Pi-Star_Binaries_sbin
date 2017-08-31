@@ -27,14 +27,16 @@ mount -o remount,rw /
 
 # Stop the services
 systemctl stop pistar-watchdog.timer
-systemctl stop pistar-watchdog
+systemctl stop pistar-watchdog.service
 systemctl stop mmdvmhost.timer
-systemctl stop mmdvmhost
+systemctl stop mmdvmhost.service
 sleep 3
 
 # Force Kill any remaining MMDVMHost processes
 echo "Killing any remaining MMDVMHost processes..."
 killall MMDVMHost
+killall MMDVMHost_NoOLED
+killall MMDVMHost_Adafruit
 
 # Output some feedback to the terminal
 echo "Starting Calibration..."
