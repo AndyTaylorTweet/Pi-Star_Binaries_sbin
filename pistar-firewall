@@ -35,6 +35,7 @@ iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 if [ -f "/root/ipv4.fw" ]
 then
   echo "Custom IPv4 Firewall rules loaded..."
+  source /root/ipv4.fw
 fi
 
 # Allow Outbound System Ports (for updates mostly)
@@ -179,6 +180,7 @@ ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 if [ -f "/root/ipv6.fw" ]
 then
   echo "Custom IPv6 Firewall rules loaded..."
+  source /root/ipv6.fw
 fi
 
 # Allow Outbound System Ports (for updates mostly)
