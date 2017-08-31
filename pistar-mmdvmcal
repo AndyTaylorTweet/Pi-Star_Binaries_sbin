@@ -30,7 +30,10 @@ systemctl stop pistar-watchdog.timer
 systemctl stop pistar-watchdog
 systemctl stop mmdvmhost.timer
 systemctl stop mmdvmhost
-sleep 5
+sleep 3
+
+# Force Kill any remaining MMDVMHost processes
+killall MMDVMHost
 
 # Output some feedback to the terminal
 echo "Starting Calibration..."
