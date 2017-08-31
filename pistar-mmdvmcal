@@ -33,7 +33,6 @@ systemctl stop mmdvmhost
 sleep 3
 
 # Force Kill any remaining MMDVMHost processes
-# Output some feedback to the terminal
 echo "Killing any remaining MMDVMHost processes..."
 killall MMDVMHost
 
