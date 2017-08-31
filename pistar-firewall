@@ -18,7 +18,6 @@ iptables -t nat -F
 iptables -t mangle -F
 iptables --flush
 iptables -X
-ipset -X insideLan
 
 # Allow traffic on loopback
 iptables -A INPUT -i lo -j ACCEPT
