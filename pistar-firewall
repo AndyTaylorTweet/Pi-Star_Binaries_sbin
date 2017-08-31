@@ -31,6 +31,12 @@ iptables -P OUTPUT DROP
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
+# If there are custom rules, pull them in here
+if [ -f "/root/ipv4.fw" ]
+then
+  echo "Custom IPv4 Firewall rules loaded..."
+fi
+
 # Allow Outbound System Ports (for updates mostly)
 iptables -A OUTPUT -p tcp --dport 21 -j ACCEPT #			FTP (Updates)
 iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT #			SSH (Used by GIT)
@@ -169,6 +175,12 @@ ip6tables -A OUTPUT -d ff00::/8 -j ACCEPT
 ip6tables -A INPUT -p icmpv6 -j ACCEPT
 ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 
+# If there are custom rules, pull them in here
+if [ -f "/root/ipv6.fw" ]
+then
+  echo "Custom IPv6 Firewall rules loaded..."
+fi
+
 # Allow Outbound System Ports (for updates mostly)
 ip6tables -A OUTPUT -p tcp --dport 21 -j ACCEPT #			FTP (Updates)
 ip6tables -A OUTPUT -p tcp --dport 22 -j ACCEPT #			SSH (Used by GIT)
@@ -195,9 +207,8 @@ ip6tables -A INPUT -p udp --dport 138 -j ACCEPT #			NETBIOS Datagram In
 ip6tables -A INPUT -p tcp --dport 139 -j ACCEPT #			NETBIOS TCP Session In
 
 # Allow uPnP Firewall Configuration
-ip6tables -A OUTPUT -p udp -s fe80::/64 -d fe80::/64 --dport 1900 -j ACCEPT #			uPnP Packets
+ip6tables -A OUTPUT -p udp -s fe80::/64 -d fe80::/64 --dport 1025:65535 -j ACCEPT #			uPnP Packets
 ip6tables -A INPUT -p udp -s fe80::/64 -d fe80::/64 --sport 1900 -j ACCEPT #			uPnP Packets
-ip6tables -A OUTPUT -p udp -s fe80::/64 -d fe80::/64 --dport 48958 -j ACCEPT #			uPnP Packets
 
 # Allow Outbound D-Star Control Ports
 ip6tables -A OUTPUT -p tcp --dport 53 -j ACCEPT #			DNS Zone Transfer - Used by xreflector.net
