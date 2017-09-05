@@ -93,7 +93,7 @@ main_function() {
 		#	sed -i 's/3.4.4/3.4.5/g' /etc/motd
 		#	apt-get install -y shellinabox
 		#	sed -i '/SHELLINABOX_PORT=/c SHELLINABOX_PORT=2222\n' /etc/default/shellinabox
-		#	sed -i '/SHELLINABOX_ARGS=/c SHELLINABOX_ARGS="--no-beep --disable-ssl-menu --disable-ssl"\n' /etc/default/shellinabox
+		#	sed -i '/SHELLINABOX_ARGS=/c SHELLINABOX_ARGS="--no-beep --disable-ssl-menu --disable-ssl --css=/etc/shellinabox/options-enabled/00_White\ On\ Black.css"\n' /etc/default/shellinabox
 		#	rm -rf /etc/shellinabox/options-enabled/00+Black\ on\ White.css
 		#	rm -rf /etc/shellinabox/options-enabled/01_Monochrome.css
 		#	systemctl enable shellinabox
