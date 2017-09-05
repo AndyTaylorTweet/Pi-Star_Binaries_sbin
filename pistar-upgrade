@@ -103,7 +103,6 @@ main_function() {
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
 		#fi
-		
 	;;
 	3.4.5)
 		Message="You are already running the lastest version..."
