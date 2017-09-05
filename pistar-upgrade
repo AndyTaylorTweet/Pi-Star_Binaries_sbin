@@ -94,6 +94,8 @@ main_function() {
 		#	apt-get install -y shellinabox
 		#	sed -i '/SHELLINABOX_PORT=/c SHELLINABOX_PORT=2222\n' /etc/default/shellinabox
 		#	sed -i '/SHELLINABOX_ARGS=/c SHELLINABOX_ARGS="--no-beep --disable-ssl-menu --disable-ssl"\n' /etc/default/shellinabox
+		#	rm -rf /etc/shellinabox/options-enabled/00+Black\ on\ White.css
+		#	rm -rf /etc/shellinabox/options-enabled/01_Monochrome.css
 		#	systemctl enable shellinabox
 		#	systemctl start shellinabox
 		#	systemctl restart shellinabox
