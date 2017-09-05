@@ -89,6 +89,12 @@ iptables -A INPUT -p tcp --dport 445 -j ACCEPT #			SMB Access
 iptables -A INPUT -p tcp --dport 8080 -j ACCEPT #			HTTP Allow the Raspicontrol Portal Access
 iptables -A INPUT -p udp --dport 10022 -j ACCEPT #			D-Star ircDDBGateway remote
 
+# Allow access to shellinabox - if installed
+if [ -f "/etc/default/shellinabox" ]
+then
+  iptables -A INPUT -p tcp --dport `grep -m 1 'SHELLINABOX_PORT=' /etc/default/shellinabox | awk -F '=' '/SHELLINABOX_PORT=/ {print $2}'` -j ACCEPT
+fi
+
 # Allow Local Network Name Resolution
 iptables -A OUTPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #	AVAHI Daemon (Name Resolution)
 iptables -A INPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #	AVAHI Daemon (Name Resolution)
@@ -202,6 +208,12 @@ ip6tables -A INPUT -p tcp --dport 22 -j ACCEPT #			SSH
 ip6tables -A INPUT -p tcp --dport 80 -j ACCEPT #			HTTP Allow the D-Star Portal Access
 ip6tables -A INPUT -p tcp --dport 445 -j ACCEPT #			SMB Access
 ip6tables -A INPUT -p udp --dport 10022 -j ACCEPT #			D-Star ircDDBGateway remote
+
+# Allow access to shellinabox - if installed
+if [ -f "/etc/default/shellinabox" ]
+then
+  ip6tables -A INPUT -p tcp --dport `grep -m 1 'SHELLINABOX_PORT=' /etc/default/shellinabox | awk -F '=' '/SHELLINABOX_PORT=/ {print $2}'` -j ACCEPT
+fi
 
 # Allow Local Network Name Resolution
 ip6tables -A OUTPUT -p udp -d ff02::fb --dport 5353 -j ACCEPT #		AVAHI Daemon (Name Resolution)
