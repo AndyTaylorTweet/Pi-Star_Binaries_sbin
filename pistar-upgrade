@@ -87,6 +87,24 @@ main_function() {
 	;;
 	3.4.4)
 		Message="You are already running the lastest version..."
+		#if [ ! -z "${pistarHardware}" ]; then
+		#	Message="Upgraded from ${pistarCurVersion} to 3.4.5..."
+		#	sed -i 's/3.4.4/3.4.5/g' /etc/pistar-release
+		#	sed -i 's/3.4.4/3.4.5/g' /etc/motd
+		#	apt-get install -y shellinabox
+		#	sed -i '/SHELLINABOX_PORT=/c SHELLINABOX_PORT=2222\n' /etc/default/shellinabox
+		#	sed -i '/SHELLINABOX_ARGS=/c SHELLINABOX_ARGS="--no-beep --disable-ssl-menu --disable-ssl"\n' /etc/default/shellinabox
+		#	systemctl enable shellinabox
+		#	systemctl start shellinabox
+		#	systemctl restart shellinabox
+		#	/usr/local/sbin/pistar-firewall
+		#else
+		#	Message="In-place upgrades from 3.4.4 are not supported..."
+		#fi
+		
+	;;
+	3.4.5)
+		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
 		Message="You are already running the lastest version..."
