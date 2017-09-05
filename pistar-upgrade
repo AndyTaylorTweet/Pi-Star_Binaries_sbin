@@ -99,7 +99,7 @@ main_function() {
 		#	systemctl enable shellinabox
 		#	systemctl start shellinabox
 		#	systemctl restart shellinabox
-		#	/usr/local/sbin/pistar-firewall
+		#	/usr/local/sbin/pistar-firewall  > /dev/null 2>&1
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
 		#fi
