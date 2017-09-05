@@ -86,26 +86,25 @@ main_function() {
 		fi
 	;;
 	3.4.4)
-		Message="You are already running the lastest version..."
-		#if [ ! -z "${pistarHardware}" ]; then
-		#	Message="Upgraded from ${pistarCurVersion} to 3.4.5..."
-		#	sed -i 's/3.4.4/3.4.5/g' /etc/pistar-release
-		#	sed -i 's/3.4.4/3.4.5/g' /etc/motd
-		#	echo "Installing Shell in a Box..."
-		#	apt-get install -y shellinabox
-		#	echo "Configuring Shell in a Box..."
-		#	sed -i '/SHELLINABOX_PORT=/c SHELLINABOX_PORT=2222' /etc/default/shellinabox
-		#	sed -i '/SHELLINABOX_ARGS=/c SHELLINABOX_ARGS="--no-beep --disable-ssl-menu --disable-ssl --css=/etc/shellinabox/options-enabled/00_White\\ On\\ Black.css"' /etc/default/shellinabox
-		#	rm -rf /etc/shellinabox/options-enabled/00+Black\ on\ White.css
-		#	rm -rf /etc/shellinabox/options-enabled/01_Monochrome.css
-		#	systemctl enable shellinabox
-		#	systemctl start shellinabox
-		#	systemctl restart shellinabox
-		#	echo "Updating firewall..."
-		#	/usr/local/sbin/pistar-firewall  > /dev/null 2>&1
-		#else
-		#	Message="In-place upgrades from 3.4.4 are not supported..."
-		#fi
+		if [ ! -z "${pistarHardware}" ]; then
+			Message="Upgraded from ${pistarCurVersion} to 3.4.5..."
+			sed -i 's/3.4.4/3.4.5/g' /etc/pistar-release
+			sed -i 's/3.4.4/3.4.5/g' /etc/motd
+			echo "Installing Shell in a Box..."
+			apt-get install -y shellinabox
+			echo "Configuring Shell in a Box..."
+			sed -i '/SHELLINABOX_PORT=/c SHELLINABOX_PORT=2222' /etc/default/shellinabox
+			sed -i '/SHELLINABOX_ARGS=/c SHELLINABOX_ARGS="--no-beep --disable-ssl-menu --disable-ssl --css=/etc/shellinabox/options-enabled/00_White\\ On\\ Black.css"' /etc/default/shellinabox
+			rm -rf /etc/shellinabox/options-enabled/00+Black\ on\ White.css
+			rm -rf /etc/shellinabox/options-enabled/01_Monochrome.css
+			systemctl enable shellinabox
+			systemctl start shellinabox
+			systemctl restart shellinabox
+			echo "Updating firewall..."
+			/usr/local/sbin/pistar-firewall  > /dev/null 2>&1
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
 	;;
 	3.4.5)
 		Message="You are already running the lastest version..."
