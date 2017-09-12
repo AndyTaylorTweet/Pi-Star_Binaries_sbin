@@ -3,10 +3,10 @@
 #                                                       #
 #              HostFilesUpdate.sh Updater               #
 #                                                       #
-# Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
+#      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.4                       #
+#                     Version 2.5                       #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -70,15 +70,15 @@ do
 done
 
 # Generate Host Files
-curl --fail -o ${APRSHOSTS} -s http://www.mw0mwz.co.uk/pi-star/APRS_Hosts.txt
-curl --fail -o ${DCSHOSTS} -s http://www.mw0mwz.co.uk/pi-star/DCS_Hosts.txt
-curl --fail -o ${DMRHOSTS} -s http://www.mw0mwz.co.uk/pi-star/DMR_Hosts.txt
-curl --fail -o ${DPlusHOSTS} -s http://www.mw0mwz.co.uk/pi-star/DPlus_Hosts.txt
-curl --fail -o ${DExtraHOSTS} -s http://www.mw0mwz.co.uk/pi-star/DExtra_Hosts.txt
-curl --fail -o ${DMRIDFILE} -s http://www.mw0mwz.co.uk/pi-star/DMRIds.dat
-curl --fail -o ${P25HOSTS} -s http://www.mw0mwz.co.uk/pi-star/P25_Hosts.txt
-curl --fail -o ${YSFHOSTS} -s http://www.mw0mwz.co.uk/pi-star/YSF_Hosts.txt
-curl --fail -s http://www.mw0mwz.co.uk/pi-star/USTrust_Hosts.txt >> ${DExtraHOSTS}
+curl --fail -o ${APRSHOSTS} -s http://www.pistar.uk/downloads/APRS_Hosts.txt
+curl --fail -o ${DCSHOSTS} -s http://www.pistar.uk/downloads/DCS_Hosts.txt
+curl --fail -o ${DMRHOSTS} -s http://www.pistar.uk/downloads/DMR_Hosts.txt
+curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_Hosts.txt
+curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_Hosts.txt
+curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat
+curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
+curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
+curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
