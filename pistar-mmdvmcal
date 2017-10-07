@@ -42,9 +42,9 @@ killall MMDVMHost_Adafruit
 echo "Starting Calibration..."
 
 # Run MMDVMCal twice, killing the first one after 3 secs
-/usr/local/bin/MMDVMCal ${mmdvmModem} > /dev/null 2>&1 &
+/usr/local/bin/MMDVMCal ${mmdvmModem} >/dev/null 2>&1 &
 sleep 3
-killall MMDVMCal > /dev/null 2>&1
+killall MMDVMCal >/dev/null 2>&1
 /usr/local/bin/MMDVMCal ${mmdvmModem}
 
 # Output some feedback to the terminal
