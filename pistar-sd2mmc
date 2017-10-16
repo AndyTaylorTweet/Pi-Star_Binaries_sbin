@@ -90,7 +90,7 @@ usage()
 	echo "    If these partitions are not found (or -f), then $PGM will ask"
 	echo "    if it is OK to initialize the destination SD card partitions."
 	echo "    This is done by a partial 'dd' from the running booted device"
-	echo "    /dev/mmcblk0 to the destination SD card /dev/sdN followed by a"
+	echo "    /dev/mmcblk1 to the destination SD card /dev/sdN followed by a"
 	echo "    fdisk resize and mkfs.ext4 of /dev/sdN partition 2."
 	echo "    This creates a completed $SRC_BOOT_PARTITION_TYPE partition 1 containing all boot"
 	echo "    files and an empty but properly sized partition 2 rootfs."
@@ -230,7 +230,7 @@ expand_rootfs()
 	{
 	# Get the starting offset of the root partition
 	# (with Jessie's parted, now need to strip trailing 's' from PART_START)
-	PART_START=$(parted /dev/mmcblk0 -ms unit s p  \
+	PART_START=$(parted /dev/mmcblk1 -ms unit s p  \
 			| grep "^2" | cut -f 2 -d: | cut -f 1 -d s)
 	[ "$PART_START" ] || return 1
 	# Return value will likely be error for fdisk as it fails to reload the
@@ -302,7 +302,7 @@ then
 		# the start of partition 2.
 		#
 		# Calculate the start of partition 2 in MB for the dd.
-		PART2_START=$(parted /dev/mmcblk0 -ms unit MB p | grep "^2" \
+		PART2_START=$(parted /dev/mmcblk1 -ms unit MB p | grep "^2" \
 				| cut -f 2 -d: | sed s/MB// | tr "," "." | cut -f 1 -d.)
 		# and add some slop
 		DD_COUNT=`expr $PART2_START + 8`
@@ -310,7 +310,7 @@ then
 		echo ""
 		echo "Imaging the partition structure, copying $DD_COUNT megabytes..."
 		sync
-		dd if=/dev/mmcblk0 of=/dev/$DST_DISK bs=1M count=$DD_COUNT
+		dd if=/dev/mmcblk1 of=/dev/$DST_DISK bs=1M count=$DD_COUNT
 
 		# Partition was copied live so fsck to clean up for possible future
 		# "Volume was not properly unmounted" warnings.
@@ -335,9 +335,9 @@ then
 		parted /dev/$DST_DISK unit MB p \
 			| sed "/^Model/d ; /^Sector/d ; /^Disk Flags/d"
 
-		SRC_ROOT_VOL_NAME=`e2label /dev/mmcblk0p2`
+		SRC_ROOT_VOL_NAME=`e2label /dev/mmcblk1p2`
 		echo ""
-		echo "Your booted /dev/mmcblk0p2 rootfs existing label: $SRC_ROOT_VOL_NAME"
+		echo "Your booted /dev/mmcblk1p2 rootfs existing label: $SRC_ROOT_VOL_NAME"
 		echo -n "You may enter a label for the destination rootfs $DST_ROOT_PARTITION: "
 		read resp
 		if [ "$resp" != "" ]
