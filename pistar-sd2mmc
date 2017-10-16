@@ -327,7 +327,7 @@ then
 		echo "Sizing partition 2 (root partition) to use all SD card space..."
 		expand_rootfs
 		partprobe
-		mkfs.ext4 -F $DST_ROOT_PARTITION
+		mkfs.ext4 -F $DST_ROOT_PARTITION -O ^64bit,^metadata_csum,uninit_bg
 
 		echo ""
 		echo "/dev/$DST_DISK is initialized and resized.  Its partitions are:"
@@ -336,14 +336,9 @@ then
 			| sed "/^Model/d ; /^Sector/d ; /^Disk Flags/d"
 
 		SRC_ROOT_VOL_NAME=`e2label /dev/mmcblk1p2`
-		echo ""
-		echo "Your booted /dev/mmcblk1p2 rootfs existing label: $SRC_ROOT_VOL_NAME"
-		echo -n "You may enter a label for the destination rootfs $DST_ROOT_PARTITION: "
-		read resp
-		if [ "$resp" != "" ]
-		then
-			e2label $DST_ROOT_PARTITION $resp
-		fi
+		e2label $DST_ROOT_PARTITION $SRC_ROOT_VOL_NAME
+		fatlabel $DST_BOOT_PARTITION boot
+
 	else
 		echo -e "Aborting\n"
 		exit 0
