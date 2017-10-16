@@ -273,7 +273,7 @@ then
 		echo "Forcing a partition initialization of destination disk $DST_DISK"
 	else
 		echo "The destination disk $DST_DISK partition table does not"
-		echo "match the booted disk /dev/mmcblk0 partition table so a"
+		echo "match the booted disk /dev/mmcblk1 partition table so a"
 		echo "destination disk initialize is required."
 	fi
 
