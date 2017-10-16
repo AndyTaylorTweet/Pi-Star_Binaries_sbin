@@ -141,8 +141,9 @@ FORCE_INITIALIZE=true
 
 if [ "$DST_DISK" = "" ]
 then
-	usage
-	exit 0
+	#usage
+	#exit 0
+	DST_DISK=mmcblk0
 fi
 
 if ! cat /proc/partitions | grep -q $DST_DISK
