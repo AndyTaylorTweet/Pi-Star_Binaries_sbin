@@ -20,6 +20,13 @@ fi
 cmd=/usr/local/bin/remotecontrold
 module=$(grep -m 1 'callsign=' /etc/dstarrepeater | awk -F "=" '/callsign/ {print $2}')
 
+if [ -z "$1" ]
+then
+      echo "To unlink, use: pistar-link unlink"
+      echo "To link, use: pistar-link ref000_a"
+      exit 0
+fi
+
 case ${1} in
 *unlink)
   ${cmd} "${module}" unlink
