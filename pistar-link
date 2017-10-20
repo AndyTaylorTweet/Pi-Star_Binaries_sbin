@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                         Pi-Star ircDDBlink Tool                            #
+#                                                                            #
+#     Version 1.1, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#                 Make it simple to run MMDVMCal on Pi-Star.                 #
+#                  Orrigional suggestion by Adrian (VK4TUX)                  #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Setup some variables
+cmd=/usr/local/bin/remotecontrold
+module=$(grep -m 1 'callsign=' /etc/dstarrepeater | awk -F "=" '/callsign/ {print $2}')
+
+case ${1} in
+*unlink)
+  ${cmd} "${module}" unlink
+  exit 0
+;;
+*)
+  ${cmd} "${module}" link never $1
+  exit 0
+;;
