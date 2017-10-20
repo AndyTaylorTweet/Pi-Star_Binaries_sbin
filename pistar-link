@@ -29,3 +29,6 @@ case ${1} in
   ${cmd} "${module}" link never $1
   exit 0
 ;;
+esac
+
+exit 0
