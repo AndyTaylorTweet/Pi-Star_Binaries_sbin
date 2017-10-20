@@ -22,8 +22,8 @@ module=$(grep -m 1 'callsign=' /etc/dstarrepeater | awk -F "=" '/callsign/ {prin
 
 if [ -z "$1" ]
 then
-      echo "To unlink, use: pistar-link unlink"
-      echo "To link, use: pistar-link ref000_a"
+      echo "To unlink from any connected reflector, use: pistar-link unlink"
+      echo "To link to REF000 A for example, use: pistar-link ref000_a"
       exit 0
 fi
 
