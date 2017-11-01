@@ -48,7 +48,7 @@ then
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_rpi.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
     chmod +x /tmp/zumfirmware/flash.sh
     cd  /tmp/zumfirmware
-    flash.sh
+    ./flash.sh
     echo ""
     rm -rf /tmp/zumfirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
@@ -63,7 +63,7 @@ then
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_usb.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
     chmod +x /tmp/zumfirmware/flash.sh
     cd  /tmp/zumfirmware
-    flash.sh
+    ./flash.sh
     echo ""
     rm -rf /tmp/zumfirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
@@ -78,7 +78,7 @@ then
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_librekit.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
     chmod +x /tmp/zumfirmware/flash.sh
     cd  /tmp/zumfirmware
-    flash.sh
+    ./flash.sh
     echo ""
     rm -rf /tmp/zumfirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
