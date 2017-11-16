@@ -25,6 +25,7 @@ DMRHOSTS=/usr/local/etc/DMR_Hosts.txt
 DPlusHOSTS=/usr/local/etc/DPlus_Hosts.txt
 P25HOSTS=/usr/local/etc/P25Hosts.txt
 YSFHOSTS=/usr/local/etc/YSFHosts.txt
+XLXHOSTS=/usr/local/etc/XLXHosts.txt
 
 # How many backups
 FILEBACKUP=1
@@ -45,6 +46,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${DPlusHOSTS} ${DPlusHOSTS}.$(date +%Y%m%d)
 	cp ${P25HOSTS} ${P25HOSTS}.$(date +%Y%m%d)
 	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d)
+	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d)
 fi
 
 # Prune backups
@@ -55,7 +57,8 @@ ${DMRIDFILE}
 ${DMRHOSTS}
 ${DPlusHOSTS}
 ${P25HOSTS}
-${YSFHOSTS}"
+${YSFHOSTS}
+${XLXHOSTS}"
 
 for file in ${FILES}
 do
@@ -79,6 +82,7 @@ curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat
 curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
 curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
 #curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
+curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
