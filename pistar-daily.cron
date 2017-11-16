@@ -27,6 +27,15 @@ git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin maste
 # Purge the logs older than 2 days
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
 
+# Pre-Fix some config in MMDVMHost for update purposes.
+mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
+needsUpdate=`grep -c Gwy /etc/mmdvmhost`
+if [ ${mmdvmHostVer} \> 20171031 ] && [ ${needsUpdate} \> 0 ]; then
+        # Config needs to be updated, add in the changes here
+        sed -i "/GwyAddress=/c\\GatewayAddress=127.0.0.1" /etc/mmdvmhost
+        sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
+fi
+
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
@@ -44,15 +53,6 @@ if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
   sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
 	systemctl daemon-reload
 	systemctl restart nginx.service
-fi
-
-# Pre-Fix some config in MMDVMHost for update purposes.
-mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
-needsUpdate=`grep -c Gwy /etc/mmdvmhost`
-if [ ${mmdvmHostVer} \> 20171031 ] && [ ${needsUpdate} \> 0 ]; then
-        # Config needs to be updated, add in the changes here
-        sed -i "/GwyAddress=/c\\GatewayAddress=127.0.0.1" /etc/mmdvmhost
-        sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
 fi
 
 exit 0
