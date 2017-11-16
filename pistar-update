@@ -67,6 +67,15 @@ main_function() {
 	pistar-firewall > /dev/null 2>&1
 	echo "Done"
 
+	# Pre-Fix some config in MMDVMHost for update purposes.
+	mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
+	needsUpdate=`grep -c Gwy /etc/mmdvmhost`
+	if [ ${mmdvmHostVer} \> 20171031 ] && [ ${needsUpdate} \> 0 ]; then
+	        # Config needs to be updated, add in the changes here
+	        sed -i "/GwyAddress=/c\\GatewayAddress=127.0.0.1" /etc/mmdvmhost
+	        sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
+	fi
+
 	echo "Starting Services..."
 	systemctl start dmrgateway.service > /dev/null 2>&1
 	systemctl start dstarrepeater.service > /dev/null 2>&1
