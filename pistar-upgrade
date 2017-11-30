@@ -107,20 +107,35 @@ main_function() {
 		fi
 	;;
 	3.4.5)
-		sed -i 's/3.4.5/3.4.6/g' /etc/pistar-release
-                sed -i 's/3.4.5/3.4.6/g' /etc/motd
-		sed -i '13d;17d' /etc/motd
-		sed -i '2,9d' /etc/motd
-		sed -i '2i║                                                                       ║' /etc/motd
-		sed -i '3i║           ██████╗ ██╗      ███████╗████████╗ █████╗ ██████╗           ║' /etc/motd
-		sed -i '4i║           ██╔══██╗██║      ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗          ║' /etc/motd
-		sed -i '5i║           ██████╔╝██║█████╗███████╗   ██║   ███████║██████╔╝          ║' /etc/motd
-		sed -i '6i║           ██╔═══╝ ██║╚════╝╚════██║   ██║   ██╔══██║██╔══██╗          ║' /etc/motd
-		sed -i '7i║           ██║     ██║      ███████║   ██║   ██║  ██║██║  ██║          ║' /etc/motd
-		sed -i '8i║           ╚═╝     ╚═╝      ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝          ║' /etc/motd
-		sed -i '9i║                                                                       ║' /etc/motd
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.5/3.4.6/g' /etc/pistar-release
+                	sed -i 's/3.4.5/3.4.6/g' /etc/motd
+			sed -i '13d;17d' /etc/motd
+			sed -i '2,9d' /etc/motd
+			sed -i '2i║                                                                       ║' /etc/motd
+			sed -i '3i║           ██████╗ ██╗      ███████╗████████╗ █████╗ ██████╗           ║' /etc/motd
+			sed -i '4i║           ██╔══██╗██║      ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗          ║' /etc/motd
+			sed -i '5i║           ██████╔╝██║█████╗███████╗   ██║   ███████║██████╔╝          ║' /etc/motd
+			sed -i '6i║           ██╔═══╝ ██║╚════╝╚════██║   ██║   ██╔══██║██╔══██╗          ║' /etc/motd
+			sed -i '7i║           ██║     ██║      ███████║   ██║   ██║  ██║██║  ██║          ║' /etc/motd
+			sed -i '8i║           ╚═╝     ╚═╝      ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝          ║' /etc/motd
+			sed -i '9i║                                                                       ║' /etc/motd
+			Message="Upgraded from ${pistarCurVersion} to 3.4.6..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
 	;;
 	3.4.6)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.6/3.4.7/g' /etc/pistar-release
+                	sed -i 's/3.4.6/3.4.7/g' /etc/motd
+			apt-get install -y libimobiledevice-utils usb-modeswitch usb-modeswitch-data
+			Message="Upgraded from ${pistarCurVersion} to 3.4.7..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.7)
 		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
