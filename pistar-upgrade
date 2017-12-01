@@ -143,7 +143,8 @@ main_function() {
 			curl --fail -O -s http://archive.raspbian.org/raspbian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2m-3_armhf.deb
 			curl --fail -O -s http://archive.raspbian.org/raspbian/pool/main/s/shellinabox/shellinabox_2.20_armhf.deb
 			dpkg -i /tmp/libssl1.0.2_1.0.2m-3_armhf.deb
-			dpkg -i /tmp/shellinabox_2.20_armhf.deb
+			dpkg -i /tmp/shellinabox_2.20_armhf.deb &
+			sleep 10
 			rm /tmp/libssl1.0.2_1.0.2m-3_armhf.deb
 			rm /tmp/shellinabox_2.20_armhf.deb
 			Message="Upgraded from ${pistarCurVersion} to 3.4.8..."
