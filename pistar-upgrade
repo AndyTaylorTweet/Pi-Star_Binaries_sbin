@@ -136,19 +136,20 @@ main_function() {
 		fi
 	;;
 	3.4.7)
-		if [ ! -z "${pistarHardware}" ]; then
-			sed -i 's/3.4.7/3.4.8/g' /etc/pistar-release
-                	sed -i 's/3.4.7/3.4.8/g' /etc/motd
-			curl --fail -o /tmp/libssl1.0.2_1.0.2m-3_armhf.deb -s http://archive.raspbian.org/raspbian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2m-3_armhf.deb
-			curl --fail -o /tmp/shellinabox_2.20_armhf.deb -s wget http://archive.raspbian.org/raspbian/pool/main/s/shellinabox/shellinabox_2.20_armhf.deb
-			dpkg -i /tmp/libssl1.0.2_1.0.2m-3_armhf.deb
-			dpkg -i /tmp/shellinabox_2.20_armhf.deb
-			rm /tmp/libssl1.0.2_1.0.2m-3_armhf.deb
-			tm /tmp/shellinabox_2.20_armhf.deb
-			Message="Upgraded from ${pistarCurVersion} to 3.4.8..."
-		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
-		fi
+		#if [ ! -z "${pistarHardware}" ]; then
+		#	sed -i 's/3.4.7/3.4.8/g' /etc/pistar-release
+                #	sed -i 's/3.4.7/3.4.8/g' /etc/motd
+		#	curl --fail -o /tmp/libssl1.0.2_1.0.2m-3_armhf.deb -s http://archive.raspbian.org/raspbian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2m-3_armhf.deb
+		#	curl --fail -o /tmp/shellinabox_2.20_armhf.deb -s wget http://archive.raspbian.org/raspbian/pool/main/s/shellinabox/shellinabox_2.20_armhf.deb
+		#	dpkg -i /tmp/libssl1.0.2_1.0.2m-3_armhf.deb
+		#	dpkg -i /tmp/shellinabox_2.20_armhf.deb
+		#	rm /tmp/libssl1.0.2_1.0.2m-3_armhf.deb
+		#	tm /tmp/shellinabox_2.20_armhf.deb
+		#	Message="Upgraded from ${pistarCurVersion} to 3.4.8..."
+		#else
+		#	Message="In-place upgrades from 3.4.4 are not supported..."
+		#fi
+		Message="You are already running the lastest version..."
 	;;
 	3.4.8)
 		Message="You are already running the lastest version..."
