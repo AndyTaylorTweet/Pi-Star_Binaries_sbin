@@ -282,7 +282,7 @@ while True:
 
 
 	# Check that the process is running, if its not there is no point in trying to stop it.
-        checkproc = subprocess.Popen('pgrep' + ' dstarrepeater', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        checkproc = subprocess.Popen('pgrep' + ' dstarrepeaterd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         if checkproc.stdout.readlines():
 
 		# This is the main loop that keeps waiting, we dont want to hammer the logs too often, every 30 secs should be enough.
