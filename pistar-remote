@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Remote Control                          #
 #                                                                             #
-#    Version 1.3, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.4, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #  This Python script is desiged to look for specific things in the logs for  #
 #       MMDVMHost and act on those to give RF control over the repeater.      #
@@ -277,5 +277,67 @@ while True:
 									# Shutdown the OS
 									os.system(r'shutdown -h now')
 	
+		# This is the 30 second sleep before the next pass.
+		time.sleep(30)
+
+
+	# Check that the process is running, if its not there is no point in trying to stop it.
+        checkproc = subprocess.Popen('pgrep' + ' dstarrepeater', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        if checkproc.stdout.readlines():
+
+		# This is the main loop that keeps waiting, we dont want to hammer the logs too often, every 30 secs should be enough.
+		utcnow = datetime.datetime.utcnow()
+		datenow = utcnow.strftime('%Y-%m-%d')
+		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
+		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
+		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
+		currentLogDStar = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+
+		# Open the DStarRepeater Log
+		logfile = open(currentLogDStar, 'r')
+		loglist = logfile.readlines()
+		logfile.close()
+
+		# Parse the log lines
+		for line in loglist:
+			# We only care about logs in the last 60 secs
+			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
+
+				# D-Star Stop MMDVMHost
+				# 2017-07-03 11:38:57: Repeater header - My: M1ABC  /1234  Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC  G  Flags: 00 00 00
+				if str('Repeater header - My: ' + keeperCall + ' ') and str('Your: ' + dstarstop) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Shutting down at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+                                        os.system(r'systemctl stop dstarrepeater.timer')
+                                        os.system(r'systemctl stop pistar-watchdog.timer')
+                                        os.system(r'systemctl stop dstarrepeater.service')
+                                        os.system(r'systemctl stop pistar-watchdog.service')
+
+				# D-Star Restart MMDVMHost
+				# 2017-07-03 11:38:57: Repeater header - My: M1ABC  /1234  Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC  G  Flags: 00 00 00
+				if str('Repeater header - My: ' + keeperCall + ' ') and str('Your: ' + dstarrestart) in line:
+					# Restart the Services
+					os.system(r'texttransmit -text "Restarting services at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+                                        os.system(r'systemctl restart ircddbgateway.service')
+                                        os.system(r'systemctl restart dstarrepeater.service')
+
+				# D-Star Reboot the OS
+				# 2017-07-03 11:38:57: Repeater header - My: M1ABC  /1234  Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC  G  Flags: 00 00 00
+				if str('Repeater header - My: ' + keeperCall + ' ') and str('Your: ' + dstarreboot) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+					os.system(r'shutdown -r now')
+
+				# D-Star Shutdown the OS
+				# 2017-07-03 11:38:57: Repeater header - My: M1ABC  /1234  Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC  G  Flags: 00 00 00
+				if str('Repeater header - My: ' + keeperCall + ' ') and str('Your: ' + dstarshutdown) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+					os.system(r'shutdown -h now')
+
 		# This is the 30 second sleep before the next pass.
 		time.sleep(30)
