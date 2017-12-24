@@ -304,7 +304,7 @@ while True:
 			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
 
 				# D-Star Stop MMDVMHost
-				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: SVCKILL   Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarstop) in line:
 					# Kill the Services
 					os.system(r'texttransmit -text "Shutting down at keeper request" "' + dstarmodule + '"')
@@ -315,7 +315,7 @@ while True:
                                         os.system(r'systemctl stop pistar-watchdog.service')
 
 				# D-Star Restart MMDVMHost
-				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: SVCKILL   Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarrestart) in line:
 					# Restart the Services
 					os.system(r'texttransmit -text "Restarting services at keeper request" "' + dstarmodule + '"')
@@ -324,7 +324,7 @@ while True:
                                         os.system(r'systemctl restart dstarrepeater.service')
 
 				# D-Star Reboot the OS
-				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: SVCKILL   Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarreboot) in line:
 					# Kill the Services
 					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
@@ -332,7 +332,7 @@ while True:
 					os.system(r'shutdown -r now')
 
 				# D-Star Shutdown the OS
-				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: SVCKILL   Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarshutdown) in line:
 					# Kill the Services
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
