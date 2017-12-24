@@ -301,7 +301,7 @@ while True:
 		# Parse the log lines
 		for line in loglist:
 			# We only care about logs in the last 60 secs
-			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
+			if line[0:19] >= logstampnowminus60sec and line[0:19] <= logstampnow:
 
 				# D-Star Stop MMDVMHost
 				# 2017-07-03 11:38:57: Repeater header - My: M1ABC  /1234  Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC  G  Flags: 00 00 00
