@@ -4,7 +4,7 @@
 #                                                                             #
 #                         Pi-Star Service Watchdog                            #
 #                                                                             #
-#    Version 1.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.7, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #   The service watchdog will monitor the D-Star Services, restarting them    #
 #       after any kind of failures - somthing that seems to happen alot       #
@@ -17,6 +17,7 @@ import time
 import os
 import linecache
 import datetime
+import ConfigParser
 
 time.sleep(90) #Assumiing the Pi has just started up, let the services settle...
 
@@ -118,12 +119,18 @@ while True: #Main loop
 		os.system('/bin/systemctl start timeserver.service')
 		time.sleep(10) #Give the service time to start before we move on
 
-#	checkprocremote = subprocess.check_output(['/usr/local/sbin/pistar-remote.service', 'status'])
-#	if "not" in checkprocremote:
-#		os.system('/bin/systemctl stop pistar-remote.service')
-#		time.sleep(2) #Give the service time to stop before we move on
-#		os.system('/bin/systemctl start pistar-remote.service')
-#		time.sleep(10) #Give the service time to start before we move on
+	# If PiStar-Remote not enabled, dont try and keep it running
+	pistarRemoteConfig = ConfigParser.RawConfigParser()
+	pistarRemoteConfig.read('/etc/pistar-remote')
+
+	isEnabled = pistarRemoteConfig.get('enable', 'enabled')
+	if (isEnabled == 'true'):
+		checkprocremote = subprocess.check_output(['/usr/local/sbin/pistar-remote.service', 'status'])
+		if "not" in checkprocremote:
+			os.system('/bin/systemctl stop pistar-remote.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start pistar-remote.service')
+			time.sleep(10) #Give the service time to start before we move on
 
 #	checkprockeeper = subprocess.Popen('pgrep' + ' pistar-keeper', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 #	if not checkprockeeper.stdout.readlines():
