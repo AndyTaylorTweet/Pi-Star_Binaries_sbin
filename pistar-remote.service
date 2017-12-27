@@ -24,7 +24,7 @@ test -x ${DAEMON_OPTS} || exit 1
 
 # Check the remote app is enabled.
 if grep "enabled" /etc/pistar-remote | grep -q "false" ; then
-        exit 1;
+	exit 1;
 fi
 
 case "$1" in
