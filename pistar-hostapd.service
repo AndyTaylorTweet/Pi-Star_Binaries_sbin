@@ -26,7 +26,7 @@ fi
 
 case "$1" in
 	start)
-		iw dev wlan0 interface add uap0 type __ap
+		iw dev wlan0 interface add wlan0_ap type __ap
 		$SLEEP 3
 		ifup wlan0_ap
 		$SLEEP 3
