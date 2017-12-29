@@ -1,0 +1,43 @@
+#!/bin/bash
+#########################################################
+#                                                       #
+#           Pi-Star HostAPD Service Handler             #
+#                                                       #
+# Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
+#               By Andy Taylor (MW0MWZ)                 #
+#                                                       #
+#                     Version 1.0                       #
+#                                                       #
+#########################################################
+
+# Service Config
+DAEMON=hostapd
+DAEMON_PATH=/usr/sbin/
+SLEEP=/bin/sleep
+
+# Pre-flight checks...
+test -x ${DAEMON_PATH}${DAEMON} || exit 1
+test -f "/etc/hostapd/hostapd.conf" || exit 0
+
+# Check that the network is UP and die if its not
+if [ -f "/var/lib/dhcpcd5/dhcpcd-wlan0.lease" ]; then
+	exit 0
+fi
+
+case "$1" in
+	start)
+		systemctl start dnsmasq
+		systemctl start hostapd
+		;;
+	stop)
+		systemctl stop hostapd
+		systemctl stop dnsmasq
+		;;
+	status)
+		systemctl status hostapd
+		;;
+
+	*)
+		echo $"Usage: $0 {start|stop|status}"
+		exit 1
+esac
