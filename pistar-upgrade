@@ -215,7 +215,7 @@ main_function() {
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.timer
 		#
 		#	systemctl daemon-reload
-		#	systemctl enable pistar-hostapd.timer
+		#	systemctl enable pistar-ap.timer
 		#
 		#	Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
 		#else
