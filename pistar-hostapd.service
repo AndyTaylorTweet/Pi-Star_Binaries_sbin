@@ -30,6 +30,8 @@ case "$1" in
 		$SLEEP 3
 		ifup wlan0_ap
 		$SLEEP 3
+		ifup wlan0_ap
+		$SLEEP 3
 		systemctl start dnsmasq
 		systemctl start hostapd
 		;;
