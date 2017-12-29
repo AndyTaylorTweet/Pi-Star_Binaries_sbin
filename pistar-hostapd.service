@@ -35,13 +35,13 @@ case "$1" in
 		$SLEEP 3
 		ifup wlan0_ap
 		$SLEEP 3
-		ifup wlan0_ap
-		$SLEEP 3
 		systemctl start dnsmasq
+		$SLEEP 2
 		systemctl start hostapd
 		;;
 	stop)
 		systemctl stop hostapd
+		$SLEEP 2
 		systemctl stop dnsmasq
 		;;
 	status)
