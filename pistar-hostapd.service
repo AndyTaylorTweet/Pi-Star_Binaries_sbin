@@ -31,6 +31,7 @@ fi
 
 case "$1" in
 	start)
+		sysctl net.ipv4.ip_forward=1
 		iw dev wlan0 interface add wlan0_ap type __ap
 		$SLEEP 3
 		ifup wlan0_ap
@@ -43,6 +44,7 @@ case "$1" in
 		systemctl stop hostapd
 		$SLEEP 2
 		systemctl stop dnsmasq
+		sysctl net.ipv4.ip_forward=0
 		;;
 	status)
 		systemctl status hostapd
