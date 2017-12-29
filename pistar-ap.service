@@ -37,14 +37,14 @@ case "$1" in
 	start)
 		sysctl net.ipv4.ip_forward=1
 		iw dev wlan0 interface add wlan0_ap type __ap
-		sleep 3 && ifup wlan0_ap && sleep 2
+		${SLEEP} 3 && ifup wlan0_ap && ${SLEEP} 2
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 		else
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
-			sleep 5
+			${SLEEP} 5
 			if [ `${PGREP} ${DAEMON}` ]; then
-				# Daemon Started
+				${SLEEP} 1
 			else
 				${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			fi
@@ -78,7 +78,7 @@ case "$1" in
 		if [ `$PGREP $DAEMON` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL -2 `${PGREP} ${DAEMON}`
-			$SLEEP 3
+			${SLEEP} 3
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 		else
