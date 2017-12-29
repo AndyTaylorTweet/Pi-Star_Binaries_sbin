@@ -42,6 +42,9 @@ case "$1" in
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 		else
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			if [ ! `${PGREP} ${DAEMON}` ]; then
+				${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			fi
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 		fi
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
