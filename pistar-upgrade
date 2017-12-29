@@ -151,6 +151,57 @@ main_function() {
 		fi
 	;;
 	3.4.8)
+		#if [ ! -z "${pistarHardware}" ]; then
+		#	sed -i 's/3.4.8/3.4.9/g' /etc/pistar-release
+                #	sed -i 's/3.4.8/3.4.9/g' /etc/motd
+		#
+		#	apt-get install -y hostapd dnsmasq
+		#	systemctl daemon-reload
+		#	systemctl disable hostapd
+		#	systemctl disable dnsmasq
+		#
+		#	echo 'DAEMON_CONF="/etc/hostapd/hostapd.conf"' >> /etc/default/hostapd
+		#
+		#	echo 'interface=wlan0_ap' > /etc/hostapd/hostapd.conf
+		#	echo 'ssid=Pi-Star' >> /etc/hostapd/hostapd.conf
+		#	echo 'hw_mode=g' >> /etc/hostapd/hostapd.conf
+		#	echo 'macaddr_acl=0' >> /etc/hostapd/hostapd.conf
+		#	echo 'auth_algs=1' >> /etc/hostapd/hostapd.conf
+		#	echo 'ignore_broadcast_ssid=0' >> /etc/hostapd/hostapd.conf
+		#	echo 'country_code=JP' >> /etc/hostapd/hostapd.conf
+		#	echo 'chanlist=1 6 11-13' >> /etc/hostapd/hostapd.conf
+		#	echo 'wpa=2' >> /etc/hostapd/hostapd.conf
+		#	echo 'wpa_passphrase=raspberry' >> /etc/hostapd/hostapd.conf
+		#	echo 'wpa_key_mgmt=WPA-PSK' >> /etc/hostapd/hostapd.conf
+		#	echo 'wpa_pairwise=TKIP' >> /etc/hostapd/hostapd.conf
+		#	echo 'rsn_pairwise=CCMP' >> /etc/hostapd/hostapd.conf
+		#
+		#	echo '' >> /etc/network/interfaces
+		#	echo 'iface wlan0_ap inet static' >> /etc/network/interfaces
+		#	echo '  hwaddress ether b8:27:eb:00:00:01' >> /etc/network/interfaces
+		#	echo '  address 192.168.50.1' >> /etc/network/interfaces
+		#	echo '  netmask 255.255.255.0' >> /etc/network/interfaces
+		#	echo '  network 192.168.50.0' >> /etc/network/interfaces
+		#	echo '  broadcast 192.168.50.255' >> /etc/network/interfaces
+		#
+		#	echo 'interface=lo,wlan_ap' >> /etc/dnsmasq.conf
+		#	echo 'server=208.67.222.123' >> /etc/dnsmasq.conf
+		#	echo 'server=208.67.220.123' >> /etc/dnsmasq.conf
+		#	echo 'domain-needed' >> /etc/dnsmasq.conf
+		#	echo 'bogus-priv' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-authoritative' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-range=192.168.50.50,192.168.50.150,4h' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-option=1,255.255.255.0' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-option=3,192.168.50.1' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-option=6,192.168.50.1' >> /etc/dnsmasq.conf
+		#
+		#	Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
+		#else
+		#	Message="In-place upgrades from 3.4.4 are not supported..."
+		#fi
+		Message="You are already running the lastest version..."
+	;;
+	3.4.9)
 		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
