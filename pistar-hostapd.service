@@ -40,15 +40,18 @@ case "$1" in
 		$SLEEP 2
 		systemctl start hostapd
 		systemctl restart hostapd
+		exit 1
 		;;
 	stop)
 		systemctl stop hostapd
 		$SLEEP 2
 		systemctl stop dnsmasq
 		sysctl net.ipv4.ip_forward=0
+		exit 1
 		;;
 	status)
 		systemctl status hostapd
+		exit 1
 		;;
 
 	*)
