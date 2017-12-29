@@ -13,6 +13,7 @@
 # Service Config
 DAEMON=hostapd
 DAEMON_PATH=/usr/sbin/
+DAEMON_OPTS=" -B -P /run/pistar-hostapd.pid /etc/hostapd/hostapd.conf"
 SLEEP=/bin/sleep
 
 # Pre-flight checks...
@@ -33,27 +34,50 @@ case "$1" in
 	start)
 		sysctl net.ipv4.ip_forward=1
 		iw dev wlan0 interface add wlan0_ap type __ap
-		$SLEEP 3
-		ifup wlan0_ap
-		$SLEEP 3
-		systemctl start dnsmasq
-		$SLEEP 2
-		systemctl start hostapd
-		systemctl restart hostapd
-		exit 1
+		sleep 3 && ifup wlan0_ap && sleep 2
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
+			exit 1;
+		else
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
+			exit 0;
+		fi
 		;;
 	stop)
-		systemctl stop hostapd
-		$SLEEP 2
-		systemctl stop dnsmasq
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL `${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			exit 1;
+		fi
 		sysctl net.ipv4.ip_forward=0
 		exit 1
 		;;
-	status)
-		systemctl status hostapd
-		exit 1
+	restart)
+		if [ `$PGREP $DAEMON` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL `${PGREP} ${DAEMON}`
+			$SLEEP 3
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		fi
 		;;
-
+	status)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is running as PID "`${PGREP} ${DAEMON}`
+		else
+			echo -e "$DAEMON is not running"
+		fi
+		;;
 	*)
 		echo $"Usage: $0 {start|stop|status}"
 		exit 1
