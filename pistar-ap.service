@@ -56,7 +56,7 @@ case "$1" in
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			$KILL -9 `${PGREP} ${DAEMON}`
+			$KILL -3 `${PGREP} ${DAEMON}`
 		else
 			echo -e "$DAEMON is not running"
 		fi
@@ -71,7 +71,7 @@ case "$1" in
 	restart)
 		if [ `$PGREP $DAEMON` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			$KILL -9 `${PGREP} ${DAEMON}`
+			$KILL -3 `${PGREP} ${DAEMON}`
 			$SLEEP 3
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
