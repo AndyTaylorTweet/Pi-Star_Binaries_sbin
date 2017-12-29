@@ -42,7 +42,10 @@ case "$1" in
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 		else
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
-			if [ ! `${PGREP} ${DAEMON}` ]; then
+			sleep 5
+			if [ `${PGREP} ${DAEMON}` ]; then
+				# Daemon Started
+			else
 				${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			fi
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
