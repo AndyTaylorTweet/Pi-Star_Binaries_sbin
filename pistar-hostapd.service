@@ -39,6 +39,7 @@ case "$1" in
 		systemctl start dnsmasq
 		$SLEEP 2
 		systemctl start hostapd
+		systemctl restart hostapd
 		;;
 	stop)
 		systemctl stop hostapd
