@@ -63,6 +63,7 @@ case "$1" in
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			systemctl stop hostapd
+			${SLEEP} 5
 		else
 			echo -e "$DAEMON is not running"
 		fi
