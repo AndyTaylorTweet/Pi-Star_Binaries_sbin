@@ -14,6 +14,7 @@
 DAEMON=hostapd
 DAEMON_PATH=/usr/sbin/
 DAEMON_OPTS=" -B -P /run/pistar-hostapd.pid /etc/hostapd/hostapd.conf"
+PGREP=/usr/bin/pgrep
 SLEEP=/bin/sleep
 
 # Pre-flight checks...
