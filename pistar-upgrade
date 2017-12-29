@@ -168,8 +168,7 @@ main_function() {
 		#	echo 'macaddr_acl=0' >> /etc/hostapd/hostapd.conf
 		#	echo 'auth_algs=1' >> /etc/hostapd/hostapd.conf
 		#	echo 'ignore_broadcast_ssid=0' >> /etc/hostapd/hostapd.conf
-		#	echo 'country_code=JP' >> /etc/hostapd/hostapd.conf
-		#	echo 'chanlist=1 6 11-13' >> /etc/hostapd/hostapd.conf
+		#	echo 'channel=6' >> /etc/hostapd/hostapd.conf
 		#	echo 'wpa=2' >> /etc/hostapd/hostapd.conf
 		#	echo 'wpa_passphrase=raspberry' >> /etc/hostapd/hostapd.conf
 		#	echo 'wpa_key_mgmt=WPA-PSK' >> /etc/hostapd/hostapd.conf
