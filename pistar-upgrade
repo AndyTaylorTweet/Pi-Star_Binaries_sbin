@@ -195,24 +195,24 @@ main_function() {
 		#	echo 'dhcp-option=3,192.168.50.1' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=6,192.168.50.1' >> /etc/dnsmasq.conf
 		#
-		#	echo '[Unit]' > /lib/systemd/system/pistar-hostapd.service
-		#	echo 'Description=Pi-Star HostAPD Service' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo 'After=syslog.target network.target' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo '' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo '[Service]' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo 'Type=forking' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo 'ExecStart=/usr/local/sbin/pistar-hostapd.service start' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo 'ExecStop=/usr/local/sbin/pistar-hostapd.service stop' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo 'ExecReload=/usr/local/sbin/pistar-hostapd.service restart' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo '' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo '[Install]' >> /lib/systemd/system/pistar-hostapd.service
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo '[Unit]' > /lib/systemd/system/pistar-ap.service
+		#	echo 'Description=Pi-Star HostAPD Service' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'After=syslog.target network.target' >> /lib/systemd/system/pistar-ap.service
+		#	echo '' >> /lib/systemd/system/pistar-ap.service
+		#	echo '[Service]' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'Type=forking' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'ExecStart=/usr/local/sbin/pistar-hostapd.service start' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'ExecStop=/usr/local/sbin/pistar-hostapd.service stop' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'ExecReload=/usr/local/sbin/pistar-hostapd.service restart' >> /lib/systemd/system/pistar-ap.service
+		#	echo '' >> /lib/systemd/system/pistar-ap.service
+		#	echo '[Install]' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.service
 		#
-		#	echo '[Timer]' > /lib/systemd/system/pistar-hostapd.timer
-		#	echo 'OnStartupSec=120' >> /lib/systemd/system/pistar-hostapd.timer
-		#	echo '' >> /lib/systemd/system/pistar-hostapd.timer
-		#	echo '[Install]' >> /lib/systemd/system/pistar-hostapd.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-hostapd.timer
+		#	echo '[Timer]' > /lib/systemd/system/pistar-ap.timer
+		#	echo 'OnStartupSec=120' >> /lib/systemd/system/pistar-ap.timer
+		#	echo '' >> /lib/systemd/system/pistar-ap.timer
+		#	echo '[Install]' >> /lib/systemd/system/pistar-ap.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.timer
 		#
 		#	systemctl daemon-reload
 		#	systemctl enable pistar-hostapd.timer
