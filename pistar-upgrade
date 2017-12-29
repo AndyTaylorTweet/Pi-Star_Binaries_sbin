@@ -195,6 +195,28 @@ main_function() {
 		#	echo 'dhcp-option=3,192.168.50.1' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=6,192.168.50.1' >> /etc/dnsmasq.conf
 		#
+		#	echo '[Unit]' > /lib/systemd/system/pistar-hostapd.service
+		#	echo 'Description=Pi-Star HostAPD Service' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo 'After=syslog.target network.target' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo '' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo '[Service]' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo 'Type=forking' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo 'ExecStart=/usr/local/sbin/pistar-hostapd.service start' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo 'ExecStop=/usr/local/sbin/pistar-hostapd.service stop' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo 'ExecReload=/usr/local/sbin/pistar-hostapd.service restart' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo '' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo '[Install]' >> /lib/systemd/system/pistar-hostapd.service
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-hostapd.service
+		#
+		#	echo '[Timer]' > /lib/systemd/system/pistar-hostapd.timer
+		#	echo 'OnStartupSec=120' >> /lib/systemd/system/pistar-hostapd.timer
+		#	echo '' >> /lib/systemd/system/pistar-hostapd.timer
+		#	echo '[Install]' >> /lib/systemd/system/pistar-hostapd.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-hostapd.timer
+		#
+		#	systemctl daemon-reload
+		#	systemctl enable pistar-hostapd.timer
+		#
 		#	Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
