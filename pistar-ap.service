@@ -50,7 +50,7 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
-		exit 1
+		exit 0
 		;;
 	stop)
 		sysctl net.ipv4.ip_forward=0
@@ -69,7 +69,7 @@ case "$1" in
 		fi
 		ifdown wlan0_ap
 		iw dev wlan0_ap del
-		exit 1
+		exit 0
 		;;
 	restart)
 		sysctl net.ipv4.ip_forward=0
@@ -106,7 +106,7 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
-		exit 1
+		exit 0
 		;;
 	status)
 		if [ `${PGREP} ${DAEMON}` ]; then
@@ -119,9 +119,9 @@ case "$1" in
 		else
 			echo -e "$DNSMASQDAEMON is not running"
 		fi
-		exit 1
+		exit 0
 		;;
 	*)
 		echo $"Usage: $0 {start|stop|status}"
-		exit 1
+		exit 0
 esac
