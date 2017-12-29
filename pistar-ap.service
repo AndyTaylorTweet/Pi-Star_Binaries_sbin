@@ -17,6 +17,7 @@ DAEMON_OPTS=" -B -P /run/pistar-hostapd.pid /etc/hostapd/hostapd.conf"
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
+DNSMASQDAEMON=dnsmasq
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
@@ -45,6 +46,14 @@ case "$1" in
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
 		fi
+		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
+			echo -e "$DNSMASQDAEMON is already running as PID "`$PGREP $DNSMASQDAEMON`
+			exit 1;
+		else
+			systemctl start dnsmasq
+			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
+			exit 0;
+		fi
 		;;
 	stop)
 		sysctl net.ipv4.ip_forward=0
@@ -54,6 +63,14 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
+			exit 1;
+		fi
+		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
+			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
+			systemctl stop dnsmasq
+			exit 1;
+		else
+			echo -e "$DNSMASQDAEMON is not running"
 			exit 1;
 		fi
 		;;
@@ -71,12 +88,28 @@ case "$1" in
 			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		fi
+		if [ `$PGREP $DNSMASQDAEMON` ]; then
+			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
+			systemctl restart dnsmasq
+			echo -e "$DNSMASQDAEMON re-started as PID "`${PGREP} ${DNSMASQDAEMON}`
+			exit 0;
+		else
+			echo -e "$DNSMASQDAEMON is not running"
+			systemctl start dnsmasq
+			echo -e "$DNSMASQDAEMON started as PID "`${PGREP} ${DNSMASQDAEMON}`
+			exit 0;
+		fi			
 		;;
 	status)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is running as PID "`${PGREP} ${DAEMON}`
 		else
 			echo -e "$DAEMON is not running"
+		fi
+		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
+			echo -e "$DNSMASQDAEMON is running as PID "`${PGREP} ${DNSMASQDAEMON}`
+		else
+			echo -e "$DNSMASQDAEMON is not running"
 		fi
 		;;
 	*)
