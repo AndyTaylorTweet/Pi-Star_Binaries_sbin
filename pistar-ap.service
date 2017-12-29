@@ -54,18 +54,20 @@ case "$1" in
 		;;
 	stop)
 		sysctl net.ipv4.ip_forward=0
-		if [ `${PGREP} ${DAEMON}` ]; then
-			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			systemctl stop hostapd
-		else
-			echo -e "$DAEMON is not running"
-		fi
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
 			systemctl stop dnsmasq
 		else
 			echo -e "$DNSMASQDAEMON is not running"
 		fi
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			systemctl stop hostapd
+		else
+			echo -e "$DAEMON is not running"
+		fi
+		ifdown wlan0_ap
+		iw dev wlan0_ap del
 		exit 1
 		;;
 	restart)
