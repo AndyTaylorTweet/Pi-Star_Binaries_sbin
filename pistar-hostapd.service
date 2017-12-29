@@ -45,6 +45,7 @@ case "$1" in
 		fi
 		;;
 	stop)
+		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
@@ -53,8 +54,6 @@ case "$1" in
 			echo -e "$DAEMON is not running"
 			exit 1;
 		fi
-		sysctl net.ipv4.ip_forward=0
-		exit 1
 		;;
 	restart)
 		if [ `$PGREP $DAEMON` ]; then
