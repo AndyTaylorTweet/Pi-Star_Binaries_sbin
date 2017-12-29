@@ -200,10 +200,11 @@ main_function() {
 		#	echo 'After=syslog.target network.target' >> /lib/systemd/system/pistar-ap.service
 		#	echo '' >> /lib/systemd/system/pistar-ap.service
 		#	echo '[Service]' >> /lib/systemd/system/pistar-ap.service
-		#	echo 'Type=forking' >> /lib/systemd/system/pistar-ap.service
-		#	echo 'ExecStart=/usr/local/sbin/pistar-hostapd.service start' >> /lib/systemd/system/pistar-ap.service
-		#	echo 'ExecStop=/usr/local/sbin/pistar-hostapd.service stop' >> /lib/systemd/system/pistar-ap.service
-		#	echo 'ExecReload=/usr/local/sbin/pistar-hostapd.service restart' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'Type=notify' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'RemainAfterExit=yes' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'ExecStart=/usr/local/sbin/pistar-ap.service start' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'ExecStop=/usr/local/sbin/pistar-ap.service stop' >> /lib/systemd/system/pistar-ap.service
+		#	echo 'ExecReload=/usr/local/sbin/pistar-ap.service restart' >> /lib/systemd/system/pistar-ap.service
 		#	echo '' >> /lib/systemd/system/pistar-ap.service
 		#	echo '[Install]' >> /lib/systemd/system/pistar-ap.service
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.service
