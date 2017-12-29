@@ -72,23 +72,39 @@ case "$1" in
 		exit 1
 		;;
 	restart)
-		if [ `$PGREP $DAEMON` ]; then
-			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			systemctl restart hostapd
-			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
-		else
-			echo -e "$DAEMON is not running"
-			systemctl start hostapd
-			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
-		fi
-		if [ `$PGREP $DNSMASQDAEMON` ]; then
+		sysctl net.ipv4.ip_forward=0
+		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
-			systemctl restart dnsmasq
-			echo -e "$DNSMASQDAEMON re-started as PID "`${PGREP} ${DNSMASQDAEMON}`
+			systemctl stop dnsmasq
 		else
 			echo -e "$DNSMASQDAEMON is not running"
+		fi
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			systemctl stop hostapd
+			${SLEEP} 5
+		else
+			echo -e "$DAEMON is not running"
+		fi
+		ifdown wlan0_ap
+		iw dev wlan0_ap del
+		
+		${SLEEP} 2
+		
+		sysctl net.ipv4.ip_forward=1
+		iw dev wlan0 interface add wlan0_ap type __ap
+		${SLEEP} 3 && ifup wlan0_ap && ${SLEEP} 2
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
+		else
+			systemctl start hostapd
+			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
+		fi
+		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
+			echo -e "$DNSMASQDAEMON is already running as PID "`$PGREP $DNSMASQDAEMON`
+		else
 			systemctl start dnsmasq
-			echo -e "$DNSMASQDAEMON started as PID "`${PGREP} ${DNSMASQDAEMON}`
+			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
 		exit 1
 		;;
