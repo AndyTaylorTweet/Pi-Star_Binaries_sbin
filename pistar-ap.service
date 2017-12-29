@@ -1,0 +1,85 @@
+#!/bin/bash
+#########################################################
+#                                                       #
+#           Pi-Star HostAPD Service Handler             #
+#                                                       #
+# Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
+#               By Andy Taylor (MW0MWZ)                 #
+#                                                       #
+#                     Version 1.0                       #
+#                                                       #
+#########################################################
+
+# Service Config
+DAEMON=hostapd
+DAEMON_PATH=/usr/sbin/
+DAEMON_OPTS=" -B -P /run/pistar-hostapd.pid /etc/hostapd/hostapd.conf"
+PGREP=/usr/bin/pgrep
+KILL=/bin/kill
+SLEEP=/bin/sleep
+
+# Pre-flight checks...
+test -x ${DAEMON_PATH}${DAEMON} || exit 1
+test -f "/etc/hostapd/hostapd.conf" || exit 0
+
+# Check that WLAN0 exists
+if [ ! -f "/sys/class/net/wlan0/operstate" ]; then
+	exit 0
+fi
+
+# Check that the network is UP and die if it IS
+if [ `cat /sys/class/net/wlan0/operstate` == "up" ]; then
+	exit 0
+fi
+
+case "$1" in
+	start)
+		sysctl net.ipv4.ip_forward=1
+		iw dev wlan0 interface add wlan0_ap type __ap
+		sleep 3 && ifup wlan0_ap && sleep 2
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
+			exit 1;
+		else
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
+			exit 0;
+		fi
+		;;
+	stop)
+		sysctl net.ipv4.ip_forward=0
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL -9 `${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			exit 1;
+		fi
+		;;
+	restart)
+		if [ `$PGREP $DAEMON` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL -9 `${PGREP} ${DAEMON}`
+			$SLEEP 3
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		fi
+		;;
+	status)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is running as PID "`${PGREP} ${DAEMON}`
+		else
+			echo -e "$DAEMON is not running"
+		fi
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status}"
+		exit 1
+esac
