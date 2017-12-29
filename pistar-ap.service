@@ -43,7 +43,8 @@ case "$1" in
 		else
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			${SLEEP} 5
-			if [ `${PGREP} ${DAEMON}` ]; then
+			if [ `${PGREP} ${DAEMON}` ]
+			then
 				${SLEEP} 1
 			else
 				${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
