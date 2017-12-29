@@ -24,7 +24,7 @@ test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -f "/etc/hostapd/hostapd.conf" || exit 0
 
 # Check that WLAN0 exists
-if [ ! -f "/sys/class/net/wlan0/operstate" ]; then
+if [ ! -d "/sys/class/net/wlan0" ]; then
 	exit 0
 fi
 
