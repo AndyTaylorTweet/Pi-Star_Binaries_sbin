@@ -155,11 +155,17 @@ main_function() {
 		#	sed -i 's/3.4.8/3.4.9/g' /etc/pistar-release
                 #	sed -i 's/3.4.8/3.4.9/g' /etc/motd
 		#
+		#	# Add the Colby Ross Random Seed fix
+		#	rm -rf /var/lib/systemd/random-seed
+		#	ln -s /tmp/random-seed /var/lib/systemd/random-seed
+		#
+		#	# Install the tools
 		#	apt-get install -y hostapd dnsmasq
 		#	systemctl daemon-reload
 		#	systemctl disable hostapd
 		#	systemctl disable dnsmasq
 		#
+		#	# Setup the config(s)
 		#	echo 'DAEMON_CONF="/etc/hostapd/hostapd.conf"' >> /etc/default/hostapd
 		#
 		#	echo 'interface=wlan0_ap' > /etc/hostapd/hostapd.conf
@@ -190,11 +196,12 @@ main_function() {
 		#	echo 'domain-needed' >> /etc/dnsmasq.conf
 		#	echo 'bogus-priv' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-authoritative' >> /etc/dnsmasq.conf
-		#	echo 'dhcp-range=192.168.50.50,192.168.50.150,4h' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-range=192.168.50.50,101.168.50.109,4h' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=1,255.255.255.0' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=3,192.168.50.1' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=6,192.168.50.1' >> /etc/dnsmasq.conf
 		#
+		#	# Add the Unit file(s)
 		#	echo '[Unit]' > /lib/systemd/system/pistar-ap.service
 		#	echo 'Description=Pi-Star HostAPD Service' >> /lib/systemd/system/pistar-ap.service
 		#	echo 'After=syslog.target network.target' >> /lib/systemd/system/pistar-ap.service
@@ -215,9 +222,11 @@ main_function() {
 		#	echo '[Install]' >> /lib/systemd/system/pistar-ap.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.timer
 		#
+		#	# Restart SystemD and add the service
 		#	systemctl daemon-reload
 		#	systemctl enable pistar-ap.timer
 		#
+		#	# Report the update status
 		#	Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
