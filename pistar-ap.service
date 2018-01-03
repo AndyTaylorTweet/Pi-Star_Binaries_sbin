@@ -34,7 +34,7 @@ if [ `cat /sys/class/net/wlan0/operstate` == "up" ]; then
 fi
 
 # Make sure we have a card that supports AP mode
-if [ ! `grep -q -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw )' /proc/modules` ]; then
+if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw )' /proc/modules` -eq "0" ]; then
 	exit 0
 fi
 
