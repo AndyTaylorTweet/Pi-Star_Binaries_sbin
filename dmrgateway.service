@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.1                       #
+#                     Version 1.2                       #
 #                                                       #
 #########################################################
 
@@ -39,7 +39,12 @@ fi
 if [ `sed -n '/\[DMR Network\]/{n;p;n;p;}' /etc/mmdvmhost | sed '1d' | awk -F = '{print $2}'` != 127.0.0.1 ]; then
 	exit 1;
 fi
-	
+
+# Reconfigure to use old style service if the config is not ready
+if [[ $(grep -c "\[XLX Network\]" /etc/dmrgateway) -eq "0" ]]; then
+	DAEMON=DMRGateway_old
+fi
+
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
