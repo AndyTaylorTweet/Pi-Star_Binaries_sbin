@@ -96,9 +96,4 @@ if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
 fi
 
-# If there is a P25 Over-ride file, add it's contents to P25Hosts.txt
-if [ -f "/root/P25Hosts.txt" ]; then
-	cat /root/P25Hosts.txt >> ${P25HOSTS}
-fi
-
 exit 0
