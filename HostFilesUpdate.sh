@@ -96,4 +96,12 @@ if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
 fi
 
+# Add some fixes for P25Gateway
+if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" ]]; then
+	sed -i 's/HostsFile2=\/root\/P25Hosts.txt/HostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
+fi
+if [ -f "/root/P25Hosts.txt" ]; then
+	cat /root/P25Hosts.txt >> /usr/local/etc/P25HostsLocal.txt
+fi
+
 exit 0
