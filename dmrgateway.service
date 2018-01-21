@@ -41,7 +41,7 @@ if [ `sed -n '/\[DMR Network\]/{n;p;n;p;}' /etc/mmdvmhost | sed '1d' | awk -F = 
 fi
 
 # Reconfigure to use old style service if the config is not ready
-if [[ $(grep -c "\[XLX Network\]" /etc/dmrgateway) -eq "0" ]]; then
+if [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "0" ]]; then
 	DAEMON=DMRGateway_old
 fi
 
