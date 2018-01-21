@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 2.7, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 2.8, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
@@ -25,7 +25,7 @@ main_function() {
 	apt-get upgrade -y
 	apt-get clean
 	echo "Done"
-	
+
 	echo "Checking nginx config"
 	if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
 		sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
@@ -48,7 +48,7 @@ main_function() {
 	echo "Updating DV Binaries..."
 	git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
 	echo "Done"
-	
+
 	echo "Updating Pi-Star Binaries..."
 	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git update-index --assume-unchanged pistar-upnp.service
 	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
@@ -84,6 +84,29 @@ main_function() {
 		touch /root/P25Hosts.txt
 	fi
 
+	# If we are ready to use the new DMRGateway
+	if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt "20170924" ]] && [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "1" ]] && [[ ! -f /usr/local/etc/DMR_Audio/no_NO.indx ]]; then
+		curl --fail -o /usr/local/etc/DMR_Audio/de_DE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/en_GB.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/en_US.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/es_ES.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/it_IT.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/no_NO.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/no_NO.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.indx
+		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.ambe
+		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
+	fi
 
 	echo "Starting Services..."
 	systemctl start dmrgateway.service > /dev/null 2>&1
@@ -101,7 +124,7 @@ main_function() {
 	sleep 3
 	mount -o remount,ro /
 	mount -o remount,ro /boot
-	
+
 	# Tell the user we are done
 	echo "Finished"
 	}
