@@ -167,7 +167,7 @@ main_function() {
 	3.4.9)
 		#if [ ! -z "${pistarHardware}" ]; then
 		#	sed -i 's/3.4.9/3.4.10/g' /etc/pistar-release
-                #	sed -i 's/3.4.9/3.4.10/g' /etc/motd
+                #	sed -i 's/3.4.9═/3.4.10/g' /etc/motd
 		#
 		#	# Add the Colby Ross Random Seed fix
 		#	rm -rf /var/lib/systemd/random-seed
