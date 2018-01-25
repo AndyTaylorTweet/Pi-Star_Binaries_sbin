@@ -151,9 +151,23 @@ main_function() {
 		fi
 	;;
 	3.4.8)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.8/3.4.9/g' /etc/pistar-release
+			sed -i 's/3.4.8/3.4.9/g' /etc/motd
+			apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7638D0442B90D010
+			apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8B48AD6246925553
+			echo 'deb http://httpredir.debian.org/debian jessie-backports main contrib non-free' > /etc/apt/sources.list.d/jessie-backports.list
+			apt-get update
+			apt-get -t jessie-backports install usb-modeswitch usb-modeswitch-data
+			Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.9)
 		#if [ ! -z "${pistarHardware}" ]; then
-		#	sed -i 's/3.4.8/3.4.9/g' /etc/pistar-release
-                #	sed -i 's/3.4.8/3.4.9/g' /etc/motd
+		#	sed -i 's/3.4.9/3.4.10/g' /etc/pistar-release
+                #	sed -i 's/3.4.9/3.4.10/g' /etc/motd
 		#
 		#	# Add the Colby Ross Random Seed fix
 		#	rm -rf /var/lib/systemd/random-seed
@@ -227,13 +241,13 @@ main_function() {
 		#	systemctl enable pistar-ap.timer
 		#
 		#	# Report the update status
-		#	Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
+		#	Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
 		#fi
 		Message="You are already running the lastest version..."
 	;;
-	3.4.9)
+	3.4.10)
 		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
