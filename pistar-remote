@@ -17,6 +17,7 @@ import linecache
 import os
 import subprocess
 import ConfigParser
+import random
 
 # Read the config;
 config = ConfigParser.RawConfigParser()
@@ -77,6 +78,10 @@ if config.has_option('d-star', 'shutdown'):
 	dstarshutdown = config.get('d-star', 'shutdown')
 else:
 	dstarshutdown = str(999999999999)
+if config.has_option('d-star', '8Ball'):
+        dstar8ball = config.get('d-star', '8Ball')
+else:
+        dstar8ball = str(999999999999)
 dstarmodule = mmdvmConfig.get('General', 'Callsign') + ' ' + mmdvmConfig.get('D-Star', 'Module')
 
 # YSF Control Options
@@ -115,6 +120,30 @@ if config.has_option('p25', 'shutdown'):
 else:
         p25shutdown = str(999999999999)
 
+# 8-Ball answers
+magic8ball = [
+        'It is certain',
+        'It is decidedly so',
+        'Without a doubt',
+        'Yes definitely',
+        'You may rely on it',
+        'As I see it, yes',
+        'Most likely',
+        'Outlook good',
+        'Yes',
+        'Signs point to yes',
+        'Reply hazy try agn',
+        'Ask again later',
+        'Tell you later',
+        'Cannot predict now',
+        'Concentrate, ask agn',
+        'Dont count on it',
+        'My reply is no',
+        'My sources say no',
+        'Outlook not so good',
+        'Very doubtful'
+        ]
+
 # Now run the loop
 while True:
 	# Check that the process is running, if its not there is no point in trying to stop it.
@@ -124,7 +153,7 @@ while True:
 		# This is the main loop that keeps waiting, we dont want to hammer the logs too often, every 30 secs should be enough.
 		utcnow = datetime.datetime.utcnow()
 		datenow = utcnow.strftime('%Y-%m-%d')
-		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
+		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(seconds=30)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
 		currentLog = mmdvmLogPath + '/' + mmdvmFileRoot + '-' + datenow + '.log'
@@ -231,7 +260,14 @@ while True:
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
-					
+
+				# D-Star 8Ball
+                                # M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+                                if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstar8ball) in line:
+                                        # Ask the 8Ball
+                                        magic8ballanswer = random.choice(magic8ball)
+                                        os.system(r'texttransmit -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
+
 				# YSF
 				# M: 2017-07-13 19:50:43.464 YSF, received RF header from M1ABC      to ALL
 				if str('YSF, received RF header from ' + keeperCall + ' ') in line:
@@ -303,7 +339,7 @@ while True:
 			# We only care about logs in the last 60 secs
 			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
 
-				# D-Star Stop MMDVMHost
+				# D-Star Stop Services
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarstop) in line:
 					# Kill the Services
@@ -314,7 +350,7 @@ while True:
                                         os.system(r'systemctl stop dstarrepeater.service')
                                         os.system(r'systemctl stop pistar-watchdog.service')
 
-				# D-Star Restart MMDVMHost
+				# D-Star Restart Services
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarrestart) in line:
 					# Restart the Services
@@ -338,6 +374,13 @@ while True:
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
+
+				# D-Star 8Ball
+                                # M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstar8ball) in line:
+                                        # Ask the 8Ball
+                                        magic8ballanswer = random.choice(magic8ball)
+                                        os.system(r'texttransmit -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
 
 		# This is the 30 second sleep before the next pass.
 		time.sleep(30)
