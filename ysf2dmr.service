@@ -34,6 +34,11 @@ if [ `sed -n '/\[System Fusion Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0
 	exit 1;
 fi
 
+# Make sure I am supposed to be used
+if [ `grep 'YSF2DMRAddress' /etc/ysfgateway | awk -F = '{print $2}'` != 127.0.0.1 ]; then
+	exit 1;
+fi
+
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
