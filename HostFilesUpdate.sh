@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.8                       #
+#                     Version 2.9                       #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -103,6 +103,17 @@ if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt 
 fi
 if [ -f "/root/P25Hosts.txt" ]; then
 	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
+fi
+
+# If there is an XLX over-ride
+if [ -f "/root/XLXHosts.txt" ]; then
+	while IFS= read -r line; do
+		if [[ $line != \#* ]]
+		then
+			ip=`echo $line | awk -F  ";" '{print $2}'`
+			/bin/sed -i "/$ip/c\\$line" /usr/local/etc/XLXHosts.txt
+		fi
+	done < /root/XLXHosts.txt
 fi
 
 exit 0
