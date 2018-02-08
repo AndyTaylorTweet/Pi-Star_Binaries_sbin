@@ -275,7 +275,7 @@ if [ -t 1 ]; then
   main_function
 else
   # if not run via terminal, log everything into a log file
-  main_function 2>&1 >> /var/log/pi-star/pi-star_upgrade.log
+  main_function >> /var/log/pi-star/pi-star_upgrade.log 2>&1
 fi
 
 exit 0
