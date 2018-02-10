@@ -44,6 +44,31 @@ if [ ! -f /root/P25Hosts.txt ]; then
 	touch /root/P25Hosts.txt
 fi
 
+# If we are ready to use the new DMRGateway
+if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt "20170924" ]] && [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "1" ]] && [[ ! -f /usr/local/etc/DMR_Audio/no_NO.indx ]]; then
+	curl --fail -o /usr/local/etc/DMR_Audio/de_DE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/en_GB.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/en_US.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/es_ES.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/it_IT.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/no_NO.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/no_NO.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.indx
+	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.ambe
+	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
+fi
+
+
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
