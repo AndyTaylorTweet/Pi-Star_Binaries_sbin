@@ -111,7 +111,7 @@ if [ -f "/root/XLXHosts.txt" ]; then
 		if [[ $line != \#* ]]
 		then
 			xlxid=`echo $line | awk -F  ";" '{print $1}'`
-			/bin/sed -i "/$xlxid\;/c\\$line" /usr/local/etc/XLXHosts.txt
+			/bin/sed -i "/^$xlxid\;/c\\$line" /usr/local/etc/XLXHosts.txt
 		fi
 	done < /root/XLXHosts.txt
 fi
