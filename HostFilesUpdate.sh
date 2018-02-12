@@ -110,8 +110,8 @@ if [ -f "/root/XLXHosts.txt" ]; then
 	while IFS= read -r line; do
 		if [[ $line != \#* ]]
 		then
-			ip=`echo $line | awk -F  ";" '{print $2}'`
-			/bin/sed -i "/$ip/c\\$line" /usr/local/etc/XLXHosts.txt
+			xlxid=`echo $line | awk -F  ";" '{print $1}'`
+			/bin/sed -i "/^$xlxid\;/c\\$line" /usr/local/etc/XLXHosts.txt
 		fi
 	done < /root/XLXHosts.txt
 fi
