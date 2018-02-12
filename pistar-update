@@ -15,6 +15,12 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+exec 200>/var/lock/pistar-update.lock || exit 1
+if ! flock -n 200 ; then
+  echo -e "Another instance is already running...\n"
+  exit 1
+fi
+
 main_function() {
 	# Make the disk writable
 	mount -o remount,rw /
