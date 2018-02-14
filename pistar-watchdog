@@ -140,6 +140,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start pistar-remote.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocremote.wait()
 
 #	checkprockeeper = subprocess.Popen('pgrep' + ' pistar-keeper', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 #	if not checkprockeeper.stdout.readlines():
