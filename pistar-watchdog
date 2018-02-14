@@ -4,11 +4,11 @@
 #                                                                             #
 #                         Pi-Star Service Watchdog                            #
 #                                                                             #
-#    Version 1.7, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.8, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #   The service watchdog will monitor the D-Star Services, restarting them    #
-#       after any kind of failures - somthing that seems to happen alot       #
-#                       when using the G4KLX software                         #
+#   after any kind of failures - something that used to happen occasionally   #
+#             when using the origional G4KLX D-Star software.                 #
 #                                                                             #
 ###############################################################################
 
