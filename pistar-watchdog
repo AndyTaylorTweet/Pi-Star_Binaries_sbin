@@ -34,6 +34,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start dstarrepeater.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocdstar.wait()
 
 		# At this point it's a safe bet that the service is running, now look for signs of DVAP failure.
 		utcnow = datetime.datetime.utcnow()
@@ -68,6 +69,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start mmdvmhost.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocmmdvm.wait()
 		
 		checkprocdmrgateway = subprocess.Popen('pgrep' + ' DMRGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocdmrgateway.stdout.readlines():
@@ -75,6 +77,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start dmrgateway.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocdmrgateway.wait()
 
 		checkprocysfgateway = subprocess.Popen('pgrep' + ' YSFGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocysfgateway.stdout.readlines():
@@ -82,6 +85,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start ysfgateway.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocysfgateway.wait()
 
 		checkprocp25gateway = subprocess.Popen('pgrep' + ' P25Gateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocp25gateway.stdout.readlines():
@@ -89,6 +93,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start p25gateway.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocp25gateway.wait()
 
 		checkprocysfparrot = subprocess.Popen('pgrep' + ' YSFParrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocysfparrot.stdout.readlines():
@@ -96,6 +101,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start ysfparrot.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocysfparrot.wait()
 
 		checkprocp25parrot = subprocess.Popen('pgrep' + ' P25Parrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocp25parrot.stdout.readlines():
@@ -103,6 +109,7 @@ while True: #Main loop
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start p25parrot.service')
 			time.sleep(10) #Give the service time to start before we move on
+		checkprocp25parrot.wait()
 		
 	# Check the services that can be used by all systems
 	checkprocirc = subprocess.Popen('pgrep' + ' ircddbgatewayd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -111,6 +118,7 @@ while True: #Main loop
 		time.sleep(2) #Give the service time to stop before we move on
 		os.system('/bin/systemctl start ircddbgateway.service')
 		time.sleep(10) #Give the service time to start before we move on
+	checkprocirc.wait()
 
 	checkproctime = subprocess.Popen('pgrep' + ' timeserverd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	if not checkproctime.stdout.readlines():
@@ -118,6 +126,7 @@ while True: #Main loop
 		time.sleep(2) #Give the service time to stop before we move on
 		os.system('/bin/systemctl start timeserver.service')
 		time.sleep(10) #Give the service time to start before we move on
+	checkproctime.wait()
 
 	# If PiStar-Remote not enabled, dont try and keep it running
 	pistarRemoteConfig = ConfigParser.RawConfigParser()
@@ -136,5 +145,6 @@ while True: #Main loop
 #	if not checkprockeeper.stdout.readlines():
 #		os.system('service pistar-keeper start')
 #		time.sleep(10) #Give the service time to start before we move on
+#	checkprockeeper.wait()
 
 	time.sleep(300) #Time to wait between service checks
