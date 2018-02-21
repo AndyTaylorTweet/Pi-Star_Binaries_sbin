@@ -164,7 +164,7 @@ main_function() {
 			Message="In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
-	3.5.9)
+	3.4.9)
 		#if [ ! -z "${pistarHardware}" ]; then
 		#	sed -i 's/3.4.9/3.4.10/g' /etc/pistar-release
                 #	sed -i 's/═3.4.9/3.4.10/g' /etc/motd
