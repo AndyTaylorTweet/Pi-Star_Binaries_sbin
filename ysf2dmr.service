@@ -34,6 +34,10 @@ if [ `sed -n '/\[System Fusion Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0
 	exit 1;
 fi
 
+if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/ysf2dmr | cut -c 9` != 1 ]; then
+	exit 1;
+fi
+
 # Make sure I am supposed to be used
 if [ `grep 'YSF2DMRAddress' /etc/ysfgateway | awk -F = '{print $2}'` != 127.0.0.1 ]; then
 	exit 1;
