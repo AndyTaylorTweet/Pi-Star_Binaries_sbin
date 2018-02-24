@@ -209,6 +209,7 @@ main_function() {
                 #	sed -i 's/3.4.10/3.4.11/g' /etc/motd
 		#
 		#	# Install the tools
+		#	apt-get update
 		#	apt-get install -y hostapd dnsmasq
 		#	systemctl daemon-reload
 		#	systemctl disable hostapd
