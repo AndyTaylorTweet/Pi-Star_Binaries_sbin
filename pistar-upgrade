@@ -165,44 +165,43 @@ main_function() {
 		fi
 	;;
 	3.4.9)
-		#if [ ! -z "${pistarHardware}" ]; then
-		#	sed -i 's/3.4.9/3.4.10/g' /etc/pistar-release
-                #	sed -i '10,1d' /etc/motd
-		#	sed -i '10i╚═══════════════════════════════════════════════════════════════v3.4.10═╝' /etc/motd
-		#
-		#	# Add the Colby Ross Random Seed fix
-		#	rm -rf /var/lib/systemd/random-seed
-		#	ln -s /tmp/random-seed /var/lib/systemd/random-seed
-		#
-		#	# Add the Unit file(s)
-		#	echo '[Unit]' > /lib/systemd/system/ysf2dmr.service
-		#	echo 'Description=Pi-Star YSF2DMR Service' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2dmr.service
-		#	echo '' >> /lib/systemd/system/ysf2dmr.service
-		#	echo '[Service]' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'Type=forking' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'ExecStart=/usr/local/sbin/ysf2dmr.service start' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'ExecStop=/usr/local/sbin/ysf2dmr.service stop' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'ExecReload=/usr/local/sbin/ysf2dmr.service restart' >> /lib/systemd/system/ysf2dmr.service
-		#	echo '' >> /lib/systemd/system/ysf2dmr.service
-		#	echo '[Install]' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2dmr.service
-		#
-		#	echo '[Timer]' > /lib/systemd/system/ysf2dmr.timer
-		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2dmr.timer
-		#	echo '' >> /lib/systemd/system/ysf2dmr.timer
-		#	echo '[Install]' >> /lib/systemd/system/ysf2dmr.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2dmr.timer
-		#
-		#	# Restart SystemD and add the service
-		#	systemctl daemon-reload
-		#	systemctl enable ysf2dmr.timer
-		#
-		#	Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
-		#else
-		#	Message="In-place upgrades from 3.4.4 are not supported..."
-		#fi
-		Message="You are already running the lastest version..."
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.9/3.4.10/g' /etc/pistar-release
+                	sed -i '10,1d' /etc/motd
+			sed -i '10i╚═══════════════════════════════════════════════════════════════v3.4.10═╝' /etc/motd
+
+			# Add the Colby Ross Random Seed fix
+			rm -rf /var/lib/systemd/random-seed
+			ln -s /tmp/random-seed /var/lib/systemd/random-seed
+
+			# Add the Unit file(s)
+			echo '[Unit]' > /lib/systemd/system/ysf2dmr.service
+			echo 'Description=Pi-Star YSF2DMR Service' >> /lib/systemd/system/ysf2dmr.service
+			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2dmr.service
+			echo '' >> /lib/systemd/system/ysf2dmr.service
+			echo '[Service]' >> /lib/systemd/system/ysf2dmr.service
+			echo 'Type=forking' >> /lib/systemd/system/ysf2dmr.service
+			echo 'ExecStart=/usr/local/sbin/ysf2dmr.service start' >> /lib/systemd/system/ysf2dmr.service
+			echo 'ExecStop=/usr/local/sbin/ysf2dmr.service stop' >> /lib/systemd/system/ysf2dmr.service
+			echo 'ExecReload=/usr/local/sbin/ysf2dmr.service restart' >> /lib/systemd/system/ysf2dmr.service
+			echo '' >> /lib/systemd/system/ysf2dmr.service
+			echo '[Install]' >> /lib/systemd/system/ysf2dmr.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2dmr.service
+
+			echo '[Timer]' > /lib/systemd/system/ysf2dmr.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2dmr.timer
+			echo '' >> /lib/systemd/system/ysf2dmr.timer
+			echo '[Install]' >> /lib/systemd/system/ysf2dmr.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2dmr.timer
+
+			# Restart SystemD and add the service
+			systemctl daemon-reload
+			systemctl enable ysf2dmr.timer
+		
+			Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
 	;;
 	3.4.10)
 		#if [ ! -z "${pistarHardware}" ]; then
