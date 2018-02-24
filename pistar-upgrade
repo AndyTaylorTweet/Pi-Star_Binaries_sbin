@@ -167,7 +167,8 @@ main_function() {
 	3.4.9)
 		#if [ ! -z "${pistarHardware}" ]; then
 		#	sed -i 's/3.4.9/3.4.10/g' /etc/pistar-release
-                #	sed -i 's/═3.4.9/3.4.10/g' /etc/motd
+                #	sed -i '10,1d' /etc/motd
+		#	sed -i '10i╚═══════════════════════════════════════════════════════════════v3.4.10═╝' /etc/motd
 		#
 		#	# Add the Colby Ross Random Seed fix
 		#	rm -rf /var/lib/systemd/random-seed
@@ -197,6 +198,7 @@ main_function() {
 		#	systemctl daemon-reload
 		#	systemctl enable ysf2dmr.timer
 		#
+		#	Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
 		#fi
