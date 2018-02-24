@@ -22,6 +22,7 @@ DNSMASQDAEMON=dnsmasq
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -f "/etc/hostapd/hostapd.conf" || exit 0
+test -f "/etc/hostap.off" || exit 0
 
 # Check that WLAN0 exists
 if [ ! -d "/sys/class/net/wlan0" ]; then
