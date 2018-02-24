@@ -181,9 +181,9 @@ main_function() {
 		#	echo '' >> /lib/systemd/system/ysf2dmr.service
 		#	echo '[Service]' >> /lib/systemd/system/ysf2dmr.service
 		#	echo 'Type=forking' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'ExecStart=/usr/local/sbin/ysfgateway.service start' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'ExecStop=/usr/local/sbin/ysfgateway.service stop' >> /lib/systemd/system/ysf2dmr.service
-		#	echo 'ExecReload=/usr/local/sbin/ysfgateway.service restart' >> /lib/systemd/system/ysf2dmr.service
+		#	echo 'ExecStart=/usr/local/sbin/ysf2dmr.service start' >> /lib/systemd/system/ysf2dmr.service
+		#	echo 'ExecStop=/usr/local/sbin/ysf2dmr.service stop' >> /lib/systemd/system/ysf2dmr.service
+		#	echo 'ExecReload=/usr/local/sbin/ysf2dmr.service restart' >> /lib/systemd/system/ysf2dmr.service
 		#	echo '' >> /lib/systemd/system/ysf2dmr.service
 		#	echo '[Install]' >> /lib/systemd/system/ysf2dmr.service
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2dmr.service
