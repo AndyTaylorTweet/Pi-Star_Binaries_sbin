@@ -242,8 +242,7 @@ main_function() {
 		#	echo '  network 192.168.50.0' >> /etc/network/interfaces
 		#	echo '  broadcast 192.168.50.255' >> /etc/network/interfaces
 		#
-		#	echo '' >> /etc/dnsmasq.conf
-		#	echo 'interface=lo,wlan0_ap' >> /etc/dnsmasq.conf
+		#	echo 'interface=lo,wlan0_ap' > /etc/dnsmasq.conf
 		#	echo 'server=208.67.222.123' >> /etc/dnsmasq.conf
 		#	echo 'server=208.67.220.123' >> /etc/dnsmasq.conf
 		#	echo 'domain-needed' >> /etc/dnsmasq.conf
