@@ -248,7 +248,7 @@ main_function() {
 		#	echo 'domain-needed' >> /etc/dnsmasq.conf
 		#	echo 'bogus-priv' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-authoritative' >> /etc/dnsmasq.conf
-		#	echo 'dhcp-range=192.168.50.50,101.168.50.109,4h' >> /etc/dnsmasq.conf
+		#	echo 'dhcp-range=192.168.50.50,192.168.50.99,4h' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=1,255.255.255.0' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=3,192.168.50.1' >> /etc/dnsmasq.conf
 		#	echo 'dhcp-option=6,192.168.50.1' >> /etc/dnsmasq.conf
