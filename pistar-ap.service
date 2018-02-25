@@ -22,7 +22,9 @@ DNSMASQDAEMON=dnsmasq
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -f "/etc/hostapd/hostapd.conf" || exit 0
-test -f "/etc/hostap.off" || exit 0
+if [ -f "/etc/hostap.off" ]; then
+    exit 0
+fi
 
 # Check that WLAN0 exists
 if [ ! -d "/sys/class/net/wlan0" ]; then
@@ -41,6 +43,7 @@ fi
 
 case "$1" in
 	start)
+		mount -o remount,rw /
 		sysctl net.ipv4.ip_forward=1
 		iw dev wlan0 interface add wlan0_ap type __ap
 		${SLEEP} 3 && ifup wlan0_ap && ${SLEEP} 2
@@ -56,9 +59,11 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
+		mount -o remount,ro
 		exit 0
 		;;
 	stop)
+		mount -o remount,rw /
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
@@ -75,9 +80,11 @@ case "$1" in
 		fi
 		ifdown wlan0_ap
 		iw dev wlan0_ap del
+		mount -o remount,ro
 		exit 0
 		;;
 	restart)
+		mount -o remount,rw /
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
@@ -112,6 +119,7 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
+		mount -o remount,ro
 		exit 0
 		;;
 	status)
