@@ -45,7 +45,7 @@ then
     rm -rf /tmp/mdofirmware 2> /dev/null
     mkdir /tmp/mdofirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl --fail -o /tmp/mdofirmware/flash.sh -s https://github.com/BD7KLE/MDO-FW/raw/master/up.sh
+    wget -O /tmp/mdofirmware/flash.sh https://github.com/BD7KLE/MDO-FW/raw/master/up.sh
     chmod +x /tmp/mdofirmware/flash.sh
     cd  /tmp/mdofirmware
     ./flash.sh
@@ -60,7 +60,7 @@ then
     rm -rf /tmp/mdofirmware 2> /dev/null
     mkdir /tmp/mdofirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl --fail -o /tmp/mdofirmware/flash.sh -s https://github.com/BD7KLE/MDO-FW/raw/master/up2.sh
+    wget -O /tmp/mdofirmware/flash.sh https://github.com/BD7KLE/MDO-FW/raw/master/up.sh
     chmod +x /tmp/mdofirmware/flash.sh
     cd  /tmp/mdofirmware
     ./flash.sh
@@ -75,7 +75,7 @@ then
     rm -rf /tmp/mdofirmware 2> /dev/null
     mkdir /tmp/mdofirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl --fail -o /tmp/mdofirmware/flash.sh -s https://github.com/BD7KLE/MDO-FW/raw/master/vhf.sh
+    wget -O /tmp/mdofirmware/flash.sh https://github.com/BD7KLE/MDO-FW/raw/master/up.sh
     chmod +x /tmp/mdofirmware/flash.sh
     cd  /tmp/mdofirmware
     ./flash.sh
