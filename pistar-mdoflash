@@ -26,6 +26,10 @@ then
   echo "To flash a UHF2018 board conected to GPIO, run:     pistar-mdoflash uhf"
   echo "To flash a UHF302018 board conected to GPIO, run:   pistar-mdoflash uhf2"
   echo "To flash a VHF302018 board conected to GPIO, run:   pistar-mdoflash vhf"
+  echo ""
+  echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
+  echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
   exit 0
 fi
 #
