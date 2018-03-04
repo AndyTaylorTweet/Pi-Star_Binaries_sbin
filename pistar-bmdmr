@@ -145,8 +145,8 @@ esac
 
 # Do the magic
 echo "Request to BrandMesiter API: ${REQUEST}"
-RESULT=curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
-	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])"
+RESULT=$(curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
+	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
 echo "Result: ${RESULT}"
 echo ""
 exit 0
