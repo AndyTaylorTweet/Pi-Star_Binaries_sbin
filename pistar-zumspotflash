@@ -27,9 +27,6 @@ then
   echo "To flash a ZUMSpot duplex board conected to GPIO, run:  pistar-zumspotflash rpi_duplex"
   echo "To flash a ZUMSpot USB Key, run:                        pistar-zumspotflash usb"
   echo "To flash a USB Connected Libre Modem, run:              pistar-zumspotflash libre"
-  echo "To flash an HS_HAT board conected to GPIO, run:         pistar-zumspotflash hs_hat"
-  echo "To flash an HS_DUAL_HAT board conected to GPIO, run:    pistar-zumspotflash hs_dual_hat"
-  echo "To flash an Nano HS board conected to GPIO, run:        pistar-zumspotflash nano_hs"
   exit 0
 fi
 #
@@ -60,7 +57,7 @@ then
     exit 0
   ;;
   rpi_duplex)
-    # Flashing RPi GPIO Modem
+    # Flashing RPi Duplex GPIO Modem
     rm -rf /tmp/zumfirmware 2> /dev/null
     mkdir /tmp/zumfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
@@ -95,51 +92,6 @@ then
     mkdir /tmp/zumfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_librekit.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
-  hs_hat)
-    # Flashing Libre Kit Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
-  hs_dual_hat)
-    # Flashing Libre Kit Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
-  nano_hs)
-    # Flashing Libre Kit Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanohs.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
     chmod +x /tmp/zumfirmware/flash.sh
     cd  /tmp/zumfirmware
     ./flash.sh
