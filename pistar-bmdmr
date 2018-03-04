@@ -1,0 +1,140 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                      Pi-Star BrandMeister API Tool                         #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#    Make it simple to link / unlink reflectors from the CLI on Pi-Star.     #
+#    Added the option to manage static/dynamic TalkGroups and to be able     #
+#                        to drop the current QSO.                            #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Setup some variables
+APIKeyFile=/etc/bmapi.key
+APIURL="https://api.brandmeister.network/v1.0/repeater/"
+DMRID=$(grep -m 1 'Id=' /etc/mmdvmhost | awk -F "=" '/Id/ {print $2}')
+
+if [ -z "$1" ]
+then
+	echo "NOTE: In the below example commands, please replace {TG Number} with"
+	echo "the number of the Talkgroup you wish to add/remove. For example 12345."
+	echo ""
+	echo "Similarly the {TimeSlot} should be replaced with your target time"
+	echo "slot, for hotspots this is TimeSlot 0 (NOT TimeSlot 2) and for"
+	echo "duplex repeaters it will be eithe TimeSlot 1 or TimeSlot 2."
+	echo ""
+	echo "Reflector numbers are from 4000 to 5000"
+	echo ""
+	echo "To add a static TG:            pistar-bmdmr addtg {TG Number} {TimeSlot Number}"
+	echo "To remove a static TG:         pistar-bmdmr deltg {TG Number} {TimeSlot Number}"
+	echo "To Link to a reflector:        pistar-bmdmr ref {Reflector Number}"
+	echo "To Unlink from a reflector:    pistar-bmdmr ref 4000"
+	echo "To drop all Dynamic TGs:       pistar-bmdmr dropdyn {TimeSlot Number}"
+	echo "To drop the current QSO:       pistar-bmdmr dropqso {TimeSlot Number}"
+	echo ""
+	exit 0
+fi
+
+# Get the stored BM API Key
+if [ -f ${APIKeyFile} ]; then
+	APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
+else
+	echo "Unable to find your BrandMesiter API Key, no API commands available."
+	exit 0
+fi
+
+case ${1} in
+apikey)
+	echo "Your BrandMeister API Key is: ${APIKey}"
+	exit 0
+;;
+addtg)
+	# Check that the variable for TalkGroup has been passed
+	if [ -z "$2" ]
+	then
+		echo "No TG Specfified"
+		exit 0
+	else
+		targetTG=$2
+	fi
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$3" ]
+	then
+		TS="0"
+	else
+		TS=$3
+	fi
+	APIURL="${APIURL}talkgroup/?action=ADD&id=${DMRID}"
+	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
+;;
+deltg)
+	# Check that the variable for TalkGroup has been passed
+	if [ -z "$2" ]
+	then
+		echo "No TG Specfified"
+		exit 0
+	else
+		targetTG=$2
+	fi
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$3" ]
+	then
+		TS="0"
+	else
+		TS=$3
+	fi
+
+	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
+	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
+;;
+ref)
+	# Check that the variable for Reflector has been passed
+	if [ -z "$2" ]
+	then
+		echo "No Reflector Specfified"
+		exit 0
+	else
+		targetREF=$2
+	fi
+	APIURL="${APIURL}reflector/setActiveReflector.php?id=${DMRID}"
+	APIDATA="reflector=${targetREF}"
+;;
+dropdyn)
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$2" ]
+	then
+		TS="0"
+	else
+		TS=$3
+	fi
+	APIURL="${APIURL}setRepeaterTarantool.php?action=dropDynamicGroups&slot=0&q=${DMRID}"
+;;
+dropqso)
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$2" ]
+	then
+		TS="0"
+	else
+		TS=$3
+	fi
+	APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=0&q=${DMRID}"
+;;
+*)
+	echo "ERROR: Unknown Command Specified"
+	exit 0
+;;
+esac
+
+
+# Do the magic
+curl --user "${APIKey}:" --data "${APIDATA}" "${APIURL}"
+echo ""
+exit 0
