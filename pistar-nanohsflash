@@ -26,7 +26,7 @@ then
   echo "To flash an Nano HS board conected to GPIO, run:        pistar-nanohsflash nano_hs"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
-  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
+  echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
   exit 0
 fi
