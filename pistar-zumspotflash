@@ -4,7 +4,7 @@
 #                                                                             #
 #                      Pi-Star Firmware Update Tool                           #
 #                                                                             #
-#    Version 0.3, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                 Make it simple to update the Firmware                       #
 #                                                                             #
@@ -27,6 +27,9 @@ then
   echo "To flash a ZUMSpot duplex board conected to GPIO, run:  pistar-zumspotflash rpi_duplex"
   echo "To flash a ZUMSpot USB Key, run:                        pistar-zumspotflash usb"
   echo "To flash a USB Connected Libre Modem, run:              pistar-zumspotflash libre"
+  echo ""
+  echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
   exit 0
 fi
 #
