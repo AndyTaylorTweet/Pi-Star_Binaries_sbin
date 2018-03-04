@@ -19,7 +19,7 @@ fi
 #
 if [ -z "$1" ]
 then
-  echo "This tool is used to flash your ZUMSpot Modem"
+  echo "This tool is used to flash your MMDVM_HS Hat Modem"
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
