@@ -24,6 +24,9 @@ then
   echo "please choose form the list below..."
   echo ""
   echo "To flash an Nano HS board conected to GPIO, run:        pistar-nanohsflash nano_hs"
+  echo ""
+  echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
   exit 0
 fi
 #
