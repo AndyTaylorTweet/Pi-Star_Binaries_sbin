@@ -34,6 +34,11 @@ if [ `sed -n '/\[System Fusion Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0
 	exit 1;
 fi
 
+# Reconfigure to use old style service if the config is not ready
+if [[ $(grep -c "\[FCS Network\]" /etc/ysfgateway) -eq "0" ]]; then
+	DAEMON=YSFGateway_old
+fi
+
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
