@@ -33,12 +33,12 @@ then
 	echo ""
 	echo "Reflector numbers are from 4000 to 5000"
 	echo ""
-	echo "To add a static TG:            pistar-bmdmr addtg {TG Number} {TimeSlot Number}"
-	echo "To remove a static TG:         pistar-bmdmr deltg {TG Number} {TimeSlot Number}"
-	echo "To Link to a reflector:        pistar-bmdmr ref {Reflector Number}"
-	echo "To Unlink from a reflector:    pistar-bmdmr ref 4000"
-	echo "To drop all Dynamic TGs:       pistar-bmdmr dropdyn {TimeSlot Number}"
-	echo "To drop the current QSO:       pistar-bmdmr dropqso {TimeSlot Number}"
+	echo "To add a static TG:            pistar-bmapi addtg {TG Number} {TimeSlot Number}"
+	echo "To remove a static TG:         pistar-bmapi deltg {TG Number} {TimeSlot Number}"
+	echo "To Link to a reflector:        pistar-bmapi ref {Reflector Number}"
+	echo "To Unlink from a reflector:    pistar-bmapi ref 4000"
+	echo "To drop all Dynamic TGs:       pistar-bmapi dropdyn {TimeSlot Number}"
+	echo "To drop the current QSO:       pistar-bmapi dropqso {TimeSlot Number}"
 	echo ""
 	exit 0
 fi
