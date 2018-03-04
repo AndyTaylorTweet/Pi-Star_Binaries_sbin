@@ -78,7 +78,7 @@ addtg)
 	fi
 	APIURL="${APIURL}talkgroup/?action=ADD&id=${DMRID}"
 	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
-	MESSAGE="Adding TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Add TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 deltg)
 	# Check that the variable for TalkGroup has been passed
@@ -99,7 +99,7 @@ deltg)
 
 	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
 	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
-	MESSAGE="Deleting TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Delet TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 ref)
 	# Check that the variable for Reflector has been passed
@@ -112,7 +112,7 @@ ref)
 	fi
 	APIURL="${APIURL}reflector/setActiveReflector.php?id=${DMRID}"
 	APIDATA="reflector=${targetREF}"
-	MESSAGE="Connecting to Reflector ${targetREF} for DMR ID ${DMRID}"
+	REQUEST="Connec to Reflector ${targetREF} for DMR ID ${DMRID}"
 ;;
 dropdyn)
 	# Check that the variable to TimeSlot has been passed
@@ -123,7 +123,7 @@ dropdyn)
 		TS=$3
 	fi
 	APIURL="${APIURL}setRepeaterTarantool.php?action=dropDynamicGroups&slot=0&q=${DMRID}"
-	MESSAGE="Dropping all Dynamic Talkgroups on TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Drop all Dynamic TG on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 dropqso)
 	# Check that the variable to TimeSlot has been passed
@@ -134,7 +134,7 @@ dropqso)
 		TS=$3
 	fi
 	APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=0&q=${DMRID}"
-	MESSAGE="Dropping Active QSO on TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Drop Active QSO on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 *)
 	echo "ERROR: Unknown Command Specified"
@@ -144,9 +144,9 @@ esac
 
 
 # Do the magic
-echo "${MESSAGE}"
-echo ""
-echo "Result: "
-curl --user "${APIKey}:" --data "${APIDATA}" "${APIURL}"
+echo "Request to BrandMesiter API: ${REQUEST}"
+RESULT=curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
+	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])"
+echo "Result: ${RESULT}"
 echo ""
 exit 0
