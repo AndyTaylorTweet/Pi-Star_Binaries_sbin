@@ -75,10 +75,10 @@ then
     rm -rf /tmp/mdofirmware 2> /dev/null
     mkdir /tmp/mdofirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    wget -O /tmp/mdofirmware/vhf.sh https://github.com/BD7KLE/MDO-FW/raw/master/vhf.sh
-    chmod +x /tmp/mdofirmware/vhf.sh
+    wget -O /tmp/mdofirmware/up.sh https://github.com/BD7KLE/MDO-FW/raw/master/vhf.sh
+    chmod +x /tmp/mdofirmware/up.sh
     cd  /tmp/mdofirmware
-    ./vhf.sh
+    ./up.sh
     echo ""
     rm -rf /tmp/mdofirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
