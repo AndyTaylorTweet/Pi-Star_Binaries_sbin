@@ -56,6 +56,10 @@ apikey)
 	echo "Your BrandMeister API Key is: ${APIKey}"
 	exit 0
 ;;
+dmrid)
+	echo "Your DMR ID is: ${DMRID}"
+	exit 0
+;;
 addtg)
 	# Check that the variable for TalkGroup has been passed
 	if [ -z "$2" ]
