@@ -19,7 +19,7 @@ fi
 #
 if [ -z "$1" ]
 then
-  echo "This tool is used to flash your BD7KLE/MDO Modem"
+  echo "This tool is used to flash your BD7KLE/BG3MDO Modem"
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
