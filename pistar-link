@@ -27,13 +27,20 @@ then
       exit 0
 fi
 
+if [ -z "$2" ]
+then
+      relink=never
+else
+      relink=${2}
+fi
+
 case ${1} in
 *unlink)
   ${cmd} "${module}" unlink
   exit 0
 ;;
 *)
-  ${cmd} "${module}" link never $1
+  ${cmd} "${module}" link ${relink} $1
   exit 0
 ;;
 esac
