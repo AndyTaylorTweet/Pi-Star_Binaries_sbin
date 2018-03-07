@@ -7,7 +7,7 @@
 #     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
 #                                                                            #
 #         Make it simple to link reflectors from the CLI on Pi-Star.         #
-#                  Origional suggestion by Adrian (VK4TUX)                  #
+#                  Origional suggestion by Adrian (VK4TUX)                   #
 #                                                                            #
 ##############################################################################
 #
@@ -24,6 +24,13 @@ if [ -z "$1" ]
 then
       echo "To unlink from any connected reflector, use: pistar-link unlink"
       echo "To link to REF000 A for example, use: pistar-link ref000_a"
+      echo ""
+      echo "If you need to make a reflector FIXED so that users cannot unlink,"
+      echo "for schedulling connections via CRON for example you can use the"
+      echo "the following: pistar-link ref000_a fixed"
+      echo "Should you wish to Un-Fix a reflector, relink to the same reflector"
+      echo "without the fixed flag, such as: pistar-link ref000_a"
+      echo ""
       exit 0
 fi
 
