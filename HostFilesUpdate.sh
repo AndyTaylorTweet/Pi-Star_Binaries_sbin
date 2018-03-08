@@ -27,6 +27,7 @@ P25HOSTS=/usr/local/etc/P25Hosts.txt
 YSFHOSTS=/usr/local/etc/YSFHosts.txt
 XLXHOSTS=/usr/local/etc/XLXHosts.txt
 NXDNIDFILE=/usr/local/etc/NXDN.csv
+TGLISTBM=/usr/local/etc/TGList_BM.txt
 
 # How many backups
 FILEBACKUP=1
@@ -49,6 +50,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d)
 	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d)
 	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d)
+	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d)
 fi
 
 # Prune backups
@@ -61,7 +63,8 @@ ${DPlusHOSTS}
 ${P25HOSTS}
 ${YSFHOSTS}
 ${XLXHOSTS}
-${NXDNIDFILE}"
+${NXDNIDFILE}
+${TGLISTBM}"
 
 for file in ${FILES}
 do
@@ -94,6 +97,7 @@ curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
 #curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
 curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
 curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv
+curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
