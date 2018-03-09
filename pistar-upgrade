@@ -279,7 +279,7 @@ main_function() {
 			systemctl enable pistar-ap.timer
 		
 			# Report the update status
-			Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
+			Message="Upgraded from ${pistarCurVersion} to 3.4.11..."
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
 		fi
