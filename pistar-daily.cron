@@ -13,6 +13,7 @@ sleep 2
 systemctl stop ircddbgateway.service > /dev/null 2>&1
 systemctl stop ysfgateway.service > /dev/null 2>&1
 systemctl stop ysfparrot.service > /dev/null 2>&1
+systemctl stop ysf2dmr.service > /dev/null 2>&1
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
 systemctl stop dmrgateway.service > /dev/null 2>&1
@@ -26,6 +27,7 @@ git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin maste
 
 # Purge the logs older than 2 days
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
+rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)
 
 # Pre-Fix some config in MMDVMHost for update purposes.
 mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
@@ -68,12 +70,12 @@ if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt 
 	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 fi
 
-
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
 systemctl start ysfgateway.service > /dev/null 2>&1
 systemctl start ysfparrot.service > /dev/null 2>&1
+systemctl start ysf2dmr.service > /dev/null 2>&1
 systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
 systemctl start timeserver.service > /dev/null 2>&1
