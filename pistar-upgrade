@@ -286,8 +286,8 @@ main_function() {
 	;;
 	3.4.11)
 	#	if [ ! -z "${pistarHardware}" ]; then
-	#		sed -i 's/3.4.10/3.4.11/g' /etc/pistar-release
-        #        	sed -i 's/3.4.10/3.4.11/g' /etc/motd
+	#		sed -i 's/3.4.11/3.4.12/g' /etc/pistar-release
+        #        	sed -i 's/3.4.11/3.4.12/g' /etc/motd
 	#		curl --fail -o /etc/nxdngateway -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/NXDNGateway.ini
 	#		# NXDN Gateway Service
 	#		echo '[Unit]' > /lib/systemd/system/nxdngateway.service
@@ -356,7 +356,7 @@ main_function() {
 	#		echo 'ReloadTime=60' >> /etc/nxdngateway
 	#		echo 'ParrotAddress=127.0.0.1' >> /etc/nxdngateway
 	#		echo 'ParrotPort=42012' >> /etc/nxdngateway
-	#		echo 'Startup=10200' >> /etc/nxdngateway
+	#		echo 'Startup=65000' >> /etc/nxdngateway
 	#		echo 'Debug=0' >> /etc/nxdngateway
 	#		# Touch NXDNHostsLocal.txt
 	#		touch /usr/local/etc/NXDNHostsLocal.txt
