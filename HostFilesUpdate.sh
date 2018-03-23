@@ -27,6 +27,7 @@ P25HOSTS=/usr/local/etc/P25Hosts.txt
 YSFHOSTS=/usr/local/etc/YSFHosts.txt
 XLXHOSTS=/usr/local/etc/XLXHosts.txt
 NXDNIDFILE=/usr/local/etc/NXDN.csv
+NXDNHOSTS=/usr/local/etc/NXDNHosts.txt
 TGLISTBM=/usr/local/etc/TGList_BM.txt
 
 # How many backups
@@ -50,6 +51,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d)
 	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d)
 	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d)
+	cp ${NXDNHOSTS} ${NXDNHOSTS}.$(date +%Y%m%d)
 	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d)
 fi
 
@@ -64,6 +66,7 @@ ${P25HOSTS}
 ${YSFHOSTS}
 ${XLXHOSTS}
 ${NXDNIDFILE}
+${NXDNHOSTS}
 ${TGLISTBM}"
 
 for file in ${FILES}
@@ -97,6 +100,7 @@ curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
 #curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
 curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
 curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv
+curl --fail -o ${NXDNHOSTS} -s http://www.pistar.uk/downloads/NXDN_Hosts.txt
 curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
