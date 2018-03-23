@@ -285,6 +285,52 @@ main_function() {
 		fi
 	;;
 	3.4.11)
+	#	if [ ! -z "${pistarHardware}" ]; then
+	#		sed -i 's/3.4.10/3.4.11/g' /etc/pistar-release
+        #        	sed -i 's/3.4.10/3.4.11/g' /etc/motd
+	#		curl --fail -o /etc/nxdngateway -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/NXDNGateway.ini
+	#		echo '[Unit]' > /lib/systemd/system/nxdngateway.service
+	#		echo 'Description=NXDN Servce' >> /lib/systemd/system/nxdngateway.service
+	#		echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/nxdngateway.service
+	#		echo '' >> /lib/systemd/system/nxdngateway.service
+	#		echo '[Service]' >> /lib/systemd/system/nxdngateway.service
+	#		echo 'Type=forking' >> /lib/systemd/system/nxdngateway.service
+	#		echo 'ExecStart=/usr/local/sbin/nxdngateway.service start' >> /lib/systemd/system/nxdngateway.service
+	#		echo 'ExecStop=/usr/local/sbin/nxdngateway.service stop' >> /lib/systemd/system/nxdngateway.service
+	#		echo 'ExecReload=/usr/local/sbin/nxdngateway.service restart' >> /lib/systemd/system/nxdngateway.service
+	#		echo '' >> /lib/systemd/system/nxdngateway.service
+	#		echo '[Install]' >> /lib/systemd/system/nxdngateway.service
+	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdngateway.service
+	#		echo '[Timer]' > /lib/systemd/system/nxdngateway.timer
+	#		echo 'OnStartupSec=20' >> /lib/systemd/system/nxdngateway.timer
+	#		echo '' >> /lib/systemd/system/nxdngateway.timer
+	#		echo '[Install]' >> /lib/systemd/system/nxdngateway.timer
+	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdngateway.timer
+	#		echo '[Unit]' > /lib/systemd/system/nxdnparrot.service
+	#		echo 'Description=NXDN Parrot' >> /lib/systemd/system/nxdnparrot.service
+	#		echo 'After=syslog.target network.target nxdngateway.timer' >> /lib/systemd/system/nxdnparrot.service
+	#		echo '' >> /lib/systemd/system/nxdnparrot.service
+	#		echo '[Service]' >> /lib/systemd/system/nxdnparrot.service
+	#		echo 'Type=forking' >> /lib/systemd/system/nxdnparrot.service
+	#		echo 'ExecStart=/usr/local/sbin/nxdnparrot.service start' >> /lib/systemd/system/nxdnparrot.service
+	#		echo 'ExecStop=/usr/local/sbin/nxdnparrot.service stop' >> /lib/systemd/system/nxdnparrot.service
+	#		echo 'ExecReload=/usr/local/sbin/nxdnparrot.service restart' >> /lib/systemd/system/nxdnparrot.service
+	#		echo '[Install]' > /lib/systemd/system/nxdnparrot.timer
+	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
+	#		echo '' >> /lib/systemd/system/nxdnparrot.timer
+	#		echo '[Timer]' >> /lib/systemd/system/nxdnparrot.timer
+	#		echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
+	#		echo '' >> /lib/systemd/system/nxdnparrot.timer
+	#		echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
+	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
+	#		Message="Upgraded from ${pistarCurVersion} to 3.4.12..."
+	#	else
+	#		Message="In-place upgrades from 3.4.4 are not supported..."
+	#	fi
+	
+		Message="You are already running the lastest version..."
+	;;
+	3.4.12)
 		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
