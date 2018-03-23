@@ -76,11 +76,17 @@ iptables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
 iptables -A OUTPUT -p udp --dport 62030 -j ACCEPT #			XLX Networking
 iptables -t mangle -A POSTROUTING -p udp --dport 62030 -j DSCP --set-dscp 46
 
-# Allow Outbound YSFGateway / P25Gateway Ports
-iptables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #			P25 Outbound Connections
-iptables -t mangle -A POSTROUTING -p udp --dport 41000:41010 -j DSCP --set-dscp 46
+# Allow Outbound YSFGateway Ports
 iptables -A OUTPUT -p udp --dport 42000:43000 -j ACCEPT #               YSF Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --dport 42000:43000 -j DSCP --set-dscp 46
+
+# Allow Outbound P25Gateway Ports
+iptables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #			P25 Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 41000:41010 -j DSCP --set-dscp 46
+
+# Allow Outbound NXDNGateway Ports
+iptables -A OUTPUT -p udp --dport 41400 -j ACCEPT #			NXDN Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 41400 -j DSCP --set-dscp 46
 
 # Allow Inbound Services
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT #				SSH
@@ -144,10 +150,6 @@ iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gatew
 
 # Allow Inbound P25 Gateway Ports
 iptables -A INPUT -p udp --sport 41000:41010 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
-
-# Allow Inbound NXDN Gateway Ports
-iptables -A INPUT -p udp --sport 14020 --dport 41400 -j ACCEPT #		NXDN Gateway Routing
-
 
 # Set up debug logging for incoming traffic.
 iptables -N LOGNDROP
@@ -271,11 +273,17 @@ ip6tables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
 ip6tables -A OUTPUT -p udp --dport 62030 -j ACCEPT #			XLX Networking
 ip6tables -t mangle -A POSTROUTING -p udp --dport 62030 -j DSCP --set-dscp 46
 
-# Allow Outbound YSF / P25 Voice Ports
-ip6tables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #		P25 Networking
-ip6tables -t mangle -A POSTROUTING -p udp --dport 41000:41010 -j DSCP --set-dscp 46
+# Allow Outbound YSF Ports
 ip6tables -A OUTPUT -p udp --dport 42000:43000 -j ACCEPT #		YSF Networking
 ip6tables -t mangle -A POSTROUTING -p udp --dport 42000:43000 -j DSCP --set-dscp 46
+
+# Allow Outbound P25 Ports
+ip6tables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #		P25 Networking
+ip6tables -t mangle -A POSTROUTING -p udp --dport 41000:41010 -j DSCP --set-dscp 46
+
+# Allow Outbound NXDNGateway Ports
+ip6tables -A OUTPUT -p udp --dport 41400 -j ACCEPT #			NXDN Outbound Connections
+ip6tables -t mangle -A POSTROUTING -p udp --dport 41400 -j DSCP --set-dscp 46
 
 # Allow Inbound D-Star Voice Ports
 ip6tables -A INPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Linking
@@ -290,9 +298,6 @@ ip6tables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gate
 
 # Allow Inbound P25 Gateway Ports
 ip6tables -A INPUT -p udp --sport 41000:41010 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
-
-# Allow Inbound NXDN Gateway Ports
-ip6tables -A INPUT -p udp --sport 14020 --dport 41400 -j ACCEPT #		NXDN Gateway Routing
 
 # Set up debug logging for incoming traffic.
 ip6tables -N LOGNDROP
