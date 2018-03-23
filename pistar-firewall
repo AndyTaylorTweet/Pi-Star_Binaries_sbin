@@ -145,6 +145,10 @@ iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gatew
 # Allow Inbound P25 Gateway Ports
 iptables -A INPUT -p udp --sport 41000:41010 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
 
+# Allow Inbound NXDN Gateway Ports
+iptables -A INPUT -p udp --sport 14020 --dport 41400 -j ACCEPT #		NXDN Gateway Routing
+
+
 # Set up debug logging for incoming traffic.
 iptables -N LOGNDROP
 iptables -A INPUT -j LOGNDROP
@@ -286,6 +290,9 @@ ip6tables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #		YSF Gate
 
 # Allow Inbound P25 Gateway Ports
 ip6tables -A INPUT -p udp --sport 41000:41010 --dport 32768:60999 -j ACCEPT #		P25 Gateway Routing
+
+# Allow Inbound NXDN Gateway Ports
+ip6tables -A INPUT -p udp --sport 14020 --dport 41400 -j ACCEPT #		NXDN Gateway Routing
 
 # Set up debug logging for incoming traffic.
 ip6tables -N LOGNDROP
