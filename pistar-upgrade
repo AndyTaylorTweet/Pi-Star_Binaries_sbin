@@ -364,24 +364,24 @@ main_function() {
 	#		mkdir -p /usr/local/etc/NXDN_Audio
 	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DE.indx
 	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DE.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DE.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DK.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DK.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DK.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DK.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_GB.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_GB.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_GB.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_GB.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_US.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_US.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_US.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_US.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_ES.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_ES.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_ES.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_ES.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_FR.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_FR.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_FR.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_FR.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_IT.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_IT.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_IT.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_IT.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_NO.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_NO.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_NO.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_NO.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_PL.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_PL.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_PL.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_PL.nxdn
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_SE.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_SE.indx
-	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_SE.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_SE.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/dk_DK.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/dk_DK.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/dk_DK.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/en_GB.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/en_GB.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/en_GB.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/en_US.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/en_US.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/en_US.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/es_ES.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/es_ES.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/es_ES.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/fr_FR.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/fr_FR.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/fr_FR.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/it_IT.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/it_IT.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/it_IT.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/no_NO.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/no_NO.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/no_NO.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/no_NO.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/pl_PL.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/pl_PL.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/pl_PL.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/se_SE.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/se_SE.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/se_SE.nxdn
 	#		# Update systemd and enable new services
 	#		systemctl daemon-reload
 	#		systemctl enable nxdngateway.timer
