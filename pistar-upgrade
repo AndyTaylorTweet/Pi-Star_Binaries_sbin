@@ -289,6 +289,7 @@ main_function() {
 	#		sed -i 's/3.4.10/3.4.11/g' /etc/pistar-release
         #        	sed -i 's/3.4.10/3.4.11/g' /etc/motd
 	#		curl --fail -o /etc/nxdngateway -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/NXDNGateway.ini
+	#		# NXDN Gateway Service
 	#		echo '[Unit]' > /lib/systemd/system/nxdngateway.service
 	#		echo 'Description=NXDN Servce' >> /lib/systemd/system/nxdngateway.service
 	#		echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/nxdngateway.service
@@ -301,11 +302,13 @@ main_function() {
 	#		echo '' >> /lib/systemd/system/nxdngateway.service
 	#		echo '[Install]' >> /lib/systemd/system/nxdngateway.service
 	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdngateway.service
+	#		# NXDN Gateway Timer
 	#		echo '[Timer]' > /lib/systemd/system/nxdngateway.timer
 	#		echo 'OnStartupSec=20' >> /lib/systemd/system/nxdngateway.timer
 	#		echo '' >> /lib/systemd/system/nxdngateway.timer
 	#		echo '[Install]' >> /lib/systemd/system/nxdngateway.timer
 	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdngateway.timer
+	#		# NXDN Parrot Service
 	#		echo '[Unit]' > /lib/systemd/system/nxdnparrot.service
 	#		echo 'Description=NXDN Parrot' >> /lib/systemd/system/nxdnparrot.service
 	#		echo 'After=syslog.target network.target nxdngateway.timer' >> /lib/systemd/system/nxdnparrot.service
@@ -318,11 +321,71 @@ main_function() {
 	#		echo '[Install]' > /lib/systemd/system/nxdnparrot.timer
 	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
 	#		echo '' >> /lib/systemd/system/nxdnparrot.timer
+	#		# NXDN Parrot Timer
 	#		echo '[Timer]' >> /lib/systemd/system/nxdnparrot.timer
 	#		echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
 	#		echo '' >> /lib/systemd/system/nxdnparrot.timer
 	#		echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
 	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
+	#		# NXDN Gateway Config
+	#		echo '[General]' > /etc/nxdngateway
+	#		echo 'Callsign=M1ABC' >> /etc/nxdngateway
+	#		echo 'RptAddress=127.0.0.1' >> /etc/nxdngateway
+	#		echo 'RptPort=14021' >> /etc/nxdngateway
+	#		echo 'LocalPort=14020' >> /etc/nxdngateway
+	#		echo 'Debug=0' >> /etc/nxdngateway
+	#		echo 'Daemon=1' >> /etc/nxdngateway
+	#		echo '' >> /etc/nxdngateway
+	#		echo '[Voice]' >> /etc/nxdngateway
+	#		echo 'Enabled=1' >> /etc/nxdngateway
+	#		echo 'Language=en_GB' >> /etc/nxdngateway
+	#		echo 'Directory=/usr/local/etc/NXDN_Audio' >> /etc/nxdngateway
+	#		echo '' >> /etc/nxdngateway
+	#		echo '[Id Lookup]' >> /etc/nxdngateway
+	#		echo 'Name=/usr/local/etc/NXDN.csv' >> /etc/nxdngateway
+	#		echo 'Time=24' >> /etc/nxdngateway
+	#		echo '' >> /etc/nxdngateway
+	#		echo '[Log]' >> /etc/nxdngateway
+	#		echo 'FilePath=/var/log/pi-star' >> /etc/nxdngateway
+	#		echo 'FileRoot=NXDNGateway' >> /etc/nxdngateway
+	#		echo '' >> /etc/nxdngateway
+	#		echo '[Network]' >> /etc/nxdngateway
+	#		echo 'Port=14050' >> /etc/nxdngateway
+	#		echo 'HostsFile1=/usr/local/etc/NXDNHosts.txt' >> /etc/nxdngateway
+	#		echo 'HostsFile2=/usr/local/etc/NXDNHostsLocal.txt' >> /etc/nxdngateway
+	#		echo 'ReloadTime=60' >> /etc/nxdngateway
+	#		echo 'ParrotAddress=127.0.0.1' >> /etc/nxdngateway
+	#		echo 'ParrotPort=42012' >> /etc/nxdngateway
+	#		echo 'Startup=10200' >> /etc/nxdngateway
+	#		echo 'Debug=0' >> /etc/nxdngateway
+	#		# Touch NXDNHostsLocal.txt
+	#		touch /usr/local/etc/NXDNHostsLocal.txt
+	#		# Download the voice files
+	#		mkdir -p /usr/local/etc/NXDN_Audio
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DE.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DE.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DE.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DK.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DK.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DK.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DK.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_GB.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_GB.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_GB.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_GB.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_US.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_US.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_US.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_US.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_ES.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_ES.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_ES.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_ES.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_FR.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_FR.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_FR.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_FR.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_IT.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_IT.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_IT.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_IT.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_NO.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_NO.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_NO.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_NO.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_PL.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_PL.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_PL.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_PL.nxdn
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_SE.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_SE.indx
+	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_SE.nxdn -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_SE.nxdn
+	#		# Update systemd and enable new services
+	#		systemctl daemon-reload
+	#		systemctl enable nxdngateway.timer
+	#		systemctl enable nxdnparrot.timer
 	#		Message="Upgraded from ${pistarCurVersion} to 3.4.12..."
 	#	else
 	#		Message="In-place upgrades from 3.4.4 are not supported..."
