@@ -113,9 +113,6 @@ if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt 
 	sed -i 's/Hosts=\/usr\/local\/etc\/P25Hosts.txt/HostsFile1=\/usr\/local\/etc\/P25Hosts.txt\nHostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 	sed -i 's/HostsFile2=\/root\/P25Hosts.txt/HostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 fi
-if [ -f "/root/P25Hosts.txt" ]; then
-	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
-fi
 
 # If there is an XLX over-ride
 if [ -f "/root/XLXHosts.txt" ]; then
