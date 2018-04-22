@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Remote Control                          #
 #                                                                             #
-#    Version 1.4, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #  This Python script is desiged to look for specific things in the logs for  #
 #       MMDVMHost and act on those to give RF control over the repeater.      #
@@ -60,6 +60,10 @@ if config.has_option('dmr', 'shutdown'):
 	dmrshutdown = config.get('dmr', 'shutdown')
 else:
 	dmrshutdown = str(999999999999)
+if config.has_option('dmr', 'hostfiles'):
+	dmrhostfiles = config.get('dmr', 'hostfiles')
+else:
+	dmrhostfiles = str(999999999999)
 
 # D-Star Control Options
 if config.has_option('d-star', 'svckill'):
@@ -78,6 +82,10 @@ if config.has_option('d-star', 'shutdown'):
 	dstarshutdown = config.get('d-star', 'shutdown')
 else:
 	dstarshutdown = str(999999999999)
+if config.has_option('d-star', 'hostfiles'):
+	dstarhostfiles = config.get('d-star', 'hostfiles')
+else:
+	dstarhostfiles = str(999999999999)
 if config.has_option('d-star', '8Ball'):
         dstar8ball = config.get('d-star', '8Ball')
 else:
@@ -101,6 +109,10 @@ if config.has_option('ysf', 'shutdown'):
 	ysfshutdown = config.get('ysf', 'shutdown')
 else:
 	ysfshutdown = str(999999999999)
+if config.has_option('ysf', 'hostfiles'):
+	ysfhostfiles = config.get('ysf', 'hostfiles')
+else:
+	ysfhostfiles = str(999999999999)
 
 # P25 Control Options
 if config.has_option('p25', 'svckill'):
@@ -119,6 +131,10 @@ if config.has_option('p25', 'shutdown'):
         p25shutdown = config.get('p25', 'shutdown')
 else:
         p25shutdown = str(999999999999)
+if config.has_option('p25', 'hostfiles'):
+        p25hostfiles = config.get('p25', 'hostfiles')
+else:
+        p25hostfiles = str(999999999999)
 
 # 8-Ball answers
 magic8ball = [
@@ -196,7 +212,13 @@ while True:
 				if str('received RF voice header from ' + keeperCall + ' to ' + dmrshutdown) in line:
 					# Shutdown the OS
 					os.system(r'shutdown -h now')
-					
+
+				# DMR Update Hostfiles
+				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
+				if str('received RF voice header from ' + keeperCall + ' to ' + dmrhostfiles) in line:
+					# Shutdown the OS
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
+
 				# P25 Stop MMDVMHost
                                 # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
                                 if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25stop) in line:
@@ -224,6 +246,12 @@ while True:
                                 if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25shutdown) in line:
                                         # Shutdown the OS
                                         os.system(r'shutdown -h now')
+
+				# P25 Update Hostfiles
+				# M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
+                                if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25hostfiles) in line:
+					# Shutdown the OS
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# D-Star Stop MMDVMHost
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -260,6 +288,14 @@ while True:
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
+
+				# D-Star Hostfiles Update
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarhostfiles) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# D-Star 8Ball
                                 # M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -312,6 +348,12 @@ while True:
 								if str('Trying to find non existent reflector') and str(ysfshutdown) in lineysf:
 									# Shutdown the OS
 									os.system(r'shutdown -h now')
+
+								# YSF Update the Hostfiles
+								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
+								if str('Trying to find non existent reflector') and str(ysfhostfiles) in lineysf:
+									# Shutdown the OS
+									os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 	
 		# This is the 30 second sleep before the next pass.
 		time.sleep(30)
@@ -374,6 +416,14 @@ while True:
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
+				
+				# D-Star Update the host files
+				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarhostfiles) in line:
+					# Kill the Services
+					os.system(r'texttransmit -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
+					time.sleep(5)
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# D-Star 8Ball
                                 # M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
