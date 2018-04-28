@@ -359,8 +359,6 @@ main_function() {
 	#		echo 'NXDN2DMRPort=42022' >> /etc/nxdngateway
 	#		echo 'Startup=65000' >> /etc/nxdngateway
 	#		echo 'Debug=0' >> /etc/nxdngateway
-	#		# Touch NXDNHostsLocal.txt
-	#		touch /usr/local/etc/NXDNHostsLocal.txt
 	#		# Download the voice files
 	#		mkdir -p /usr/local/etc/NXDN_Audio
 	#		curl --fail -o  /usr/local/etc/NXDN_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/NXDNClients/master/NXDNGateway/Audio/de_DE.indx
