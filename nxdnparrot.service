@@ -13,7 +13,7 @@
 # Service Config
 DAEMON=NXDNParrot
 DAEMON_PATH=/usr/local/bin/
-DAEMON_OPTS=42012
+DAEMON_OPTS=42021
 LOGDIR=/var/log/pi-star
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
