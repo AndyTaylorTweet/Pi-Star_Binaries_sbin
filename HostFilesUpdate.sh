@@ -117,6 +117,11 @@ if [ -f "/root/P25Hosts.txt" ]; then
 	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
 fi
 
+# Add custom NXDN Hosts
+if [ -f "/root/NXDNHosts.txt" ]; then
+	cat /root/NXDNHosts.txt >> /usr/local/etc/NXDNHosts.txt
+fi
+
 # If there is an XLX over-ride
 if [ -f "/root/XLXHosts.txt" ]; then
 	while IFS= read -r line; do
