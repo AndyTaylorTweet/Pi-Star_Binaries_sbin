@@ -351,11 +351,12 @@ main_function() {
 	#		echo '' >> /etc/nxdngateway
 	#		echo '[Network]' >> /etc/nxdngateway
 	#		echo 'Port=14050' >> /etc/nxdngateway
-	#		echo 'HostsFile1=/usr/local/etc/NXDNHosts.txt' >> /etc/nxdngateway
-	#		echo 'HostsFile2=/usr/local/etc/NXDNHostsLocal.txt' >> /etc/nxdngateway
+	#		echo 'HostsFile=/usr/local/etc/NXDNHosts.txt' >> /etc/nxdngateway
 	#		echo 'ReloadTime=60' >> /etc/nxdngateway
 	#		echo 'ParrotAddress=127.0.0.1' >> /etc/nxdngateway
-	#		echo 'ParrotPort=42012' >> /etc/nxdngateway
+	#		echo 'ParrotPort=42021' >> /etc/nxdngateway
+	#		echo 'NXDN2DMRAddress=127.0.0.1' >> /etc/nxdngateway
+	#		echo 'NXDN2DMRPort=42022' >> /etc/nxdngateway
 	#		echo 'Startup=65000' >> /etc/nxdngateway
 	#		echo 'Debug=0' >> /etc/nxdngateway
 	#		# Touch NXDNHostsLocal.txt
