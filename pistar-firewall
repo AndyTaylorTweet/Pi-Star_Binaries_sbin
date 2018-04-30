@@ -80,6 +80,10 @@ iptables -t mangle -A POSTROUTING -p udp --dport 62030 -j DSCP --set-dscp 46
 iptables -A OUTPUT -p udp --dport 42000:43000 -j ACCEPT #               YSF Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --dport 42000:43000 -j DSCP --set-dscp 46
 
+# Allow Outbound FCS Ports
+iptables -A OUTPUT -p udp --sport 42001 --dport 62500 -j ACCEPT #       FCS Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --sport 42001 --dport 62500 -j DSCP --set-dscp 46
+
 # Allow Outbound P25Gateway Ports
 iptables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #			P25 Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --dport 41000:41010 -j DSCP --set-dscp 46
@@ -278,6 +282,10 @@ ip6tables -t mangle -A POSTROUTING -p udp --dport 62030 -j DSCP --set-dscp 46
 # Allow Outbound YSF Ports
 ip6tables -A OUTPUT -p udp --dport 42000:43000 -j ACCEPT #		YSF Networking
 ip6tables -t mangle -A POSTROUTING -p udp --dport 42000:43000 -j DSCP --set-dscp 46
+
+# Allow Outbound FCS Ports
+ip6tables -A OUTPUT -p udp --sport 42001 --dport 62500 -j ACCEPT #       FCS Outbound Connections
+ip6tables -t mangle -A POSTROUTING -p udp --sport 42001 --dport 62500 -j DSCP --set-dscp 46
 
 # Allow Outbound P25 Ports
 ip6tables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #		P25 Networking
