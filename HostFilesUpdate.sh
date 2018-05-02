@@ -124,13 +124,16 @@ fi
 
 # If there is an XLX over-ride
 if [ -f "/root/XLXHosts.txt" ]; then
-	while IFS= read -r line; do
-		if [[ $line != \#* ]]
-		then
-			xlxid=`echo $line | awk -F  ";" '{print $1}'`
-			/bin/sed -i "/^$xlxid\;/c\\$line" /usr/local/etc/XLXHosts.txt
-		fi
-	done < /root/XLXHosts.txt
+        while IFS= read -r line; do
+                if [[ $line != \#* ]]
+                then
+                        xlxid=`echo $line | awk -F  ";" '{print $1}'`
+                        xlxroom=`echo $line | awk -F  ";" '{print $3}'`
+                        xlxip=`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt | awk -F  ";" '{print $2}'`
+                        xlxNewLine="${xlxid};${xlxip};${xlxroom}"
+                        /bin/sed -i "/^$xlxid\;/c\\$xlxNewLine" /usr/local/etc/XLXHosts.txt
+                fi
+        done < /root/XLXHosts.txt
 fi
 
 exit 0
