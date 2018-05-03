@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.20                      #
+#                     Version 2.25                      #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
