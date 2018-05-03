@@ -25,6 +25,7 @@ DMRHOSTS=/usr/local/etc/DMR_Hosts.txt
 DPlusHOSTS=/usr/local/etc/DPlus_Hosts.txt
 P25HOSTS=/usr/local/etc/P25Hosts.txt
 YSFHOSTS=/usr/local/etc/YSFHosts.txt
+FCSHOSTS=/usr/local/etc/FCSHosts.txt
 XLXHOSTS=/usr/local/etc/XLXHosts.txt
 NXDNIDFILE=/usr/local/etc/NXDN.csv
 NXDNHOSTS=/usr/local/etc/NXDNHosts.txt
@@ -49,6 +50,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${DPlusHOSTS} ${DPlusHOSTS}.$(date +%Y%m%d)
 	cp ${P25HOSTS} ${P25HOSTS}.$(date +%Y%m%d)
 	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d)
+	cp ${FCSHOSTS} ${FCSHOSTS}.$(date +%Y%m%d)
 	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d)
 	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d)
 	cp ${NXDNHOSTS} ${NXDNHOSTS}.$(date +%Y%m%d)
@@ -64,6 +66,7 @@ ${DMRHOSTS}
 ${DPlusHOSTS}
 ${P25HOSTS}
 ${YSFHOSTS}
+${FCSHOSTS}
 ${XLXHOSTS}
 ${NXDNIDFILE}
 ${NXDNHOSTS}
@@ -97,6 +100,7 @@ fi
 curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat
 curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
 curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
+curl --fail -o ${FCSHOSTS} -s http://www.pistar.uk/downloads/FCS_Hosts.txt
 #curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
 curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
 curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv
