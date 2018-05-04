@@ -129,7 +129,7 @@ fi
 # If there is an XLX over-ride
 if [ -f "/root/XLXHosts.txt" ]; then
         while IFS= read -r line; do
-                if [[ $line != \#* ]]
+                if [[ $line != \#* ]] && [[ $line = *";"* ]]
                 then
                         xlxid=`echo $line | awk -F  ";" '{print $1}'`
                         xlxroom=`echo $line | awk -F  ";" '{print $3}'`
