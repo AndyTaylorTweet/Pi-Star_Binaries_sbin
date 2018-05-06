@@ -40,7 +40,6 @@ if [ `sed -n '/\[P25 Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
 	else
 		exit 1;
 	fi
-
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
