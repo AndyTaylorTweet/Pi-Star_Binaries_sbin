@@ -33,7 +33,7 @@ test -r $CONFIG || exit 1
 if [ `sed -n '/\[NXDN Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
 	if [ `sed -n '/\[System Fusion\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
 		exit 1;
-	elif [ `sed -n '/\[enabled\]/{n;p;}' /etc/ysf2nxdn | cut -c 8` == 0 ]; then
+	elif [ -f '/etc/ysf2nxdn' ] && [ `sed -n '/\[enabled\]/{n;p;}' /etc/ysf2nxdn | cut -c 8` == 0 ]; then
 		exit 1;
 	fi
 	#exit 1;
