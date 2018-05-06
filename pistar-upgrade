@@ -200,7 +200,7 @@ main_function() {
 			# Restart SystemD and add the service
 			systemctl daemon-reload
 			systemctl enable ysf2dmr.timer
-		
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
@@ -210,17 +210,17 @@ main_function() {
 		if [ ! -z "${pistarHardware}" ]; then
 			sed -i 's/3.4.10/3.4.11/g' /etc/pistar-release
                 	sed -i 's/3.4.10/3.4.11/g' /etc/motd
-		
+
 			# Install the tools
 			apt-get update
 			apt-get install -y hostapd dnsmasq
 			systemctl daemon-reload
 			systemctl disable hostapd
 			systemctl disable dnsmasq
-		
+
 			# Setup the config(s)
 			echo 'DAEMON_CONF="/etc/hostapd/hostapd.conf"' >> /etc/default/hostapd
-		
+
 			echo 'interface=wlan0_ap' > /etc/hostapd/hostapd.conf
 			echo 'ssid=Pi-Star' >> /etc/hostapd/hostapd.conf
 			echo 'hw_mode=g' >> /etc/hostapd/hostapd.conf
@@ -233,7 +233,7 @@ main_function() {
 			echo 'wpa_key_mgmt=WPA-PSK' >> /etc/hostapd/hostapd.conf
 			echo 'wpa_pairwise=TKIP' >> /etc/hostapd/hostapd.conf
 			echo 'rsn_pairwise=CCMP' >> /etc/hostapd/hostapd.conf
-		
+
 			echo '' >> /etc/network/interfaces
 			echo 'iface wlan0_ap inet static' >> /etc/network/interfaces
 			echo '  hwaddress ether b8:27:eb:00:00:01' >> /etc/network/interfaces
@@ -241,7 +241,7 @@ main_function() {
 			echo '  netmask 255.255.255.0' >> /etc/network/interfaces
 			echo '  network 192.168.50.0' >> /etc/network/interfaces
 			echo '  broadcast 192.168.50.255' >> /etc/network/interfaces
-		
+
 			echo 'interface=lo,wlan0_ap' > /etc/dnsmasq.conf
 			echo 'server=208.67.222.123' >> /etc/dnsmasq.conf
 			echo 'server=208.67.220.123' >> /etc/dnsmasq.conf
@@ -252,7 +252,7 @@ main_function() {
 			echo 'dhcp-option=1,255.255.255.0' >> /etc/dnsmasq.conf
 			echo 'dhcp-option=3,192.168.50.1' >> /etc/dnsmasq.conf
 			echo 'dhcp-option=6,192.168.50.1' >> /etc/dnsmasq.conf
-		
+
 			# Add the Unit file(s)
 			echo '[Unit]' > /lib/systemd/system/pistar-ap.service
 			echo 'Description=Pi-Star HostAPD Service' >> /lib/systemd/system/pistar-ap.service
@@ -267,17 +267,17 @@ main_function() {
 			echo '' >> /lib/systemd/system/pistar-ap.service
 			echo '[Install]' >> /lib/systemd/system/pistar-ap.service
 			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.service
-		
+
 			echo '[Timer]' > /lib/systemd/system/pistar-ap.timer
 			echo 'OnStartupSec=120' >> /lib/systemd/system/pistar-ap.timer
 			echo '' >> /lib/systemd/system/pistar-ap.timer
 			echo '[Install]' >> /lib/systemd/system/pistar-ap.timer
 			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-ap.timer
-		
+
 			# Restart SystemD and add the service
 			systemctl daemon-reload
 			systemctl enable pistar-ap.timer
-		
+
 			# Report the update status
 			Message="Upgraded from ${pistarCurVersion} to 3.4.11..."
 		else
@@ -393,6 +393,7 @@ main_function() {
 		#if [ ! -z "${pistarHardware}" ]; then
 		#	sed -i 's/3.4.12/3.4.13/g' /etc/pistar-release
                 #	sed -i 's/3.4.12/3.4.13/g' /etc/motd
+
 		#	# YSF2NXDN Gateway Service
 		#	echo '[Unit]' > /lib/systemd/system/ysf2nxdn.service
 		#	echo 'Description=Pi-Star YSF2NXDN Service' >> /lib/systemd/system/ysf2nxdn.service
@@ -406,12 +407,14 @@ main_function() {
 		#	echo '[Install]' > /lib/systemd/system/ysf2nxdn.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
+
 		#	# YSF2NXDN Gateway Timer
 		#	echo '[Timer]' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
+
 		#	# YSF2P25 Gateway Service
 		#	echo '[Unit]' > /lib/systemd/system/ysf2p25.service
 		#	echo 'Description=Pi-Star YSF2P25 Service' >> /lib/systemd/system/ysf2p25.service
@@ -425,12 +428,14 @@ main_function() {
 		#	echo '[Install]' > /lib/systemd/system/ysf2p25.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
 		#	echo '' >> /lib/systemd/system/ysf2p25.timer
+
 		#	# YSF2P25 Gateway Timer
 		#	echo '[Timer]' >> /lib/systemd/system/ysf2p25.timer
 		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2p25.timer
 		#	echo '' >> /lib/systemd/system/ysf2p25.timer
 		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
+
 		#	# NXDN Parrot Service
 		#	echo '[Unit]' > /lib/systemd/system/nxdnparrot.service
 		#	echo 'Description=NXDN Parrot' >> /lib/systemd/system/nxdnparrot.service
@@ -444,19 +449,23 @@ main_function() {
 		#	echo '' >> /lib/systemd/system/nxdnparrot.service
 		#	echo '[Install]' >> /lib/systemd/system/nxdnparrot.service
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.service
+
 		#	# NXDN Parrot Timer
 		#	echo '[Timer]' > /lib/systemd/system/nxdnparrot.timer
 		#	echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
 		#	echo '' >> /lib/systemd/system/nxdnparrot.timer
 		#	echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
+
 		#	# Download configs
 		#	curl --fail -o  /etc/ysf2nxdn -s https://raw.githubusercontent.com/juribeparada/YSF2NXDN/master/YSF2NXDN.ini
 		#	curl --fail -o  /etc/ysf2p25 -s https://raw.githubusercontent.com/juribeparada/YSF2P25/master/YSF2P25.ini
+
 		#	# Update systemd and enable new services
 		#	systemctl daemon-reload
 		#	systemctl enable ysf2nxdn.timer
 		#	systemctl enable ysf2p25.timer
+
 		#	Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
