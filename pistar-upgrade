@@ -390,6 +390,38 @@ main_function() {
 		fi
 	;;
 	3.4.12)
+		#if [ ! -z "${pistarHardware}" ]; then
+		#	sed -i 's/3.4.12/3.4.13/g' /etc/pistar-release
+                #	sed -i 's/3.4.12/3.4.13/g' /etc/motd
+		#	# YSF2NXDN Gateway Service
+		#	echo '[Unit]' > /lib/systemd/system/ysf2nxdn.service
+		#	echo 'Description=Pi-Star YSF2NXDN Service' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo '' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo '[Service]' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo 'Type=forking' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo 'ExecStart=/usr/local/sbin/ysf2nxdn.service start' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo 'ExecStop=/usr/local/sbin/ysf2nxdn.service stop' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo 'ExecReload=/usr/local/sbin/ysf2nxdn.service restart' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo '[Install]' > /lib/systemd/system/ysf2nxdn.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
+		#	# YSF2NXDN Gateway Timer
+		#	echo '[Timer]' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer	
+		#	# Update systemd and enable new services
+		#	systemctl daemon-reload
+		#	systemctl enable ysf2nxdn.timer
+		#	Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
+		#else
+		#	Message="In-place upgrades from 3.4.4 are not supported..."
+		#fi
+		Message="You are already running the lastest version..."
+	;;
+	3.4.13)
 		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
