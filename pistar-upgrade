@@ -390,87 +390,86 @@ main_function() {
 		fi
 	;;
 	3.4.12)
-		#if [ ! -z "${pistarHardware}" ]; then
-		#	sed -i 's/3.4.12/3.4.13/g' /etc/pistar-release
-                #	sed -i 's/3.4.12/3.4.13/g' /etc/motd
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.12/3.4.13/g' /etc/pistar-release
+                	sed -i 's/3.4.12/3.4.13/g' /etc/motd
 
-		#	# YSF2NXDN Gateway Service
-		#	echo '[Unit]' > /lib/systemd/system/ysf2nxdn.service
-		#	echo 'Description=Pi-Star YSF2NXDN Service' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo '' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo '[Service]' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo 'Type=forking' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo 'ExecStart=/usr/local/sbin/ysf2nxdn.service start' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo 'ExecStop=/usr/local/sbin/ysf2nxdn.service stop' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo 'ExecReload=/usr/local/sbin/ysf2nxdn.service restart' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo '' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.service
+			# YSF2NXDN Gateway Service
+			echo '[Unit]' > /lib/systemd/system/ysf2nxdn.service
+			echo 'Description=Pi-Star YSF2NXDN Service' >> /lib/systemd/system/ysf2nxdn.service
+			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2nxdn.service
+			echo '' >> /lib/systemd/system/ysf2nxdn.service
+			echo '[Service]' >> /lib/systemd/system/ysf2nxdn.service
+			echo 'Type=forking' >> /lib/systemd/system/ysf2nxdn.service
+			echo 'ExecStart=/usr/local/sbin/ysf2nxdn.service start' >> /lib/systemd/system/ysf2nxdn.service
+			echo 'ExecStop=/usr/local/sbin/ysf2nxdn.service stop' >> /lib/systemd/system/ysf2nxdn.service
+			echo 'ExecReload=/usr/local/sbin/ysf2nxdn.service restart' >> /lib/systemd/system/ysf2nxdn.service
+			echo '' >> /lib/systemd/system/ysf2nxdn.service
+			echo '[Install]' >> /lib/systemd/system/ysf2nxdn.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.service
 
-		#	# YSF2NXDN Gateway Timer
-		#	echo '[Timer]' > /lib/systemd/system/ysf2nxdn.timer
-		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2nxdn.timer
-		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
-		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
+			# YSF2NXDN Gateway Timer
+			echo '[Timer]' > /lib/systemd/system/ysf2nxdn.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2nxdn.timer
+			echo '' >> /lib/systemd/system/ysf2nxdn.timer
+			echo '[Install]' >> /lib/systemd/system/ysf2nxdn.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
 
-		#	# YSF2P25 Gateway Service
-		#	echo '[Unit]' > /lib/systemd/system/ysf2p25.service
-		#	echo 'Description=Pi-Star YSF2P25 Service' >> /lib/systemd/system/ysf2p25.service
-		#	echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2p25.service
-		#	echo '' >> /lib/systemd/system/ysf2p25.service
-		#	echo '[Service]' >> /lib/systemd/system/ysf2p25.service
-		#	echo 'Type=forking' >> /lib/systemd/system/ysf2p25.service
-		#	echo 'ExecStart=/usr/local/sbin/ysf2p25.service start' >> /lib/systemd/system/ysf2p25.service
-		#	echo 'ExecStop=/usr/local/sbin/ysf2p25.service stop' >> /lib/systemd/system/ysf2p25.service
-		#	echo 'ExecReload=/usr/local/sbin/ysf2p25.service restart' >> /lib/systemd/system/ysf2p25.service
-		#	echo '' >> /lib/systemd/system/ysf2p25.service
-		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.service
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.service
+			# YSF2P25 Gateway Service
+			echo '[Unit]' > /lib/systemd/system/ysf2p25.service
+			echo 'Description=Pi-Star YSF2P25 Service' >> /lib/systemd/system/ysf2p25.service
+			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2p25.service
+			echo '' >> /lib/systemd/system/ysf2p25.service
+			echo '[Service]' >> /lib/systemd/system/ysf2p25.service
+			echo 'Type=forking' >> /lib/systemd/system/ysf2p25.service
+			echo 'ExecStart=/usr/local/sbin/ysf2p25.service start' >> /lib/systemd/system/ysf2p25.service
+			echo 'ExecStop=/usr/local/sbin/ysf2p25.service stop' >> /lib/systemd/system/ysf2p25.service
+			echo 'ExecReload=/usr/local/sbin/ysf2p25.service restart' >> /lib/systemd/system/ysf2p25.service
+			echo '' >> /lib/systemd/system/ysf2p25.service
+			echo '[Install]' >> /lib/systemd/system/ysf2p25.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.service
 
-		#	# YSF2P25 Gateway Timer
-		#	echo '[Timer]' > /lib/systemd/system/ysf2p25.timer
-		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2p25.timer
-		#	echo '' >> /lib/systemd/system/ysf2p25.timer
-		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
+			# YSF2P25 Gateway Timer
+			echo '[Timer]' > /lib/systemd/system/ysf2p25.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2p25.timer
+			echo '' >> /lib/systemd/system/ysf2p25.timer
+			echo '[Install]' >> /lib/systemd/system/ysf2p25.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
 
-		#	# NXDN Parrot Service
-		#	echo '[Unit]' > /lib/systemd/system/nxdnparrot.service
-		#	echo 'Description=NXDN Parrot' >> /lib/systemd/system/nxdnparrot.service
-		#	echo 'After=syslog.target network.target nxdngateway.timer' >> /lib/systemd/system/nxdnparrot.service
-		#	echo '' >> /lib/systemd/system/nxdnparrot.service
-		#	echo '[Service]' >> /lib/systemd/system/nxdnparrot.service
-		#	echo 'Type=forking' >> /lib/systemd/system/nxdnparrot.service
-		#	echo 'ExecStart=/usr/local/sbin/nxdnparrot.service start' >> /lib/systemd/system/nxdnparrot.service
-		#	echo 'ExecStop=/usr/local/sbin/nxdnparrot.service stop' >> /lib/systemd/system/nxdnparrot.service
-		#	echo 'ExecReload=/usr/local/sbin/nxdnparrot.service restart' >> /lib/systemd/system/nxdnparrot.service
-		#	echo '' >> /lib/systemd/system/nxdnparrot.service
-		#	echo '[Install]' >> /lib/systemd/system/nxdnparrot.service
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.service
+			# NXDN Parrot Service
+			echo '[Unit]' > /lib/systemd/system/nxdnparrot.service
+			echo 'Description=NXDN Parrot' >> /lib/systemd/system/nxdnparrot.service
+			echo 'After=syslog.target network.target nxdngateway.timer' >> /lib/systemd/system/nxdnparrot.service
+			echo '' >> /lib/systemd/system/nxdnparrot.service
+			echo '[Service]' >> /lib/systemd/system/nxdnparrot.service
+			echo 'Type=forking' >> /lib/systemd/system/nxdnparrot.service
+			echo 'ExecStart=/usr/local/sbin/nxdnparrot.service start' >> /lib/systemd/system/nxdnparrot.service
+			echo 'ExecStop=/usr/local/sbin/nxdnparrot.service stop' >> /lib/systemd/system/nxdnparrot.service
+			echo 'ExecReload=/usr/local/sbin/nxdnparrot.service restart' >> /lib/systemd/system/nxdnparrot.service
+			echo '' >> /lib/systemd/system/nxdnparrot.service
+			echo '[Install]' >> /lib/systemd/system/nxdnparrot.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.service
 
-		#	# NXDN Parrot Timer
-		#	echo '[Timer]' > /lib/systemd/system/nxdnparrot.timer
-		#	echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
-		#	echo '' >> /lib/systemd/system/nxdnparrot.timer
-		#	echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
+			# NXDN Parrot Timer
+			echo '[Timer]' > /lib/systemd/system/nxdnparrot.timer
+			echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
+			echo '' >> /lib/systemd/system/nxdnparrot.timer
+			echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
 
-		#	# Download configs
-		#	curl --fail -o /etc/ysf2nxdn -s https://raw.githubusercontent.com/juribeparada/YSF2NXDN/master/YSF2NXDN.ini
-		#	curl --fail -o /etc/ysf2p25 -s https://raw.githubusercontent.com/juribeparada/YSF2P25/master/YSF2P25.ini
+			# Download configs
+			curl --fail -o /etc/ysf2nxdn -s https://raw.githubusercontent.com/juribeparada/YSF2NXDN/master/YSF2NXDN.ini
+			curl --fail -o /etc/ysf2p25 -s https://raw.githubusercontent.com/juribeparada/YSF2P25/master/YSF2P25.ini
 
-		#	# Update systemd and enable new services
-		#	systemctl daemon-reload
-		#	systemctl enable ysf2nxdn.timer
-		#	systemctl enable ysf2p25.timer
+			# Update systemd and enable new services
+			systemctl daemon-reload
+			systemctl enable ysf2nxdn.timer
+			systemctl enable ysf2p25.timer
 
-		#	Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
-		#else
-		#	Message="In-place upgrades from 3.4.4 are not supported..."
-		#fi
-		Message="You are already running the lastest version..."
+			Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
 	;;
 	3.4.13)
 		Message="You are already running the lastest version..."
