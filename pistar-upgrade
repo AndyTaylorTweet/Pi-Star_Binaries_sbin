@@ -317,11 +317,11 @@ main_function() {
 			echo 'ExecStart=/usr/local/sbin/nxdnparrot.service start' >> /lib/systemd/system/nxdnparrot.service
 			echo 'ExecStop=/usr/local/sbin/nxdnparrot.service stop' >> /lib/systemd/system/nxdnparrot.service
 			echo 'ExecReload=/usr/local/sbin/nxdnparrot.service restart' >> /lib/systemd/system/nxdnparrot.service
-			echo '[Install]' > /lib/systemd/system/nxdnparrot.timer
-			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
-			echo '' >> /lib/systemd/system/nxdnparrot.timer
+			echo '' >> /lib/systemd/system/nxdnparrot.service
+			echo '[Install]' >> /lib/systemd/system/nxdnparrot.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.service
 			# NXDN Parrot Timer
-			echo '[Timer]' >> /lib/systemd/system/nxdnparrot.timer
+			echo '[Timer]' > /lib/systemd/system/nxdnparrot.timer
 			echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
 			echo '' >> /lib/systemd/system/nxdnparrot.timer
 			echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
@@ -431,6 +431,25 @@ main_function() {
 		#	echo '' >> /lib/systemd/system/ysf2p25.timer
 		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.timer
 		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
+		#	# NXDN Parrot Service
+		#	echo '[Unit]' > /lib/systemd/system/nxdnparrot.service
+		#	echo 'Description=NXDN Parrot' >> /lib/systemd/system/nxdnparrot.service
+		#	echo 'After=syslog.target network.target nxdngateway.timer' >> /lib/systemd/system/nxdnparrot.service
+		#	echo '' >> /lib/systemd/system/nxdnparrot.service
+		#	echo '[Service]' >> /lib/systemd/system/nxdnparrot.service
+		#	echo 'Type=forking' >> /lib/systemd/system/nxdnparrot.service
+		#	echo 'ExecStart=/usr/local/sbin/nxdnparrot.service start' >> /lib/systemd/system/nxdnparrot.service
+		#	echo 'ExecStop=/usr/local/sbin/nxdnparrot.service stop' >> /lib/systemd/system/nxdnparrot.service
+		#	echo 'ExecReload=/usr/local/sbin/nxdnparrot.service restart' >> /lib/systemd/system/nxdnparrot.service
+		#	echo '' >> /lib/systemd/system/nxdnparrot.service
+		#	echo '[Install]' >> /lib/systemd/system/nxdnparrot.service
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.service
+		#	# NXDN Parrot Timer
+		#	echo '[Timer]' > /lib/systemd/system/nxdnparrot.timer
+		#	echo 'OnStartupSec=25' >> /lib/systemd/system/nxdnparrot.timer
+		#	echo '' >> /lib/systemd/system/nxdnparrot.timer
+		#	echo '[Install]' >> /lib/systemd/system/nxdnparrot.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nxdnparrot.timer
 		#	# Download configs
 		#	curl --fail -o  /etc/ysf2nxdn -s https://raw.githubusercontent.com/juribeparada/YSF2NXDN/master/YSF2NXDN.ini
 		#	curl --fail -o  /etc/ysf2p25 -s https://raw.githubusercontent.com/juribeparada/YSF2P25/master/YSF2P25.ini
