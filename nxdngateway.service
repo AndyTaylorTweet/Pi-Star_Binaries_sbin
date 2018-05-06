@@ -31,7 +31,12 @@ test -r $CONFIG || exit 1
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
 if [ `sed -n '/\[NXDN Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	exit 1;
+	if [ `sed -n '/\[System Fusion\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
+		exit 1;
+	elif [ `sed -n '/\[enabled\]/{n;p;}' /etc/ysf2nxdn | cut -c 8` == 0 ]; then
+		exit 1;
+	fi
+	#exit 1;
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
