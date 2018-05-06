@@ -404,12 +404,12 @@ main_function() {
 		#	echo 'ExecStart=/usr/local/sbin/ysf2nxdn.service start' >> /lib/systemd/system/ysf2nxdn.service
 		#	echo 'ExecStop=/usr/local/sbin/ysf2nxdn.service stop' >> /lib/systemd/system/ysf2nxdn.service
 		#	echo 'ExecReload=/usr/local/sbin/ysf2nxdn.service restart' >> /lib/systemd/system/ysf2nxdn.service
-		#	echo '[Install]' > /lib/systemd/system/ysf2nxdn.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
-		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo '' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.service
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.service
 
 		#	# YSF2NXDN Gateway Timer
-		#	echo '[Timer]' >> /lib/systemd/system/ysf2nxdn.timer
+		#	echo '[Timer]' > /lib/systemd/system/ysf2nxdn.timer
 		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.timer
@@ -425,12 +425,12 @@ main_function() {
 		#	echo 'ExecStart=/usr/local/sbin/ysf2p25.service start' >> /lib/systemd/system/ysf2p25.service
 		#	echo 'ExecStop=/usr/local/sbin/ysf2p25.service stop' >> /lib/systemd/system/ysf2p25.service
 		#	echo 'ExecReload=/usr/local/sbin/ysf2p25.service restart' >> /lib/systemd/system/ysf2p25.service
-		#	echo '[Install]' > /lib/systemd/system/ysf2p25.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
-		#	echo '' >> /lib/systemd/system/ysf2p25.timer
+		#	echo '' >> /lib/systemd/system/ysf2p25.service
+		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.service
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.service
 
 		#	# YSF2P25 Gateway Timer
-		#	echo '[Timer]' >> /lib/systemd/system/ysf2p25.timer
+		#	echo '[Timer]' > /lib/systemd/system/ysf2p25.timer
 		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2p25.timer
 		#	echo '' >> /lib/systemd/system/ysf2p25.timer
 		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.timer
