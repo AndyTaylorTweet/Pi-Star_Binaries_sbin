@@ -411,10 +411,33 @@ main_function() {
 		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '' >> /lib/systemd/system/ysf2nxdn.timer
 		#	echo '[Install]' >> /lib/systemd/system/ysf2nxdn.timer
-		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer	
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2nxdn.timer
+		#	# YSF2P25 Gateway Service
+		#	echo '[Unit]' > /lib/systemd/system/ysf2p25.service
+		#	echo 'Description=Pi-Star YSF2P25 Service' >> /lib/systemd/system/ysf2p25.service
+		#	echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/ysf2p25.service
+		#	echo '' >> /lib/systemd/system/ysf2p25.service
+		#	echo '[Service]' >> /lib/systemd/system/ysf2p25.service
+		#	echo 'Type=forking' >> /lib/systemd/system/ysf2p25.service
+		#	echo 'ExecStart=/usr/local/sbin/ysf2p25.service start' >> /lib/systemd/system/ysf2p25.service
+		#	echo 'ExecStop=/usr/local/sbin/ysf2p25.service stop' >> /lib/systemd/system/ysf2p25.service
+		#	echo 'ExecReload=/usr/local/sbin/ysf2p25.service restart' >> /lib/systemd/system/ysf2p25.service
+		#	echo '[Install]' > /lib/systemd/system/ysf2p25.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
+		#	echo '' >> /lib/systemd/system/ysf2p25.timer
+		#	# YSF2P25 Gateway Timer
+		#	echo '[Timer]' >> /lib/systemd/system/ysf2p25.timer
+		#	echo 'OnStartupSec=20' >> /lib/systemd/system/ysf2p25.timer
+		#	echo '' >> /lib/systemd/system/ysf2p25.timer
+		#	echo '[Install]' >> /lib/systemd/system/ysf2p25.timer
+		#	echo 'WantedBy=multi-user.target' >> /lib/systemd/system/ysf2p25.timer
+		#	# Download configs
+		#	curl --fail -o  /etc/ysf2nxdn -s https://raw.githubusercontent.com/juribeparada/YSF2NXDN/master/YSF2NXDN.ini
+		#	curl --fail -o  /etc/ysf2p25 -s https://raw.githubusercontent.com/juribeparada/YSF2P25/master/YSF2P25.ini
 		#	# Update systemd and enable new services
 		#	systemctl daemon-reload
 		#	systemctl enable ysf2nxdn.timer
+		#	systemctl enable ysf2p25.timer
 		#	Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
 		#else
 		#	Message="In-place upgrades from 3.4.4 are not supported..."
