@@ -143,10 +143,10 @@ main_function() {
 			sed -i 's/3.4.7/3.4.8/g' /etc/pistar-release
                 	sed -i 's/3.4.7/3.4.8/g' /etc/motd
 			cd /tmp
-			curl --fail -O -s http://archive.raspbian.org/raspbian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2n-1_armhf.deb
+			curl --fail -O -s http://archive.raspbian.org/raspbian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2l-2+deb9u3_armhf.deb
 			curl --fail -O -s http://archive.raspbian.org/raspbian/pool/main/s/shellinabox/shellinabox_2.20_armhf.deb
-			dpkg -i /tmp/libssl1.0.2_1.0.2n-1_armhf.deb
-			rm /tmp/libssl1.0.2_1.0.2n-1_armhf.deb
+			dpkg -i /tmp/libssl1.0.2_1.0.2l-2+deb9u3_armhf.deb
+			rm /tmp/libssl1.0.2_1.0.2l-2+deb9u3_armhf.deb
 			if [ -z "$STY" ]; then exec screen -dm -S update dpkg -i /tmp/shellinabox_2.20_armhf.deb "$0"; fi
 			Message="Upgraded from ${pistarCurVersion} to 3.4.8..."
 		else
