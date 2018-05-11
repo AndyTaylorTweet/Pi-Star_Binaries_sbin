@@ -42,6 +42,10 @@ if [ `sed -n '/\[NXDN Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
 	fi
 fi
 
+if [`grep -c -E 'NXDN Network' /etc/mmdvmhost` == 0 ]; then
+	exit 1;
+fi
+
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
