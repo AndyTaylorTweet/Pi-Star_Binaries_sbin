@@ -80,7 +80,7 @@ ${TGLISTNXDN}"
 
 for file in ${FILES}
 do
-  BACKUPCOUNT=$(ls ${file}.* | wc -l)
+  BACKUPCOUNT=$(ls ${file}.* | wc -l 2>/dev/null)
   BACKUPSTODELETE=$(expr ${BACKUPCOUNT} - ${FILEBACKUP})
   if [ ${BACKUPCOUNT} -gt ${FILEBACKUP} ]; then
 	for f in $(ls -tr ${file}.* | head -${BACKUPSTODELETE})
