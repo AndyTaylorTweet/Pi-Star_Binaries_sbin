@@ -64,7 +64,7 @@ main_function() {
 	echo "Done"
 
 	echo "Updating Hostfiles..."
-	/usr/local/sbin/HostFilesUpdate.sh
+	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
 	echo "Done"
 
 	echo "Updating Dashboard..."
