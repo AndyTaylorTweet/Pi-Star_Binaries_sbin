@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.25                      #
+#                     Version 2.30                      #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -30,6 +30,8 @@ XLXHOSTS=/usr/local/etc/XLXHosts.txt
 NXDNIDFILE=/usr/local/etc/NXDN.csv
 NXDNHOSTS=/usr/local/etc/NXDNHosts.txt
 TGLISTBM=/usr/local/etc/TGList_BM.txt
+TGLISTP25=/usr/local/etc/TGList_P25.txt
+TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
 
 # How many backups
 FILEBACKUP=1
@@ -42,19 +44,21 @@ fi
 
 # Create backup of old files
 if [ ${FILEBACKUP} -ne 0 ]; then
-	cp ${APRSHOSTS} ${APRSHOSTS}.$(date +%Y%m%d)
-	cp ${DCSHOSTS} ${DCSHOSTS}.$(date +%Y%m%d)
-	cp ${DExtraHOSTS} ${DExtraHOSTS}.$(date +%Y%m%d)
-	cp ${DMRIDFILE} ${DMRIDFILE}.$(date +%Y%m%d)
-	cp ${DMRHOSTS} ${DMRHOSTS}.$(date +%Y%m%d)
-	cp ${DPlusHOSTS} ${DPlusHOSTS}.$(date +%Y%m%d)
-	cp ${P25HOSTS} ${P25HOSTS}.$(date +%Y%m%d)
-	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d)
-	cp ${FCSHOSTS} ${FCSHOSTS}.$(date +%Y%m%d)
-	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d)
-	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d)
-	cp ${NXDNHOSTS} ${NXDNHOSTS}.$(date +%Y%m%d)
-	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d)
+	cp ${APRSHOSTS} ${APRSHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DCSHOSTS} ${DCSHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DExtraHOSTS} ${DExtraHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DMRIDFILE} ${DMRIDFILE}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DMRHOSTS} ${DMRHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DPlusHOSTS} ${DPlusHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${P25HOSTS} ${P25HOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${FCSHOSTS} ${FCSHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d) 2>/dev/null
+	cp ${NXDNHOSTS} ${NXDNHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTP25} ${TGLISTP25}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d) 2>/dev/null
 fi
 
 # Prune backups
@@ -70,7 +74,9 @@ ${FCSHOSTS}
 ${XLXHOSTS}
 ${NXDNIDFILE}
 ${NXDNHOSTS}
-${TGLISTBM}"
+${TGLISTBM}
+${TGLISTP25}
+${TGLISTNXDN}"
 
 for file in ${FILES}
 do
@@ -106,6 +112,8 @@ curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
 curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv
 curl --fail -o ${NXDNHOSTS} -s http://www.pistar.uk/downloads/NXDN_Hosts.txt
 curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt
+curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt
+curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
