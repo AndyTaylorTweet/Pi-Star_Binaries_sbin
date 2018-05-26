@@ -42,8 +42,17 @@ if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |
 fi
 
 # Some cards cannot be in AP mode *AND* Managed mode at the same time
-if [ `grep -c -E '(rt2800usb |dhd )' /proc/modules` -gt "0" ]; then
+if [ `grep -c -E '(rt2800usb )' /proc/modules` -gt "0" ]; then
 	ifconfig wlan0 down
+	${SLEEP} 2
+fi
+
+# FriendlyArm Nano Pi Neo Air
+if [ `grep -c -E '(dhd )' /proc/modules` -gt "0" ]; then
+	ifconfig wlan0 down
+	rmmod dhd
+	modprobe dhd op_mode=2
+	ip link set wlan0 name wlan0_ap
 	${SLEEP} 2
 fi
 
