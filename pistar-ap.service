@@ -27,13 +27,15 @@ if [ -f "/etc/hostap.off" ]; then
 fi
 
 # Check that WLAN0 exists
-if [ ! -d "/sys/class/net/wlan0" ]; then
+if [ ! -d "/sys/class/net/wlan0" ] && [ ! -d "/sys/class/net/wlan0_ap" ]; then
 	exit 0
 fi
 
 # Check if the Wireless network is UP, and die if it IS
-if [ `cat /sys/class/net/wlan0/operstate` == "up" ]; then
-	exit 0
+if [ -d "/sys/class/net/wlan0" ]; then
+	if [ `cat /sys/class/net/wlan0/operstate` == "up" ]; then
+		exit 0
+	fi
 fi
 
 # Make sure we have a card that supports AP mode
@@ -49,11 +51,14 @@ fi
 
 # FriendlyArm Nano Pi Neo Air
 if [ `grep -c -E '(dhd )' /proc/modules` -gt "0" ]; then
-	ifconfig wlan0 down
-	rmmod dhd
-	modprobe dhd op_mode=2
-	ip link set wlan0 name wlan0_ap
-	${SLEEP} 2
+	if [ ! -d "/sys/class/net/wlan0_ap" ]; then
+		sed -i '/hwaddress ether b8:27:eb:00:00:01/d' /etc/network/interfaces
+		ifconfig wlan0 down
+		rmmod dhd
+		modprobe dhd op_mode=2
+		ip link set wlan0 name wlan0_ap
+		${SLEEP} 2
+	fi
 fi
 
 # Autofix DNSMASQ
