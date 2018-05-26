@@ -45,13 +45,24 @@ main_function() {
 	fi
 
 	echo "Stopping Services..."
+	systemctl stop pistar-watchdog.service > /dev/null 2>&1
+	systemctl stop pistar-remote.service > /dev/null 2>&1
 	systemctl stop dmrgateway.service > /dev/null 2>&1
-	systemctl stop mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
-	systemctl stop dstarrepeater.service > /dev/null 2>&1
 	systemctl stop ircddbgateway.service > /dev/null 2>&1
-	systemctl stop ysfgateway.service > /dev/null 2>&1
-	systemctl stop p25gateway.service > /dev/null 2>&1
 	systemctl stop timeserver.service > /dev/null 2>&1
+	systemctl stop ysfgateway.service > /dev/null 2>&1
+	systemctl stop ysf2dmr.service > /dev/null 2>&1
+	systemctl stop ysf2nxdn.service > /dev/null 2>&1
+	systemctl stop ysf2p25.service > /dev/null 2>&1
+	systemctl stop ysfparrot.service > /dev/null 2>&1
+	systemctl stop p25gateway.service > /dev/null 2>&1
+	systemctl stop p25parrot.service > /dev/null 2>&1
+	systemctl stop nxdngateway.service > /dev/null 2>&1
+	systemctl stop nxdn2dmr.service > /dev/null 2>&1
+	systemctl stop nxdnparrot.service > /dev/null 2>&1
+	systemctl stop dstarrepeater.service > /dev/null 2>&1
+	systemctl stop mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
+	
 	echo "Done"
 
 	echo "Updating DV Binaries..."
@@ -119,13 +130,22 @@ main_function() {
 
 	echo "Starting Services..."
 	systemctl start dmrgateway.service > /dev/null 2>&1
-	systemctl start dstarrepeater.service > /dev/null 2>&1
 	systemctl start ircddbgateway.service > /dev/null 2>&1
-	systemctl start ysfgateway.service > /dev/null 2>&1
-	systemctl start p25gateway.service > /dev/null 2>&1
 	systemctl start timeserver.service > /dev/null 2>&1
+	systemctl start ysfgateway.service > /dev/null 2>&1
+	systemctl start ysf2dmr.service > /dev/null 2>&1
+	systemctl start ysf2nxdn.service > /dev/null 2>&1
+	systemctl start ysf2p25.service > /dev/null 2>&1
+	systemctl start ysfparrot.service > /dev/null 2>&1
+	systemctl start p25gateway.service > /dev/null 2>&1
+	systemctl start p25parrot.service > /dev/null 2>&1
+	systemctl start nxdngateway.service > /dev/null 2>&1
+	systemctl start nxdn2dmr.service > /dev/null 2>&1
+	systemctl start nxdnparrot.service > /dev/null 2>&1
 	systemctl start dstarrepeater.service > /dev/null 2>&1
 	systemctl start mmdvmhost.service > /dev/null 2>&1
+	systemctl start pistar-watchdog.service > /dev/null 2>&1
+	systemctl start pistar-remote.service > /dev/null 2>&1
 	echo "Done"
 
 	echo "Updates complete, sleeping for a few seconds before making the disk Read-Only"
