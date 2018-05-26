@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.1                       #
+#                     Version 1.5                       #
 #                                                       #
 #########################################################
 
@@ -39,7 +39,7 @@ if [ -d "/sys/class/net/wlan0" ]; then
 fi
 
 # Make sure we have a card that supports AP mode
-if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw |dhd )' /proc/modules` -eq "0" ]; then
+if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw |dhd |xradio_wlan )' /proc/modules` -eq "0" ]; then
 	exit 0
 fi
 
@@ -52,6 +52,7 @@ fi
 # FriendlyArm Nano Pi Neo Air
 if [ `grep -c -E '(dhd )' /proc/modules` -gt "0" ]; then
 	if [ ! -d "/sys/class/net/wlan0_ap" ]; then
+		mount -o remount,rw /
 		sed -i '/hwaddress ether b8:27:eb:00:00:01/d' /etc/network/interfaces
 		ifconfig wlan0 down
 		rmmod dhd
@@ -61,11 +62,19 @@ if [ `grep -c -E '(dhd )' /proc/modules` -gt "0" ]; then
 	fi
 fi
 
+# Orange Pi Zero XRadio Fixes
+if [ `grep -c -E '(xradio_wlan )' /proc/modules` -gt "0" ]; then
+	if [ ! -d "/sys/class/net/wlan0_ap" ]; then
+		mount -o remount,rw /
+		sed -i '/hwaddress ether b8:27:eb:00:00:01/d' /etc/network/interfaces
+		${SLEEP} 2
+	fi
+fi
+
 # Autofix DNSMASQ
 if [ `grep -c -E 'DNSMASQ_EXCEPT' /etc/default/dnsmasq` -eq "0" ]; then
 	mount -o remount,rw /
 	echo "DNSMASQ_EXCEPT=lo" >> /etc/default/dnsmasq
-	mount -o remount,ro /
 fi
 
 case "$1" in
