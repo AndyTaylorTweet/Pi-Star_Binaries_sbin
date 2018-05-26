@@ -47,6 +47,13 @@ if [ `grep -c -E '(rt2800usb )' /proc/modules` -gt "0" ]; then
 	${SLEEP} 2
 fi
 
+# Autofix DNSMASQ
+if [ `grep -c -E 'DNSMASQ_EXCEPT' /etc/default/dnsmasq` -eq "0" ]; then
+	mount -o remount,rw /
+	echo "DNSMASQ_EXCEPT=lo" >> /etc/default/dnsmasq
+	mount -o remount,ro /
+fi
+
 case "$1" in
 	start)
 		mount -o remount,rw /
