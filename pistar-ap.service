@@ -39,12 +39,12 @@ if [ -d "/sys/class/net/wlan0" ]; then
 fi
 
 # Make sure we have a card that supports AP mode
-if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw |dhd |xradio_wlan )' /proc/modules` -eq "0" ]; then
+if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw |dhd |xradio_wlan |8188eu )' /proc/modules` -eq "0" ]; then
 	exit 0
 fi
 
 # Some cards cannot be in AP mode *AND* Managed mode at the same time
-if [ `grep -c -E '(rt2800usb )' /proc/modules` -gt "0" ]; then
+if [ `grep -c -E '(rt2800usb |8188eu )' /proc/modules` -gt "0" ]; then
 	ifconfig wlan0 down
 	${SLEEP} 2
 fi
