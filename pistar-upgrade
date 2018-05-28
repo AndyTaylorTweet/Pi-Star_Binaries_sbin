@@ -505,7 +505,7 @@ main_function() {
 	#		echo 'FileRoot=DMR2YSF' >> /etc/dmr2ysf
 	#		echo '' >> /etc/dmr2ysf
 	#		echo '[Enabled]' >> /etc/dmr2ysf
-	#		echo 'Enabled=1' >> /etc/dmr2ysf
+	#		echo 'Enabled=0' >> /etc/dmr2ysf
 	#
 	#		# DMR2YSF Gateway Service
 	#		echo '[Unit]' > /lib/systemd/system/dmr2ysf.service
