@@ -473,8 +473,8 @@ main_function() {
 	;;
 	3.4.13)
 	#	if [ ! -z "${pistarHardware}" ]; then
-	#		sed -i 's/3.4.12/3.4.13/g' /etc/pistar-release
-        #		sed -i 's/3.4.12/3.4.13/g' /etc/motd
+	#		sed -i 's/3.4.13/3.4.14/g' /etc/pistar-release
+        #		sed -i 's/3.4.13/3.4.14/g' /etc/motd
 	#
 	#		# DMR2YSF Gateway Config
 	#		echo '[YSF Network]' > /etc/dmr2ysf
@@ -532,7 +532,7 @@ main_function() {
 	#		systemctl daemon-reload
 	#		systemctl enable dmr2ysf.timer
 	#
-	#		Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
+	#		Message="Upgraded from ${pistarCurVersion} to 3.4.14..."
 	#	else
 	#		Message="In-place upgrades from 3.4.4 are not supported..."
 	#	fi
