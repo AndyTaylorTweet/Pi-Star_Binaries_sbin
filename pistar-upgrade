@@ -472,6 +472,73 @@ main_function() {
 		fi
 	;;
 	3.4.13)
+	#	if [ ! -z "${pistarHardware}" ]; then
+	#		sed -i 's/3.4.12/3.4.13/g' /etc/pistar-release
+        #		sed -i 's/3.4.12/3.4.13/g' /etc/motd
+	#
+	#		# DMR2YSF Gateway Config
+	#		echo '[YSF Network]' > /etc/dmr2ysf
+	#		echo 'Callsign=M1ABC' >> /etc/dmr2ysf
+	#		echo 'Suffix=ND' >> /etc/dmr2ysf
+	#		echo 'GatewayAddress=127.0.0.1' >> /etc/dmr2ysf
+	#		echo 'GatewayPort=4200' >> /etc/dmr2ysf
+	#		echo 'LocalAddress=127.0.0.1' >> /etc/dmr2ysf
+	#		echo 'LocalPort=3200' >> /etc/dmr2ysf
+	#		echo 'Daemon=1' >> /etc/dmr2ysf
+	#		echo '' >> /etc/dmr2ysf
+	#		echo '[DMR Network]' >> /etc/dmr2ysf
+	#		echo 'Id=1234567' >> /etc/dmr2ysf
+	#		echo 'RptAddress=127.0.0.1' >> /etc/dmr2ysf
+	#		echo 'RptPort=62034' >> /etc/dmr2ysf
+	#		echo 'LocalAddress=127.0.0.1' >> /etc/dmr2ysf
+	#		echo 'LocalPort=62033' >> /etc/dmr2ysf
+	#		echo 'Debug=0' >> /etc/dmr2ysf
+	#		echo '' >> /etc/dmr2ysf
+	#		echo '[DMR Id Lookup]' >> /etc/dmr2ysf
+	#		echo 'File=/usr/local/etc/DMRIds.dat' >> /etc/dmr2ysf
+	#		echo 'Time=24' >> /etc/dmr2ysf
+	#		echo '' >> /etc/dmr2ysf
+	#		echo '[Log]' >> /etc/dmr2ysf
+	#		echo 'DisplayLevel=0' >> /etc/dmr2ysf
+	#		echo 'FileLevel=2' >> /etc/dmr2ysf
+	#		echo 'FilePath=/var/log/pi-star' >> /etc/dmr2ysf
+	#		echo 'FileRoot=DMR2YSF' >> /etc/dmr2ysf
+	#		echo '' >> /etc/dmr2ysf
+	#		echo '[Enabled]' >> /etc/dmr2ysf
+	#		echo 'Enabled=1' >> /etc/dmr2ysf
+	#
+	#		# DMR2YSF Gateway Service
+	#		echo '[Unit]' > /lib/systemd/system/dmr2ysf.service
+	#		echo 'Description=Pi-Star DMR2YSF Service' >> /lib/systemd/system/dmr2ysf.service
+	#		echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dmr2ysf.service
+	#		echo '' >> /lib/systemd/system/dmr2ysf.service
+	#		echo '[Service]' >> /lib/systemd/system/dmr2ysf.service
+	#		echo 'Type=forking' >> /lib/systemd/system/dmr2ysf.service
+	#		echo 'ExecStart=/usr/local/sbin/dmr2ysf.service start' >> /lib/systemd/system/dmr2ysf.service
+	#		echo 'ExecStop=/usr/local/sbin/dmr2ysf.service stop' >> /lib/systemd/system/dmr2ysf.service
+	#		echo 'ExecReload=/usr/local/sbin/dmr2ysf.service restart' >> /lib/systemd/system/dmr2ysf.service
+	#		echo '' >> /lib/systemd/system/dmr2ysf.service
+	#		echo '[Install]' >> /lib/systemd/system/dmr2ysf.service
+	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dmr2ysf.service
+	#
+	#		# DMR2YSF Gateway Timer
+	#		echo '[Timer]' > /lib/systemd/system/dmr2ysf.timer
+	#		echo 'OnStartupSec=20' >> /lib/systemd/system/dmr2ysf.timer
+	#		echo '' >> /lib/systemd/system/dmr2ysf.timer
+	#		echo '[Install]' >> /lib/systemd/system/dmr2ysf.timer
+	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dmr2ysf.timer
+	#
+	#		# Update systemd and enable new services
+	#		systemctl daemon-reload
+	#		systemctl enable dmr2ysf.timer
+	#
+	#		Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
+	#	else
+	#		Message="In-place upgrades from 3.4.4 are not supported..."
+	#	fi
+		Message="You are already running the lastest version..."
+	;;
+	3.4.14)
 		Message="You are already running the lastest version..."
 	;;
 	3.5.0-Beta)
