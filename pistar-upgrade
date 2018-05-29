@@ -538,73 +538,72 @@ main_function() {
 		fi
 	;;
 	3.4.14)
-	#	if [ ! -z "${pistarHardware}" ]; then
-	#		sed -i 's/3.4.14/3.4.15/g' /etc/pistar-release
-        #		sed -i 's/3.4.14/3.4.15/g' /etc/motd
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.14/3.4.15/g' /etc/pistar-release
+        		sed -i 's/3.4.14/3.4.15/g' /etc/motd
 
-	#		# DMR2NXDN Gateway Config
-	#		echo '[NXDN Network]' > /etc/dmr2nxdn
-	#		echo 'GatewayAddress=127.0.0.1' >> /etc/dmr2nxdn
-	#		echo 'GatewayPort=14020' >> /etc/dmr2nxdn
-	#		echo 'LocalAddress=127.0.0.1' >> /etc/dmr2nxdn
-	#		echo 'LocalPort=14021' >> /etc/dmr2nxdn
-	#		echo 'Daemon=1' >> /etc/dmr2nxdn
-	#		echo '' >> /etc/dmr2nxdn
-	#		echo '[DMR Network]' >> /etc/dmr2nxdn
-	#		echo 'Id=1234567' >> /etc/dmr2nxdn
-	#		echo 'RptAddress=127.0.0.1' >> /etc/dmr2nxdn
-	#		echo 'RptPort=62036' >> /etc/dmr2nxdn
-	#		echo 'LocalAddress=127.0.0.1' >> /etc/dmr2nxdn
-	#		echo 'LocalPort=62035' >> /etc/dmr2nxdn
-	#		echo 'Debug=0' >> /etc/dmr2nxdn
-	#		echo '' >> /etc/dmr2nxdn
-	#		echo '[DMR Id Lookup]' >> /etc/dmr2nxdn
-	#		echo 'File=/usr/local/etc/DMRIds.dat' >> /etc/dmr2nxdn
-	#		echo 'Time=24' >> /etc/dmr2nxdn
-	#		echo '' >> /etc/dmr2nxdn
-	#		echo '[NXDN Id Lookup]' >> /etc/dmr2nxdn
-	#		echo 'File=/usr/local/etc/NXDN.csv' >> /etc/dmr2nxdn
-	#		echo 'Time=24' >> /etc/dmr2nxdn
-	#		echo '' >> /etc/dmr2nxdn
-	#		echo '[Log]' >> /etc/dmr2nxdn
-	#		echo 'DisplayLevel=0' >> /etc/dmr2nxdn
-	#		echo 'FileLevel=2' >> /etc/dmr2nxdn
-	#		echo 'FilePath=/var/log/pi-star' >> /etc/dmr2nxdn
-	#		echo 'FileRoot=DMR2NXDN' >> /etc/dmr2nxdn
-	#		echo '' >> /etc/dmr2nxdn
-	#		echo '[Enabled]' >> /etc/dmr2nxdn
-	#		echo 'Enabled=0' >> /etc/dmr2nxdn
+			# DMR2NXDN Gateway Config
+			echo '[NXDN Network]' > /etc/dmr2nxdn
+			echo 'GatewayAddress=127.0.0.1' >> /etc/dmr2nxdn
+			echo 'GatewayPort=14020' >> /etc/dmr2nxdn
+			echo 'LocalAddress=127.0.0.1' >> /etc/dmr2nxdn
+			echo 'LocalPort=14021' >> /etc/dmr2nxdn
+			echo 'Daemon=1' >> /etc/dmr2nxdn
+			echo '' >> /etc/dmr2nxdn
+			echo '[DMR Network]' >> /etc/dmr2nxdn
+			echo 'Id=1234567' >> /etc/dmr2nxdn
+			echo 'RptAddress=127.0.0.1' >> /etc/dmr2nxdn
+			echo 'RptPort=62036' >> /etc/dmr2nxdn
+			echo 'LocalAddress=127.0.0.1' >> /etc/dmr2nxdn
+			echo 'LocalPort=62035' >> /etc/dmr2nxdn
+			echo 'Debug=0' >> /etc/dmr2nxdn
+			echo '' >> /etc/dmr2nxdn
+			echo '[DMR Id Lookup]' >> /etc/dmr2nxdn
+			echo 'File=/usr/local/etc/DMRIds.dat' >> /etc/dmr2nxdn
+			echo 'Time=24' >> /etc/dmr2nxdn
+			echo '' >> /etc/dmr2nxdn
+			echo '[NXDN Id Lookup]' >> /etc/dmr2nxdn
+			echo 'File=/usr/local/etc/NXDN.csv' >> /etc/dmr2nxdn
+			echo 'Time=24' >> /etc/dmr2nxdn
+			echo '' >> /etc/dmr2nxdn
+			echo '[Log]' >> /etc/dmr2nxdn
+			echo 'DisplayLevel=0' >> /etc/dmr2nxdn
+			echo 'FileLevel=2' >> /etc/dmr2nxdn
+			echo 'FilePath=/var/log/pi-star' >> /etc/dmr2nxdn
+			echo 'FileRoot=DMR2NXDN' >> /etc/dmr2nxdn
+			echo '' >> /etc/dmr2nxdn
+			echo '[Enabled]' >> /etc/dmr2nxdn
+			echo 'Enabled=0' >> /etc/dmr2nxdn
 
-	#		# DMR2NXDN Gateway Service
-	#		echo '[Unit]' > /lib/systemd/system/dmr2nxdn.service
-	#		echo 'Description=Pi-Star DMR2NXDN Service' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo '' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo '[Service]' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo 'Type=forking' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo 'ExecStart=/usr/local/sbin/dmr2nxdn.service start' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo 'ExecStop=/usr/local/sbin/dmr2nxdn.service stop' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo 'ExecReload=/usr/local/sbin/dmr2nxdn.service restart' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo '' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo '[Install]' >> /lib/systemd/system/dmr2nxdn.service
-	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dmr2nxdn.service
+			# DMR2NXDN Gateway Service
+			echo '[Unit]' > /lib/systemd/system/dmr2nxdn.service
+			echo 'Description=Pi-Star DMR2NXDN Service' >> /lib/systemd/system/dmr2nxdn.service
+			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dmr2nxdn.service
+			echo '' >> /lib/systemd/system/dmr2nxdn.service
+			echo '[Service]' >> /lib/systemd/system/dmr2nxdn.service
+			echo 'Type=forking' >> /lib/systemd/system/dmr2nxdn.service
+			echo 'ExecStart=/usr/local/sbin/dmr2nxdn.service start' >> /lib/systemd/system/dmr2nxdn.service
+			echo 'ExecStop=/usr/local/sbin/dmr2nxdn.service stop' >> /lib/systemd/system/dmr2nxdn.service
+			echo 'ExecReload=/usr/local/sbin/dmr2nxdn.service restart' >> /lib/systemd/system/dmr2nxdn.service
+			echo '' >> /lib/systemd/system/dmr2nxdn.service
+			echo '[Install]' >> /lib/systemd/system/dmr2nxdn.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dmr2nxdn.service
 
-	#		# DMR2NXDN Gateway Timer
-	#		echo '[Timer]' > /lib/systemd/system/dmr2nxdn.timer
-	#		echo 'OnStartupSec=20' >> /lib/systemd/system/dmr2nxdn.timer
-	#		echo '' >> /lib/systemd/system/dmr2nxdn.timer
-	#		echo '[Install]' >> /lib/systemd/system/dmr2nxdn.timer
-	#		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dmr2nxdn.timer
+			# DMR2NXDN Gateway Timer
+			echo '[Timer]' > /lib/systemd/system/dmr2nxdn.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/dmr2nxdn.timer
+			echo '' >> /lib/systemd/system/dmr2nxdn.timer
+			echo '[Install]' >> /lib/systemd/system/dmr2nxdn.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dmr2nxdn.timer
 
-	#		# Update systemd and enable new services
-	#		systemctl daemon-reload
-	#		systemctl enable dmr2nxdn.timer
+			# Update systemd and enable new services
+			systemctl daemon-reload
+			systemctl enable dmr2nxdn.timer
 
-	#		Message="Upgraded from ${pistarCurVersion} to 3.4.15..."
-	#	else
-	#		Message="In-place upgrades from 3.4.4 are not supported..."
-	#	fi
-		Message="You are already running the lastest version..."
+			Message="Upgraded from ${pistarCurVersion} to 3.4.15..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
 	;;
 	3.4.15)
 		Message="You are already running the lastest version..."
