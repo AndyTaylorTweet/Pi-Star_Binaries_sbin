@@ -565,7 +565,7 @@ main_function() {
 	#		echo '[NXDN Id Lookup]' >> /etc/dmr2nxdn
 	#		echo 'File=/usr/local/etc/NXDN.csv' >> /etc/dmr2nxdn
 	#		echo 'Time=24' >> /etc/dmr2nxdn
-	#		echo '' >> /etc/dmr2nxdn	
+	#		echo '' >> /etc/dmr2nxdn
 	#		echo '[Log]' >> /etc/dmr2nxdn
 	#		echo 'DisplayLevel=0' >> /etc/dmr2nxdn
 	#		echo 'FileLevel=2' >> /etc/dmr2nxdn
