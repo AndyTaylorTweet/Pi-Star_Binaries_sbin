@@ -31,11 +31,7 @@ test -r $CONFIG || exit 1
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
 if [ `sed -n '/\[System Fusion Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/dmr2ysf | cut -c 9` == 1 ]; then
-		test=pass
-	else
-		exit 1;
-	fi
+	exit 1;
 fi
 
 if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/ysf2p25 | cut -c 9` != 1 ]; then
