@@ -110,7 +110,7 @@ while True: #Main loop
 			os.system('/bin/systemctl start p25parrot.service')
 			time.sleep(10) #Give the service time to start before we move on
 		checkprocp25parrot.wait()
-		
+
 		checkprocysf2dmr = subprocess.Popen('pgrep' + ' YSF2DMR', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocysf2dmr.stdout.readlines():
 			os.system('/bin/systemctl stop ysf2dmr.service')
@@ -118,6 +118,38 @@ while True: #Main loop
 			os.system('/bin/systemctl start ysf2dmr.service')
 			time.sleep(10) #Give the service time to start before we move on
 		checkprocysf2dmr.wait()
+
+		checkprocysf2nxdn = subprocess.Popen('pgrep' + ' YSF2NXDN', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocysf2nxdn.stdout.readlines():
+			os.system('/bin/systemctl stop ysf2nxdn.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start ysf2nxdn.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocysf2nxdn.wait()
+
+		checkprocysf2p25 = subprocess.Popen('pgrep' + ' YSF2P25', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocysf2p25.stdout.readlines():
+			os.system('/bin/systemctl stop ysf2p25.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start ysf2p25.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocysf2p25.wait()
+
+		checkprocdmr2ysf = subprocess.Popen('pgrep' + ' DMR2YSF', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocdmr2ysf.stdout.readlines():
+			os.system('/bin/systemctl stop dmr2ysf.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start dmr2ysf.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocdmr2ysf.wait()
+
+		checkprocdmr2nxdn = subprocess.Popen('pgrep' + ' DMR2NXDN', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocdmr2nxdn.stdout.readlines():
+			os.system('/bin/systemctl stop dmr2nxdn.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start dmr2nxdn.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocdmr2nxdn.wait()
 		
 	# Check the services that can be used by all systems
 	checkprocirc = subprocess.Popen('pgrep' + ' ircddbgatewayd', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
