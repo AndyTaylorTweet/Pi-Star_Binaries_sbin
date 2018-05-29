@@ -30,7 +30,13 @@ test -r $CONFIG || exit 1
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
 if [ `sed -n '/\[System Fusion Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	exit 1;
+	if [ -f '/etc/dmr2ysf' ] && [ `sed -n '/\[Enabled\]/{n;p;}' /etc/dmr2ysf | cut -c 9` == 0 ]; then
+		exit 1;
+	elif [ -f '/etc/dmr2ysf' ] && [ `sed -n '/\[Enabled\]/{n;p;}' /etc/dmr2ysf | cut -c 9` == 1 ]; then
+		test=pass
+	else
+		exit 1;
+	fi
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
