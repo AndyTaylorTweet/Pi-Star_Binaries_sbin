@@ -55,6 +55,8 @@ main_function() {
 	systemctl stop ysf2nxdn.service > /dev/null 2>&1
 	systemctl stop ysf2p25.service > /dev/null 2>&1
 	systemctl stop ysfparrot.service > /dev/null 2>&1
+	systemctl stop dmr2ysf.service > /dev/null 2>&1
+	systemctl stop dmr2nxdn.service > /dev/null 2>&1
 	systemctl stop p25gateway.service > /dev/null 2>&1
 	systemctl stop p25parrot.service > /dev/null 2>&1
 	systemctl stop nxdngateway.service > /dev/null 2>&1
@@ -137,6 +139,8 @@ main_function() {
 	systemctl start ysf2nxdn.service > /dev/null 2>&1
 	systemctl start ysf2p25.service > /dev/null 2>&1
 	systemctl start ysfparrot.service > /dev/null 2>&1
+	systemctl start dmr2ysf.service > /dev/null 2>&1
+	systemctl start dmr2nxdn.service > /dev/null 2>&1
 	systemctl start p25gateway.service > /dev/null 2>&1
 	systemctl start p25parrot.service > /dev/null 2>&1
 	systemctl start nxdngateway.service > /dev/null 2>&1
