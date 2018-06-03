@@ -86,10 +86,10 @@ if config.has_option('d-star', 'hostfiles'):
 	dstarhostfiles = config.get('d-star', 'hostfiles')
 else:
 	dstarhostfiles = str(999999999999)
-#if config.has_option('d-star', 'getip'):
-#	dstargetip = config.get('d-star', 'getip')
-#else:
-#	dstargetip = str(999999999999)
+if config.has_option('d-star', 'getip'):
+	dstargetip = config.get('d-star', 'getip')
+else:
+	dstargetip = str(999999999999)
 if config.has_option('d-star', '8Ball'):
         dstar8ball = config.get('d-star', '8Ball')
 else:
@@ -303,10 +303,10 @@ while True:
 
 				# D-Star Get the current IP
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
-				#if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
-				#	# Get the IP
-				#	myIP = os.popen('/bin/hostname -I').read()
-				#	os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
+					# Get the IP
+					myIP = os.popen('/bin/hostname -I').read()
+					os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
                                 # M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -438,10 +438,10 @@ while True:
 
 				# D-Star Get the current IP
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
-				#if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetip) in line:
-				#	# Get the IP
-				#	myIP = os.popen('/bin/hostname -I').read()
-				#	os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
+				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetip) in line:
+					# Get the IP
+					myIP = os.popen('/bin/hostname -I').read()
+					os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
                                 # M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
