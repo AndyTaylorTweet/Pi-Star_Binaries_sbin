@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Remote Control                          #
 #                                                                             #
-#    Version 1.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #  This Python script is desiged to look for specific things in the logs for  #
 #       MMDVMHost and act on those to give RF control over the repeater.      #
@@ -306,7 +306,7 @@ while True:
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
 					# Get the IP
 					myIP = os.popen('/bin/hostname -I').read()
-					os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
+					os.system(r'texttransmit -text "IP: ' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
                                 # M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
