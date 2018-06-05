@@ -141,9 +141,15 @@ if [ -f "/root/XLXHosts.txt" ]; then
                 then
                         xlxid=`echo $line | awk -F  ";" '{print $1}'`
                         xlxroom=`echo $line | awk -F  ";" '{print $3}'`
-                        xlxip=`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt | awk -F  ";" '{print $2}'`
+                        xlxip=`echo $line | awk -F  ";" '{print $2}'`
+                        [ -z "$xlxip" ] && xlxip=`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt | awk -F  ";" '{print $2}'`
+                        [ -z "$xlxip" ] && continue;
                         xlxNewLine="${xlxid};${xlxip};${xlxroom}"
-                        /bin/sed -i "/^$xlxid\;/c\\$xlxNewLine" /usr/local/etc/XLXHosts.txt
+                        if [ -z "`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt`" ]; then
+                                echo "$xlxNewLine" >> /usr/local/etc/XLXHosts.txt
+                        else
+                                /bin/sed -i "/^$xlxid\;/c\\$xlxNewLine" /usr/local/etc/XLXHosts.txt
+                        fi
                 fi
         done < /root/XLXHosts.txt
 fi
