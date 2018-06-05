@@ -95,6 +95,8 @@ iptables -A OUTPUT -p udp --dport 42400 -j ACCEPT #			NXDN Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --dport 42400 -j DSCP --set-dscp 46
 iptables -A OUTPUT -p udp --dport 41500 -j ACCEPT #			NXDN Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --dport 41500 -j DSCP --set-dscp 46
+iptables -A OUTPUT -p udp --sport 14050 -j ACCEPT #			NXDN Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 
 # Allow Inbound Services
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT #				SSH
@@ -300,6 +302,8 @@ ip6tables -A OUTPUT -p udp --dport 42400 -j ACCEPT #			NXDN Outbound Connections
 ip6tables -t mangle -A POSTROUTING -p udp --dport 42400 -j DSCP --set-dscp 46
 ip6tables -A OUTPUT -p udp --dport 41400 -j ACCEPT #			NXDN Outbound Connections
 ip6tables -t mangle -A POSTROUTING -p udp --dport 41400 -j DSCP --set-dscp 46
+ip6tables -A OUTPUT -p udp --sport 14050 -j ACCEPT #			NXDN Outbound Connections
+ip6tables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 
 # Allow Inbound D-Star Voice Ports
 ip6tables -A INPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Linking
