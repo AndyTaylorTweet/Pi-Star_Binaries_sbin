@@ -146,6 +146,7 @@ if [ -f "/root/XLXHosts.txt" ]; then
                         [ -z "$xlxip" ] && continue;
                         xlxNewLine="${xlxid};${xlxip};${xlxroom}"
                         if [ -z "`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt`" ]; then
+                                [ -s /usr/local/etc/XLXHosts.txt ] && [ "`tail -c1 /usr/local/etc/XLXHosts.txt | xxd -u -p`" != "0A" ] && echo >> /usr/local/etc/XLXHosts.txt
                                 echo "$xlxNewLine" >> /usr/local/etc/XLXHosts.txt
                         else
                                 /bin/sed -i "/^$xlxid\;/c\\$xlxNewLine" /usr/local/etc/XLXHosts.txt
