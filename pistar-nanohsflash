@@ -23,7 +23,7 @@ then
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
-  echo "To flash an Nano HS board conected to GPIO, run:        pistar-nanohsflash nano_hs"
+  echo "To flash an Nano HS board connected to GPIO, run:        pistar-nanohsflash nano_hs"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
   echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
