@@ -19,7 +19,7 @@ PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 USER=root
-GROUP=root
+GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 ipVar=`hostname -I | cut -d' ' -f1`
 
