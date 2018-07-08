@@ -48,6 +48,7 @@ main_function() {
 	systemctl stop pistar-watchdog.service > /dev/null 2>&1
 	systemctl stop pistar-remote.service > /dev/null 2>&1
 	systemctl stop dmrgateway.service > /dev/null 2>&1
+	systemctl stop dapnetgateway.service > /dev/null 2>&1
 	systemctl stop ircddbgateway.service > /dev/null 2>&1
 	systemctl stop timeserver.service > /dev/null 2>&1
 	systemctl stop ysfgateway.service > /dev/null 2>&1
@@ -148,6 +149,7 @@ main_function() {
 	systemctl start nxdnparrot.service > /dev/null 2>&1
 	systemctl start dstarrepeater.service > /dev/null 2>&1
 	systemctl start mmdvmhost.service > /dev/null 2>&1
+	systemctl start dapnetgateway.service > /dev/null 2>&1
 	systemctl start pistar-watchdog.service > /dev/null 2>&1
 	systemctl start pistar-remote.service > /dev/null 2>&1
 	echo "Done"
