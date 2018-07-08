@@ -637,6 +637,10 @@ main_function() {
 			echo '[Install]' >> /lib/systemd/system/dapnetgateway.timer
 			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dapnetgateway.timer
 
+			# Update systemd and enable new services
+			systemctl daemon-reload
+			systemctl enable dapnetgateway.timer
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.16..."
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
