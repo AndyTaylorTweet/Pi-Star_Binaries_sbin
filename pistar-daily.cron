@@ -11,6 +11,7 @@ systemctl stop mmdvmhost.service > /dev/null 2>&1
 systemctl stop dstarrepeater.service > /dev/null 2>&1
 sleep 2
 systemctl stop ircddbgateway.service > /dev/null 2>&1
+systemctl stop dapnetgateway.service > /dev/null 2>&1
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
 systemctl stop nxdngateway.service > /dev/null 2>&1
@@ -82,6 +83,7 @@ fi
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
+systemctl start dapnetgateway.service > /dev/null 2>&1
 systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
 systemctl start nxdngateway.service > /dev/null 2>&1
