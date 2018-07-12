@@ -32,7 +32,7 @@ then
   echo "   https://www.df2et.de/mmdvm_hs_builder/"
   echo ""
   echo "Use this script and the generated firmware at your own risk!"
-  echo "Usage: ${0} <firmware.bin>"
+  echo "Usage: $(basename ${0}) <firmware.bin>"
   echo ""
   exit 0
 fi
