@@ -36,7 +36,7 @@ fi
 #
 # OK we know what the modem is, let get the firmware string from the log...
 #
-tac /var/log/pi-star/MMDVM-*.log | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
+tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
 read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
 echo ""
 #
