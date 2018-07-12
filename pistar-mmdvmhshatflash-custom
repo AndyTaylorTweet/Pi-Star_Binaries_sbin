@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                   Pi-Star Custom Firmware Update Tool                       #
+#                                                                             #
+#   Version 0.1, Code, Design and Development by Florian Wolters DF2ET).      #
+#                  Based on work by Andy Taylor (MW0MZW)                      #
+#                                                                             #
+#                 Make it simple to update the Firmware                       #
+#                                                                             #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+#
+# Output some usefull information when no variables are passed
+#
+if [ -z "$1" ]
+then
+  echo "This tool is used to flash a custom made firmware to your MMDVM_HS Hat Modem"
+  echo ""
+  echo "Pre-built nightly firmware configured from the templates can be downloaded from:"
+  echo ""
+  echo "   https://www.df2et.de/mmdvm_hs/"
+  echo ""
+  echo "And there is also a firmware builder tool that can be used to build a fully customizable version of the firmware. It is available at:"
+  echo ""
+  echo "   https://www.df2et.de/mmdvm_hs_builder/"
+  echo ""
+  echo "Use this script and the generated firmware at your own risk!"
+  echo "Usage: ${0} <firmware.bin>"
+  exit 0
+fi
+#
+# OK we know what the modem is, let get the firmware string from the log...
+#
+tac /var/log/pi-star/MMDVM-*.log | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
+read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
+echo ""
+#
+# Download the correct firmware
+#
+if [ "$1" ]
+then
+  if [ ! -e "$1" ]; then
+     echo "Firmware file $1 not found! Aborting."
+  fi
+fi
+exit 0
