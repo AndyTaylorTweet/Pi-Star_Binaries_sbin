@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                         Pi-Star DAPNET API Tool                            #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#       Helpfull input from Florian Wolters (DF2FET) - Thank you Flo.        #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Get the stored DAPNET API Config
+DAPNETAPIFile=/etc/dapnetapi.key
+if [ -f ${DAPNETAPIFile} ]; then
+        USER=$(grep -m 1 'USER=' ${DAPNETAPIFile} | awk -F "=" '/USER/ {print $2}')
+        PASS=$(grep -m 1 'PASS=' ${DAPNETAPIFile} | awk -F "=" '/PASS/ {print $2}')
+        TRXAREA=$(grep -m 1 'TRXAREA=' ${DAPNETAPIFile} | awk -F "=" '/TRXAREA/ {print $2}')
+else
+        echo "Unable to find your DAPNET API Info, no API commands available."
+        exit 0
+fi
+
+if [ -z "$2" ]
+then
+        echo ""
+        echo "To use this script, call the script with some arguments;"
+        echo "Example:"
+        echo "pistar-dapnetapi M1ABC \"Test Message\""
+        echo "The above command will send a page containing \"Text Message\" to MW0MWZ"
+        echo ""
+        echo "For additional feedback add the \"debug\" option:"
+        echo "pistar-dapnetapi M1ABC \"Test Message\" debug"
+        echo ""
+        exit 0
+fi
+
+# Setup some variables
+APIURL="https://hampager.de/api"
+RECIPIENT="${1}"
+TEXT="${2}"
+HOST=$(hostname)
+
+# Debug option
+if [ "$3" = "debug" ]
+then
+        echo " Request to DAPNET API: {"
+        echo "  \"text\": \"${HOST^^}: ${TEXT}\","
+        echo "  \"callSignNames\": ["
+        echo "    \"${RECIPIENT}\""
+        echo "  ],"
+        echo "  \"transmitterGroupNames\": ["
+        echo "    \"${TRXAREA}\""
+        echo "  ],"
+        echo "  \"emergency\": false"
+        echo "}"
+        echo ""
+        echo ""
+fi
+
+# Speak to DAPNET
+RESULT=$(curl -s -H "Content-Type: application/json" -X POST -u ${USER}:${PASS} -d \
+        "{ \"text\": \"${HOST^^}: ${TEXT}\", \"callSignNames\": [\"${RECIPIENT}\"], \"transmitterGroupNames\": [\"${TRXAREA}\"], \"emergency\": false }" \
+        ${APIURL}/calls )
+
+# Debug option
+if [ "$3" = "debug" ]
+then
+        echo "Answer from DAPNET API: ${RESULT}"
+        echo ""
+        echo ""
+fi
+
+# Exit Clean
+exit 0
