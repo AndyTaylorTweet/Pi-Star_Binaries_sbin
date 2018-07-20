@@ -23,17 +23,14 @@ then
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
-  echo "To flash a ZUMSpot connected to GPIO, run:         pistar-zumspotflash rpi"
-  echo "To flash a ZUMSpot duplex connected to GPIO, run:  pistar-zumspotflash rpi_duplex"
-  echo "To flash a ZUMSpot USB Key, run:                  pistar-zumspotflash usb"
-  echo "To flash a USB Connected Libre Modem, run:        pistar-zumspotflash libre"
+  echo "To flash a NANO_DV connected to GPIO by BG4TGO, run:    pistar-nanodvflash pi"
+  echo "To flash a NANO_DV connected to USB by BG4TGO, run:     pistar-nanodvflash usb"
   echo ""
+  echo "To flash ZUMSpot devices please use pistar-zumspotflash"
   echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
   echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
   echo ""
-  echo "To flash a NANO_DV connected to GPIO by BG4TGO, run:    pistar-nanodvflash pi"
-  echo "To flash a NANO_DV connected to USB by BG4TGO, run:     pistar-nanodvflash usb"
   exit 0
 fi
 #
