@@ -53,7 +53,7 @@ then
     rm -rf /tmp/nanodvfirmware 2> /dev/null
     mkdir /tmp/nanodvfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanodv.sh' | wget --base=http://github.com/ -i - -O /tmp/nanodvfirmware/flash.sh
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanodv_npi.sh' | wget --base=http://github.com/ -i - -O /tmp/nanodvfirmware/flash.sh
     chmod +x /tmp/nanodvfirmware/flash.sh
     cd  /tmp/nanodvfirmware
     ./flash.sh
