@@ -42,8 +42,11 @@ fi
 # Setup some variables
 APIURL="https://hampager.de/api"
 RECIPIENT="${1}"
-TEXT="${2}"
 HOST=$(hostname)
+SIZEHOST=${#HOST}
+SIZEMESSAGE=$(expr 78 - ${SIZEHOST})
+TEXT="$(echo ${2} | cut -c 1-${SIZEMESSAGE})"
+
 
 # Debug option
 if [ "$3" = "debug" ]
