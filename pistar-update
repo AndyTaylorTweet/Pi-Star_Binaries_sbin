@@ -108,7 +108,7 @@ main_function() {
 	fi
 	
 	# Fix up new NXDNGateway Config Hostfile setup
-	if [[ $(/usr/local/bin/ NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
+	if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
 		sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
 	fi
 	if [ ! -f /root/NXDNHosts.txt ]; then
