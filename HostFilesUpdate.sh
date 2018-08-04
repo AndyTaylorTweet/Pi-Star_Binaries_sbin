@@ -135,7 +135,7 @@ fi
 
 # Add custom NXDN Hosts
 if [ -f "/root/NXDNHosts.txt" ]; then
-	cat /root/NXDNHosts.txt >> /usr/local/etc/NXDNHosts.txt
+	cat /root/NXDNHosts.txt > /usr/local/etc/NXDNHostsLocal.txt
 fi
 
 # If there is an XLX over-ride
