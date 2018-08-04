@@ -133,6 +133,17 @@ if [ -f "/root/P25Hosts.txt" ]; then
 	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
 fi
 
+# Fix up new NXDNGateway Config Hostfile setup
+if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
+	sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
+fi
+if [ ! -f /root/NXDNHosts.txt ]; then
+	touch /root/NXDNHosts.txt
+fi
+if [ ! -f /usr/local/etc/NXDNHostsLocal.txt ]; then
+	touch /usr/local/etc/NXDNHostsLocal.txt
+fi
+
 # Add custom NXDN Hosts
 if [ -f "/root/NXDNHosts.txt" ]; then
 	cat /root/NXDNHosts.txt > /usr/local/etc/NXDNHostsLocal.txt
