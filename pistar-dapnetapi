@@ -4,7 +4,7 @@
 #                                                                            #
 #                         Pi-Star DAPNET API Tool                            #
 #                                                                            #
-#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#     Version 2.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
 #       Helpfull input from Florian Wolters (DF2FET) - Thank you Flo.        #
 #                                                                            #
 ##############################################################################
@@ -43,40 +43,82 @@ fi
 APIURL="https://hampager.de/api"
 RECIPIENT="${1}"
 HOST=$(hostname)
+MESSAGE=${2}
 SIZEHOST=${#HOST}
 SIZEMESSAGE=$(expr 78 - ${SIZEHOST})
-TEXT="$(echo ${2} | cut -c 1-${SIZEMESSAGE})"
+SIZETEXT=${#MESSAGE}
+NUMMESSAGES=$(expr ${SIZETEXT} / ${SIZEMESSAGE})
+
+send_page () {
+	# Set the variables for the function
+	TEXT="${1}"
+
+	# Debug option
+	if [ "$2" = "debug" ]
+	then
+	        echo " Request to DAPNET API: {"
+	        echo "  \"text\": \"${HOST^^}: ${TEXT}\","
+	        echo "  \"callSignNames\": ["
+	        echo "    \"${RECIPIENT}\""
+	        echo "  ],"
+	        echo "  \"transmitterGroupNames\": ["
+	        echo "    \"${TRXAREA}\""
+	        echo "  ],"
+	        echo "  \"emergency\": false"
+	        echo "}"
+	        echo ""
+	        echo ""
+	fi
+
+	# Speak to DAPNET
+	RESULT=$(curl -s -H "Content-Type: application/json" -X POST -u ${USER}:${PASS} -d \
+	        "{ \"text\": \"${HOST^^}: ${TEXT}\", \"callSignNames\": [\"${RECIPIENT}\"], \"transmitterGroupNames\": [\"${TRXAREA}\"], \"emergency\": false }" \
+	        ${APIURL}/calls )
+
+	# Debug option
+	if [ "$2" = "debug" ]
+	then
+	        echo "Answer from DAPNET API: ${RESULT}"
+	        echo ""
+	        echo ""
+	fi
+}
 
 
-# Debug option
-if [ "$3" = "debug" ]
-then
-        echo " Request to DAPNET API: {"
-        echo "  \"text\": \"${HOST^^}: ${TEXT}\","
-        echo "  \"callSignNames\": ["
-        echo "    \"${RECIPIENT}\""
-        echo "  ],"
-        echo "  \"transmitterGroupNames\": ["
-        echo "    \"${TRXAREA}\""
-        echo "  ],"
-        echo "  \"emergency\": false"
-        echo "}"
-        echo ""
-        echo ""
+if [ "${NUMMESSAGES}" -gt "0" ]; then
+	# OK now I know I need to split the message, now I need to know now many I need.
+	SIZEMESSAGESPLIT=$(expr 73 - ${SIZEHOST})
+	NUMMESSAGESSPLIT=$(expr ${SIZETEXT} / ${SIZEMESSAGESPLIT} + 1)
+
+	# Limit output to 5 concurrent messages
+	if [ "${NUMMESSAGESSPLIT}" -ge "6" ]; then
+		NUMMESSAGESSPLIT=5
+	fi
+
+	# Now I need to split the message into ${NUMMESSAGESSPLIT} chunks
+	COUNTER=1
+	while [ ${COUNTER} -le ${NUMMESSAGESSPLIT} ]; do
+		TXTSTART=$(expr ${SIZEMESSAGESPLIT} \* ${COUNTER} - ${SIZEMESSAGESPLIT})
+		TXTPRE="${COUNTER}/${NUMMESSAGESSPLIT}"
+		TXTCHUNK=${MESSAGE:$TXTSTART:$SIZEMESSAGESPLIT}
+		TXTMESSAGE=${TXTPRE}" "${TXTCHUNK}
+
+		if [ "$3" = "debug" ]; then
+			send_page "${TXTMESSAGE}" debug
+		else
+			send_page "${TXTMESSAGE}"
+		fi
+		let COUNTER=COUNTER+1
+	done
+else
+	# Messge does not need to be split
+	if [ "$3" = "debug" ]; then
+		send_page "${MESSAGE}" debug
+	else
+		send_page "${MESSAGE}"
+	fi
 fi
 
-# Speak to DAPNET
-RESULT=$(curl -s -H "Content-Type: application/json" -X POST -u ${USER}:${PASS} -d \
-        "{ \"text\": \"${HOST^^}: ${TEXT}\", \"callSignNames\": [\"${RECIPIENT}\"], \"transmitterGroupNames\": [\"${TRXAREA}\"], \"emergency\": false }" \
-        ${APIURL}/calls )
-
-# Debug option
-if [ "$3" = "debug" ]
-then
-        echo "Answer from DAPNET API: ${RESULT}"
-        echo ""
-        echo ""
-fi
 
 # Exit Clean
 exit 0
