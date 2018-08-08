@@ -35,6 +35,8 @@ then
         echo ""
         echo "For additional feedback add the \"debug\" option:"
         echo "pistar-dapnetapi M1ABC \"Test Message\" debug"
+	echo "Suppress the hostname with the \"nohost\" option:"
+        echo "pistar-dapnetapi M1ABC \"Test Message\" nohost"
         echo ""
         exit 0
 fi
