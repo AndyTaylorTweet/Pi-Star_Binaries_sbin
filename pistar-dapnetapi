@@ -27,18 +27,18 @@ fi
 
 if [ -z "$2" ]
 then
-        echo ""
-        echo "To use this script, call the script with some arguments;"
-        echo "Example:"
-        echo "pistar-dapnetapi M1ABC \"Test Message\""
-        echo "The above command will send a page containing \"Text Message\" to MW0MWZ"
-        echo ""
-        echo "For additional feedback add the \"debug\" option:"
-        echo "pistar-dapnetapi M1ABC \"Test Message\" debug"
+	echo ""
+	echo "To use this script, call the script with some arguments;"
+	echo "Example:"
+	echo "pistar-dapnetapi M1ABC \"Test Message\""
+	echo "The above command will send a page containing \"Text Message\" to MW0MWZ"
+	echo ""
+	echo "For additional feedback add the \"debug\" option:"
+	echo "pistar-dapnetapi M1ABC \"Test Message\" debug"
 	echo "Suppress the hostname with the \"nohost\" option:"
-        echo "pistar-dapnetapi M1ABC \"Test Message\" nohost"
-        echo ""
-        exit 0
+	echo "pistar-dapnetapi M1ABC \"Test Message\" nohost"
+	echo ""
+	exit 0
 fi
 
 # Check some options
