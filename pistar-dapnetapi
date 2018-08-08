@@ -39,10 +39,22 @@ then
         exit 0
 fi
 
+# Check some options
+if [ "${3^^}" = "DEBUG" ] || [ "${4^^}" = "DEBUG" ]; then
+	DEBUG="1"
+else
+	DEBUG="0"
+fi
+
+if [ "${3^^}" = "NOHOST" ] || [ "${4^^}" = "NOHOST" ]; then
+	HOST=${USER^^}
+else
+	HOST=$(hostname)
+fi
+
 # Setup some variables
 APIURL="https://hampager.de/api"
 RECIPIENT="${1}"
-HOST=$(hostname)
 MESSAGE=${2}
 SIZEHOST=${#HOST}
 SIZEMESSAGE=$(expr 78 - ${SIZEHOST})
@@ -54,8 +66,7 @@ send_page () {
 	TEXT="${1}"
 
 	# Debug option
-	if [ "$2" = "debug" ]
-	then
+	if [ "${DEBUG}" -gt "0" ]; then
 	        echo " Request to DAPNET API: {"
 	        echo "  \"text\": \"${HOST^^}: ${TEXT}\","
 	        echo "  \"callSignNames\": ["
@@ -76,8 +87,7 @@ send_page () {
 	        ${APIURL}/calls )
 
 	# Debug option
-	if [ "$2" = "debug" ]
-	then
+	if [ "${DEBUG}" -gt "0" ]; then
 	        echo "Answer from DAPNET API: ${RESULT}"
 	        echo ""
 	        echo ""
@@ -103,20 +113,13 @@ if [ "${NUMMESSAGES}" -gt "0" ]; then
 		TXTCHUNK=${MESSAGE:$TXTSTART:$SIZEMESSAGESPLIT}
 		TXTMESSAGE=${TXTPRE}" "${TXTCHUNK}
 
-		if [ "$3" = "debug" ]; then
-			send_page "${TXTMESSAGE}" debug
-		else
-			send_page "${TXTMESSAGE}"
-		fi
+		send_page "${TXTMESSAGE}"
+
 		let COUNTER=COUNTER+1
 	done
 else
 	# Messge does not need to be split
-	if [ "$3" = "debug" ]; then
-		send_page "${MESSAGE}" debug
-	else
-		send_page "${MESSAGE}"
-	fi
+	send_page "${MESSAGE}"
 fi
 
 
