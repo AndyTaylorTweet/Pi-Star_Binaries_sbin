@@ -65,7 +65,7 @@ NUMMESSAGES=$(expr ${SIZETEXT} / ${SIZEMESSAGE})
 
 send_page () {
 	# Set the variables for the function
-	TEXT="${1}"
+	TEXT="$(echo ${1})"
 
 	# Debug option
 	if [ "${DEBUG}" -gt "0" ]; then
