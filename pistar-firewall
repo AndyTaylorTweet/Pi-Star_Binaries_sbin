@@ -52,6 +52,7 @@ iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT #			DNS (DNS Zone Transfer - Used
 iptables -A OUTPUT -p tcp --dport 9007 -j ACCEPT #			ircDDB Servers (Callsign Routing)
 iptables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #			D-PRS Position Info
 iptables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #			D-Plus Outbound Links
+iptables -A OUTPUT -d 176.10.105.252 -p tcp --dport 20001 -j REJECT # Deliberately block access to dns.xreflector.net
 
 # Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
 iptables -A OUTPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Outbound Voice
