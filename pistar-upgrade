@@ -647,13 +647,13 @@ main_function() {
 		fi
 	;;
 	3.4.16)
-		Message="You are already running the lastest version..."
+		Message="You are already running the latest version..."
 	;;
 	3.5.0-Beta)
-		Message="You are already running the lastest version..."
+		Message="You are already running the latest version..."
 	;;
 	3.5.0)
-		Message="You are already running the lastest version..."
+		Message="You are already running the latest version..."
 	;;
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"
