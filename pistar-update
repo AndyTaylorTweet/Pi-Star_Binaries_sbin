@@ -118,6 +118,27 @@ main_function() {
 		touch /usr/local/etc/NXDNHostsLocal.txt
 	fi
 
+	# myDV Cast Updates
+	#if [[ "$(grep "Special" /etc/pistar-release | awk '{print $3}')" = "myDV_Cast" ]]; then
+	#	if [[ !$(grep -i path /etc/bash.bashrc) ]]; then
+	#		# Add the new path info because its missing
+	#	fi
+	#
+	#	# Pull the binaries
+	#	if [ ! -d /usr/local/bin/castbin ]; then
+	#		# No folder, create it
+	#	else
+	#		# Update it
+	#	fi
+	#
+	#	# Pull the Dashboard module
+	#	if [ ! -d /var/www/dashboard/admin/modules/castfw ]; then
+	#		# No folder, create it
+	#	else
+	#		# Update it
+	#	fi
+	#fi
+
 	# If we are ready to use the new DMRGateway
 	if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt "20170924" ]] && [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "1" ]] && [[ ! -f /usr/local/etc/DMR_Audio/no_NO.indx ]]; then
 		curl --fail -o /usr/local/etc/DMR_Audio/de_DE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.ambe
