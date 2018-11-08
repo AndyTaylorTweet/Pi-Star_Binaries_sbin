@@ -139,6 +139,9 @@ main_function() {
 	#		# No folder, create it
 	#		git clone https://github.com/pe1msz/myDV-nano /var/www/dashboard/admin/modules/castfw
 	#		ln -s /var/www/dashboard/admin/modules/castfw/fw /var/www/dashboard/admin/castfw
+	#		cd /var/www/dashboard/admin/modules/castfw/pyserial-3.2.1
+	#		python setup.py install
+	#		cd
 	#	else
 	#		# Update it
 	#		git --work-tree=/var/www/dashboard/admin/modules/castfw --git-dir=/var/www/dashboard/admin/modules/castfw/.git pull origin master
