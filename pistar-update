@@ -122,20 +122,26 @@ main_function() {
 	#if [[ "$(grep "Special" /etc/pistar-release | awk '{print $3}')" = "myDV_Cast" ]]; then
 	#	if [[ !$(grep -i path /etc/bash.bashrc) ]]; then
 	#		# Add the new path info because its missing
+	#		echo -e "export PATH=/usr/local/bin/castbin:$PATH" >> /etc/bash.bashrc
 	#	fi
 	#
 	#	# Pull the binaries
 	#	if [ ! -d /usr/local/bin/castbin ]; then
 	#		# No folder, create it
+	#		git clone https://github.com/pe1msz/castbin /usr/local/bin/castbin
 	#	else
 	#		# Update it
+	#		git --work-tree=/usr/local/bin/castbin --git-dir=/usr/local/bin/castbin/.git pull origin master
 	#	fi
 	#
 	#	# Pull the Dashboard module
 	#	if [ ! -d /var/www/dashboard/admin/modules/castfw ]; then
 	#		# No folder, create it
+	#		git clone https://github.com/pe1msz/myDV-nano /var/www/dashboard/admin/modules/castfw
+	#		ln -s /var/www/dashboard/admin/modules/castfw/fw /var/www/dashboard/admin/castfw
 	#	else
 	#		# Update it
+	#		git --work-tree=/var/www/dashboard/admin/modules/castfw --git-dir=/var/www/dashboard/admin/modules/castfw/.git pull origin master
 	#	fi
 	#fi
 
