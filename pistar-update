@@ -30,7 +30,7 @@ main_function() {
 		# This is running from a terminal, so it should be safe to update the OS
 		echo -e "Updating OS...\n"
 		apt-get update
-		apt-get upgrade -y
+		apt-get upgrade --fix-missing --fix-broken -y
 		apt-get clean
 		echo "Done"
 
