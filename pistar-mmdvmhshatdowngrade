@@ -48,21 +48,21 @@ echo ""
 
 mapfile -t VERSIONS < <( curl -s -L https://api.github.com/repos/juribeparada/MMDVM_HS/releases | grep "tag_name" | sed -e 's/.*\(v[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\).*/\1/' )
 
+VERSION=""
 if [ "$2" ]
 then
-   FOUND=0
    echo -n "Checking your choice \"$2\" against release tags..."
    if [[ ! " ${VERSIONS[@]} " =~ " $2 " ]]
    then
       echo "not found!"
    else
       echo "found."
-      FOUND=1
+      VERSION="$2"
    fi
    echo ""
 fi
 
-if [ -z "$2" ] || [ $FOUND -eq 0 ]
+if [ -z "$2" ] || [ $VERSION == "" ]
 then
    echo "Please choose the version to flash from the following list of ${#VERSIONS[@]} items:"
    I=1
@@ -86,6 +86,7 @@ then
    fi
 
    echo "Your choice: ${CHOICE} (${VERSIONS[(($CHOICE - 1))]})"
+   VERSION="${VERSIONS[(($CHOICE - 1))]}"
 fi
 
 #
@@ -98,8 +99,8 @@ then
     # Flashing MMDVM_HS Hat Modem
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to version ${VERSIONS[(( $CHOICE - 1 ))]}"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSIONS[(( $CHOICE - 1 ))]} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    echo "Flashing your ${1} modem to version ${VERSION}"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
     cd  /tmp/mmdvmhshatfirmware
     ./flash.sh
@@ -113,8 +114,8 @@ then
     # Flashing MMDVM_HS Hat Modem with 12.288 MHz TCXO
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the ${VERSIONS[(( $CHOICE - 1 ))]} version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSIONS[(( $CHOICE - 1 ))]} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    echo "Flashing your ${1} modem to the ${VERSION} version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
     cd  /tmp/mmdvmhshatfirmware
     ./flash.sh
@@ -128,8 +129,8 @@ then
     # Flashing MMDVM_HS_DUAL Modem
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the ${VERSIONS[(( $CHOICE - 1 ))]} version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSIONS[(( $CHOICE - 1 ))]} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    echo "Flashing your ${1} modem to the ${VERSION} version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
     cd  /tmp/mmdvmhshatfirmware
     ./flash.sh
@@ -143,8 +144,8 @@ then
     # Flashing MMDVM_HS_DUAL Modem with 12.288 MHz TCXO
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the ${VERSIONS[(( $CHOICE - 1 ))]} version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSIONS[(( $CHOICE - 1 ))]} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    echo "Flashing your ${1} modem to the ${VERSION} version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
     cd  /tmp/mmdvmhshatfirmware
     ./flash.sh
