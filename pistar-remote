@@ -94,7 +94,7 @@ if config.has_option('d-star', '8Ball'):
         dstar8ball = config.get('d-star', '8Ball')
 else:
         dstar8ball = str(999999999999)
-dstarmodule = mmdvmConfig.get('General', 'Callsign') + ' ' + mmdvmConfig.get('D-Star', 'Module')
+dstarmodule = mmdvmConfig.get('General', 'Callsign').ljust(7) + mmdvmConfig.get('D-Star', 'Module')
 
 # YSF Control Options
 if config.has_option('ysf', 'svckill'):
