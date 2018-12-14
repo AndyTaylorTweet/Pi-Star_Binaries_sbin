@@ -24,7 +24,7 @@ then
   echo "please choose form the list below..."
   echo ""
   echo "To flash HS_HAT (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat"
-  echo "To flash HS_HAT (12.288MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat-12mhz"
+  echo "To flash HS_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat-12mhz"
   echo "To flash HS_DUAL_HAT (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat"
   echo "To flash HS_DUAL_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat-12mhz"
   echo ""
