@@ -31,6 +31,25 @@ then
   echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
   echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
+  # Get the pretty name for the chosen Modem according to the dashboard.
+  if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
+    # Get the modem that the user has selected.
+    modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
+    modemSelected=${modemSelected#*=}
+
+    # Get the user friendly version of the selected Modem.
+    modemSelectedHuman=$(grep ${modemSelected} /var/www/dashboard/admin/configure.php)
+    modemSelectedHuman=${modemSelectedHuman#*\">}
+    modemSelectedHuman=${modemSelectedHuman::-9}
+    echo "Selected Modem:     ${modemSelectedHuman}"
+  fi
+
+  # Get the physically connected modem from the logs
+  numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+  if [[ ${numLogs} -gt 0 ]]; then
+    modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
+    echo "Connected Hardware: ${modemLog}"
+  fi
   exit 0
 fi
 #
