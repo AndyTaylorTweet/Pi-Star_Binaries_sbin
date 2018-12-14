@@ -45,11 +45,18 @@ then
     echo "Selected Modem:     ${modemSelectedHuman}"
   fi
 
-  # Get the physically connected modem from the logs
+  # Get the Modem info from the Log
   numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
   if [[ ${numLogs} -gt 0 ]]; then
+    # Get the physically connected modem from the logs
     modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
     echo "Connected Hardware: ${modemLog}"
+    
+    # Get the TCXO data
+    if [[ ${modemLog} == *"MHz"* ]]; then
+      tcxoData=$(echo ${modemLog} | awk '{print $3}')
+      echo "TCXO Value:         ${tcxoData}"
+    fi
   fi
   exit 0
 fi
