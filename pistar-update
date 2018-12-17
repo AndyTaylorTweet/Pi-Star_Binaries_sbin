@@ -118,10 +118,6 @@ main_function() {
 		touch /usr/local/etc/NXDNHostsLocal.txt
 	fi
 
-	# Fix DMRGateway issues with brackets
-	sed -i '/Name=.*(/d' /etc/dmrgateway
-	sed -i '/Name=.*)/d' /etc/dmrgateway
-
 	# myDV Cast Updates
 	#if [[ "$(grep "Special" /etc/pistar-release | awk '{print $3}')" = "myDV_Cast" ]]; then
 	#	if [[ !$(grep -i path /etc/bash.bashrc) ]]; then
