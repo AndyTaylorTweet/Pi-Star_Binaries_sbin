@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.40                      #
+#                     Version 2.41                      #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -124,6 +124,12 @@ if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
 fi
 
+# Fix DMRGateway issues with brackets
+if [ -f "/etc/dmrgateway" ]; then
+	sed -i '/Name=.*(/d' /etc/dmrgateway
+	sed -i '/Name=.*)/d' /etc/dmrgateway
+fi
+	
 # Add some fixes for P25Gateway
 if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" ]]; then
 	sed -i 's/Hosts=\/usr\/local\/etc\/P25Hosts.txt/HostsFile1=\/usr\/local\/etc\/P25Hosts.txt\nHostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
