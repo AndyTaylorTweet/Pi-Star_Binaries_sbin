@@ -28,7 +28,7 @@ then
   echo ""
   echo "To flash ZUMSpot devices please use pistar-zumspotflash"
   echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
-  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-vyehsflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
   echo ""
   # Get the pretty name for the chosen Modem according to the dashboard.
