@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Pi-Star Hourly Cleanup Script
+#
+
+# Clean up systemd logs
+journalctl --vacuum-time=12h
+journalctl --vacuum-size=2M
+
+# Mount the disk RO
+mount -o remount,ro /
