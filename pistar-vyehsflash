@@ -23,7 +23,8 @@ then
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
-  echo "To flash an Nano HS board connected to GPIO, run:        pistar-nanohsflash nano_hs"
+  echo "To flash an Nano HS board connected to GPIO, run:     pistar-vyehsflash nano_hs"
+  echo "To flash HS_DUAL_HAT (VR2VYE) connected to GPIO, run: pistar-vyehsflash hs_dual_hat"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
   echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
@@ -73,6 +74,23 @@ then
     ./flash.sh
     echo ""
     rm -rf /tmp/nanohsfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+  hs_dual_hat)
+    # Flashing MMDVM_HS_DUAL Modem
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    echo "Flashing your ${1} modem to the latest version"
+    curl -s -L https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | egrep -o '/VR2VYE/MMDVM_HS_firmware/releases/download/v[0-9.]*/install_fw_duplex.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    tr -d "\r" < /tmp/mmdvmhshatfirmware/flash.sh > /tmp/mmdvmhshatfirmware/flash2.sh
+    mv /tmp/mmdvmhshatfirmware/flash2.sh /tmp/mmdvmhshatfirmware/flash.sh
+    chmod +x /tmp/mmdvmhshatfirmware/flash.sh
+    cd  /tmp/mmdvmhshatfirmware
+    ./flash.sh
+    echo ""
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
     shutdown -r now
     exit 0
