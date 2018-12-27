@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.1                       #
+#                     Version 1.2                       #
 #                                                       #
 #########################################################
 
@@ -30,6 +30,11 @@ test -r $CONFIG || exit 1
 # if MMDVMHost is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.mmdvmhost || exit 1
 test -r /etc/dstar-radio.dstarrepeater || exit 1
+
+# if ircDDBGAteway is configured for Icom Repeater, dont run DStarRepeater
+if [[ $(grep "repeaterType1" /etc/ircddbgateway | cut -c 15) -ge 1 ]]; then
+  exit 1;
+fi
 
 if [ `$PGREP "MMDVMHost"` ]; then
   echo "Service 'MMDVMHost' is already running, cannot start $DAEMON"
