@@ -54,6 +54,15 @@ iptables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #			D-PRS Position Info
 iptables -A OUTPUT -d 176.10.105.252 -p tcp --dport 20001 -j REJECT #   Deliberately block access to dns.xreflector.net
 iptables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #			D-Plus Outbound Links
 
+# D-Star Voice to and from Icom RP2C controllers
+iptables -A OUTPUT -p udp -d 192.168.0.0/16 --dport 20000 -j ACCEPT # Voice Packets out to Icom PR2C
+iptables -A OUTPUT -p udp -d 172.16.0.0/12 --dport 20000 -j ACCEPT #  Voice Packets out to Icom PR2C
+iptables -A OUTPUT -p udp -d 10.0.0.0/8 --dport 20000 -j ACCEPT #     Voice Packets out to Icom PR2C
+iptables -A INPUT -p udp -s 192.168.0.0/16 --dport 20000 -j ACCEPT #  Voice Packets in from Icom PR2C
+iptables -A INPUT -p udp -s 172.16.0.0/12 --dport 20000 -j ACCEPT #   Voice Packets in from Icom PR2C
+iptables -A INPUT -p udp -s 10.0.0.0/8 --dport 20000 -j ACCEPT #      Voice Packets in from Icom PR2C
+iptables -t mangle -A POSTROUTING -p udp --dport 20000 -j DSCP --set-dscp 46
+
 # Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
 iptables -A OUTPUT -p udp --dport 20001 -j ACCEPT #			D-Plus Outbound Voice
 iptables -A OUTPUT -p udp --dport 30001 -j ACCEPT #			DExtra Outbound Voice
@@ -103,11 +112,13 @@ iptables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 iptables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connections
 
 # Allow Inbound Services
-iptables -A INPUT -p tcp --dport 22 -j ACCEPT #				SSH
-iptables -A INPUT -p tcp --dport 80 -j ACCEPT #				HTTP Allow the D-Star Portal Access
-iptables -A INPUT -p tcp --dport 445 -j ACCEPT #			SMB Access
-iptables -A INPUT -p tcp --dport 8080 -j ACCEPT #			HTTP Allow the Raspicontrol Portal Access
-iptables -A INPUT -p udp --dport 10022 -j ACCEPT #			D-Star ircDDBGateway remote
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT #                     SSH
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT #                     HTTP Allow the D-Star Portal Access
+iptables -A INPUT -p tcp -s 192.168.0.0/16 --dport 445 -j ACCEPT #  SMB Access (Local Networks Only)
+iptables -A INPUT -p tcp -s 172.16.0.0/12 --dport 445 -j ACCEPT #   SMB Access (Local Networks Only)
+iptables -A INPUT -p tcp -s 10.0.0.0/8 --dport 445 -j ACCEPT #      SMB Access (Local Networks Only)
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT #                   HTTP Allow the Raspicontrol Portal Access
+iptables -A INPUT -p udp --dport 10022 -j ACCEPT #                  D-Star ircDDBGateway remote
 
 # Allow access to shellinabox - if installed
 if [ -f "/etc/default/shellinabox" ]
