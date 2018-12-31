@@ -61,6 +61,7 @@ case "$1" in
 			done
 			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
 				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
+				$PGREP $DAEMON > /run/dstarrepeater.pid
 			else
 				nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			fi
@@ -87,6 +88,7 @@ case "$1" in
 			$SLEEP 3
 			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
 				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
+				$PGREP $DAEMON > /run/dstarrepeater.pid
 			else
 				nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			fi
@@ -96,6 +98,7 @@ case "$1" in
 			echo -e "$DAEMON is not running"
 			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
 				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
+				$PGREP $DAEMON > /run/dstarrepeater.pid
 			else
 				nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			fi
