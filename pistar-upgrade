@@ -649,10 +649,13 @@ main_function() {
 	3.4.16)
 		Message="You are already running the latest version..."
 	;;
-	3.5.0-Beta)
+	4.0.0-Beta)
+		Message="This release will not recieve upgrades..."
+	;;
+	4.0.0-RC1)
 		Message="You are already running the latest version..."
 	;;
-	3.5.0)
+	4.0.0)
 		Message="You are already running the latest version..."
 	;;
 	*)
