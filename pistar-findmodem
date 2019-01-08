@@ -24,7 +24,7 @@ fi
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
 # Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* and /dev/ttyUSB*)
-for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB|S)."); do
+for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); do
         # Send the MMDVM "Get Version" command to test the ports.
         touch /tmp/${randomFilename}                    # Make the output File
         stty -F ${modemDevice} 115200 raw -echo         # Configure the serial port, its always 115200
