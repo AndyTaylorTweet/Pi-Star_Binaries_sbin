@@ -1,9 +1,15 @@
 #!/bin/bash
-
 #
-# Script to find all MMDVM Modems on this host
+##############################################################################
+#                                                                            #
+#                         Pi-Star Find Modem Tool.                           #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#              Make it simple to find the attached MMDVM Modem               #
+#                                                                            #
+##############################################################################
 #
-
 # Kill any MMDVMHost or DStarRepeater processes
 if [[ $(/usr/bin/pgrep MMDVMHost) ]]; then
         systemctl stop mmdvmhost > /dev/null 2>&1
@@ -38,7 +44,7 @@ for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
         fi
 done
 
-# Restart the service(s)
+# Restart the service(s) if I stopped them
 if [[ -v svcRestart ]]; then
         systemctl start ${svcRestart} > /dev/null 2>&1
 fi
