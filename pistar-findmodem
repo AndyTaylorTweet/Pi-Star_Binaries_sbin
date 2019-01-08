@@ -44,17 +44,23 @@ for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB|S)."); do
                 # OK we have some output, format it into somthing useful.
                 if [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
                         echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice} (${modemData})"
+                elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyS"* ]]; then
+                        echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice} (${modemData})"
                 elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
                         echo -e "Detected MMDVM_HS (USB)  : ${modemDevice} (${modemData})"
                 elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
                         echo -e "Detected MMDVM_HS (USB)  : ${modemDevice} (${modemData})"
                 elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
                         echo -e "Detected MMDVM    (GPIO) : ${modemDevice} (${modemData})"
+                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyS"* ]]; then
+                        echo -e "Detected MMDVM    (GPIO) : ${modemDevice} (${modemData})"
                 elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
                         echo -e "Detected MMDVM    (USB)  : ${modemDevice} (${modemData})"
                 elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
                         echo -e "Detected MMDVM    (USB)  : ${modemDevice} (${modemData})"
                 elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
+                        echo -e "Detected DVMEGA   (GPIO) : ${modemDevice} (${modemData})"
+                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyS"* ]]; then
                         echo -e "Detected DVMEGA   (GPIO) : ${modemDevice} (${modemData})"
                 elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
                         echo -e "Detected DVMEGA   (USB)  : ${modemDevice} (${modemData})"
