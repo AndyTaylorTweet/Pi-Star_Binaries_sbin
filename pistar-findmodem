@@ -20,21 +20,22 @@ if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
         svcRestart=dstarrepeaterd
 fi
 
-# Find all the possible devices
+# Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* and /dev/ttyUSB*)
 for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
-        # Send the MMDVM command to get the ident string
-        touch /tmp/ttyDump.dat
-        stty -F ${modemDevice} 115200 raw -echo         # CONFIGURE SERIAL PORT
-        exec 3<${modemDevice}                           # REDIRECT SERIAL OUTPUT TO FD 3
-        cat <&3 >> /tmp/ttyDump.dat &                   # REDIRECT SERIAL OUTPUT TO FILE
-        PID=$!                                          # SAVE PID TO KILL CAT
-        echo -en '\xE0\x03\x00' > ${modemDevice}        # SEND COMMAND STRING TO SERIAL PORT
-        sleep 0.2s                                      # WAIT FOR RESPONSE
-        kill -9 $PID > /dev/null 2>&1                   # KILL CAT PROCESS
-        exec 3<&- 1> /dev/stdout 2> /dev/null           # FREE FD 3
+        # Send the MMDVM "Get Version" command to test the ports.
+        touch /tmp/ttyDump.dat                          # Make the output File
+        stty -F ${modemDevice} 115200 raw -echo         # Configure the serial port, its always 115200
+        exec 3<${modemDevice}                           # Redirect the output from serial to file descriptor 3
+        cat <&3 > /tmp/ttyDump.dat &                    # Get the content of FD3 and punt it to a file
+        PID=$!                                          # Save the PID for the cat command, to dump it later
+        echo -en '\xE0\x03\x00' > ${modemDevice}        # Send the "Get Version" command to the port
+        sleep 0.2s                                      # Wait for a responce
+        kill -9 $PID > /dev/null 2>&1                   # Kill the cat!
+        exec 3<&- 1> /dev/stdout 2> /dev/null           # Free up FD3
 
-        # Do somthing with the output
+        # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/ttyDump.dat | wc -c) -ge 1 ]]; then
+                # OK we have some output, format it into somthing useful.
                 if [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
                         echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice}"
                 elif [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
@@ -54,10 +55,10 @@ for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
                 elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
                         echo -e "Detected DVMEGA   (USB)  : ${modemDevice}"
                 fi
-                rm -rf /tmp/ttyDump.dat
-        else
-                rm -rf /tmp/ttyDump.dat
         fi
+        
+        # Dump the temp file we used
+        rm -rf /tmp/ttyDump.dat
 done
 
 # Restart the service(s) if I stopped them
