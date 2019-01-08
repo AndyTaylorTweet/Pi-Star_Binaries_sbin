@@ -35,8 +35,12 @@ for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
 
         # Do somthing with the output
         if [[ $(cat /tmp/ttyDump.dat | wc -c) -ge 1 ]]; then
-                if [[ $(grep "MMDVM" /tmp/ttyDump.dat) ]]; then
-                        echo -e "MMDVM Detected: ${modemDevice}"
+                if [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) ]]; then
+                        echo -e "MMDVM_HS Detected: ${modemDevice}"
+                elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) ]]; then
+                        echo -e "MMDVM Detected   : ${modemDevice}"
+                elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) ]]; then
+                        echo -e "DVMEGA Detected. : ${modemDevice}"
                 fi
                 rm -rf /tmp/ttyDump.dat
         else
