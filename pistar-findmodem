@@ -20,13 +20,16 @@ if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
         svcRestart=dstarrepeaterd
 fi
 
+# Random Filename
+randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
 # Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* and /dev/ttyUSB*)
 for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
         # Send the MMDVM "Get Version" command to test the ports.
-        touch /tmp/ttyDump.dat                          # Make the output File
+        touch /tmp/${randomFilename}                          # Make the output File
         stty -F ${modemDevice} 115200 raw -echo         # Configure the serial port, its always 115200
         exec 3<${modemDevice}                           # Redirect the output from serial to file descriptor 3
-        cat <&3 > /tmp/ttyDump.dat &                    # Get the content of FD3 and punt it to a file
+        cat <&3 > /tmp/${randomFilename} &                    # Get the content of FD3 and punt it to a file
         PID=$!                                          # Save the PID for the cat command, to dump it later
         echo -en '\xE0\x03\x00' > ${modemDevice}        # Send the "Get Version" command to the port
         sleep 0.2s                                      # Wait for a responce
@@ -34,34 +37,34 @@ for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
         exec 3<&- 1> /dev/stdout 2> /dev/null           # Free up FD3
 
         # Read the output, and make it pretty for humans...
-        if [[ $(cat /tmp/ttyDump.dat | wc -c) -ge 1 ]]; then
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
                 # OK we have some output, clean up the modem version string and remove non-printables
-                modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/ttyDump.dat | sed 's/^.MMDVM/MMDVM/g')
+                modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g')
 
                 # OK we have some output, format it into somthing useful.
-                if [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
+                if [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
                         echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
+                elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
                         echo -e "Detected MMDVM_HS (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
+                elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
                         echo -e "Detected MMDVM_HS (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
+                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
                         echo -e "Detected MMDVM    (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
+                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
                         echo -e "Detected MMDVM    (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
+                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
                         echo -e "Detected MMDVM    (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
+                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
                         echo -e "Detected DVMEGA   (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
+                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
                         echo -e "Detected DVMEGA   (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
+                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
                         echo -e "Detected DVMEGA   (USB)  : ${modemDevice} (${modemData})"
                 fi
         fi
 
         # Dump the temp file we used
-        rm -rf /tmp/ttyDump.dat
+        rm -rf /tmp/${randomFilename}
 done
 
 # Restart the service(s) if I stopped them
