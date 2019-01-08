@@ -24,12 +24,12 @@ fi
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
 # Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* and /dev/ttyUSB*)
-for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
+for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB|S)."); do
         # Send the MMDVM "Get Version" command to test the ports.
-        touch /tmp/${randomFilename}                          # Make the output File
+        touch /tmp/${randomFilename}                    # Make the output File
         stty -F ${modemDevice} 115200 raw -echo         # Configure the serial port, its always 115200
         exec 3<${modemDevice}                           # Redirect the output from serial to file descriptor 3
-        cat <&3 > /tmp/${randomFilename} &                    # Get the content of FD3 and punt it to a file
+        cat <&3 > /tmp/${randomFilename} &              # Get the content of FD3 and punt it to a file
         PID=$!                                          # Save the PID for the cat command, to dump it later
         echo -en '\xE0\x03\x00' > ${modemDevice}        # Send the "Get Version" command to the port
         sleep 0.2s                                      # Wait for a responce
