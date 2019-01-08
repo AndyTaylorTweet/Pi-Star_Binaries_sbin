@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#
+# Script to find all MMDVM Modems on this host
+#
+
+# Kill any MMDVMHost or DStarRepeater processes
+if [[ $(/usr/bin/pgrep MMDVMHost) ]]; then
+        systemctl stop mmdvmhost > /dev/null 2>&1
+        svcRestart=mmdvmhost
+fi
+if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
+        systemctl stop dstarrepeaterd > /dev/null 2>&1
+        svcRestart=dstarrepeaterd
+fi
+
+# Find all the possible devices
+for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
+        # Send the MMDVM command to get the ident string
+        touch /tmp/ttyDump.dat
+        stty -F ${modemDevice} 115200 raw -echo         # CONFIGURE SERIAL PORT
+        exec 3<${modemDevice}                           # REDIRECT SERIAL OUTPUT TO FD 3
+        cat <&3 >> /tmp/ttyDump.dat &                   # REDIRECT SERIAL OUTPUT TO FILE
+        PID=$!                                          # SAVE PID TO KILL CAT
+        echo -en '\xE0\x03\x00' > ${modemDevice}        # SEND COMMAND STRING TO SERIAL PORT
+        sleep 0.2s                                      # WAIT FOR RESPONSE
+        kill -9 $PID > /dev/null 2>&1                   # KILL CAT PROCESS
+        exec 3<&- 1> /dev/stdout 2> /dev/null           # FREE FD 3
+
+        # Do somthing with the output
+        if [[ $(cat /tmp/ttyDump.dat | wc -c) -ge 1 ]]; then
+                if [[ $(grep "MMDVM" /tmp/ttyDump.dat) ]]; then
+                        echo -e "MMDVM Detected: ${modemDevice}"
+                fi
+                rm -rf /tmp/ttyDump.dat
+        else
+                rm -rf /tmp/ttyDump.dat
+        fi
+done
+
+# Restart the service(s)
+if [[ -v svcRestart ]]; then
+        systemctl start ${svcRestart} > /dev/null 2>&1
+fi
