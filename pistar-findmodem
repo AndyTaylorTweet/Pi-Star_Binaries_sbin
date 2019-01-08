@@ -36,23 +36,23 @@ for modemDevice in $(ls /dev/tty* | grep -E "tty(AMA|ACM|USB)."); do
         # Do somthing with the output
         if [[ $(cat /tmp/ttyDump.dat | wc -c) -ge 1 ]]; then
                 if [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
-                        echo -e "Detected MMDVM_HS (GPIO): ${modemDevice}"
+                        echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice}"
                 elif [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
-                        echo -e "Detected MMDVM_HS (USB) : ${modemDevice}"
+                        echo -e "Detected MMDVM_HS (USB)  : ${modemDevice}"
                 elif [[ $(grep "MMDVM_HS" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
-                        echo -e "Detected MMDVM_HS (USB) : ${modemDevice}"
+                        echo -e "Detected MMDVM_HS (USB)  : ${modemDevice}"
                 elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
-                        echo -e "Detected MMDVM (GPIO)   : ${modemDevice}"
+                        echo -e "Detected MMDVM    (GPIO) : ${modemDevice}"
                 elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
-                        echo -e "Detected MMDVM (USB)    : ${modemDevice}"
+                        echo -e "Detected MMDVM    (USB)  : ${modemDevice}"
                 elif [[ $(grep "MMDVM" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
-                        echo -e "Detected MMDVM (USB)    : ${modemDevice}"
+                        echo -e "Detected MMDVM    (USB)  : ${modemDevice}"
                 elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyAMA"* ]]; then
-                        echo -e "Detected DVMEGA (GPIO)  : ${modemDevice}"
+                        echo -e "Detected DVMEGA   (GPIO) : ${modemDevice}"
                 elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyACM"* ]]; then
-                        echo -e "Detected DVMEGA (USB)   : ${modemDevice}"
+                        echo -e "Detected DVMEGA   (USB)  : ${modemDevice}"
                 elif [[ $(grep "DVMEGA" /tmp/ttyDump.dat) && ${modemDevice} == *"ttyUSB"* ]]; then
-                        echo -e "Detected DVMEGA (USB)   : ${modemDevice}"
+                        echo -e "Detected DVMEGA   (USB)  : ${modemDevice}"
                 fi
                 rm -rf /tmp/ttyDump.dat
         else
