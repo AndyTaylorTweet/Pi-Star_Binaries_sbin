@@ -89,7 +89,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                 if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
                         # OK we have some output, clean up the string and remove non-printables
                         nextionData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
-                        
+
                         # OK we have some output, format it into somthing useful.
                         # comok 1,37697-0,NX3224T024_011R,99,61488,DE6788B2935E5731,4194304???
                         if [[ $(grep "comok" /tmp/${randomFilename}) && ${nextionData} == *"NX"* ]]; then
@@ -103,7 +103,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                                 else
                                         nextionPort="(GPIO)"
                                 fi
-                                if [[ ${nextionTouch} -eq 1 ]]; then
+                                if [[ ${nextionTouch} ]]; then
                                         nextionTouch="Yes"
                                 else
                                         nextionTouch="No"
