@@ -90,7 +90,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         # OK we have some output, clean up the string and remove non-printables
                         nextionData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
 
-                        # OK we have some output, format it into somthing useful.
+                        # OK we have some output (example below), format it into somthing useful.
                         # comok 1,37697-0,NX3224T024_011R,99,61488,DE6788B2935E5731,4194304???
                         if [[ $(grep "comok" /tmp/${randomFilename}) && ${nextionData} == *"NX"* ]]; then
                                 nextionModel=$(echo ${nextionData} | awk -F',' '{print $3}')
@@ -98,16 +98,22 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                                 nextionFirmware=$(echo ${nextionData} | awk -F',' '{print $4}')
                                 nextionMCU=$(echo ${nextionData} | awk -F',' '{print $5}')
                                 nextionSerial=$(echo ${nextionData} | awk -F',' '{print $6}')
+
+                                # Clean up the port information
                                 if [[ ${modemDevice} == *"USB"* ]]; then
                                         nextionPort="(USB) "
                                 else
                                         nextionPort="(GPIO)"
                                 fi
+
+                                # Show Touchscreen support
                                 if [[ ${nextionTouch} ]]; then
                                         nextionTouch="Yes"
                                 else
                                         nextionTouch="No"
                                 fi
+
+                                # Print the output
                                 echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
 
                         fi
