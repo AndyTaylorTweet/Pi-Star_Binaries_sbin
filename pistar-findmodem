@@ -103,6 +103,11 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                                 else
                                         nextionPort="(GPIO)"
                                 fi
+                                if [[ ${nextionTouch} -eq 1 ]]; then
+                                        nextionTouch="Yes"
+                                else
+                                        nextionTouch="No"
+                                fi
                                 echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial})"
 
                         fi
