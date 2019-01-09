@@ -87,6 +87,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         DV-MEGA*)
                                 mmdvmClass="DV-Mega "
                         ;;
+                        *u-blox*)
+                                mmdvmClass="GPS     "
+                        ;;
                         *)
                                 mmdvmClass="Unknown "
                         ;;
@@ -113,6 +116,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData} - MMDMVM Protocol)"
+                elif [[ ${modemData} == *"u-blox"* ]]; then
+                        # Print the output
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (u-blox GPS Device)"
                 fi
                 
                 echo "" > /tmp/${randomFilename}
@@ -137,6 +143,10 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                 if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
                         # Print the output
                         echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData}  - DStarRepeater Protocol)"
+                fi
+                if [[ ${dvmegaData} == *"u-blox"* ]]; then
+                        # Print the output
+                        echo -e "Detected GPS      ${dvmegaPort}: ${modemDevice} (u-blox GPS Device)"
                 fi
                 echo "" > /tmp/${randomFilename}
         fi
