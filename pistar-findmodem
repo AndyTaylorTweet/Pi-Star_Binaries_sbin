@@ -133,7 +133,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         fi
 
                         # Print the output
-                        echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
+                        echo -e "Detected Nextion  ${nextionPort}: ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
 
                 fi
                 
