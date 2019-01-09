@@ -110,8 +110,16 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
-                
-                echo -e "${dvmegaData}"
+
+                # Clean up the port information
+                if [[ ${modemDevice} == *"USB"* ]]; then
+                        dvmegaPort="(USB) "
+                else
+                        dvmegaPort="(GPIO)"
+                fi
+
+                # Print the output
+                echo -e "Detected DVMega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
         fi
 
         # Send the Nextion "Connect" command to test the ports.
