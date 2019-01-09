@@ -23,6 +23,38 @@ fi
 # Random Filename
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
+function readDevice {
+        # Setup the variables
+        serialProtocol=$1
+        serialSpeed=$2
+
+        # Talk to the hardware
+        stty -F ${modemDevice} ${serialSpeed} raw -echo                         # Configure the serial port, its always 115200
+        exec 3<${modemDevice}                                                   # Redirect the output from serial to file descriptor 3
+        cat <&3 > /tmp/${randomFilename} &                                      # Get the content of FD3 and punt it to a file
+        PID=$!                                                                  # Save the PID for the cat command, to dump it later
+
+        # Case switch makes much more sense here since we now have a few protocols
+        case ${serialProtocol} in
+                mmdvm)
+                        echo -en '\xE0\x03\x00' > ${modemDevice}                # Send the "Get Version" command to the port
+                ;;
+                dvmega)
+                        echo -en '\xD0\x01\x00\x11\x00\x0B' > ${modemDevice}    # Send the "Get Version" command to the port
+                ;;
+                nextion)
+                        echo -en '\xFF\xFF\xFF' > ${modemDevice}                # Send the "Clear" command to the port
+                        echo -en 'connect' > ${modemDevice}                     # Send the "Connect" command to the port
+                        echo -en '\xFF\xFF\xFF' > ${modemDevice}                # Send the "Clear" command to the port
+                ;;
+        esac
+
+        sleep 0.2s                                      # Wait for a responce
+        kill -9 $PID > /dev/null 2>&1                   # Kill the cat!
+        exec 3<&- 1> /dev/stdout 2> /dev/null           # Free up FD3
+}
+
+
 # Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* /dev/ttyS* and /dev/ttyUSB*)
 for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); do
         # Ignore the /dev/ttyS[0-3] ports on the Odroid Platform.
@@ -32,14 +64,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
         # Send the MMDVM "Get Version" command to test the ports.
         touch /tmp/${randomFilename}                    # Make the output File
-        stty -F ${modemDevice} 115200 raw -echo         # Configure the serial port, its always 115200
-        exec 3<${modemDevice}                           # Redirect the output from serial to file descriptor 3
-        cat <&3 > /tmp/${randomFilename} &              # Get the content of FD3 and punt it to a file
-        PID=$!                                          # Save the PID for the cat command, to dump it later
-        echo -en '\xE0\x03\x00' > ${modemDevice}        # Send the "Get Version" command to the port
-        sleep 0.2s                                      # Wait for a responce
-        kill -9 $PID > /dev/null 2>&1                   # Kill the cat!
-        exec 3<&- 1> /dev/stdout 2> /dev/null           # Free up FD3
+        readDevice mmdvm 115200                         # Try MMDVM Protocol
 
         # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
@@ -47,77 +72,71 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                 modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g')
 
                 # OK we have some output, format it into somthing useful.
-                if [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
-                        echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyS"* ]]; then
-                        echo -e "Detected MMDVM_HS (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
-                        echo -e "Detected MMDVM_HS (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM_HS" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
-                        echo -e "Detected MMDVM_HS (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
-                        echo -e "Detected MMDVM    (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyS"* ]]; then
-                        echo -e "Detected MMDVM    (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
-                        echo -e "Detected MMDVM    (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "MMDVM" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
-                        echo -e "Detected MMDVM    (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyAMA"* ]]; then
-                        echo -e "Detected DVMEGA   (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyS"* ]]; then
-                        echo -e "Detected DVMEGA   (GPIO) : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyACM"* ]]; then
-                        echo -e "Detected DVMEGA   (USB)  : ${modemDevice} (${modemData})"
-                elif [[ $(grep "DVMEGA" /tmp/${randomFilename}) && ${modemDevice} == *"ttyUSB"* ]]; then
-                        echo -e "Detected DVMEGA   (USB)  : ${modemDevice} (${modemData})"
-                fi
-        else
-                # This port is not connected to an MMDVM Board, try Nextion Protocol
-                stty -F ${modemDevice} 9600 raw -echo           # Configure the serial port, its always 9600
-                exec 3<${modemDevice}                           # Redirect the output from serial to file descriptor 3
-                cat <&3 > /tmp/${randomFilename} &              # Get the content of FD3 and punt it to a file
-                PID=$!                                          # Save the PID for the cat command, to dump it later
-                echo -en '\xFF\xFF\xFF' > ${modemDevice}        # Send the "Clear" command to the port
-                echo -en 'connect' > ${modemDevice}             # Send the "Connect" command to the port
-                echo -en '\xFF\xFF\xFF' > ${modemDevice}        # Send the "Clear" command to the port
-                sleep 0.2s                                      # Wait for a responce
-                kill -9 $PID > /dev/null 2>&1                   # Kill the cat!
-                exec 3<&- 1> /dev/stdout 2> /dev/null           # Free up FD3
+                case ${modemData} in
+                        MMDVM_HS*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        MMDVM*)
+                                mmdvmClass="MMDVM   "
+                        ;;
+                        DVMEGA*)
+                                mmdvmClass="DVMega  "
+                        ;;
+                esac
 
-                # Read the output, and make it pretty for humans...
-                if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
-                        # OK we have some output, clean up the string and remove non-printables
-                        nextionData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
+                case ${modemDevice} in
+                        /dev/ttyS*)
+                                mmdvmPort="(GPIO)"
+                        ;;
+                        /dev/ttyAMA*)
+                                mmdvmPort="(GPIO)"
+                        ;;
+                        /dev/ttyACM*)
+                                mmdvmPort="(USB) "
+                        ;;
+                        /dev/ttyUSB*)
+                                mmdvmPort="(USB) "
+                        ;;
+                esac
 
-                        # OK we have some output (example below), format it into somthing useful.
-                        # comok 1,37697-0,NX3224T024_011R,99,61488,DE6788B2935E5731,4194304???
-                        if [[ $(grep "comok" /tmp/${randomFilename}) && ${nextionData} == *"NX"* ]]; then
-                                nextionModel=$(echo ${nextionData} | awk -F',' '{print $3}')
-                                nextionTouch=$(echo ${nextionData} | awk -F',' '{print $1}')
-                                nextionFirmware=$(echo ${nextionData} | awk -F',' '{print $4}')
-                                nextionMCU=$(echo ${nextionData} | awk -F',' '{print $5}')
-                                nextionSerial=$(echo ${nextionData} | awk -F',' '{print $6}')
+                # Print the output
+                echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
+        fi
+        
+        # Send the Nextion "Connect" command to test the ports.
+        readDevice nextion 9600
+        
+        # Read the output, and make it pretty for humans...
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
+                # OK we have some output, clean up the string and remove non-printables
+                nextionData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
 
-                                # Clean up the port information
-                                if [[ ${modemDevice} == *"USB"* ]]; then
-                                        nextionPort="(USB) "
-                                else
-                                        nextionPort="(GPIO)"
-                                fi
+                # OK we have some output (example below), format it into somthing useful.
+                # comok 1,37697-0,NX3224T024_011R,99,61488,DE6788B2935E5731,4194304???
+                if [[ $(grep "comok" /tmp/${randomFilename}) && ${nextionData} == *"NX"* ]]; then
+                        nextionModel=$(echo ${nextionData} | awk -F',' '{print $3}')
+                        nextionTouch=$(echo ${nextionData} | awk -F',' '{print $1}')
+                        nextionSerial=$(echo ${nextionData} | awk -F',' '{print $6}')
 
-                                # Show Touchscreen support
-                                if [[ ${nextionTouch} ]]; then
-                                        nextionTouch="Yes"
-                                else
-                                        nextionTouch="No"
-                                fi
-
-                                # Print the output
-                                echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
-
+                        # Clean up the port information
+                        if [[ ${modemDevice} == *"USB"* ]]; then
+                                nextionPort="(USB) "
+                        else
+                                nextionPort="(GPIO)"
                         fi
+
+                        # Show Touchscreen support
+                        if [[ ${nextionTouch} ]]; then
+                                nextionTouch="Yes"
+                        else
+                                nextionTouch="No"
+                        fi
+
+                        # Print the output
+                        echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
+
                 fi
+                
         fi
 
         # Dump the temp file we used
