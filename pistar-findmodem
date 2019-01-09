@@ -84,6 +84,12 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         DVMEGA*)
                                 mmdvmClass="DVMega  "
                         ;;
+                        DV-MEGA*)
+                                mmdvmClass="DVMega  "
+                        ;;
+                        *)
+                                mmdvmClass="Unknown "
+                        ;;
                 esac
 
                 case ${modemDevice} in
