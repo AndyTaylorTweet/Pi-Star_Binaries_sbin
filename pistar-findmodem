@@ -111,16 +111,19 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
-
-                # Clean up the port information
-                if [[ ${modemDevice} == *"USB"* ]]; then
-                        dvmegaPort="(USB) "
-                else
-                        dvmegaPort="(GPIO)"
+                
+                # Sanity check the output from the DV-Mega
+                if [[ ${dvmegaData} == *"DV-MEGA"* ]]; then
+                        # Clean up the port information
+                        if [[ ${modemDevice} == *"USB"* ]]; then
+                                dvmegaPort="(USB) "
+                        else
+                                dvmegaPort="(GPIO)"
+                        fi
                 fi
 
                 # Print the output
-                echo -e "Detected DVMega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
+                echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
                 echo "" > /tmp/${randomFilename}
         fi
 
