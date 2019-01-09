@@ -82,10 +82,10 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                                 mmdvmClass="MMDVM   "
                         ;;
                         DVMEGA*)
-                                mmdvmClass="DVMega  "
+                                mmdvmClass="DV-Mega "
                         ;;
                         DV-MEGA*)
-                                mmdvmClass="DVMega  "
+                                mmdvmClass="DV-Mega "
                         ;;
                         *)
                                 mmdvmClass="Unknown "
@@ -107,11 +107,15 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         ;;
                 esac
 
-                if [[ ${modemData} == "MMDVM"* || ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
+                if [[ ${modemData} == "MMDVM"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
-                        echo "" > /tmp/${randomFilename}
+                elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
+                        # Print the output
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData} - MMDMVM Protocol)"
                 fi
+                
+                echo "" > /tmp/${randomFilename}
         fi
 
         # Sent the DVMega "Get Version" Command
@@ -132,9 +136,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                 if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
-                        echo "" > /tmp/${randomFilename}
+                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData}  - DV-Mega Protocol)"
                 fi
+                echo "" > /tmp/${randomFilename}
         fi
 
         # Send the Nextion "Connect" command to test the ports.
@@ -168,8 +172,8 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                         # Print the output
                         echo -e "Detected Nextion  ${nextionPort}: ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
-                        echo "" > /tmp/${randomFilename}
                 fi
+                echo "" > /tmp/${randomFilename}
         fi
 
         # Dump the temp file we used
