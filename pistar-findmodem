@@ -62,8 +62,10 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                 continue
         fi
 
-        # Send the MMDVM "Get Version" command to test the ports.
+        # Make sure the output file exists
         touch /tmp/${randomFilename}                    # Make the output File
+
+        # Send the MMDVM "Get Version" command to test the ports.
         readDevice mmdvm 115200                         # Try MMDVM Protocol
 
         # Read the output, and make it pretty for humans...
@@ -102,10 +104,19 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                 # Print the output
                 echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
         fi
-        
+
+        # Sent the DVMega "Get Version" Command
+        readDevice dvmega 115200                        # Try DVMega Protocol
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
+                # OK we have some output, clean up the string and remove non-printables
+                dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
+                
+                echo -e "${dvmegaData}"
+        fi
+
         # Send the Nextion "Connect" command to test the ports.
-        readDevice nextion 9600
-        
+        readDevice nextion 9600                         # Try Nextion Protocol
+
         # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
@@ -134,9 +145,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                         # Print the output
                         echo -e "Detected Nextion  ${nextionPort}: ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
-
                 fi
-                
         fi
 
         # Dump the temp file we used
