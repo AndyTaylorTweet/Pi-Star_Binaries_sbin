@@ -49,9 +49,9 @@ function readDevice {
                 ;;
         esac
 
-        sleep 0.2s                                      # Wait for a responce
-        kill -9 $PID > /dev/null 2>&1                   # Kill the cat!
-        exec 3<&- 1> /dev/stdout 2> /dev/null           # Free up FD3
+        sleep 0.2s                                                              # Wait for a responce
+        kill -9 $PID > /dev/null 2>&1                                           # Kill the cat!
+        exec 3<&- 1> /dev/stdout 2> /dev/null                                   # Free up FD3
 }
 
 
@@ -63,10 +63,10 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         fi
 
         # Make sure the output file exists
-        touch /tmp/${randomFilename}                    # Make the output File
+        touch /tmp/${randomFilename}                                            # Make the output File
 
         # Send the MMDVM "Get Version" command to test the ports.
-        readDevice mmdvm 115200                         # Try MMDVM Protocol
+        readDevice mmdvm 115200                                                 # Try MMDVM Protocol
 
         # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
@@ -107,7 +107,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         fi
 
         # Sent the DVMega "Get Version" Command
-        readDevice dvmega 115200                        # Try DVMega Protocol
+        readDevice dvmega 115200                                                # Try DVMega Protocol
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
@@ -128,7 +128,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         fi
 
         # Send the Nextion "Connect" command to test the ports.
-        readDevice nextion 9600                         # Try Nextion Protocol
+        readDevice nextion 9600                                                 # Try Nextion Protocol
 
         # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
