@@ -647,26 +647,25 @@ main_function() {
 		fi
 	;;
 	3.4.16)
-		Message="You are already running the latest version..."
-#		if [ ! -z "${pistarHardware}" ]; then
-#			sed -i 's/3.4.16/3.4.17/g' /etc/pistar-release
-#       		sed -i 's/3.4.16/3.4.17/g' /etc/motd
-#
-#			# Update all the startup timers
-#			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/pistar-upnp.timer
-#			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/dmrgateway.timer
-#			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ircddbgateway.timer
-#			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/nxdnparrot.timer
-#			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/p25parrot.timer
-#			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ysfparrot.timer
-#			
-#			# Update systemd and enable new services
-#			systemctl daemon-reload
-#
-#			Message="Upgraded from ${pistarCurVersion} to 3.4.17..."
-#		else
-#			Message="In-place upgrades from 3.4.4 are not supported..."
-#		fi		
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.16/3.4.17/g' /etc/pistar-release
+       			sed -i 's/3.4.16/3.4.17/g' /etc/motd
+
+			# Update all the startup timers
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/pistar-upnp.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/dmrgateway.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ircddbgateway.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/nxdnparrot.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/p25parrot.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ysfparrot.timer
+			
+			# Update systemd and enable new services
+			systemctl daemon-reload
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.17..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi		
 	;;
 	3.4.17)
 		Message="You are already running the latest version..."
