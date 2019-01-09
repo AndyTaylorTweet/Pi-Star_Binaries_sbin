@@ -136,7 +136,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                 if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData}  - DV-Mega Protocol)"
+                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData}  - DStarRepeater Protocol)"
                 fi
                 echo "" > /tmp/${randomFilename}
         fi
