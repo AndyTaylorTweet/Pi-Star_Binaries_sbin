@@ -10,6 +10,12 @@
 #                                                                            #
 ##############################################################################
 #
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
 # Kill any MMDVMHost or DStarRepeater processes
 if [[ $(/usr/bin/pgrep MMDVMHost) ]]; then
         systemctl stop mmdvmhost > /dev/null 2>&1
