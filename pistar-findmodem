@@ -87,6 +87,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         MMDVM*)
                                 mmdvmClass="MMDVM   "
                         ;;
+                        HS_Hat*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
                         DVMEGA*)
                                 mmdvmClass="DV-Mega "
                         ;;
@@ -116,7 +119,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         ;;
                 esac
 
-                if [[ ${modemData} == "MMDVM"* ]]; then
+                if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
