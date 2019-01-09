@@ -18,10 +18,6 @@ fi
 
 # Get the Pi-Star Version Info
 pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
-# Check if we need updates
-updatesReqd=$(unattended-upgrade --dry-run -d 2> /dev/null | awk '/Checking/ { print $2 }' | wc -l)
-# Disk usage
-rootVol=$(df -h / | tail -n 1 | awk '{ print $5 }')
 
 echo -e "[0;31m╔═══════════════════════════════════════════════════════════════════════╗
 ║                                                                       ║
@@ -39,6 +35,4 @@ echo -e "[0;31m╔════════════════════�
 [0;0mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
 
-Disk Usage: ${rootVol}  OS Updates Required: ${updatesReqd}
-
-Welcome to Pi-Star:[0;31m v${pistarCurVersion} [0;0m "
+           Welcome to Pi-Star:[0;31m v${pistarCurVersion} [0;0m "
