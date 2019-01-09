@@ -27,7 +27,10 @@ echo -e "[0;31m╔════════════════════�
 ║                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════╝
 [0;0mThe Pi-Star Dashboard can be found at one of the following locations:
-[1;37mhttp://$(hostname)/  http://$(hostname).local/   http://$(hostname -I)/
+[1;37mhttp://$(hostname)/  http://$(hostname).local/   http://$(hostname -I)
 
 [0;34mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
-Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".[0;0m"
+Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
+
+Welcome to Pi-Star: 
+[0;0m"
