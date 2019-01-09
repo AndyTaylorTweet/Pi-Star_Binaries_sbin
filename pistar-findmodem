@@ -108,7 +108,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                                 else
                                         nextionTouch="No"
                                 fi
-                                echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial})"
+                                echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Touchscreen: ${nextionTouch} Serial: ${nextionSerial})"
 
                         fi
                 fi
