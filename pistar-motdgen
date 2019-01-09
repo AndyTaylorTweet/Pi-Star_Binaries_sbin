@@ -16,6 +16,9 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+# Get the Pi-Star Version Info
+pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
+
 echo -e "[0;31m╔═══════════════════════════════════════════════════════════════════════╗
 ║                                                                       ║
 ║           ██████╗ ██╗      ███████╗████████╗ █████╗ ██████╗           ║
@@ -32,5 +35,4 @@ echo -e "[0;31m╔════════════════════�
 [0;34mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
 
-Welcome to Pi-Star: 
-[0;0m"
+Welcome to Pi-Star: ${pistarCurVersion} [0;0m"
