@@ -69,7 +69,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         readDevice mmdvm 115200                         # Try MMDVM Protocol
 
         # Read the output, and make it pretty for humans...
-        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the modem version string and remove non-printables
                 modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g')
 
@@ -108,7 +108,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
         # Sent the DVMega "Get Version" Command
         readDevice dvmega 115200                        # Try DVMega Protocol
-        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
                 
@@ -131,7 +131,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         readDevice nextion 9600                         # Try Nextion Protocol
 
         # Read the output, and make it pretty for humans...
-        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 1 ]]; then
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 nextionData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
 
