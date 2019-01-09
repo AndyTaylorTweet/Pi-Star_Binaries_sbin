@@ -1,6 +1,20 @@
 #!/bin/bash
-
-
+#
+##############################################################################
+#                                                                            #
+#                         Pi-Star Find Modem Tool.                           #
+#                                                                            #
+#     Version 1.2, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#              Make it simple to find the attached MMDVM Modem               #
+#                                                                            #
+##############################################################################
+#
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
 
 echo -e "[0;31m╔═══════════════════════════════════════════════════════════════════════╗
 ║                                                                       ║
@@ -12,11 +26,8 @@ echo -e "[0;31m╔════════════════════�
 ║           ╚═╝     ╚═╝      ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝          ║
 ║                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════╝
-[1;37mFrom your Windows Computer:
-Pi-Star Dashboard:      http://$(hostname)/
-
-From your Apple iPhone, iPad, Macbook, iMac etc.
-Pi-Star Dashboard:      http://$(hostname).local/
+[0;0mThe Pi-Star Dashboard can be found at one of the following locations:
+[1;37mhttp://$(hostname)/  http://$(hostname).local/   http://$(hostname -I)/
 
 [0;34mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".[0;0m"
