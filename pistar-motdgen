@@ -35,4 +35,5 @@ echo -e "[0;31m╔════════════════════�
 [0;0mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
 
-                     Welcome to Pi-Star:[0;31m v${pistarCurVersion} [0;0m "
+                     Welcome to Pi-Star:[0;31m v${pistarCurVersion}
+[0;0m"
