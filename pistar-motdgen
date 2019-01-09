@@ -36,4 +36,4 @@ echo -e "[0;31m╔════════════════════�
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
 
                      Welcome to Pi-Star:[0;31m v${pistarCurVersion}
-[0;0m"
+[0;0m" > /etc/motd
