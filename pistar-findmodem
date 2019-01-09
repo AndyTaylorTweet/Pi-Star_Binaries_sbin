@@ -103,6 +103,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                 # Print the output
                 echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
+                echo "" > /tmp/${randomFilename}
         fi
 
         # Sent the DVMega "Get Version" Command
@@ -120,6 +121,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                 # Print the output
                 echo -e "Detected DVMega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
+                echo "" > /tmp/${randomFilename}
         fi
 
         # Send the Nextion "Connect" command to test the ports.
@@ -153,6 +155,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                         # Print the output
                         echo -e "Detected Nextion  ${nextionPort}: ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
+                        echo "" > /tmp/${randomFilename}
                 fi
         fi
 
