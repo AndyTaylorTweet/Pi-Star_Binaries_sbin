@@ -98,7 +98,12 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                                 nextionFirmware=$(echo ${nextionData} | awk -F',' '{print $4}')
                                 nextionMCU=$(echo ${nextionData} | awk -F',' '{print $5}')
                                 nextionSerial=$(echo ${nextionData} | awk -F',' '{print $6}')
-                                echo -e "Detected Nextion (USB)   : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial})"
+                                if [[ ${modemDevice} == *"USB"* ]]; then
+                                        nextionPort="(USB) "
+                                else
+                                        nextionPort="(GPIO)"
+                                fi
+                                echo -e "Detected Nextion ${nextionPort}  : ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial})"
 
                         fi
                 fi
