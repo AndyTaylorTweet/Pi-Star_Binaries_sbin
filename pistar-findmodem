@@ -101,9 +101,11 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         ;;
                 esac
 
-                # Print the output
-                echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
-                echo "" > /tmp/${randomFilename}
+                if [[ ${modemData} == "MMDVM"* || ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
+                        # Print the output
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
+                        echo "" > /tmp/${randomFilename}
+                fi
         fi
 
         # Sent the DVMega "Get Version" Command
@@ -122,9 +124,11 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         fi
                 fi
 
-                # Print the output
-                echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
-                echo "" > /tmp/${randomFilename}
+                if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
+                        # Print the output
+                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData})"
+                        echo "" > /tmp/${randomFilename}
+                fi
         fi
 
         # Send the Nextion "Connect" command to test the ports.
