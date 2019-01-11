@@ -674,6 +674,23 @@ main_function() {
 		Message="This release will not recieve upgrades..."
 	;;
 	4.0.0-RC1)
+		sed -i 's/4.0.0-RC1/4.0.0-RC2/g' /etc/pistar-release
+
+		# Update all the startup timers
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/pistar-upnp.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/dmrgateway.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ircddbgateway.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/nxdnparrot.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/p25parrot.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ysfparrot.timer
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+
+		# Fix some broken libs
+		apt-get update && apt-get install --reinstall libraspberrypi0 libraspberrypi-dev libraspberrypi-bin
+	;;
+	4.0.0-RC2)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0)
