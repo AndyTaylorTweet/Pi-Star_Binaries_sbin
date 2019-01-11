@@ -67,6 +67,11 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         if [[ $(platformDetect.sh) == *"Odroid"* && ${modemDevice} == *"ttyS"* && ${modemDevice} != *"ttySAC"* ]]; then
                 continue
         fi
+        
+        # Ignore /dev/ttyS0 on the NanoPi Platform
+        if [[ $(platformDetect.sh) == *"sun8i"* && ${modemDevice} == *"ttyS0"* ]]; then
+                continue
+        fi
 
         # Make sure the output file exists
         touch /tmp/${randomFilename}                                            # Make the output File
