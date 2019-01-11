@@ -689,6 +689,8 @@ main_function() {
 
 		# Fix some broken libs
 		apt-get update && apt-get install --reinstall libraspberrypi0 libraspberrypi-dev libraspberrypi-bin
+
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC2..."
 	;;
 	4.0.0-RC2)
 		Message="You are already running the latest version..."
