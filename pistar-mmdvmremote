@@ -65,8 +65,8 @@ if [ ${1} ]; then
 		;;
 	esac
 
-	# Cleanup any left over loggin
-	rm -rf ~/RemoteCommand-*
+	# Cleanup any left over logs that are dropped all over the place...
+	rm -rf RemoteCommand-*.log > /dev/null 2>&1
 fi
 
 exit 0
