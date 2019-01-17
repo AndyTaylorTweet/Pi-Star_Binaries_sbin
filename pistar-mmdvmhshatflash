@@ -29,7 +29,7 @@ then
   echo "To flash HS_DUAL_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat-12mhz"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
-  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-vyehsflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
   echo ""
   # Get the pretty name for the chosen Modem according to the dashboard.

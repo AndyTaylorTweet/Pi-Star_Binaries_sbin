@@ -169,4 +169,10 @@ if [ -f "/root/XLXHosts.txt" ]; then
         done < /root/XLXHosts.txt
 fi
 
+# Yaesu FT-70D radios only do upper case
+if [ -f /etc/hostfiles.ysfupper ]; then
+	sed -i 's/\(.*\)/\U\1/' ${YSFHOSTS}
+	sed -i 's/\(.*\)/\U\1/' ${FCSHOSTS}
+fi
+
 exit 0

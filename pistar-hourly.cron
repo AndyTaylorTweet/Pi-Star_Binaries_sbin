@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Pi-Star Hourly Cleanup Script
+#
+
+# Shrink NxinX error log to stop it getting out of hand
+echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
+
+# Clean up systemd logs
+journalctl --vacuum-time=24h
+journalctl --vacuum-size=5M
+
+# Mount the disk RO
+mount -o remount,ro /

@@ -1,4 +1,14 @@
 #!/bin/bash
+
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Make the disk RW
+mount -o remount,rw /
+
 # Host Files Update
 /usr/local/sbin/HostFilesUpdate.sh
 
