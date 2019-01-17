@@ -214,12 +214,10 @@ then
 	MNT_MOUNT=`fgrep " /mnt " /etc/mtab | cut -f 1 -d ' ' `
 	if [ "$MNT_MOUNT" = "" ]
 	then
-		mount -o remount,rw /
 		mkdir $CLONE
 	else
 		echo "$MNT_MOUNT is currently mounted on /mnt."
 		unmount_or_abort /mnt
-		mount -o remount,rw /
 		mkdir $CLONE
 	fi
 fi
