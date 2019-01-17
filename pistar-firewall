@@ -52,7 +52,7 @@ iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT #                      DNS (DNS Z
 iptables -A OUTPUT -p tcp --dport 9007 -j ACCEPT #                    ircDDB Servers (Callsign Routing)
 iptables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #                   D-PRS Position Info
 iptables -A OUTPUT -d 176.10.105.252 -p tcp --dport 20001 -j REJECT # Deliberately block access to dns.xreflector.net
-iptables -A OUTPUT -p tcp --dport 20001:20005 -j ACCEPT #             D-Plus Outbound Links
+iptables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #                   D-Plus Outbound Links
 
 # D-Star Voice to and from Icom RP2C controllers
 iptables -A OUTPUT -p udp -d 192.168.0.0/16 --dport 20000 -j ACCEPT # Voice Packets out to Icom PR2C
@@ -64,13 +64,13 @@ iptables -A INPUT -p udp -s 10.0.0.0/8 --dport 20000 -j ACCEPT #      Voice Pack
 iptables -t mangle -A POSTROUTING -p udp --dport 20000 -j DSCP --set-dscp 46
 
 # Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
-iptables -A OUTPUT -p udp --dport 20001 -j ACCEPT #       D-Plus Outbound Voice
+iptables -A OUTPUT -p udp --dport 20001:20007 -j ACCEPT # D-Plus Outbound Voice
 iptables -A OUTPUT -p udp --dport 30001 -j ACCEPT #       DExtra Outbound Voice
 iptables -A OUTPUT -p udp --dport 30051 -j ACCEPT #       DCS Outbound Voice
 iptables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT # CCS Voice
 iptables -A OUTPUT -p udp --dport 40000 -j ACCEPT #       Icom G2 Callsign Routing
 
-iptables -t mangle -A POSTROUTING -p udp --dport 20001 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 20001:20007 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 30001 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 30051 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 46
@@ -273,16 +273,16 @@ ip6tables -A INPUT -p udp -s fe80::/64 -d fe80::/64 --sport 1900 -j ACCEPT #    
 ip6tables -A OUTPUT -p tcp --dport 53 -j ACCEPT #           DNS Zone Transfer - Used by xreflector.net
 ip6tables -A OUTPUT -p tcp --dport 9007 -j ACCEPT #         ircDDB Servers (Callsign Routing)
 ip6tables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #        D-PRS Position Info
-ip6tables -A OUTPUT -p tcp --dport 20001:20005 -j ACCEPT #  D-Plus Outbound Links
+ip6tables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #        D-Plus Outbound Links
 
 # Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
-ip6tables -A OUTPUT -p udp --dport 20001 -j ACCEPT #        D-Plus Outbound Links
+ip6tables -A OUTPUT -p udp --dport 20001:20007 -j ACCEPT #  D-Plus Outbound Links
 ip6tables -A OUTPUT -p udp --dport 30001 -j ACCEPT #        DExtra Outbound Links
 ip6tables -A OUTPUT -p udp --dport 30051 -j ACCEPT #        DCS Outbound Links
 ip6tables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT #  CCS
 ip6tables -A OUTPUT -p udp --dport 40000 -j ACCEPT #        Icom G2 Callsign Routing
 
-ip6tables -t mangle -A POSTROUTING -p udp --dport 20001 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 20001:20007 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 30001 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 30051 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 46
