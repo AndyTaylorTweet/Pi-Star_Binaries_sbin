@@ -4,7 +4,7 @@
 #                                                                             #
 #                         Pi-Star Service Watchdog                            #
 #                                                                             #
-#    Version 1.9, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 2.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #   The service watchdog will monitor the D-Star Services, restarting them    #
 #   after any kind of failures - something that used to happen occasionally   #
@@ -42,7 +42,13 @@ while True: #Main loop
 		dateminus300sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		logstampnowminus300sec = dateminus300sec.strftime('%Y-%m-%d %H:%M:%S')
-		currentLog = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		# Best figure out the log name now
+		currentLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		currentLogNew = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		if os.path.isfile(currentLogOld):
+			currentLog = currentLogOld
+		if os.path.isfile(currentLogNew):
+			currentLog = currentLogNew
 
 		# Open the DStarRepeater Log
 		logfile = open(currentLog, 'r')
