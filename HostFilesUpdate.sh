@@ -178,12 +178,15 @@ fi
 # Fix up ircDDBGateway Host Files on v4
 if [ -d "/usr/local/etc/ircddbgateway" ]; then
 	if [[ -f "/usr/local/etc/ircddbgateway/DCS_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DCS_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DCS_Hosts.txt
 		ln -s /usr/local/etc/DCS_Hosts.txt /usr/local/etc/ircddbgateway/DCS_Hosts.txt
 	fi
 	if [[ -f "/usr/local/etc/ircddbgateway/DExtra_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DExtra_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DExtra_Hosts.txt
 		ln -s /usr/local/etc/DExtra_Hosts.txt /usr/local/etc/ircddbgateway/DExtra_Hosts.txt
 	fi
 	if [[ -f "/usr/local/etc/ircddbgateway/DPlus_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DPlus_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
 		ln -s /usr/local/etc/DPlus_Hosts.txt /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
 	fi
 fi
