@@ -189,6 +189,10 @@ if [ -d "/usr/local/etc/ircddbgateway" ]; then
 		rm -rf /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
 		ln -s /usr/local/etc/DPlus_Hosts.txt /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
 	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/CCS_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/CCS_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/CCS_Hosts.txt
+		ln -s /usr/local/etc/CCS_Hosts.txt /usr/local/etc/ircddbgateway/CCS_Hosts.txt
+	fi
 fi
 
 exit 0
