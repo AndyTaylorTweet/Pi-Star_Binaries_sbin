@@ -382,7 +382,7 @@ while True:
 		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
 		# Best figure out the log name now
 		currentLogDStarOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
-		currentLogDStarNew = '/var/log/pi-star/dstarrepeater-' + datenow + '.log'
+		currentLogDStarNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
 		if os.path.isfile(currentLogOld):
 			currentLogDStar = currentLogDStarOld
 		if os.path.isfile(currentLogNew):
