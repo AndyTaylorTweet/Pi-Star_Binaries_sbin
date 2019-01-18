@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Remote Control                          #
 #                                                                             #
-#    Version 1.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.7, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #  This Python script is desiged to look for specific things in the logs for  #
 #       MMDVMHost and act on those to give RF control over the repeater.      #
@@ -380,7 +380,13 @@ while True:
 		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
-		currentLogDStar = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		# Best figure out the log name now
+		currentLogDStarOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		currentLogDStarNew = '/var/log/pi-star/dstarrepeater-' + datenow + '.log'
+		if os.path.isfile(currentLogOld):
+			currentLogDStar = currentLogDStarOld
+		if os.path.isfile(currentLogNew):
+			currentLogDStar = currentLogDStarNew
 
 		# Open the DStarRepeater Log
 		logfile = open(currentLogDStar, 'r')
