@@ -707,8 +707,8 @@ main_function() {
 #		echo '' >> /etc/systemd/system/apt-daily.service
 #		echo '[Service]' >> /etc/systemd/system/apt-daily.service
 #		echo 'Type=oneshot' >> /etc/systemd/system/apt-daily.service
-#		echo 'ExecStartPre=/bin/mount/mount -o remount,rw /' >> /etc/systemd/system/apt-daily.service
-#		echo 'ExecStartPre=/bin/mount/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily.service
+#		echo 'ExecStartPre=/bin/mount -o remount,rw /' >> /etc/systemd/system/apt-daily.service
+#		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily.service
 #		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily update' >> /etc/systemd/system/apt-daily.service
 
 		#apt-daily-upgrade.service 
@@ -720,8 +720,8 @@ main_function() {
 #		echo '' >> /etc/systemd/system/apt-daily-upgrade.service
 #		echo '[Service]' >> /etc/systemd/system/apt-daily-upgrade.service
 #		echo 'Type=oneshot' >> /etc/systemd/system/apt-daily-upgrade.service
-#		echo 'ExecStartPre=/bin/mount/mount -o remount,rw /' >> /etc/systemd/system/apt-daily-upgrade.service
-#		echo 'ExecStartPre=/bin/mount/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily-upgrade.service
+#		echo 'ExecStartPre=/bin/mount -o remount,rw /' >> /etc/systemd/system/apt-daily-upgrade.service
+#		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily-upgrade.service
 #		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily install' >> /etc/systemd/system/apt-daily-upgrade.service
 #		echo 'KillMode=process' >> /etc/systemd/system/apt-daily-upgrade.service
 #		echo 'TimeoutStopSec=900' >> /etc/systemd/system/apt-daily-upgrade.service
