@@ -383,9 +383,9 @@ while True:
 		# Best figure out the log name now
 		currentLogDStarOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
 		currentLogDStarNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
-		if os.path.isfile(currentLogOld):
+		if os.path.isfile(currentLogDStarOld):
 			currentLogDStar = currentLogDStarOld
-		if os.path.isfile(currentLogNew):
+		if os.path.isfile(currentLogDStarNew):
 			currentLogDStar = currentLogDStarNew
 
 		# Open the DStarRepeater Log
