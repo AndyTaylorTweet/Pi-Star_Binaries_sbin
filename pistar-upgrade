@@ -695,7 +695,7 @@ main_function() {
 
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC2..."
 	;;
-	4.0.0-RC2
+	4.0.0-RC2)
 		sed -i 's/4.0.0-RC2/4.0.0-RC3/g' /etc/pistar-release
 
 		# apt-daily.service
