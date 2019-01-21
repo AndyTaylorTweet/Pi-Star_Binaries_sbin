@@ -305,7 +305,7 @@ while True:
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
 					# Get the IP
-					myIP = os.popen('/bin/hostname -I').read()
+					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
 					os.system(r'texttransmit -text "IP: ' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
