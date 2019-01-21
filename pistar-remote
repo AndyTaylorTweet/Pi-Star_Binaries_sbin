@@ -446,7 +446,7 @@ while True:
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetip) in line:
 					# Get the IP
-					myIP = os.popen('/bin/hostname -I').read()
+					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
 					os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
