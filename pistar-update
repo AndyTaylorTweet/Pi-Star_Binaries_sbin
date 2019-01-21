@@ -186,14 +186,14 @@ main_function() {
         	fi
 	
 		if [[ $(cat /etc/ircddbgateway | grep -o "mobileGPS" | wc -l) -eq 0 ]]; then
-                	echo "MobileGPS Config to /etc/ircddbgateway"
+                	echo "Adding MobileGPS Config to /etc/ircddbgateway"
                 	echo "mobileGPSEnabled=0" >> /etc/ircddbgateway
                 	echo "mobileGPSAddress=127.0.0.1" >> /etc/ircddbgateway
                 	echo "mobileGPSPort=7834" >> /etc/ircddbgateway
         	fi
 
 		if [[ $(cat /etc/dstarrepeater | grep -o "mmdvmRXInvert" | wc -l) -eq 0 ]]; then
-        	        echo "MobileGPS Config to /etc/dstarrepeater"
+        	        echo "Adding better MMDVM Config to /etc/dstarrepeater"
         	        echo "mmdvmRXInvert=0" >> /etc/dstarrepeater
         	        echo "mmdvmTXInvert=0" >> /etc/dstarrepeater
         	        echo "mmdvmPTTInvert=0" >> /etc/dstarrepeater
