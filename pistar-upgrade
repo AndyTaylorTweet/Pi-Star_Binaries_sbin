@@ -689,10 +689,54 @@ main_function() {
 
 		# Fix some broken libs
 		apt-get update && apt-get install --reinstall libraspberrypi0 libraspberrypi-dev libraspberrypi-bin
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
 
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC2..."
 	;;
 	4.0.0-RC2)
+		sed -i 's/4.0.0-RC2/4.0.0-RC3/g' /etc/pistar-release
+
+		# apt-daily.service
+		echo '[Unit]' > /etc/systemd/system/apt-daily.service
+		echo 'Description=Daily apt download activities' >> /etc/systemd/system/apt-daily.service
+		echo 'Documentation=man:apt(8)' >> /etc/systemd/system/apt-daily.service
+		echo 'ConditionACPower=true' >> /etc/systemd/system/apt-daily.service
+		echo 'After=network-online.target' >> /etc/systemd/system/apt-daily.service
+		echo 'Wants=network-online.target' >> /etc/systemd/system/apt-daily.service
+		echo '' >> /etc/systemd/system/apt-daily.service
+		echo '[Service]' >> /etc/systemd/system/apt-daily.service
+		echo 'Type=oneshot' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily update' >> /etc/systemd/system/apt-daily.service
+
+		#apt-daily-upgrade.service 
+		echo '[Unit]' > /etc/systemd/system/apt-daily-upgrade.service
+		echo 'Description=Daily apt upgrade and clean activities' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'Documentation=man:apt(8)' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ConditionACPower=true' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'After=apt-daily.service' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo '' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo '[Service]' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'Type=oneshot' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily install' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'KillMode=process' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'TimeoutStopSec=900' >> /etc/systemd/system/apt-daily-upgrade.service
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC3..."
+	;;
+	4.0.0-RC3)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0)

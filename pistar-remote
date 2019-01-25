@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Remote Control                          #
 #                                                                             #
-#    Version 1.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.8, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #  This Python script is desiged to look for specific things in the logs for  #
 #       MMDVMHost and act on those to give RF control over the repeater.      #
@@ -220,7 +220,8 @@ while True:
 				# DMR Update Hostfiles
 				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
 				if str('received RF voice header from ' + keeperCall + ' to ' + dmrhostfiles) in line:
-					# Shutdown the OS
+					# Update Host files
+					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# P25 Stop MMDVMHost
@@ -254,7 +255,8 @@ while True:
 				# P25 Update Hostfiles
 				# M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
                                 if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25hostfiles) in line:
-					# Shutdown the OS
+					# Update Host Files
+					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# D-Star Stop MMDVMHost
@@ -288,7 +290,7 @@ while True:
 				# D-Star Shutdown the OS
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarshutdown) in line:
-					# Kill the Services
+					# Shutdown
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
@@ -296,16 +298,17 @@ while True:
 				# D-Star Hostfiles Update
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarhostfiles) in line:
-					# Kill the Services
+					# Update Host files
 					os.system(r'texttransmit -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
+					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# D-Star Get the current IP
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
 					# Get the IP
-					myIP = os.popen('/bin/hostname -I').read()
+					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
 					os.system(r'texttransmit -text "IP: ' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
@@ -363,7 +366,8 @@ while True:
 								# YSF Update the Hostfiles
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
 								if str('Trying to find non existent reflector') and str(ysfhostfiles) in lineysf:
-									# Shutdown the OS
+									# Update the host files
+									os.system(r'/bin/mount -o remount,rw /')
 									os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 	
 		# This is the 30 second sleep before the next pass.
@@ -380,7 +384,13 @@ while True:
 		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
-		currentLogDStar = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		# Best figure out the log name now
+		currentLogDStarOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+		currentLogDStarNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
+		if os.path.isfile(currentLogDStarOld):
+			currentLogDStar = currentLogDStarOld
+		if os.path.isfile(currentLogDStarNew):
+			currentLogDStar = currentLogDStarNew
 
 		# Open the DStarRepeater Log
 		logfile = open(currentLogDStar, 'r')
@@ -415,7 +425,7 @@ while True:
 				# D-Star Reboot the OS
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarreboot) in line:
-					# Kill the Services
+					# Reboot
 					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -r now')
@@ -423,7 +433,7 @@ while True:
 				# D-Star Shutdown the OS
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarshutdown) in line:
-					# Kill the Services
+					# Shutdown
 					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
@@ -431,16 +441,17 @@ while True:
 				# D-Star Update the host files
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarhostfiles) in line:
-					# Kill the Services
+					# Update the host files
 					os.system(r'texttransmit -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
+					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
 				# D-Star Get the current IP
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetip) in line:
 					# Get the IP
-					myIP = os.popen('/bin/hostname -I').read()
+					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
 					os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball

@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.41                      #
+#                     Version 2.45                      #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -129,7 +129,7 @@ if [ -f "/etc/dmrgateway" ]; then
 	sed -i '/Name=.*(/d' /etc/dmrgateway
 	sed -i '/Name=.*)/d' /etc/dmrgateway
 fi
-	
+
 # Add some fixes for P25Gateway
 if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" ]]; then
 	sed -i 's/Hosts=\/usr\/local\/etc\/P25Hosts.txt/HostsFile1=\/usr\/local\/etc\/P25Hosts.txt\nHostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
@@ -143,10 +143,10 @@ fi
 if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
 	sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
 fi
-if [ ! -f /root/NXDNHosts.txt ]; then
+if [ ! -f "/root/NXDNHosts.txt" ]; then
 	touch /root/NXDNHosts.txt
 fi
-if [ ! -f /usr/local/etc/NXDNHostsLocal.txt ]; then
+if [ ! -f "/usr/local/etc/NXDNHostsLocal.txt" ]; then
 	touch /usr/local/etc/NXDNHostsLocal.txt
 fi
 
@@ -170,9 +170,29 @@ if [ -f "/root/XLXHosts.txt" ]; then
 fi
 
 # Yaesu FT-70D radios only do upper case
-if [ -f /etc/hostfiles.ysfupper ]; then
+if [ -f "/etc/hostfiles.ysfupper" ]; then
 	sed -i 's/\(.*\)/\U\1/' ${YSFHOSTS}
 	sed -i 's/\(.*\)/\U\1/' ${FCSHOSTS}
+fi
+
+# Fix up ircDDBGateway Host Files on v4
+if [ -d "/usr/local/etc/ircddbgateway" ]; then
+	if [[ -f "/usr/local/etc/ircddbgateway/DCS_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DCS_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DCS_Hosts.txt
+		ln -s /usr/local/etc/DCS_Hosts.txt /usr/local/etc/ircddbgateway/DCS_Hosts.txt
+	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/DExtra_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DExtra_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DExtra_Hosts.txt
+		ln -s /usr/local/etc/DExtra_Hosts.txt /usr/local/etc/ircddbgateway/DExtra_Hosts.txt
+	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/DPlus_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DPlus_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
+		ln -s /usr/local/etc/DPlus_Hosts.txt /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
+	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/CCS_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/CCS_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/CCS_Hosts.txt
+		ln -s /usr/local/etc/CCS_Hosts.txt /usr/local/etc/ircddbgateway/CCS_Hosts.txt
+	fi
 fi
 
 exit 0
