@@ -168,9 +168,9 @@ magic8ball = [
 txtTransmitOldBin = '/usr/local/bin/texttransmit'
 txtTransmitNewBin = '/usr/local/bin/texttransmitd'
 if os.path.isfile(txtTransmitOldBin):
-	txtTransmitBin = = '/usr/local/bin/texttransmit'
+	txtTransmitBin = '/usr/local/bin/texttransmit'
 if os.path.isfile(txtTransmitNewBin):
-	txtTransmitBin = = '/usr/local/bin/texttransmitd'
+	txtTransmitBin = '/usr/local/bin/texttransmitd'
 
 # Now run the loop
 while True:
