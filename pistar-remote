@@ -164,6 +164,14 @@ magic8ball = [
         'Very doubtful'
         ]
 
+# Some Variables that are important later
+txtTransmitOldBin = '/usr/local/bin/texttransmit'
+txtTransmitNewBin = '/usr/local/bin/texttransmitd'
+if os.path.isfile(txtTransmitOldBin):
+	txtTransmitBin = = '/usr/local/bin/texttransmit'
+if os.path.isfile(txtTransmitNewBin):
+	txtTransmitBin = = '/usr/local/bin/texttransmitd'
+
 # Now run the loop
 while True:
 	# Check that the process is running, if its not there is no point in trying to stop it.
@@ -263,7 +271,7 @@ while True:
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarstop) in line:
 					# Kill the Services
-					os.system(r'texttransmit -text "Shutting down at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Shutting down at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
                                         os.system(r'systemctl stop mmdvmhost.timer')
                                         os.system(r'systemctl stop pistar-watchdog.timer')
@@ -274,7 +282,7 @@ while True:
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarrestart) in line:
 					# Restart the Services
-					os.system(r'texttransmit -text "Restarting services at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Restarting services at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
                                         os.system(r'systemctl restart ircddbgateway.service')
                                         os.system(r'systemctl restart mmdvmhost.service')
@@ -283,7 +291,7 @@ while True:
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarreboot) in line:
 					# Kill the Services
-					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -r now')
 
@@ -291,7 +299,7 @@ while True:
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarshutdown) in line:
 					# Shutdown
-					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
 
@@ -299,7 +307,7 @@ while True:
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstarhostfiles) in line:
 					# Update Host files
-					os.system(r'texttransmit -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
@@ -309,14 +317,14 @@ while True:
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
 					# Get the IP
 					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
-					os.system(r'texttransmit -text "IP: ' + myIP + '" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "IP: ' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
                                 # M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
                                 if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstar8ball) in line:
                                         # Ask the 8Ball
                                         magic8ballanswer = random.choice(magic8ball)
-                                        os.system(r'texttransmit -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
+                                        os.system(txtTransmitBin + ' -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
 
 				# YSF
 				# M: 2017-07-13 19:50:43.464 YSF, received RF header from M1ABC      to ALL
@@ -406,7 +414,7 @@ while True:
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarstop) in line:
 					# Kill the Services
-					os.system(r'texttransmit -text "Shutting down at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Shutting down at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
                                         os.system(r'systemctl stop dstarrepeater.timer')
                                         os.system(r'systemctl stop pistar-watchdog.timer')
@@ -417,7 +425,7 @@ while True:
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarrestart) in line:
 					# Restart the Services
-					os.system(r'texttransmit -text "Restarting services at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Restarting services at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
                                         os.system(r'systemctl restart ircddbgateway.service')
                                         os.system(r'systemctl restart dstarrepeater.service')
@@ -426,7 +434,7 @@ while True:
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarreboot) in line:
 					# Reboot
-					os.system(r'texttransmit -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Rebooting OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -r now')
 
@@ -434,7 +442,7 @@ while True:
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarshutdown) in line:
 					# Shutdown
-					os.system(r'texttransmit -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Shutting down OS at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'shutdown -h now')
 				
@@ -442,7 +450,7 @@ while True:
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarhostfiles) in line:
 					# Update the host files
-					os.system(r'texttransmit -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
@@ -452,14 +460,14 @@ while True:
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetip) in line:
 					# Get the IP
 					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
-					os.system(r'texttransmit -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
+					os.system(txtTransmitBin + ' -text "My IP: "' + myIP + '" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
                                 # M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstar8ball) in line:
                                         # Ask the 8Ball
                                         magic8ballanswer = random.choice(magic8ball)
-                                        os.system(r'texttransmit -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
+                                        os.system(txtTransmitBin + ' -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
 
 		# This is the 30 second sleep before the next pass.
 		time.sleep(30)
