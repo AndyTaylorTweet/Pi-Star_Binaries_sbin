@@ -408,7 +408,7 @@ while True:
 		# Parse the log lines
 		for line in loglist:
 			# We only care about logs in the last 60 secs
-			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow and line[24:51] == "Radio header decoded - My: ":
+			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
 				# D-Star Stop Services
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstarstop) in line:
