@@ -65,7 +65,11 @@ while True: #Main loop
 		                        time.sleep(30) # Give the DVAP time to recover
                 		        os.system('/bin/systemctl start dstarrepeater.service')
                         		time.sleep(270) #Give the service time to start before we move on
-
+				# Look for "No space to write data|the header|end data" and restart the service
+				if (str('No space to write') in line):
+					os.system('echo "$(tail -n 50 ' + currentLog + ')" > ' + currentLog)
+					os.system('/bin/systemctl restart dstarrepeater.service')
+		                        time.sleep(30)
 
 	# Check the MMDVMHost Specific Services
 	if os.path.isfile(mmdvmhost):
