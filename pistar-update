@@ -46,6 +46,10 @@ git_update() {
 		# Assume unchanged for pistar-upnp.service
 		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged pistar-upnp.service
 	fi
+	#if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
+	#	# Assume unchanged for pistar-upnp.service
+	#	git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged config/ircddblocal.php
+	#fi
 	# In all other cases, pull the changes
 	git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
 }
@@ -104,12 +108,11 @@ main_function() {
 	echo "Done"
 
 	echo "Updating DV Binaries..."
-	git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
+	git_update /usr/local/bin
 	echo "Done"
 
 	echo "Updating Pi-Star Binaries..."
-	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git update-index --assume-unchanged pistar-upnp.service
-	git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
+	git_update /usr/local/sbin
 	echo "Done"
 
 	echo "Updating Hostfiles..."
@@ -117,8 +120,7 @@ main_function() {
 	echo "Done"
 
 	echo "Updating Dashboard..."
-	# Update the Dashboard from GIT
-	git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin master
+	git_update /var/www/dashboard
 	echo "Done"
 
 	echo "Updating PiStar-Firewall..."
