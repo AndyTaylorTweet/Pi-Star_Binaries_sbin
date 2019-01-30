@@ -100,27 +100,7 @@ main_function() {
 	fi
 
 	echo "Stopping Services..."
-	systemctl stop pistar-watchdog.service > /dev/null 2>&1
-	systemctl stop pistar-remote.service > /dev/null 2>&1
-	systemctl stop dmrgateway.service > /dev/null 2>&1
-	systemctl stop dapnetgateway.service > /dev/null 2>&1
-	systemctl stop ircddbgateway.service > /dev/null 2>&1
-	systemctl stop timeserver.service > /dev/null 2>&1
-	systemctl stop ysfgateway.service > /dev/null 2>&1
-	systemctl stop ysf2dmr.service > /dev/null 2>&1
-	systemctl stop ysf2nxdn.service > /dev/null 2>&1
-	systemctl stop ysf2p25.service > /dev/null 2>&1
-	systemctl stop ysfparrot.service > /dev/null 2>&1
-	systemctl stop dmr2ysf.service > /dev/null 2>&1
-	systemctl stop dmr2nxdn.service > /dev/null 2>&1
-	systemctl stop p25gateway.service > /dev/null 2>&1
-	systemctl stop p25parrot.service > /dev/null 2>&1
-	systemctl stop nxdngateway.service > /dev/null 2>&1
-	systemctl stop nxdn2dmr.service > /dev/null 2>&1
-	systemctl stop nxdnparrot.service > /dev/null 2>&1
-	systemctl stop dstarrepeater.service > /dev/null 2>&1
-	systemctl stop mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
-	
+	service_handle stop
 	echo "Done"
 
 	echo "Updating DV Binaries..."
@@ -161,7 +141,7 @@ main_function() {
 	if [ ! -f /root/P25Hosts.txt ]; then
 		touch /root/P25Hosts.txt
 	fi
-	
+
 	# Fix up new NXDNGateway Config Hostfile setup
 	if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
 		sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
@@ -239,7 +219,7 @@ main_function() {
         	        echo "Adding APRS Password to /etc/ircddbgateway"
         	        echo "aprsPassword=00000" >> /etc/ircddbgateway
         	fi
-	
+
 		if [[ $(cat /etc/ircddbgateway | grep -o "mobileGPS" | wc -l) -eq 0 ]]; then
                 	echo "Adding MobileGPS Config to /etc/ircddbgateway"
                 	echo "mobileGPSEnabled=0" >> /etc/ircddbgateway
@@ -259,26 +239,7 @@ main_function() {
 	fi
 
 	echo "Starting Services..."
-	systemctl start dmrgateway.service > /dev/null 2>&1
-	systemctl start ircddbgateway.service > /dev/null 2>&1
-	systemctl start timeserver.service > /dev/null 2>&1
-	systemctl start ysfgateway.service > /dev/null 2>&1
-	systemctl start ysf2dmr.service > /dev/null 2>&1
-	systemctl start ysf2nxdn.service > /dev/null 2>&1
-	systemctl start ysf2p25.service > /dev/null 2>&1
-	systemctl start ysfparrot.service > /dev/null 2>&1
-	systemctl start dmr2ysf.service > /dev/null 2>&1
-	systemctl start dmr2nxdn.service > /dev/null 2>&1
-	systemctl start p25gateway.service > /dev/null 2>&1
-	systemctl start p25parrot.service > /dev/null 2>&1
-	systemctl start nxdngateway.service > /dev/null 2>&1
-	systemctl start nxdn2dmr.service > /dev/null 2>&1
-	systemctl start nxdnparrot.service > /dev/null 2>&1
-	systemctl start dstarrepeater.service > /dev/null 2>&1
-	systemctl start mmdvmhost.service > /dev/null 2>&1
-	systemctl start dapnetgateway.service > /dev/null 2>&1
-	systemctl start pistar-watchdog.service > /dev/null 2>&1
-	systemctl start pistar-remote.service > /dev/null 2>&1
+	service_handle start
 	echo "Done"
 
 	echo "Updates complete, sleeping for a few seconds before making the disk Read-Only"
