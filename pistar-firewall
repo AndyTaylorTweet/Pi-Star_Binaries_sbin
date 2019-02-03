@@ -96,7 +96,9 @@ iptables -t mangle -A POSTROUTING -p udp --sport 42001 --dport 62500 -j DSCP --s
 
 # Allow Outbound P25Gateway Ports
 iptables -A OUTPUT -p udp --dport 41000:41010 -j ACCEPT #			P25 Outbound Connections
+iptables -A OUTPUT -p udp --dport 41720 -j ACCEPT #           P25 Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --dport 41000:41010 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 41720 -j DSCP --set-dscp 46
 
 # Allow Outbound NXDNGateway Ports
 iptables -A OUTPUT -p udp --dport 41400 -j ACCEPT #			NXDN Outbound Connections

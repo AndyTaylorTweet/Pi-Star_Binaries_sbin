@@ -31,6 +31,10 @@ test -r $CONFIG || exit 1
 ! test -r /etc/dstar-radio.mmdvmhost || exit 1
 test -r /etc/dstar-radio.dstarrepeater || exit 1
 
+if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
+fi
+
 # if ircDDBGAteway is configured for Icom Repeater, dont run DStarRepeater
 if [[ $(grep "repeaterType1" /etc/ircddbgateway | cut -c 15) -ge 1 ]]; then
   exit 1;

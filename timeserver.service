@@ -38,6 +38,10 @@ if [ -f /etc/dstar-radio.mmdvmhost ]; then
         fi
 fi
 
+if [[ $(egrep -h -i "M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
+fi
+
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR

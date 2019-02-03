@@ -38,6 +38,10 @@ if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/nxdn2dmr | cut -c 9` != 1 ]; then
 	exit 1;
 fi
 
+if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
+fi
+
 # Make sure I am supposed to be used
 if [ `grep 'NXDN2DMRAddress' /etc/ysfgateway | awk -F = '{print $2}'` != 127.0.0.1 ]; then
 	exit 1;

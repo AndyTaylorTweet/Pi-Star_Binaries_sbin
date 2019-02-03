@@ -34,11 +34,7 @@ if [ `sed -n '/\[POCSAG Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` -ne 1 ]; th
   exit 1;
 fi
 
-if [ `grep "M1ABC" /etc/dapnetgateway | wc -l` -gt 0 ]; then
-  exit 1;
-fi
-
-if [ `grep "TOPSECRET" /etc/dapnetgateway | wc -l` -gt 0 ]; then
+if [[ $(egrep -h -i "TOPSECRET|M1ABC" /etc/dapnetgateway | wc -l) -gt 0 ]]; then
   exit 1;
 fi
 
