@@ -10,5 +10,12 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 journalctl --vacuum-time=24h
 journalctl --vacuum-size=5M
 
+# Clean up MMDVM Log
+numLogsMMDVM=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+if [[ ${numLogsMMDVM} -gt 0 ]]; then
+        logLatestMMDVM=$(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1)
+        sed -i '/from\|end\|watchdog\|lost\|protocol version/!d' ${logLatestMMDVM}
+fi
+
 # Mount the disk RO
 mount -o remount,ro /
