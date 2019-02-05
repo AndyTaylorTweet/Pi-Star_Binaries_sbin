@@ -47,15 +47,15 @@ while True: #Main loop
 			dstarLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
 			dstarLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
 			if os.path.isfile(dstarLogOld):
-				os.system('echo "$('echo $(tail -500 /var/log/pi-star/DStarRepeater-$(date +%F).log) > /var/log/pi-star/DStarRepeater-$(date +%F).log')
+				os.system('echo "$(tail -500 /var/log/pi-star/DStarRepeater-$(date +%F).log)" > /var/log/pi-star/DStarRepeater-$(date +%F).log')
 			if os.path.isfile(dstarLogNew):
-				os.system('echo "$('echo $(tail -500 /var/log/pi-star/dstarrepeaterd-$(date +%F).log) > /var/log/pi-star/dstarrepeaterd-$(date +%F).log')
+				os.system('echo "$(tail -500 /var/log/pi-star/dstarrepeaterd-$(date +%F).log)" > /var/log/pi-star/dstarrepeaterd-$(date +%F).log')
 			os.system('/bin/systemctl restart dstarrepeater.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 		if os.path.isfile(mmdvmhost):
 			mmdvmLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
 			if os.path.isfile(mmdvmLog):
-				os.system('echo $(tail -500 /var/log/pi-star/MMDVM-$(date +%F).log) > /var/log/pi-star/MMDVM-$(date +%F).log')
+				os.system('echo "$(tail -500 /var/log/pi-star/MMDVM-$(date +%F).log)" > /var/log/pi-star/MMDVM-$(date +%F).log')
 			os.system('/bin/systemctl restart mmdvmhost.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 
