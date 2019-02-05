@@ -46,15 +46,15 @@ while True: #Main loop
 			currentLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
 			currentLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
 			if os.path.isfile(currentLogOld):
-				os.system('echo "$(tail -500 currentLogOld)" > currentLogOld')
+				os.system('echo "$(tail -500 ' + currentLogOld + ')" > ' + currentLogOld)
 			if os.path.isfile(currentLogNew):
-				os.system('echo "$(tail -500 currentLogNew)" > currentLogNew')
+				os.system('echo "$(tail -500 ' + currentLogNew + ')" > ' + currentLogNew)
 			os.system('/bin/systemctl restart dstarrepeater.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 		if os.path.isfile(mmdvmhost):
 			currentLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
 			if os.path.isfile(currentLog):
-				os.system('echo "$(tail -500 currentLog)" > currentLog')
+				os.system('echo "$(tail -500 ' + currentLog + ')" > ' + currentLog)
 			os.system('/bin/systemctl restart mmdvmhost.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 
