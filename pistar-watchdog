@@ -38,23 +38,24 @@ while True: #Main loop
 		os.system('rm -rf /var/log/*.1.gz')
 		os.system('rm -rf /var/log/*.1')
 		os.system('echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log')
+		os.system('rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)')
+		os.system('rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)')
 		# Shorten the Pi-Star logs
 		utcnow = datetime.datetime.utcnow()
 		datenow = utcnow.strftime('%Y-%m-%d')
-		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		if os.path.isfile(dstarrepeater):
-			currentLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
-			currentLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
-			if os.path.isfile(currentLogOld):
-				os.system('echo "$(tail -500 ' + currentLogOld + ')" > ' + currentLogOld)
-			if os.path.isfile(currentLogNew):
-				os.system('echo "$(tail -500 ' + currentLogNew + ')" > ' + currentLogNew)
+			dstarLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+			dstarLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
+			if os.path.isfile(dstarLogOld):
+				os.system('echo "$('echo $(tail -500 /var/log/pi-star/DStarRepeater-$(date +%F).log) > /var/log/pi-star/DStarRepeater-$(date +%F).log')
+			if os.path.isfile(dstarLogNew):
+				os.system('echo "$('echo $(tail -500 /var/log/pi-star/dstarrepeaterd-$(date +%F).log) > /var/log/pi-star/dstarrepeaterd-$(date +%F).log')
 			os.system('/bin/systemctl restart dstarrepeater.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 		if os.path.isfile(mmdvmhost):
-			currentLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
-			if os.path.isfile(currentLog):
-				os.system('echo "$(tail -500 ' + currentLog + ')" > ' + currentLog)
+			mmdvmLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
+			if os.path.isfile(mmdvmLog):
+				os.system('echo $(tail -500 /var/log/pi-star/MMDVM-$(date +%F).log) > /var/log/pi-star/MMDVM-$(date +%F).log')
 			os.system('/bin/systemctl restart mmdvmhost.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 
