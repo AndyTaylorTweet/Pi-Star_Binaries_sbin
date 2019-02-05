@@ -14,7 +14,7 @@ journalctl --vacuum-size=5M
 numLogsMMDVM=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
 if [[ ${numLogsMMDVM} -gt 0 ]]; then
         logLatestMMDVM=$(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1)
-        #sed -i '/from\|end\|watchdog\|lost\|protocol version/!d' ${logLatestMMDVM}
+        sed -i '/from\|end\|watchdog\|lost\|protocol version/!d' ${logLatestMMDVM}
 fi
 
 # Mount the disk RO
