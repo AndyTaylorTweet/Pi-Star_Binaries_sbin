@@ -54,15 +54,15 @@ git_update() {
 	
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
 		echo "Updating ${gitFolder}..."
+		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+		
+		# Re-check that the updates are now good
+		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+			echo "Updates were not sucsessfull, reverting to Pi-Star origional files..."
+			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+		fi
 	else
 		echo "No updates for ${gitFolder} available"
-	fi
-	# In all other cases, pull the changes
-	git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
-
-	# Re-test for updates
-	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
-		echo "Updates were not sucsessfull."
 	fi
 }
 
