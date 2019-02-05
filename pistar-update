@@ -31,9 +31,9 @@ git_checkUpdateRequired() {
 
 	# Return the output
 	if [[ ${gitStatusRemote} != ${gitStatusLocal} ]]; then
-		return 1
+		echo "1"
 	else
-		return 0
+		echo "0"
 	fi
 }
 
