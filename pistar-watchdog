@@ -31,7 +31,8 @@ while True: #Main loop
 	# Get the current status
 	dstarrepeater = "/etc/dstar-radio.dstarrepeater"
 	mmdvmhost = "/etc/dstar-radio.mmdvmhost"
-	
+
+	# Check the disk usage
 	if disk_stat('/var/log') > 90:
 		# Clean up the log volume
 		os.system('rm -rf /var/log/*.1.gz')
@@ -48,10 +49,14 @@ while True: #Main loop
 				os.system('echo "$(tail -500 currentLogOld)" > currentLogOld')
 			if os.path.isfile(currentLogNew):
 				os.system('echo "$(tail -500 currentLogNew)" > currentLogNew')
+			os.system('/bin/systemctl restart dstarrepeater.service')
+			time.sleep(60) # Give the service 60 secs before we re-test
 		if os.path.isfile(mmdvmhost):
 			currentLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
 			if os.path.isfile(currentLog):
 				os.system('echo "$(tail -500 currentLog)" > currentLog')
+			os.system('/bin/systemctl restart mmdvmhost.service')
+			time.sleep(60) # Give the service 60 secs before we re-test
 
 	# Check the D-Star Specific Services
 	if os.path.isfile(dstarrepeater):
