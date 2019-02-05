@@ -21,10 +21,37 @@ import ConfigParser
 
 time.sleep(90) #Assumiing the Pi has just started up, let the services settle...
 
+# Get the disk usage
+def disk_stat(path):
+    disk = os.statvfs(path)
+    percent = (disk.f_blocks - disk.f_bfree) * 100 / (disk.f_blocks -disk.f_bfree + disk.f_bavail) + 1
+    return percent
+
 while True: #Main loop
 	# Get the current status
 	dstarrepeater = "/etc/dstar-radio.dstarrepeater"
 	mmdvmhost = "/etc/dstar-radio.mmdvmhost"
+	
+	if disk_stat('/var/log') > 90:
+		# Clean up the log volume
+		os.system('rm -rf /var/log/*.1.gz')
+		os.system('rm -rf /var/log/*.1')
+		os.system('echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log')
+		# Shorten the Pi-Star logs
+		utcnow = datetime.datetime.utcnow()
+		datenow = utcnow.strftime('%Y-%m-%d')
+		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
+		if os.path.isfile(dstarrepeater):
+			currentLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+			currentLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
+			if os.path.isfile(currentLogOld):
+				os.system('echo "$(tail -500 currentLogOld)" > currentLogOld')
+			if os.path.isfile(currentLogNew):
+				os.system('echo "$(tail -500 currentLogNew)" > currentLogNew')
+		if os.path.isfile(mmdvmhost):
+			currentLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
+			if os.path.isfile(currentLog):
+				os.system('echo "$(tail -500 currentLog)" > currentLog')
 
 	# Check the D-Star Specific Services
 	if os.path.isfile(dstarrepeater):
