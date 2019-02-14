@@ -21,10 +21,43 @@ import ConfigParser
 
 time.sleep(90) #Assumiing the Pi has just started up, let the services settle...
 
+# Get the disk usage
+def disk_stat(path):
+    disk = os.statvfs(path)
+    percent = (disk.f_blocks - disk.f_bfree) * 100 / (disk.f_blocks -disk.f_bfree + disk.f_bavail) + 1
+    return percent
+
 while True: #Main loop
 	# Get the current status
 	dstarrepeater = "/etc/dstar-radio.dstarrepeater"
 	mmdvmhost = "/etc/dstar-radio.mmdvmhost"
+
+	# Check the disk usage
+	if disk_stat('/var/log') > 90:
+		# Clean up the log volume
+		os.system('rm -rf /var/log/*.1.gz')
+		os.system('rm -rf /var/log/*.1')
+		os.system('echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log')
+		os.system('rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)')
+		os.system('rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)')
+		# Shorten the Pi-Star logs
+		utcnow = datetime.datetime.utcnow()
+		datenow = utcnow.strftime('%Y-%m-%d')
+		if os.path.isfile(dstarrepeater):
+			dstarLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
+			dstarLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
+			if os.path.isfile(dstarLogOld):
+				os.system('echo "$(tail -500 /var/log/pi-star/DStarRepeater-$(date +%F).log)" > /var/log/pi-star/DStarRepeater-$(date +%F).log')
+			if os.path.isfile(dstarLogNew):
+				os.system('echo "$(tail -500 /var/log/pi-star/dstarrepeaterd-$(date +%F).log)" > /var/log/pi-star/dstarrepeaterd-$(date +%F).log')
+			os.system('/bin/systemctl restart dstarrepeater.service')
+			time.sleep(60) # Give the service 60 secs before we re-test
+		if os.path.isfile(mmdvmhost):
+			mmdvmLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
+			if os.path.isfile(mmdvmLog):
+				os.system('echo "$(tail -500 /var/log/pi-star/MMDVM-$(date +%F).log)" > /var/log/pi-star/MMDVM-$(date +%F).log')
+			os.system('/bin/systemctl restart mmdvmhost.service')
+			time.sleep(60) # Give the service 60 secs before we re-test
 
 	# Check the D-Star Specific Services
 	if os.path.isfile(dstarrepeater):

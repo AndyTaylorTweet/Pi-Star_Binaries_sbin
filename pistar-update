@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 3.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 3.1, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
@@ -24,16 +24,17 @@ fi
 git_checkUpdateRequired() {
 	# Set the function variables
 	gitFolder=${1}
+	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
 
 	# Git check / update function
-	gitStatusRemote=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log origin/master --pretty=format:"%h" -1)
+	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | cut -c 1-7)
 	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%h" -1)
 
 	# Return the output
 	if [[ ${gitStatusRemote} != ${gitStatusLocal} ]]; then
-		return 1
+		echo "1"
 	else
-		return 0
+		echo "0"
 	fi
 }
 
@@ -50,8 +51,19 @@ git_update() {
 	#	# Assume unchanged for pistar-upnp.service
 	#	git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged config/ircddblocal.php
 	#fi
-	# In all other cases, pull the changes
-	git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+	
+	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+		echo "Updating ${gitFolder}..."
+		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+		
+		# Re-check that the updates are now good
+		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+			echo "Updates were not sucsessfull, reverting to Pi-Star origional files..."
+			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+		fi
+	else
+		echo "No updates for ${gitFolder} available"
+	fi
 }
 
 service_handle() {
