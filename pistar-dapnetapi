@@ -17,27 +17,29 @@ fi
 # Get the stored DAPNET API Config
 DAPNETAPIFile=/etc/dapnetapi.key
 if [ -f ${DAPNETAPIFile} ]; then
-        USER=$(grep -m 1 'USER=' ${DAPNETAPIFile} | awk -F "=" '/USER/ {print $2}')
-        PASS=$(grep -m 1 'PASS=' ${DAPNETAPIFile} | awk -F "=" '/PASS/ {print $2}')
-        TRXAREA=$(grep -m 1 'TRXAREA=' ${DAPNETAPIFile} | awk -F "=" '/TRXAREA/ {print $2}')
+	source <(grep = <(grep -A5 '\[DAPNETAPI\]' $DAPNETAPIFile | tr -d ' '))
 else
-        echo "Unable to find your DAPNET API Info, no API commands available."
-        exit 0
+	echo "Unable to find your DAPNET API Info, no API commands available."
+	exit 1
 fi
 
-if [ -z "$2" ]
-then
+# Check command line arguments
+if [ $# -lt 2 ]; then
 	echo ""
-	echo "To use this script, call the script with some arguments;"
+        echo "To use this script, call the script with some arguments;"
+	echo ""
 	echo "Example:"
-	echo "pistar-dapnetapi M1ABC \"Test Message\""
-	echo "The above command will send a page containing \"Text Message\" to MW0MWZ"
+	echo "  pistar-dapnetapi M1ABC \"Test Message\""
+	echo ""
+	echo "The above command will send a page containing \"Text Message\" to M1ABC"
 	echo ""
 	echo "For additional feedback add the \"debug\" option:"
 	echo "pistar-dapnetapi M1ABC \"Test Message\" debug"
+	echo ""
 	echo "Suppress the hostname with the \"nohost\" option:"
 	echo "pistar-dapnetapi M1ABC \"Test Message\" nohost"
 	echo ""
+
 	exit 0
 fi
 
@@ -63,7 +65,76 @@ SIZEMESSAGE=$(expr 78 - ${SIZEHOST})
 SIZETEXT=${#MESSAGE}
 NUMMESSAGES=$(expr ${SIZETEXT} / ${SIZEMESSAGE})
 
-send_page () {
+# Curl error codes
+curlErrorCodes[1]="Unsupported protocol. This build of curl has no support for this protocol."
+curlErrorCodes[2]="Failed to initialize."
+curlErrorCodes[3]="URL malformed. The syntax was not correct."
+curlErrorCodes[4]="A feature or option that was needed to perform the desired request was not enabled or was explicitly disabled at build-time. To make curl able to do this, you probably need another build of libcurl!"
+curlErrorCodes[5]="Couldn't resolve proxy. The given proxy host could not be resolved."
+curlErrorCodes[6]="Couldn't resolve host. The given remote host was not resolved."
+curlErrorCodes[7]="Failed to connect to host."
+curlErrorCodes[22]="HTTP page not retrieved. The requested url was not found or returned another error with the HTTP error code being 400 or above. This return code only appears if -f, --fail is used."
+curlErrorCodes[23]="Write error. Curl couldn't write data to a local filesystem or similar."
+curlErrorCodes[26]="Read error. Various reading problems."
+curlErrorCodes[27]="Out of memory. A memory allocation request failed."
+curlErrorCodes[28]="Operation timeout. The specified time-out period was reached according to the conditions."
+curlErrorCodes[33]="HTTP range error. The range "command" didn't work."
+curlErrorCodes[34]="HTTP post error. Internal post-request generation error."
+curlErrorCodes[35]="SSL connect error. The SSL handshaking failed."
+curlErrorCodes[37]="FILE couldn't read file. Failed to open the file. Permissions?"
+curlErrorCodes[42]="Aborted by callback. An application told curl to abort the operation."
+curlErrorCodes[43]="Internal error. A function was called with a bad parameter."
+curlErrorCodes[45]="Interface error. A specified outgoing interface could not be used."
+curlErrorCodes[47]="Too many redirects. When following redirects, curl hit the maximum amount."
+curlErrorCodes[48]="Unknown option specified to libcurl. This indicates that you passed a weird option to curl that was passed on to libcurl and rejected. Read up in the manual!"
+curlErrorCodes[51]="The peer's SSL certificate or SSH MD5 fingerprint was not OK."
+curlErrorCodes[52]="The server didn't reply anything, which here is considered an error."
+curlErrorCodes[53]="SSL crypto engine not found."
+curlErrorCodes[54]="Cannot set SSL crypto engine as default."
+curlErrorCodes[55]="Failed sending network data."
+curlErrorCodes[56]="Failure in receiving network data."
+curlErrorCodes[58]="Problem with the local certificate."
+curlErrorCodes[59]="Couldn't use specified SSL cipher."
+curlErrorCodes[60]="Peer certificate cannot be authenticated with known CA certificates."
+curlErrorCodes[61]="Unrecognized transfer encoding."
+curlErrorCodes[63]="Maximum file size exceeded."
+curlErrorCodes[65]="Sending the data requires a rewind that failed."
+curlErrorCodes[66]="Failed to initialise SSL Engine."
+curlErrorCodes[67]="The user name, password, or similar was not accepted and curl failed to log in."
+curlErrorCodes[75]="Character conversion failed."
+curlErrorCodes[76]="Character conversion functions required."
+curlErrorCodes[77]="Problem with reading the SSL CA cert (path? access rights?)."
+curlErrorCodes[78]="The resource referenced in the URL does not exist."
+curlErrorCodes[79]="An unspecified error occurred during the SSH session."
+curlErrorCodes[80]="Failed to shut down the SSL connection."
+curlErrorCodes[82]="Could not load CRL file, missing or wrong format (added in 7.19.0)."
+curlErrorCodes[83]="Issuer check failed (added in 7.19.0)."
+curlErrorCodes[85]="RTSP: mismatch of CSeq numbers"
+curlErrorCodes[86]="RTSP: mismatch of Session Identifiers"
+curlErrorCodes[89]="No connection available, the session will be queued"
+
+
+# Function that parse returned JSON for error code
+function python_ParseJSON() {
+	DAPNET_RESULT_ARG="$1" python  - <<EOF
+import os
+import json
+import sys
+
+jdata = os.environ['DAPNET_RESULT_ARG']
+data = json.loads(jdata)
+
+if 'code' in data:
+    print("%s [error:%d]" %  (str(data["message"]), data["code"]))
+    sys.exit(1)
+else:
+    sys.exit(0)
+EOF
+}
+
+# Function that send a page
+# returns 0 on success, otherwise 1
+function send_page () {
 	# Set the variables for the function
 	TEXT="$(echo ${1})"
 
@@ -84,16 +155,33 @@ send_page () {
 	fi
 
 	# Speak to DAPNET
-	RESULT=$(curl -s -H "Content-Type: application/json" -X POST -u ${USER}:${PASS} -d \
+	RESULT=$(curl -f -S -s -H "Content-Type: application/json" -X POST -u ${USER}:${PASS} -d \
 	        "{ \"text\": \"${HOST^^}: ${TEXT}\", \"callSignNames\": [\"${RECIPIENT}\"], \"transmitterGroupNames\": [\"${TRXAREA}\"], \"emergency\": false }" \
-	        ${APIURL}/calls )
+	        ${APIURL}/calls 2>&1)
+	ret=$?
+
+	# Check curl return code
+	if [ "$ret" != "0" ]; then
+		echo "ERROR: ($ret) ${curlErrorCodes[ret]}"
+		return $ret
+	fi
 
 	# Debug option
 	if [ "${DEBUG}" -gt "0" ]; then
-	        echo "Answer from DAPNET API: ${RESULT}"
+	        echo "Answer from DAPNET API: '${RESULT}'"
 	        echo ""
 	        echo ""
 	fi
+
+	# Parse returned JSON code, to catch possible error
+	error=$(python_ParseJSON "${RESULT}")
+	ret=$?
+
+	if [ "$ret" != "0" ]; then
+		echo "$error"
+	fi
+
+	return $ret
 }
 
 
@@ -116,14 +204,25 @@ if [ "${NUMMESSAGES}" -gt "0" ]; then
 		TXTMESSAGE=${TXTPRE}" "${TXTCHUNK}
 
 		send_page "${TXTMESSAGE}"
+		ret=$?
+
+		if [ "$ret" != "0" ]; then
+		    exit $ret
+		fi
 
 		let COUNTER=COUNTER+1
 	done
 else
 	# Messge does not need to be split
 	send_page "${MESSAGE}"
+	ret=$?
+	 
+	if [ "$ret" != "0" ]; then
+	    exit $ret
+	fi
 fi
 
+echo "Page to $RECIPIENT successfully sent."
 
 # Exit Clean
 exit 0
