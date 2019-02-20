@@ -17,7 +17,7 @@ fi
 # Get the stored DAPNET API Config
 DAPNETAPIFile=/etc/dapnetapi.key
 if [ -f ${DAPNETAPIFile} ]; then
-	source <(grep = <(grep -A5 '\[DAPNETAPI\]' $DAPNETAPIFile | tr -d ' '))
+	source <(grep = <(grep -A5 '\[DAPNETAPI\]' $DAPNETAPIFile | tr -d ' ' | tr -d '\r'))
 else
 	echo "Unable to find your DAPNET API Info, no API commands available."
 	exit 1
@@ -78,7 +78,7 @@ curlErrorCodes[23]="Write error. Curl couldn't write data to a local filesystem 
 curlErrorCodes[26]="Read error. Various reading problems."
 curlErrorCodes[27]="Out of memory. A memory allocation request failed."
 curlErrorCodes[28]="Operation timeout. The specified time-out period was reached according to the conditions."
-curlErrorCodes[33]="HTTP range error. The range "command" didn't work."
+curlErrorCodes[33]="HTTP range error. The range \"command\" didn't work."
 curlErrorCodes[34]="HTTP post error. Internal post-request generation error."
 curlErrorCodes[35]="SSL connect error. The SSL handshaking failed."
 curlErrorCodes[37]="FILE couldn't read file. Failed to open the file. Permissions?"
