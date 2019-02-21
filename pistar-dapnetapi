@@ -29,9 +29,11 @@ if [ $# -lt 2 ]; then
         echo "To use this script, call the script with some arguments;"
 	echo ""
 	echo "Example:"
-	echo "  pistar-dapnetapi M1ABC \"Test Message\""
+	echo "  pistar-dapnetapi M1ABC[,callsign...] \"Test Message\" [options]"
 	echo ""
 	echo "The above command will send a page containing \"Text Message\" to M1ABC"
+	echo "More than one call can be specified for multiple recipients, separated"
+	echo "by a comma, without any space in betweeen."
 	echo ""
 	echo "For additional feedback add the \"debug\" option:"
 	echo "pistar-dapnetapi M1ABC \"Test Message\" debug"
@@ -58,7 +60,7 @@ fi
 
 # Setup some variables
 APIURL="https://hampager.de/api"
-RECIPIENT="${1}"
+RECIPIENT=$(echo "$1" | sed -r 's/\,/"\,"/g')
 MESSAGE=${2}
 SIZEHOST=${#HOST}
 SIZEMESSAGE=$(expr 78 - ${SIZEHOST})
@@ -222,7 +224,7 @@ else
 	fi
 fi
 
-echo "Page to $RECIPIENT successfully sent."
+echo "Page to \"$RECIPIENT\" successfully sent."
 
 # Exit Clean
 exit 0
