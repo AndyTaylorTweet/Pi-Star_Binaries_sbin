@@ -18,6 +18,10 @@ fi
 DAPNETAPIFile=/etc/dapnetapi.key
 if [ -f ${DAPNETAPIFile} ]; then
 	source <(grep = <(grep -A5 '\[DAPNETAPI\]' $DAPNETAPIFile | tr -d ' ' | tr -d '\r'))
+    	if [ ! -z "$DAPNET_TRXAREA" ]; then
+		TRXAREA="$DAPNET_TRXAREA"
+	fi
+	TRXAREA=$(echo "$TRXAREA" | sed -r 's/\,/"\,"/g')
 else
 	echo "Unable to find your DAPNET API Info, no API commands available."
 	exit 1
@@ -224,7 +228,7 @@ else
 	fi
 fi
 
-echo "Page to \"$RECIPIENT\" successfully sent."
+echo "Page to \"$RECIPIENT\" in transmitter group(s) \"$TRXAREA\" successfully sent."
 
 # Exit Clean
 exit 0
