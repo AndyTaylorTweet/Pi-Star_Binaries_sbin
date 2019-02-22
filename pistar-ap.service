@@ -91,6 +91,9 @@ fi
 case "$1" in
 	start)
 		mount -o remount,rw /
+		if [ $(grep /var/lib/misc /proc/mounts | wc -l) -eq 0 ]; then
+			mount -t tmpfs -o nodev,noatime,nosuid,mode=1777,size=16k tmpfs /var/lib/misc
+		fi
 		sysctl net.ipv4.ip_forward=1
 		iw dev wlan0 interface add wlan0_ap type __ap
 		${SLEEP} 4 && ifup wlan0_ap && ${SLEEP} 3
