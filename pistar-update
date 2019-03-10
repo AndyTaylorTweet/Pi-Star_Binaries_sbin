@@ -250,7 +250,7 @@ main_function() {
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
 		echo "Updating P25Gateway config..."
 		echo "" >> /etc/p25gateway
-		sed -i '$a[Voice]\nenabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
+		sed -i '$a[Voice]\nEnabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
 		echo "Done"
 	fi
 
