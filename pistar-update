@@ -222,6 +222,8 @@ main_function() {
 	fi
 
 	if [[ ! -d /usr/local/etc/P25_Audio ]]; then
+		echo "Downloading P25 Voice Files..."
+		mkdir /usr/local/etc/P25_Audio
 		curl --fail -o /usr/local/etc/P25_Audio/de_DE.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/de_DE.imbe
 		curl --fail -o /usr/local/etc/P25_Audio/de_DE.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/de_DE.indx
 		curl --fail -o /usr/local/etc/P25_Audio/dk_DK.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/dk_DK.imbe
@@ -242,6 +244,7 @@ main_function() {
 		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/pl_PL.indx
 		curl --fail -o /usr/local/etc/P25_Audio/se_SE.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/se_SE.imbe
 		curl --fail -o /usr/local/etc/P25_Audio/se_SE.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/se_SE.indx
+		echo "Done"
 	fi
 
 	if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
