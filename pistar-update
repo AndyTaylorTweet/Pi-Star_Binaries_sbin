@@ -252,7 +252,6 @@ main_function() {
 		echo "" >> /etc/p25gateway
 		sed -i '$a[Voice]\nenabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
 		echo "Done"
-	}
 	fi
 
 	if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
