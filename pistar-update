@@ -221,6 +221,39 @@ main_function() {
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 	fi
 
+	if [[ ! -d /usr/local/etc/P25_Audio ]]; then
+		echo "Downloading P25 Voice Files..."
+		mkdir /usr/local/etc/P25_Audio
+		curl --fail -o /usr/local/etc/P25_Audio/de_DE.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/de_DE.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/de_DE.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/P25_Audio/dk_DK.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/dk_DK.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/dk_DK.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/dk_DK.indx
+		curl --fail -o /usr/local/etc/P25_Audio/en_GB.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/en_GB.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/en_GB.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/en_GB.indx
+		curl --fail -o /usr/local/etc/P25_Audio/en_US.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/en_US.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/en_US.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/en_US.indx
+		curl --fail -o /usr/local/etc/P25_Audio/es_ES.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/es_ES.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/es_ES.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/es_ES.indx
+		curl --fail -o /usr/local/etc/P25_Audio/fr_FR.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/fr_FR.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/fr_FR.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/fr_FR.indx
+		curl --fail -o /usr/local/etc/P25_Audio/it_IT.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/it_IT.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/it_IT.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/it_IT.indx
+		curl --fail -o /usr/local/etc/P25_Audio/no_NO.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/no_NO.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/no_NO.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/no_NO.indx
+		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/pl_PL.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/pl_PL.indx
+		curl --fail -o /usr/local/etc/P25_Audio/se_SE.imbe -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/se_SE.imbe
+		curl --fail -o /usr/local/etc/P25_Audio/se_SE.indx -s https://github.com/g4klx/P25Clients/raw/master/P25Gateway/Audio/se_SE.indx
+		echo "Done"
+	fi
+	
+	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
+		echo "Updating P25Gateway config..."
+		echo "" >> /etc/p25gateway
+		sed -i '$a[Voice]\nEnabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
+		echo "Done"
+	fi
+
 	if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
         	if [[ $(cat /etc/ircddbgateway | grep -o "xlx" | wc -l) -eq 0 ]]; then
         	        echo "Adding XLX Config to /etc/ircddbgateway"
