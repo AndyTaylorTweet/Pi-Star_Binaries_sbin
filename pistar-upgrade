@@ -737,7 +737,27 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC3..."
 	;;
 	4.0.0-RC3)
-		Message="You are already running the latest version..."
+		sed -i 's/4.0.0-RC3/4.0.0-RC4/g' /etc/pistar-release
+
+		# apt-daily.service
+		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily.service
+
+		#apt-daily-upgrade.service 
+		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily-upgrade.service
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC4..."
+	;;
+	4.0.0-RC4)
+	    Message="You are already running the latest version..."
 	;;
 	4.0.0)
 		Message="You are already running the latest version..."
