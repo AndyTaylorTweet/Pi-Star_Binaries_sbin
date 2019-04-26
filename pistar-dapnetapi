@@ -207,6 +207,12 @@ if [ "${NUMMESSAGES}" -gt "0" ]; then
 		TXTSTART=$(expr ${SIZEMESSAGESPLIT} \* ${COUNTER} - ${SIZEMESSAGESPLIT})
 		TXTPRE="${COUNTER}/${NUMMESSAGESSPLIT}"
 		TXTCHUNK=${MESSAGE:$TXTSTART:$SIZEMESSAGESPLIT}
+
+		## If last character is a backlash, get rid of it
+		if [ "${TXTCHUNK: -1}" == "\\" -a "${TXTCHUNK: -2}" != "\\" ]; then
+		    TXTCHUNK=${TXTCHUNK%?}
+		fi
+		
 		TXTMESSAGE=${TXTPRE}" "${TXTCHUNK}
 
 		send_page "${TXTMESSAGE}"
