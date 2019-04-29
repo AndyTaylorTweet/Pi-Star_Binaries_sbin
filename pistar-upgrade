@@ -757,7 +757,7 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC4..."
 	;;
 	4.0.0-RC4)
-		sed -i 's/4.0.0-R4/4.0.0-RC5/g' /etc/pistar-release
+		sed -i 's/4.0.0-RC4/4.0.0-RC5/g' /etc/pistar-release
 
 		echo '#!/bin/sh' > /usr/local/avrdude
 		echo '' >> /usr/local/avrdude
