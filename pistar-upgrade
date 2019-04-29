@@ -757,8 +757,22 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC4..."
 	;;
 	4.0.0-RC4)
-	    Message="You are already running the latest version..."
-	;;
+		sed -i 's/4.0.0-R4/4.0.0-RC5/g' /etc/pistar-release
+
+		echo '#!/bin/sh' > /usr/local/avrdude
+		echo '' >> /usr/local/avrdude
+		echo 'sudo strace -o "|autoreset" -eioctl /usr/bin/avrdude-original $@' >> /usr/local/avrdude
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC5..."
+		;;
+	4.0.0-RC5)
+		Message="You are already running the latest version..."
+		;;
+
 	4.0.0)
 		Message="You are already running the latest version..."
 	;;
