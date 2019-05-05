@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 3.1, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 3.2, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
@@ -221,6 +221,7 @@ main_function() {
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 	fi
 
+	# I previously had the wrong URL for the P25 Audio files; remove the broken downloads.
 	if [[ -f /usr/local/etc/P25_Audio/en_GB.imbe ]]; then
 		testFileIMBE=`file -i /usr/local/etc/P25_Audio/en_GB.imbe | cut -d " " -f2`
 		if [[ $testFileIMBE == text* ]]; then
@@ -228,6 +229,7 @@ main_function() {
 		fi
 	fi
 
+	# Download the correct P25 Audio Files
 	if [[ ! -d /usr/local/etc/P25_Audio ]]; then
 		echo "Downloading P25 Voice Files..."
 		mkdir /usr/local/etc/P25_Audio
