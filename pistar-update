@@ -72,6 +72,7 @@ service_handle() {
 
 	systemctl ${doWhat} pistar-watchdog.service > /dev/null 2>&1
 	systemctl ${doWhat} pistar-remote.service > /dev/null 2>&1
+	systemctl ${doWhat} mobilegps.service > /dev/null 2>&1
 	systemctl ${doWhat} dmrgateway.service > /dev/null 2>&1
 	systemctl ${doWhat} dapnetgateway.service > /dev/null 2>&1
 	systemctl ${doWhat} ircddbgateway.service > /dev/null 2>&1

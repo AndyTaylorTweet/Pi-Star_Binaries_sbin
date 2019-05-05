@@ -668,10 +668,45 @@ main_function() {
 		fi		
 	;;
 	3.4.17)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.17/3.4.18/g' /etc/pistar-release
+        		sed -i 's/3.4.17/3.4.18/g' /etc/motd
+
+			# MobileGPS Service
+			echo '[Unit]' > /lib/systemd/system/mobilegps.service
+			echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
+			echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
+			echo 'Before=mmdvmhost.timer' >> /lib/systemd/system/mobilegps.service
+			echo '' >> /lib/systemd/system/mobilegps.service
+			echo '[Service]' >> /lib/systemd/system/mobilegps.service
+			echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
+			echo 'ExecStart=/usr/local/sbin/mobilegps.service start' >> /lib/systemd/system/mobilegps.service
+			echo 'ExecStop=/usr/local/sbin/mobilegps.service stop' >> /lib/systemd/system/mobilegps.service
+			echo 'ExecReload=/usr/local/sbin/mobilegps.service restart' >> /lib/systemd/system/mobilegps.service
+			echo '' >> /lib/systemd/system/mobilegps.service
+			echo '[Install]' >> /lib/systemd/system/mobilegps.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
+			
+			# MobileGPS Timer
+			echo '[Timer]' > /lib/systemd/system/mobilegps.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/mobilegps.timer
+			echo '' >> /lib/systemd/system/mobilegps.timer
+			echo '[Install]' >> /lib/systemd/system/mobilegps.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.timer
+			
+			systemctl daemon-reload
+			systemctl enable mobilegps.timer
+			
+			Message="Upgraded from ${pistarCurVersion} to 3.4.18..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi		
+	;;
+	3.4.18)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
-		Message="This release will not recieve upgrades..."
+		Message="This release will not receive upgrades..."
 	;;
 	4.0.0-RC1)
 		sed -i 's/4.0.0-RC1/4.0.0-RC2/g' /etc/pistar-release
@@ -770,6 +805,40 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC5..."
 		;;
 	4.0.0-RC5)
+		sed -i 's/4.0.0-RC5/4.0.0-RC6/g' /etc/pistar-release
+
+		# MobileGPS Service
+		echo '[Unit]' > /lib/systemd/system/mobilegps.service
+		echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
+		echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
+		echo 'Before=mmdvmhost.timer' >> /lib/systemd/system/mobilegps.service
+		echo '' >> /lib/systemd/system/mobilegps.service
+		echo '[Service]' >> /lib/systemd/system/mobilegps.service
+		echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecStart=/usr/local/sbin/mobilegps.service start' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecStop=/usr/local/sbin/mobilegps.service stop' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecReload=/usr/local/sbin/mobilegps.service restart' >> /lib/systemd/system/mobilegps.service
+		echo '' >> /lib/systemd/system/mobilegps.service
+		echo '[Install]' >> /lib/systemd/system/mobilegps.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
+
+		# MobileGPS Timer
+		echo '[Timer]' > /lib/systemd/system/mobilegps.timer
+		echo 'OnStartupSec=20' >> /lib/systemd/system/mobilegps.timer
+		echo '' >> /lib/systemd/system/mobilegps.timer
+		echo '[Install]' >> /lib/systemd/system/mobilegps.timer
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.timer
+		
+		systemctl daemon-reload
+		systemctl enable mobilegps.timer
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC6..."
+		;;
+	4.0.0-RC6)
 		Message="You are already running the latest version..."
 		;;
 
