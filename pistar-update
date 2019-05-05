@@ -221,6 +221,13 @@ main_function() {
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 	fi
 
+	if [[ -f /usr/local/etc/P25_Audio/en_GB.imbe ]]; then
+		testFileIMBE=`file -i /usr/local/etc/P25_Audio/en_GB.imbe | cut -d " " -f2`
+		if [[ $testFileIMBE == text* ]]; then
+			rm -rf /usr/local/etc/P25_Audio
+		fi
+	fi
+
 	if [[ ! -d /usr/local/etc/P25_Audio ]]; then
 		echo "Downloading P25 Voice Files..."
 		mkdir /usr/local/etc/P25_Audio
