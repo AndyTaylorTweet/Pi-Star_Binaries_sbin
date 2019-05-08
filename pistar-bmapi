@@ -138,32 +138,32 @@ dropqso)
 	REQUEST="Drop Active QSO on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 setpos)
-        if [ -z "$2" ]
-        then
-                echo "ERROR: Latitude not specified"
-                exit 0
-        else
-                LAT=$2
-        fi
+	if [ -z "$2" ]
+	then
+		echo "ERROR: Latitude not specified"
+		exit 0
+	else
+		LAT=$2
+	fi
 
-        if [ -z "$3" ]
-        then
-                echo "ERROR: Longitude not specified"
-                exit 0
-        else
-                LON=$3
-        fi
+	if [ -z "$3" ]
+	then
+		echo "ERROR: Longitude not specified"
+		exit 0
+	else
+		LON=$3
+	fi
 
-        if [ -z "$4" ]
-        then
-                AGL="0"
-        else
-                AGL=$4
-        fi
+	if [ -z "$4" ]
+	then
+		AGL="0"
+	else
+		AGL=$4
+	fi
 
-        APIURL="${APIURL}?action=EDIT&id=${DMRID}"
-        APIDATA="lat=${LAT}&lng=${LON}&agl=${AGL}"
-        REQUEST="Set the repeater location to Lattitude: ${LAT} Longitude: ${LON} and Altitude: ${AGL}"
+	APIURL="${APIURL}?action=EDIT&id=${DMRID}"
+	APIDATA="lat=${LAT}&lng=${LON}&agl=${AGL}"
+	REQUEST="Set the repeater location to Lattitude: ${LAT} Longitude: ${LON} and Altitude: ${AGL}"
 ;;
 *)
 	echo "ERROR: Unknown Command Specified"
