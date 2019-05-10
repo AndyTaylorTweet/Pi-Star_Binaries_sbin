@@ -4,7 +4,7 @@
 #                                                                            #
 #                      Pi-Star BrandMeister API Tool                         #
 #                                                                            #
-#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#     Version 1.01, Code, Design and Development by Andy Taylor (MW0MWZ).    #
 #                                                                            #
 #    Make it simple to link / unlink reflectors from the CLI on Pi-Star.     #
 #    Added the option to manage static/dynamic TalkGroups and to be able     #
@@ -39,6 +39,7 @@ then
 	echo "To Unlink from a reflector:    pistar-bmapi ref 4000"
 	echo "To drop all Dynamic TGs:       pistar-bmapi dropdyn {TimeSlot Number}"
 	echo "To drop the current QSO:       pistar-bmapi dropqso {TimeSlot Number}"
+	echo "To set the current position:   pistar-bmapi setpos {Lattitude} {Longitude} {Altitude}"
 	echo ""
 	exit 0
 fi
@@ -135,6 +136,34 @@ dropqso)
 	fi
 	APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=0&q=${DMRID}"
 	REQUEST="Drop Active QSO on TimeSlot ${TS} for DMR ID ${DMRID}"
+;;
+setpos)
+	if [ -z "$2" ]
+	then
+		echo "ERROR: Latitude not specified"
+		exit 0
+	else
+		LAT=$2
+	fi
+
+	if [ -z "$3" ]
+	then
+		echo "ERROR: Longitude not specified"
+		exit 0
+	else
+		LON=$3
+	fi
+
+	if [ -z "$4" ]
+	then
+		AGL="0"
+	else
+		AGL=$4
+	fi
+
+	APIURL="${APIURL}?action=EDIT&id=${DMRID}"
+	APIDATA="lat=${LAT}&lng=${LON}&agl=${AGL}"
+	REQUEST="Set the repeater location to Lattitude: ${LAT} Longitude: ${LON} and Altitude: ${AGL}"
 ;;
 *)
 	echo "ERROR: Unknown Command Specified"
