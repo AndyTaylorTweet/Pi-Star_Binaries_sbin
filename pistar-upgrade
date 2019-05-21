@@ -729,6 +729,22 @@ main_function() {
 		fi		
 	;;
 	3.4.19)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.19/3.4.20/g' /etc/pistar-release
+
+			# Tweaking avahi
+			sed -i 's/^use-ipv6=.*/use-ipv6=no/g' /etc/avahi/avahi-daemon.conf
+			systemctl restart avahi-daemon
+
+			# Re-create the MOTD
+			/usr/local/sbin/pistar-motdgen
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.20..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.20)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -892,6 +908,7 @@ main_function() {
 
 		# Tweaking avahi
 		sed -i 's/^publish-hinfo=.*/publish-hinfo=yes/g;s/^publish-workstation=.*/publish-workstation=yes/g' /etc/avahi/avahi-daemon.conf
+		sed -i 's/^use-ipv6=.*/use-ipv6=no/g' /etc/avahi/avahi-daemon.conf
 		systemctl restart avahi-daemon
 		
 		# Re-create the MOTD
