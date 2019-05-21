@@ -705,7 +705,6 @@ main_function() {
 	3.4.18)
 		if [ ! -z "${pistarHardware}" ]; then
 			sed -i 's/3.4.18/3.4.19/g' /etc/pistar-release
-        		sed -i 's/3.4.18/3.4.19/g' /etc/motd
 
 			# Disable SAMBA
 			systemctl stop smbd
@@ -720,6 +719,9 @@ main_function() {
 			systemctl disable getty@tty1.service
 
 			systemctl daemon-reload
+
+			# Re-create the MOTD
+			/usr/local/sbin/pistar-motdgen
 
 			Message="Upgraded from ${pistarCurVersion} to 3.4.19..."
 		else
@@ -886,6 +888,19 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC7..."
 	;;
 	4.0.0-RC7)
+		sed -i 's/4.0.0-RC7/4.0.0-RC8/g' /etc/pistar-release
+
+		# Tweaking avahi
+		sed -i 's/^publish-hinfo=.*/publish-hinfo=yes/g;s/^publish-workstation=.*/publish-workstation=yes/g' /etc/avahi/avahi-daemon.conf
+		systemctl restart avahi-daemon
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC8..."
+	;;
+	4.0.0-RC8)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0)
