@@ -703,6 +703,24 @@ main_function() {
 		fi		
 	;;
 	3.4.18)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.18/3.4.19/g' /etc/pistar-release
+        		sed -i 's/3.4.18/3.4.19/g' /etc/motd
+
+			# Disable SAMBA
+			systemctl stop smbd
+			systemctl disable smbd
+			systemctl mask smbd
+			systemctl stop nmbd
+			systemctl disable nmbd
+			systemctl mask nmbd
+			
+			Message="Upgraded from ${pistarCurVersion} to 3.4.19..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi		
+	;;
+	3.4.19)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -803,9 +821,9 @@ main_function() {
 		
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC5..."
-		;;
+	;;
 	4.0.0-RC5)
-		sed -i 's/4.0.0-RC5/4.0.0-RC6/g' /etc/pistar-release
+ 		sed -i 's/4.0.0-RC5/4.0.0-RC6/g' /etc/pistar-release
 
 		# MobileGPS Service
 		echo '[Unit]' > /lib/systemd/system/mobilegps.service
@@ -837,11 +855,27 @@ main_function() {
 		
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC6..."
-		;;
+	;;
 	4.0.0-RC6)
-		Message="You are already running the latest version..."
-		;;
+ 		sed -i 's/4.0.0-RC6/4.0.0-RC7/g' /etc/pistar-release
 
+		# Disable SAMBA
+		systemctl stop smbd
+		systemctl disable smbd
+		systemctl mask smbd
+		systemctl stop nmbd
+		systemctl disable nmbd
+		systemctl mask nmbd
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC7..."
+	;;
+	4.0.0-RC7)
+		Message="You are already running the latest version..."
+	;;
 	4.0.0)
 		Message="You are already running the latest version..."
 	;;
