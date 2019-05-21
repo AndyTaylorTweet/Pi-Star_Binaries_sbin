@@ -709,12 +709,18 @@ main_function() {
 
 			# Disable SAMBA
 			systemctl stop smbd
-			systemctl disable smbd
-			systemctl mask smbd
 			systemctl stop nmbd
-			systemctl disable nmbd
+			LC_ALL=C systemctl disable smbd > /dev/null 2<&1
+			LC_ALL=C systemctl disable nmbd > /dev/null 2<&1
+			systemctl mask smbd
 			systemctl mask nmbd
-			
+
+			# Disable agetty on tty1
+			systemctl stop getty@tty1.service
+			systemctl disable getty@tty1.service
+
+			systemctl daemon-reload
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.19..."
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
@@ -861,11 +867,17 @@ main_function() {
 
 		# Disable SAMBA
 		systemctl stop smbd
-		systemctl disable smbd
-		systemctl mask smbd
 		systemctl stop nmbd
-		systemctl disable nmbd
+		LC_ALL=C systemctl disable smbd > /dev/null 2<&1
+		LC_ALL=C systemctl disable nmbd > /dev/null 2<&1
+		systemctl mask smbd
 		systemctl mask nmbd
+		
+		# Disable agetty on tty1
+		systemctl stop getty@tty1.service
+		systemctl disable getty@tty1.service
+		
+		systemctl daemon-reload
 		
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
