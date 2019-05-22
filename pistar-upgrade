@@ -745,6 +745,43 @@ main_function() {
 		fi
 	;;
 	3.4.20)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.20/3.4.21/g' /etc/pistar-release
+
+			# HTTP and SSH avahi services
+			cat << EOF > /etc/avahi/services/http.service 
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+<name replace-wildcards="yes">%h Pi-Star Web Interface</name>
+<service>
+<type>_http._tcp</type>
+<port>80</port>
+</service>
+</service-group>
+EOF
+			cat << EOF > /etc/avahi/services/ssh.service 
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+<name replace-wildcards="yes">%h Pi-Star SSH</name>
+<service>
+<type>_ssh._tcp</type>
+<port>22</port>
+</service>
+</service-group>
+EOF
+			systemctl restart avahi-daemon
+		
+			# Re-create the MOTD
+			/usr/local/sbin/pistar-motdgen
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.21..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.21)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -918,6 +955,40 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC8..."
 	;;
 	4.0.0-RC8)
+		sed -i 's/4.0.0-RC8/4.0.0-RC9/g' /etc/pistar-release
+
+		# HTTP and SSH avahi services
+		cat << EOF > /etc/avahi/services/http.service 
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+<name replace-wildcards="yes">%h Pi-Star Web Interface</name>
+<service>
+<type>_http._tcp</type>
+<port>80</port>
+</service>
+</service-group>
+EOF
+		cat << EOF > /etc/avahi/services/ssh.service 
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+<name replace-wildcards="yes">%h Pi-Star SSH</name>
+<service>
+<type>_ssh._tcp</type>
+<port>22</port>
+</service>
+</service-group>
+EOF
+		systemctl restart avahi-daemon
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC9..."
+	;;
+	4.0.0-RC9)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0)
