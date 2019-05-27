@@ -4,7 +4,7 @@
 #                                                                            #
 #                      Pi-Star BrandMeister API Tool                         #
 #                                                                            #
-#     Version 1.01, Code, Design and Development by Andy Taylor (MW0MWZ).    #
+#     Version 1.02, Code, Design and Development by Andy Taylor (MW0MWZ).    #
 #                                                                            #
 #    Make it simple to link / unlink reflectors from the CLI on Pi-Star.     #
 #    Added the option to manage static/dynamic TalkGroups and to be able     #
@@ -20,7 +20,23 @@ fi
 # Setup some variables
 APIKeyFile=/etc/bmapi.key
 APIURL="https://api.brandmeister.network/v1.0/repeater/"
-DMRID=$(grep -m 1 'Id=' /etc/mmdvmhost | awk -F "=" '/Id/ {print $2}')
+
+# Figure out the DMR ID
+DMRNetHost=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}')
+if [[ "${DMRNetHost}" == "127.0.0.1" ]]; then
+        # Using DMRGateway
+        DMRID=$(sed -n -e '/DMR Network 1/,/DMR Network 2/p' /etc/dmrgateway | grep "Id" | awk -F "=" '/Id=/ {print $2}')
+else
+        # Using MMDVMHost
+        DMRMMDVMHostID=$(sed -n -e '/\[DMR\]/,/\[System Fusion\]/p' /etc/mmdvmhost | grep "Id" | awk -F "=" '/Id=/ {print $2}')
+        if [[ ${DMRMMDVMHostID} ]]; then
+                # ID Specified in the DMR section
+                DMRID=${DMRMMDVMHostID}
+        else
+                # No ID in the DMR Section
+                DMRID=$(grep -m 1 'Id=' /etc/mmdvmhost | tac | tail -1 | awk -F "=" '/Id/ {print $2}')
+        fi
+fi
 
 if [ -z "$1" ]
 then
