@@ -139,7 +139,7 @@ dropdyn)
 	else
 		TS=$2
 	fi
-	APIURL="${APIURL}setRepeaterTarantool.php?action=dropDynamicGroups&slot=0&q=${DMRID}"
+	APIURL="${APIURL}setRepeaterTarantool.php?action=dropDynamicGroups&slot=${TS}&q=${DMRID}"
 	REQUEST="Drop all Dynamic TG on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 dropqso)
@@ -150,7 +150,7 @@ dropqso)
 	else
 		TS=$2
 	fi
-	APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=0&q=${DMRID}"
+	APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=${TS}&q=${DMRID}"
 	REQUEST="Drop Active QSO on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 setpos)
