@@ -98,6 +98,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         ZUMspot*)
                                 mmdvmClass="MMDVM_HS"
                         ;;
+                        Nano_hotSPOT*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
                         DVMEGA*)
                                 mmdvmClass="DV-Mega "
                         ;;
