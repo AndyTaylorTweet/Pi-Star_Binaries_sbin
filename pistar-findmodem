@@ -82,7 +82,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the modem version string and remove non-printables
-                modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g' | sed 's/^.ZUMspot/ZUMspot/g')
+                modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g' | sed 's/^.ZUMspot/ZUMspot/g' | sed 's/^.Nano_/Nano_/g')
 
                 # OK we have some output, format it into somthing useful.
                 case ${modemData} in
@@ -98,7 +98,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         ZUMspot*)
                                 mmdvmClass="MMDVM_HS"
                         ;;
-                        Nano_hotSPOT*)
+                        Nano_*)
                                 mmdvmClass="MMDVM_HS"
                         ;;
                         DVMEGA*)
@@ -130,7 +130,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         ;;
                 esac
 
-                if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "ZUMspot"* ]]; then
+                if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "ZUMspot"* || ${modemData} == "Nano_"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
