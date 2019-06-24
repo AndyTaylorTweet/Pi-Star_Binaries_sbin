@@ -763,6 +763,12 @@ main_function() {
 	4.0.0)
 		Message="You are already running the latest version..."
 	;;
+	4.1.0-Beta)
+		Message="This release will not recieve upgrades..."
+	;;
+	4.1.0-RC1)
+		Message="You are already running the latest version..."
+	;;
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"
 	;;
