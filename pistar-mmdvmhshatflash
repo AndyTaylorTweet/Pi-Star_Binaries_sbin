@@ -27,6 +27,7 @@ then
   echo "To flash HS_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat-12mhz"
   echo "To flash HS_DUAL_HAT (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat"
   echo "To flash HS_DUAL_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat-12mhz"
+  echo "To flash HS_HAT_AMBE (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat_ambe"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
   echo "To flash MMDVM_HS Nano Hat devices please use pistar-vyehsflash"
@@ -123,6 +124,21 @@ then
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    chmod +x /tmp/mmdvmhshatfirmware/flash.sh
+    cd  /tmp/mmdvmhshatfirmware
+    ./flash.sh
+    echo ""
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+    hs_hat_ambe)
+    # Flashing MMDVM_HS Hat Modem
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    echo "Flashing your ${1} modem to the latest version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_d2rg_mmdvmhs.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
     cd  /tmp/mmdvmhshatfirmware
     ./flash.sh
