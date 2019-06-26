@@ -995,7 +995,7 @@ EOF
 		Message="You are already running the latest version..."
 	;;
 	4.1.0-Beta)
-		Message="This release will not recieve upgrades..."
+		Message="This release will not receive upgrades..."
 	;;
 	4.1.0-RC1)
 		Message="You are already running the latest version..."
