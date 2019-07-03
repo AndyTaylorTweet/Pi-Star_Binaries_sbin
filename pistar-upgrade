@@ -768,6 +768,7 @@ main_function() {
 	;;
 	4.1.0-RC1)
 		#sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
+
 		# logrotate issue;
 		#if [[ -f /etc/logrotate.d/alternatives ]]; then
 		#	rm -rf /etc/logrotate.d/alternatives
@@ -779,6 +780,13 @@ main_function() {
 		#	rm -rf /etc/logrotate.d/wtmp
 		#fi
 		#systemctl restart logrotate
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
+
 		Message="You are already running the latest version..."
 	;;
 	4.1.0-RC2)
