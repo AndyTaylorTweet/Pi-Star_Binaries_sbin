@@ -767,6 +767,7 @@ main_function() {
 		Message="This release will not recieve upgrades..."
 	;;
 	4.1.0-RC1)
+		#sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
 		# logrotate issue;
 		#if [[ -f /etc/logrotate.d/alternatives ]]; then
 		#	rm -rf /etc/logrotate.d/alternatives
@@ -777,6 +778,7 @@ main_function() {
 		#if [[ -f /etc/logrotate.d/wtmp ]]; then
 		#	rm -rf /etc/logrotate.d/wtmp
 		#fi
+		#systemctl restart logrotate
 		Message="You are already running the latest version..."
 	;;
 	4.1.0-RC2)
