@@ -767,6 +767,22 @@ main_function() {
 		Message="This release will not recieve upgrades..."
 	;;
 	4.1.0-RC1)
+		# logrotate issue;
+		#if [[ -f /etc/logrotate.d/alternatives ]]; then
+		#	rm -rf /etc/logrotate.d/alternatives
+		#fi
+		#if [[ -f /etc/logrotate.d/btmp ]]; then
+		#	rm -rf /etc/logrotate.d/btmp
+		#fi
+		#if [[ -f /etc/logrotate.d/wtmp ]]; then
+		#	rm -rf /etc/logrotate.d/wtmp
+		#fi
+		Message="You are already running the latest version..."
+	;;
+	4.1.0-RC2)
+		Message="You are already running the latest version..."
+	;;
+	4.1.0)
 		Message="You are already running the latest version..."
 	;;
 	*)
