@@ -268,8 +268,7 @@ main_function() {
         	if [[ $(cat /etc/ircddbgateway | grep -o "xlx" | wc -l) -eq 0 ]]; then
         	        echo "Adding XLX Config to /etc/ircddbgateway"
         	        echo "xlxEnabled=0" >> /etc/ircddbgateway
-        	        echo "xlxOverrideLocal=0" >> /etc/ircddbgateway
-        	        echo "xlxHostsFileUrl=" >> /etc/ircddbgateway
+        	        echo "xlxHostsFileUrl=http://xlxapi.rlx.lu/api.php?do=GetXLXDMRMaster" >> /etc/ircddbgateway
         	fi
 
         	if [[ $(cat /etc/ircddbgateway | grep -o "aprsPassword" | wc -l) -eq 0 ]]; then
