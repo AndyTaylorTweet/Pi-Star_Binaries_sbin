@@ -779,6 +779,12 @@ main_function() {
 		#if [[ -f /etc/logrotate.d/wtmp ]]; then
 		#	rm -rf /etc/logrotate.d/wtmp
 		#fi
+		#if [[ -f /etc/logrotate.d/rsyslog.dpkg-dist ]]; then
+		#	rm -rf /etc/logrotate.d/rsyslog.dpkg-dist
+		#fi
+		#if [[ $(grep "copytruncate" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
+		#	sed -i "s/sharedscripts/sharedscripts\n\tcopytruncate/g" /etc/logrotate.d/rsyslog
+		#fi
 		#systemctl restart logrotate
 
 		# Re-create the MOTD
