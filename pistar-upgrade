@@ -767,7 +767,7 @@ main_function() {
 		Message="This release will not recieve upgrades..."
 	;;
 	4.1.0-RC1)
-		#sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
+		sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
 		
 		# Clean up for the new version of Buster going to release
 		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 04EE7237B7D453EC
