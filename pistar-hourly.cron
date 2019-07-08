@@ -6,6 +6,20 @@
 # Shrink NginX error log to stop it getting out of hand
 echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
+# Shrink the MMDVMHost Log
+MMDVMLogFiles=$(ls /var/log/pi-star/MMDVM-*.log 2> /dev/null | wc -l)
+if [[ "$MMDVMLogFiles" != "0" ]]; then
+  todayMMDVMLog=$(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1)
+  echo "$(egrep -h "from|end|watchdog|lost|protocol" ${todayMMDVMLog} | sed '/(CSBK|overflow|mapping points|Downlink)/d' | tail -n 1000)" > ${todayMMDVMLog}
+fi
+
+# Shrink the YSFGateway Log
+YSFLogFiles=$(ls /var/log/pi-star/YSFGateway-*.log 2> /dev/null | wc -l)
+if [[ "$YSFLogFiles" != "0" ]]; then
+  todayYSFGatewayLog=$(ls -1rt /var/log/pi-star/YSFGateway-*.log | tail -n1)
+  echo "$(egrep -h "onnection to|onnect to|ink|isconnect|Opening YSF network" ${todayYSFGatewayLog} | tail -n 1000)" > ${todayYSFGatewayLog}
+fi
+
 # Clean up systemd logs
 journalctl --rotate
 journalctl --vacuum-time=24h
