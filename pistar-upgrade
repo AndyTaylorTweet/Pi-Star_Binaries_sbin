@@ -998,8 +998,24 @@ EOF
 		Message="This release will not receive upgrades..."
 	;;
 	4.1.0-RC1)
-		#sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
+		sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
+		
+		# Clean up for the new version of Buster going to release
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 04EE7237B7D453EC
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 648ACFD622F3D138
+		apt-get update --allow-releaseinfo-change
 
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
+
+		#Message="You are already running the latest version..."
+	;;
+	4.1.0-RC2)
+		#sed -i 's/4.1.0-RC2/4.1.0-RC3/g' /etc/pistar-release
+		
 		# logrotate issue;
 		#if [[ -f /etc/logrotate.d/alternatives ]]; then
 		#	rm -rf /etc/logrotate.d/alternatives
@@ -1010,14 +1026,20 @@ EOF
 		#if [[ -f /etc/logrotate.d/wtmp ]]; then
 		#	rm -rf /etc/logrotate.d/wtmp
 		#fi
+		#if [[ -f /etc/logrotate.d/rsyslog.dpkg-dist ]]; then
+		#	rm -rf /etc/logrotate.d/rsyslog.dpkg-dist
+		#fi
+		#if [[ $(grep "copytruncate" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
+		#	sed -i "s/sharedscripts/sharedscripts\n\tcopytruncate/g" /etc/logrotate.d/rsyslog
+		#fi
 		#systemctl restart logrotate
-
+		
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
-
+		
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
-
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
+		
 		Message="You are already running the latest version..."
 	;;
 	4.1.0-RC2)
