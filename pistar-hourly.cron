@@ -10,7 +10,11 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 MMDVMLogFiles=$(ls /var/log/pi-star/MMDVM-*.log 2> /dev/null | wc -l)
 if [[ "$MMDVMLogFiles" != "0" ]]; then
   todayMMDVMLog=$(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1)
-  echo "$(egrep -h "from|end|watchdog|lost|protocol" ${todayMMDVMLog} | sed '/(CSBK|overflow|mapping points|Downlink)/d' | tail -n 1000)" > ${todayMMDVMLog}
+  modemLine=$(grep "MMDVM protocol version" ${todayMMDVMLog} | tail -n 1)
+  if [ "$(head -n 1 ${todayMMDVMLog})" = "${modemLine}" ]; then
+    sed -i '1d' ${todayMMDVMLog}
+  fi
+  echo -e "${modemLine}\n$(egrep -h "from|end|watchdog|lost|protocol" ${todayMMDVMLog} | sed '/(CSBK|overflow|mapping points|Downlink)/d' | tail -n 1000)" > ${todayMMDVMLog}
 fi
 
 # Shrink the YSFGateway Log
