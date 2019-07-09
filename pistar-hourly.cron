@@ -7,22 +7,22 @@
 echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
 # Shrink the MMDVMHost Log
-MMDVMLogFiles=$(ls /var/log/pi-star/MMDVM-*.log 2> /dev/null | wc -l)
-if [[ "$MMDVMLogFiles" != "0" ]]; then
-  todayMMDVMLog=$(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1)
-  modemLine=$(grep "MMDVM protocol version" ${todayMMDVMLog} | tail -n 1)
-  if [ "$(head -n 1 ${todayMMDVMLog})" = "${modemLine}" ]; then
-    sed -i '1d' ${todayMMDVMLog}
-  fi
-  echo -e "${modemLine}\n$(egrep -h "from|end|watchdog|lost|protocol" ${todayMMDVMLog} | sed '/(CSBK|overflow|mapping points|Downlink)/d' | tail -n 1000)" > ${todayMMDVMLog}
-fi
+#MMDVMLogFiles=$(ls /var/log/pi-star/MMDVM-*.log 2> /dev/null | wc -l)
+#if [[ "$MMDVMLogFiles" != "0" ]]; then
+#  todayMMDVMLog=$(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1)
+#  modemLine=$(grep "MMDVM protocol version" ${todayMMDVMLog} | tail -n 1)
+#  if [ "$(head -n 1 ${todayMMDVMLog})" = "${modemLine}" ]; then
+#    sed -i '1d' ${todayMMDVMLog}
+#  fi
+#  echo -e "${modemLine}\n$(egrep -h "from|end|watchdog|lost|protocol" ${todayMMDVMLog} | sed '/(CSBK|overflow|mapping points|Downlink)/d' | tail -n 1000)" > ${todayMMDVMLog}
+#fi
 
 # Shrink the YSFGateway Log
-YSFLogFiles=$(ls /var/log/pi-star/YSFGateway-*.log 2> /dev/null | wc -l)
-if [[ "$YSFLogFiles" != "0" ]]; then
-  todayYSFGatewayLog=$(ls -1rt /var/log/pi-star/YSFGateway-*.log | tail -n1)
-  echo "$(egrep -h "onnection to|onnect to|ink|isconnect|Opening YSF network" ${todayYSFGatewayLog} | tail -n 1000)" > ${todayYSFGatewayLog}
-fi
+#YSFLogFiles=$(ls /var/log/pi-star/YSFGateway-*.log 2> /dev/null | wc -l)
+#if [[ "$YSFLogFiles" != "0" ]]; then
+#  todayYSFGatewayLog=$(ls -1rt /var/log/pi-star/YSFGateway-*.log | tail -n1)
+#  echo "$(egrep -h "onnection to|onnect to|ink|isconnect|Opening YSF network" ${todayYSFGatewayLog} | tail -n 1000)" > ${todayYSFGatewayLog}
+#fi
 
 # Clean up systemd logs
 journalctl --rotate
