@@ -784,7 +784,7 @@ main_function() {
 	;;
 	4.1.0-RC2)
 		#sed -i 's/4.1.0-RC2/4.1.0-RC3/g' /etc/pistar-release
-		
+
 		# logrotate issue;
 		#if [[ -f /etc/logrotate.d/alternatives ]]; then
 		#	rm -rf /etc/logrotate.d/alternatives
@@ -802,13 +802,16 @@ main_function() {
 		#	sed -i "s/sharedscripts/sharedscripts\n\tcopytruncate/g" /etc/logrotate.d/rsyslog
 		#fi
 		#systemctl restart logrotate
-		
+
+		# Add some missing firemwares
+		#apt-get update && apt-get install -y firmware-misc-nonfree
+
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
-		
+
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
-		
+
 		Message="You are already running the latest version..."
 	;;
 	4.1.0-RC2)
