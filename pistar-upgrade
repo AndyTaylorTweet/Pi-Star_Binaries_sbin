@@ -779,42 +779,54 @@ main_function() {
 
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
+	;;
+	4.1.0-RC2)
+		sed -i 's/4.1.0-RC2/4.1.0-RC3/g' /etc/pistar-release
+
+		# logrotate issues;
+		if [[ -f /etc/logrotate.d/alternatives ]]; then
+			rm -rf /etc/logrotate.d/alternatives
+		fi
+		if [[ -f /etc/logrotate.d/btmp ]]; then
+			rm -rf /etc/logrotate.d/btmp
+		fi
+		if [[ -f /etc/logrotate.d/wtmp ]]; then
+			rm -rf /etc/logrotate.d/wtmp
+		fi
+		if [[ -f /etc/logrotate.d/rsyslog.dpkg-dist ]]; then
+			rm -rf /etc/logrotate.d/rsyslog.dpkg-dist
+		fi
+		if [[ $(grep "copytruncate" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
+			sed -i "s/sharedscripts/sharedscripts\n\tcopytruncate/g" /etc/logrotate.d/rsyslog
+		fi
+		if [[ $(grep "pgrep" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
+			sed -i "/invoke-rc.d/c\\\t\t# invoke-rc.d rsyslog rotate > /dev/null\n\t\tkill -s 1 \$(pgrep rsyslog) > /dev/null" /etc/logrotate.d/rsyslog
+		fi
+		systemctl restart logrotate
+
+		# Add some missing firemwares
+		apt-get update && apt-get install -y firmware-misc-nonfree
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
 
 		#Message="You are already running the latest version..."
 	;;
-	4.1.0-RC2)
-		#sed -i 's/4.1.0-RC2/4.1.0-RC3/g' /etc/pistar-release
-
-		# logrotate issue;
-		#if [[ -f /etc/logrotate.d/alternatives ]]; then
-		#	rm -rf /etc/logrotate.d/alternatives
-		#fi
-		#if [[ -f /etc/logrotate.d/btmp ]]; then
-		#	rm -rf /etc/logrotate.d/btmp
-		#fi
-		#if [[ -f /etc/logrotate.d/wtmp ]]; then
-		#	rm -rf /etc/logrotate.d/wtmp
-		#fi
-		#if [[ -f /etc/logrotate.d/rsyslog.dpkg-dist ]]; then
-		#	rm -rf /etc/logrotate.d/rsyslog.dpkg-dist
-		#fi
-		#if [[ $(grep "copytruncate" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
-		#	sed -i "s/sharedscripts/sharedscripts\n\tcopytruncate/g" /etc/logrotate.d/rsyslog
-		#fi
-		#systemctl restart logrotate
-
-		# Add some missing firemwares
-		#apt-get update && apt-get install -y firmware-misc-nonfree
-
+	4.1.0-RC3)
+		#sed -i 's/4.1.0-RC3/4.1.0-RC4/g' /etc/pistar-release
+		
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
-
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
+		
 		Message="You are already running the latest version..."
 	;;
-	4.1.0-RC2)
+	4.1.0-RC4)
 		Message="You are already running the latest version..."
 	;;
 	4.1.0)
