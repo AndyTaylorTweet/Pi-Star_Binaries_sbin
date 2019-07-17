@@ -116,7 +116,7 @@ deltg)
 
 	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
 	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
-	REQUEST="Delet TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Delete TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 ref)
 	# Check that the variable for Reflector has been passed
@@ -129,7 +129,7 @@ ref)
 	fi
 	APIURL="${APIURL}reflector/setActiveReflector.php?id=${DMRID}"
 	APIDATA="reflector=${targetREF}"
-	REQUEST="Connec to Reflector ${targetREF} for DMR ID ${DMRID}"
+	REQUEST="Connect to Reflector ${targetREF} for DMR ID ${DMRID}"
 ;;
 dropdyn)
 	# Check that the variable to TimeSlot has been passed
