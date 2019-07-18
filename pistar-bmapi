@@ -63,6 +63,7 @@ fi
 # Get the stored BM API Key
 if [ -f ${APIKeyFile} ]; then
 	APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
+	APIKeyB64=$(echo -n "${APIKey}:" | base64 | sed 's/=$*//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ //g')
 else
 	echo "Unable to find your BrandMesiter API Key, no API commands available."
 	exit 0
@@ -116,7 +117,7 @@ deltg)
 
 	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
 	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
-	REQUEST="Delet TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Delete TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 ref)
 	# Check that the variable for Reflector has been passed
@@ -129,7 +130,7 @@ ref)
 	fi
 	APIURL="${APIURL}reflector/setActiveReflector.php?id=${DMRID}"
 	APIDATA="reflector=${targetREF}"
-	REQUEST="Connec to Reflector ${targetREF} for DMR ID ${DMRID}"
+	REQUEST="Connect to Reflector ${targetREF} for DMR ID ${DMRID}"
 ;;
 dropdyn)
 	# Check that the variable to TimeSlot has been passed
@@ -190,7 +191,8 @@ esac
 
 # Do the magic
 echo " Request to BrandMesiter API: ${REQUEST}"
-RESULT=$(curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
+#RESULT=$(curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
+RESULT=$(wget -q -O - --header="Content-Type: application/x-www-form-urlencoded" --header="Authorization: Basic ${APIKeyB64}:"  --post-data="${APIDATA}" "${APIURL}" | \
 	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
 echo "Answer from BrandMesiter API: ${RESULT}"
 echo ""
