@@ -106,7 +106,8 @@ else
   curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_Hosts.txt
   curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_Hosts.txt
 fi
-curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat
+#curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat
+curl --fail -o ${DMRIDFILE} -s https://raw.githubusercontent.com/BM-Database/database-beta/master/DMRIds.dat
 curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
 curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
 curl --fail -o ${FCSHOSTS} -s http://www.pistar.uk/downloads/FCS_Hosts.txt
