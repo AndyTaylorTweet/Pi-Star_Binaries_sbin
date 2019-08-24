@@ -30,6 +30,7 @@ fi
 case ${modemSelected} in
 mmdvmhshat)
   # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
+  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -44,9 +45,11 @@ mmdvmhshat)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
+  systemctl start mmdvmhost
 ;;
 mmdvmhsdualhatgpio)
   # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
+  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -61,9 +64,11 @@ mmdvmhsdualhatgpio)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
+  systemctl start mmdvmhost
 ;;
 zumspotgpio)
   # Reset process for ZumSpot Board (20,-21,21:-20,21)
+  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -78,6 +83,7 @@ zumspotgpio)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
+  systemctl start mmdvmhost
 ;;
 
 *)
