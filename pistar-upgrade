@@ -814,17 +814,29 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
 	;;
 	4.1.0-RC3)
-		#sed -i 's/4.1.0-RC3/4.1.0-RC4/g' /etc/pistar-release
+		sed -i 's/4.1.0-RC3/4.1.0-RC4/g' /etc/pistar-release
+
+		# Check / Reset the GPIO pins on boot (specifically on the Pi 4 hardware)
+		sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/{N;N;s/$/\n# Reset the GPIO Pins on Pi4 Only\n\/usr\/local\/sbin\/pistar-mmdvmhshatreset boot\n/}' /etc/rc.local
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
+	;;
+	4.1.0-RC4)
+		#sed -i 's/4.1.0-RC4/4.1.0-RC5/g' /etc/pistar-release
 		
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC5..."
 		
 		Message="You are already running the latest version..."
 	;;
-	4.1.0-RC4)
+	4.1.0-RC5)
 		Message="You are already running the latest version..."
 	;;
 	4.1.0)
