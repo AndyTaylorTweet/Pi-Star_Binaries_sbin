@@ -30,13 +30,17 @@ if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
     modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
     modemSelectedHuman=${modemSelectedHuman#*\">}
     modemSelectedHuman=${modemSelectedHuman::-9}
-    echo -e "Resetting Modem: ${modemSelectedHuman}"
+fi
+
+# If there are no arguments (like "boot") then stop the service...
+if [ -z "$1" ]; then
+  echo -e "Resetting Modem: ${modemSelectedHuman}"
+  systemctl stop mmdvmhost
 fi
 
 case ${modemSelected} in
 mmdvmhshat)
   # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
-  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -51,12 +55,10 @@ mmdvmhshat)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
-  systemctl start mmdvmhost
   message="Modem reset complete"
 ;;
 mmdvmhsdualhatgpio)
   # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
-  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -71,12 +73,10 @@ mmdvmhsdualhatgpio)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
-  systemctl start mmdvmhost
   message="Modem reset complete"
 ;;
 zumspotgpio)
   # Reset process for ZumSpot Board (20,-21,21:-20,21)
-  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -91,12 +91,10 @@ zumspotgpio)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
-  systemctl start mmdvmhost
   message="Modem reset complete"
 ;;
 mmdvmvyehatdual)
   # Reset process for VR2VYE Dual Board (20,-21,21:-20,21)
-  systemctl stop mmdvmhost
   echo 20 > /sys/class/gpio/export
   echo 21 > /sys/class/gpio/export
   echo out > /sys/class/gpio/gpio20/direction
@@ -111,7 +109,6 @@ mmdvmvyehatdual)
   sleep 0.5
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
-  systemctl start mmdvmhost
   message="Modem reset complete"
 ;;
 *)
@@ -119,6 +116,10 @@ mmdvmvyehatdual)
 ;;
 esac
 
-echo -e ${message}
+# If there are no arguments (like "boot") then start the service...
+if [ -z "$1" ]; then
+  systemctl start mmdvmhost
+  echo -e ${message}
+fi
 
 exit 0
