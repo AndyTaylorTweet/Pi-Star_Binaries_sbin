@@ -15,6 +15,12 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+if [ "$1" = "boot" ]; then
+    if [ "$(/usr/local/bin/platformDetect.sh | grep "Pi 4 Model" | wc -l)" -eq 0 ]; then
+        exit 1
+    fi
+fi
+
 if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
     # Get the modem that the user has selected.
     modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
@@ -46,6 +52,7 @@ mmdvmhshat)
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
   systemctl start mmdvmhost
+  message="Modem reset complete"
 ;;
 mmdvmhsdualhatgpio)
   # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
@@ -65,6 +72,7 @@ mmdvmhsdualhatgpio)
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
   systemctl start mmdvmhost
+  message="Modem reset complete"
 ;;
 zumspotgpio)
   # Reset process for ZumSpot Board (20,-21,21:-20,21)
@@ -84,13 +92,14 @@ zumspotgpio)
   echo 20 > /sys/class/gpio/unexport
   echo 21 > /sys/class/gpio/unexport
   systemctl start mmdvmhost
+  message="Modem reset complete"
 ;;
 
 *)
-  # Nothing to do.
+  message="Compatible modem not configured."
 ;;
 esac
 
-echo -e "Reset Complete"
+echo -e ${message}
 
 exit 0
