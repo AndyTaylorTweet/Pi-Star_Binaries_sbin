@@ -94,7 +94,26 @@ zumspotgpio)
   systemctl start mmdvmhost
   message="Modem reset complete"
 ;;
-
+mmdvmvyehatdual)
+  # Reset process for VR2VYE Dual Board (20,-21,21:-20,21)
+  systemctl stop mmdvmhost
+  echo 20 > /sys/class/gpio/export
+  echo 21 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio20/direction
+  echo out > /sys/class/gpio/gpio21/direction
+  sleep 0.5
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 0 > /sys/class/gpio/gpio21/value
+  echo 1 > /sys/class/gpio/gpio21/value
+  sleep 1
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 1 > /sys/class/gpio/gpio20/value
+  sleep 0.5
+  echo 20 > /sys/class/gpio/unexport
+  echo 21 > /sys/class/gpio/unexport
+  systemctl start mmdvmhost
+  message="Modem reset complete"
+;;
 *)
   message="Compatible modem not configured."
 ;;
