@@ -1,0 +1,126 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                     Pi-Star MMDVM HS_HAT Reset Tool                        #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#     Make it simple to reset an MMDVM bosard from the CLI on Pi-Star.       #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Make the "boot" option only work on Pi 4 hardware
+if [ "$1" = "boot" ]; then
+    if [ "$(/usr/local/bin/platformDetect.sh | grep "Pi 4 Model" | wc -l)" -eq 0 ]; then
+        exit 1
+    fi
+fi
+
+if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
+    # Get the modem that the user has selected.
+    modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
+    modemSelected=${modemSelected#*=}
+
+    # Get the user friendly version of the selected Modem.
+    modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
+    modemSelectedHuman=${modemSelectedHuman#*\">}
+    modemSelectedHuman=${modemSelectedHuman::-9}
+fi
+
+# If there are no arguments (like "boot") then stop the service...
+if [ -z "$1" ]; then
+  echo -e "Resetting Modem: ${modemSelectedHuman}"
+  systemctl stop mmdvmhost
+fi
+
+case ${modemSelected} in
+mmdvmhshat)
+  # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
+  echo 20 > /sys/class/gpio/export
+  echo 21 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio20/direction
+  echo out > /sys/class/gpio/gpio21/direction
+  sleep 0.5
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 0 > /sys/class/gpio/gpio21/value
+  echo 1 > /sys/class/gpio/gpio21/value
+  sleep 1
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 1 > /sys/class/gpio/gpio20/value
+  sleep 0.5
+  echo 20 > /sys/class/gpio/unexport
+  echo 21 > /sys/class/gpio/unexport
+  message="Modem reset complete"
+;;
+mmdvmhsdualhatgpio)
+  # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
+  echo 20 > /sys/class/gpio/export
+  echo 21 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio20/direction
+  echo out > /sys/class/gpio/gpio21/direction
+  sleep 0.5
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 0 > /sys/class/gpio/gpio21/value
+  echo 1 > /sys/class/gpio/gpio21/value
+  sleep 1
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 1 > /sys/class/gpio/gpio20/value
+  sleep 0.5
+  echo 20 > /sys/class/gpio/unexport
+  echo 21 > /sys/class/gpio/unexport
+  message="Modem reset complete"
+;;
+zumspotgpio)
+  # Reset process for ZumSpot Board (20,-21,21:-20,21)
+  echo 20 > /sys/class/gpio/export
+  echo 21 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio20/direction
+  echo out > /sys/class/gpio/gpio21/direction
+  sleep 0.5
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 0 > /sys/class/gpio/gpio21/value
+  echo 1 > /sys/class/gpio/gpio21/value
+  sleep 1
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 1 > /sys/class/gpio/gpio20/value
+  sleep 0.5
+  echo 20 > /sys/class/gpio/unexport
+  echo 21 > /sys/class/gpio/unexport
+  message="Modem reset complete"
+;;
+mmdvmvyehatdual)
+  # Reset process for VR2VYE Dual Board (20,-21,21:-20,21)
+  echo 20 > /sys/class/gpio/export
+  echo 21 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio20/direction
+  echo out > /sys/class/gpio/gpio21/direction
+  sleep 0.5
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 0 > /sys/class/gpio/gpio21/value
+  echo 1 > /sys/class/gpio/gpio21/value
+  sleep 1
+  echo 0 > /sys/class/gpio/gpio20/value
+  echo 1 > /sys/class/gpio/gpio20/value
+  sleep 0.5
+  echo 20 > /sys/class/gpio/unexport
+  echo 21 > /sys/class/gpio/unexport
+  message="Modem reset complete"
+;;
+*)
+  message="Compatible modem not configured."
+;;
+esac
+
+# If there are no arguments (like "boot") then start the service...
+if [ -z "$1" ]; then
+  systemctl start mmdvmhost
+  echo -e ${message}
+fi
+
+exit 0

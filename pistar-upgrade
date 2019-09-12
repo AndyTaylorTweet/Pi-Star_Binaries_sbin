@@ -658,7 +658,7 @@ main_function() {
 			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/nxdnparrot.timer
 			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/p25parrot.timer
 			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ysfparrot.timer
-			
+
 			# Update systemd and enable new services
 			systemctl daemon-reload
 
@@ -803,7 +803,7 @@ EOF
 
 		# Fix some broken libs
 		apt-get update && apt-get install --reinstall libraspberrypi0 libraspberrypi-dev libraspberrypi-bin
-		
+
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
@@ -843,10 +843,10 @@ EOF
 
 		# Update systemd and enable new services
 		systemctl daemon-reload
-		
+
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
-		
+
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC3..."
 	;;
@@ -999,7 +999,7 @@ EOF
 	;;
 	4.1.0-RC1)
 		sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
-		
+
 		# Clean up for the new version of Buster going to release
 		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 04EE7237B7D453EC
 		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 648ACFD622F3D138
@@ -1045,17 +1045,53 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
 	;;
 	4.1.0-RC3)
-		#sed -i 's/4.1.0-RC3/4.1.0-RC4/g' /etc/pistar-release
-		
+		sed -i 's/4.1.0-RC3/4.1.0-RC4/g' /etc/pistar-release
+
+		# Check / Reset the GPIO pins on boot (specifically on the Pi 4 hardware)
+		sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/{N;N;s/$/\n# Reset the GPIO Pins on Pi4 Only\n\/usr\/local\/sbin\/pistar-mmdvmhshatreset boot\n/}' /etc/rc.local
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
+	;;
+	4.1.0-RC4)
+		sed -i 's/4.1.0-RC4/4.1.0-RC5/g' /etc/pistar-release
+
+		# Fix up some minor issues with resolvconf's config
+		sed -i '2ifi' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+		sed -i '2i\\ttouch /var/lib/dhcpcd5/resolv.conf' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+		sed -i '2iif [ ! -f "/var/lib/dhcpcd5/resolv.conf" ]; then' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+		sed -i '2i\\n' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+
+		# Fix fstab to accunt for the change
+		sed -i "/\/var\/lib\/dhcpcd5/c\\tmpfs\t\t\t\/var\/lib\/dhcpcd5\ttmpfs\tnodev,noatime,nosuid,mode=1777,size=32k\t\t0\t0" /etc/fstab
+
+		# Change the filesystem to match
+		cp /etc/resolv.conf /var/lib/dhcpcd5/resolv.conf
+		rm -rf /etc/resolv.conf
+		rm -rf /etc/resolv.conf.bak
+		ln -s /var/lib/dhcpcd5/resolv.conf /etc/resolv.conf
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC5..."
+	;;
+	4.1.0-RC5)
+		#sed -i 's/4.1.0-RC5/4.1.0-RC6/g' /etc/pistar-release
+
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
-		
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC6..."
+
 		Message="You are already running the latest version..."
 	;;
-	4.1.0-RC4)
+	4.1.0-RC6)
 		Message="You are already running the latest version..."
 	;;
 	4.1.0)
