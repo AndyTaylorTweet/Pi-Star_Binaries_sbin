@@ -850,18 +850,16 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC5..."
 	;;
 	4.1.0-RC5)
-		#sed -i 's/4.1.0-RC5/4.1.0-RC6/g' /etc/pistar-release
+		sed -i 's/4.1.0-RC5/4.1.0-RC6/g' /etc/pistar-release
 
 		# Fix issue with sysctl.conf not being applied in Raspbian Buster
-		#sed -i '3i/etc/init.d/procps restart' /etc/network/if-up.d/pistar-motdgen
+		sed -i '3i/etc/init.d/procps restart' /etc/network/if-up.d/pistar-motdgen
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC6..."
-
-		Message="You are already running the latest version..."
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC6..."
 	;;
 	4.1.0-RC6)
 		#sed -i 's/4.1.0-RC6/4.1.0-RC7/g' /etc/pistar-release
