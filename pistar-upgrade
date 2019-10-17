@@ -782,6 +782,21 @@ EOF
 		fi
 	;;
 	3.4.21)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.21/3.4.22/g' /etc/pistar-release
+
+			echo 'deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main contrib non-free' > /etc/apt/sources.list.d/jessie-backports.list
+			echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/100disablechecks
+			
+			# Re-create the MOTD
+			/usr/local/sbin/pistar-motdgen
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.22..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.22)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
