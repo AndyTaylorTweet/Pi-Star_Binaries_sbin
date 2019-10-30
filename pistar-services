@@ -5,6 +5,19 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+# Display services active status
+function status_services() {
+    services=("pistar-watchdog.service" "mmdvmhost.service" "dstarrepeater.service" "ircddbgateway.service" "dapnetgateway.service"
+	      "p25gateway.service" "p25parrot.service" "nxdngateway.service" "nxdnparrot.service" "ysfgateway.service"
+	      "ysfparrot.service" "ysf2dmr.service" "ysf2p25.service" "ysf2nxdn.service" "dmr2ysf.service" "dmr2nxdn.service"
+              "dmrgateway.service" "mobilegps.service" "timeserver.service")
+
+    for s in "${services[@]}"; do
+	status=$(systemctl is-active "$s" | tr [a-z] [A-Z])
+	echo "Service $s -> $status"
+    done
+}
+
 # Start/Stop all the services...
 function stop_services()
 {
@@ -82,6 +95,10 @@ case "$1" in
                 stop_services
         ;;
 
+	status)
+	        status_services
+	;;
+	
         restart)
                 stop_services
                 start_services
