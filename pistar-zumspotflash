@@ -39,7 +39,7 @@ then
     modemSelected=${modemSelected#*=}
 
     # Get the user friendly version of the selected Modem.
-    modemSelectedHuman=$(grep ${modemSelected} /var/www/dashboard/admin/configure.php)
+    modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
     modemSelectedHuman=${modemSelectedHuman#*\">}
     modemSelectedHuman=${modemSelectedHuman::-9}
     echo "Selected Modem:     ${modemSelectedHuman}"
