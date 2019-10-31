@@ -24,6 +24,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+VERSION_STRING="0.0.1"
 BACKUP_ROOT_DIR="/var/backups/pistar"
 BACKUP_CATALOG="$BACKUP_ROOT_DIR/catalog"
 
@@ -74,18 +75,22 @@ function MenuServices() {
 		/usr/local/sbin/pistar-services start
 		echo "[OK]"
 		;;
+
 	    2)
 		/usr/local/sbin/pistar-services stop
 		echo "[OK]"
 		;;
+
 	    3)
 		/usr/local/sbin/pistar-services restart
 		echo "[OK]"
 		;;
+
 	    4)
 		/usr/local/sbin/pistar-services status
 		echo "[OK]"
 		;;
+
 	    113|81)
 		break
 		;;
@@ -429,20 +434,231 @@ function MenuBackupRestore() {
 	    1)
 		ListAvailableBackups
 		;;
+
 	    2)
 		BackupCurrentConfig
 		break
 		;;
+
 	    3)
 		RestoreBackup
 		break
 		;;
+
 	    4)
 		DeleteBackup
 		;;
+
 	    113|81)
 		break
 		;;
+	    
+	    *)
+		echo "[ERR]"
+		;;
+	esac
+    done
+}
+
+function ShowModem() {
+    # Get the pretty name for the chosen Modem according to the dashboard.
+    echo "************************************************************************************************************"
+    echo "***                                          Modem Informations                                          ***"
+    echo "************************************************************************************************************"
+    if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
+	# Get the modem that the user has selected.
+	modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
+	modemSelected=${modemSelected#*=}
+	
+	# Get the user friendly version of the selected Modem.
+	modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
+	modemSelectedHuman=${modemSelectedHuman#*\">}
+	modemSelectedHuman=${modemSelectedHuman::-9}
+	echo " Selected Modem:     ${modemSelectedHuman}"
+    fi
+    
+    # Get the Modem info from the Log
+    numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+    if [[ ${numLogs} -gt 0 ]]; then
+	# Get the physically connected modem from the logs
+	modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
+	echo " Connected Hardware: ${modemLog}"
+	
+	# Get the TCXO data
+	if [[ ${modemLog} == *"MHz"* ]]; then
+	    tcxoData=$(echo ${modemLog} | awk '{print $3}')
+	    echo " TCXO Value:         ${tcxoData}"
+	fi
+    fi
+    echo "************************************************************************************************************"
+}
+
+## Modem tools submenu
+function ModemTools() {
+    while true; do
+	echo -e "\n"
+	ShowModem
+	
+	echo -e "\n   Modem Tools:"
+	echo "   -----------"
+	echo "                *** MMDVM Devices ***"
+	echo "   1: Flash a HS_HAT (14.7456MHz TCXO) connected to GPIO"
+	echo "   2: Flash a HS_HAT (12.2880MHz TCXO) connected to GPIO"
+	echo "   3: Flash a HS_DUAL_HAT (14.7456MHz TCXO) connected to GPIO"
+	echo "   4: Flash a HS_DUAL_HAT (12.2880MHz TCXO) connected to GPIO"
+	echo "   5: Flash a HS_HAT_AMBE (14.7456MHz TCXO) connected to GPIO"
+	echo "   6: Resets HS_HAT or HS_DUAL_HAT"
+	echo "               *** ZUMSpot Devices ***"
+	echo "   7: Flash a ZUMSpot connected to GPIO"
+	echo "   8: Flash a ZUMSpot duplex connected to GPIO"
+	echo "   9: Flash a ZUMSpot USB Key"
+	echo "   10: Flash a USB Connected Libre Modem"
+	echo "             *** MMDVM_HS Nano Devices ***"
+	echo "   11: Flash an Nano HS board connected to GPIO"
+	echo "   12: Flash HS_DUAL_HAT (VR2VYE) connected to GPIO"
+	echo "             *** BD7KLE/BG3MDO Devices ***"
+	echo "   13: Flash a UHF2018 board connected to GPIO"
+	echo "   14: Flash a UHF302018 board connected to GPIO"
+	echo "   15: Flash a VHF302018 board connected to GPIO"
+	echo "                   *** General ***"
+	echo "   16: MMDVM Calibration"
+	MenuPrompt
+	r=$?
+	
+	case "$r" in
+	    1)
+		/usr/local/sbin/pistar-mmdvmhshatflash hs_hat
+		break
+		;;
+	    2)
+		/usr/local/sbin/pistar-mmdvmhshatflash hs_hat-12mhz
+		break
+		;;
+
+	    3)
+		/usr/local/sbin/pistar-mmdvmhshatflash hs_dual_hat
+		break
+		;;
+
+	    4)
+		/usr/local/sbin/pistar-mmdvmhshatflash hs_dual_hat-12mhz
+		break
+		;;
+
+	    5)
+		/usr/local/sbin/pistar-mmdvmhshatflash hs_hat_ambe
+		break
+		;;
+
+	    6)
+		/usr/local/sbin/pistar-mmdvmhshatreset
+		break
+		;;
+	    
+	    7)
+		/usr/local/sbin/pistar-zumspotflash rpi
+		break
+		;;
+
+	    8)
+		/usr/local/sbin/pistar-zumspotflash rpi_duplex
+		break
+		;;
+
+	    9)
+		/usr/local/sbin/pistar-zumspotflash usb
+		break
+		;;
+
+	    10)
+		/usr/local/sbin/pistar-zumspotflash libre
+		break
+		;;
+
+	    11)
+		/usr/local/sbin/pistar-vyehsflash nano_hs
+		break
+		;;
+
+	    12)
+		/usr/local/sbin/pistar-vyehsflash hs_dual_hat
+		break
+		;;
+	    
+	    13)
+		/usr/local/sbin/pistar-mdoflash uhf
+		break
+		;;
+
+	    14)
+		/usr/local/sbin/pistar-mdoflash uhf2
+		break
+		;;
+
+	    15)
+		/usr/local/sbin/pistar-mdoflash vhf
+		break
+		;;
+
+	    16)
+		/usr/local/sbin/pistar-mmdvmcal
+		break
+		;;
+	    
+	    113|81)
+		break
+		;;
+	    
+	    *)
+		echo "[ERR]"
+		;;
+	esac
+    done
+}
+
+## System submenu
+function MenuSystem() {
+    while true; do
+	echo -e "\n   System:"
+	echo "   ------"
+	echo "   1: Pi-Star Update"
+	echo "   2: Pi-Star Upgrade"
+	echo "   3: Modem Tools"
+	echo "   4: System Reboot"
+	echo "   5: System Shutdown"
+	MenuPrompt
+	r=$?
+	
+	case "$r" in
+	    1)
+		/usr/local/sbin/pistar-update
+		break
+		;;
+
+	    2)
+		/usr/local/sbin/pistar-upgrade
+		break
+		;;
+
+	    3)
+		ModemTools
+		break
+		;;
+
+	    4)
+		shutdown --no-wall -r now
+		break
+		;;
+
+	    5)
+		shutdown --no-wall -P now
+		break
+		;;
+	    
+	    113|81)
+		break
+		;;
+	    
 	    *)
 		echo "[ERR]"
 		;;
@@ -470,6 +686,7 @@ function CtrlC() {
 	y|yes|Y|YES)
 	    exit 1
 	    ;;
+	
 	*)
 	    return 0
 	    ;;
@@ -483,10 +700,12 @@ SanityCheck
 
 let loop=1
 while [ $loop == 1 ]; do
+    echo "`basename $0` v$VERSION_STRING"
     echo -e "\n   Main Menu:"
     echo "   ---------"
     echo "   1: Services"
     echo "   2: Backup/Restore"
+    echo "   3: System"
     MenuPrompt
     r=$?
 
@@ -498,10 +717,15 @@ while [ $loop == 1 ]; do
 	2)
 	    MenuBackupRestore
 	    ;;
+
+	3)
+	    MenuSystem
+	    ;;
 	
 	113|81)
 	    let loop=0
 	    ;;
+	
 	*)
 	    echo "[ERR]"
 	    ;;
