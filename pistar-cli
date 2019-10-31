@@ -1,0 +1,511 @@
+#!/bin/bash
+# -*- mode: shell-script; -*-
+
+# Script that manage few things on Pi-Star
+# Copyright (C) 2019 F1RMB - Daniel Caujolle-Bert <f1rmb.daniel@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+#
+
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+BACKUP_ROOT_DIR="/var/backups/pistar"
+BACKUP_CATALOG="$BACKUP_ROOT_DIR/catalog"
+
+## Remount FS RW mode
+function _rw() {
+    mount -o remount,rw /
+    mount -o remount,rw /boot
+}
+
+## Remount FS RO mode
+function _ro() {
+    sync
+    mount -o remount,ro /boot
+    mount -o remount,ro /
+}
+
+## Handled menu choice
+function MenuPrompt() {
+    echo "   q: Exit"
+    echo -n "?> "
+    read r
+    
+    re='^[0-9]+$'
+
+    if [ -z "$r" ]; then
+	return -1
+    elif [[ $r =~ $re ]] && [ "$r" -ge 0 -a "$r" -lt 99 ]; then
+	return "$r"
+    else
+	return $(printf '%d' "'$r")
+    fi
+}
+
+## Services menu
+function MenuServices() {
+    while true; do
+	echo -e "\n   Services:"
+	echo "   --------"
+	echo "   1: Start Services"
+	echo "   2: Stop Services"
+	echo "   3: Restart Services"
+	echo "   4: Services Status."
+	MenuPrompt
+	r=$?
+	
+	case "$r" in
+	    1)
+		/usr/local/sbin/pistar-services start
+		echo "[OK]"
+		;;
+	    2)
+		/usr/local/sbin/pistar-services stop
+		echo "[OK]"
+		;;
+	    3)
+		/usr/local/sbin/pistar-services restart
+		echo "[OK]"
+		;;
+	    4)
+		/usr/local/sbin/pistar-services status
+		echo "[OK]"
+		;;
+	    113|81)
+		break
+		;;
+	esac
+    done
+}
+
+## Rebuild backup catalog (removes empty backup entries)
+function RebuildBackupCatalog() {
+    if [ -f $BACKUP_CATALOG -a -s $BACKUP_CATALOG ]; then
+	declare -a lines
+	
+	while read l; do
+	    lines+=("$l")
+	done < $BACKUP_CATALOG
+	
+	_rw
+	let n=0
+	for l in "${lines[@]}"; do
+	    location=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
+	    
+	    if [ ! -e "$BACKUP_ROOT_DIR/$location/config_backup.zip" ] || [ -e "$BACKUP_ROOT_DIR/$location/config_backup.zip" -a ! -s "$BACKUP_ROOT_DIR/$location/config_backup.zip" ]; then
+		rm -rf $BACKUP_ROOT_DIR/$location/config_backup.zip > /dev/null 2>&1
+		rmdir $BACKUP_ROOT_DIR/$location > /dev/null 2>&1
+		unset 'lines[n]'
+	    fi
+	    
+	    ((n++))
+	done
+	
+	rm -f $BACKUP_CATALOG > /dev/null 2>&1
+	for l in "${lines[@]}"; do
+	    echo "$l" >> $BACKUP_CATALOG
+	done
+	_ro
+	
+    fi
+}
+
+## Execute backup. Add or replace existing ones
+function DoBackup() {
+    backupName="$1"
+    oldTS="$2"
+    backupDir="/tmp/config_backup"
+    backupZip="/tmp/config_backup.zip"
+    
+    echo -n "Backing files up..."
+
+    rm -rf $backupZip > /dev/null 2>&1
+    rm -rf $backupDir > /dev/null 2>&1
+    mkdir -p $backupDir > /dev/null 2>&1
+    
+    if [ -f /etc/dhcpcd.conf ]; then
+	if [ ! -z "`cat /etc/dhcpcd.conf | grep \"static ip_address\" | grep -v \"#\"`" ]; then
+            cp /etc/dhcpcd.conf $backupDir > /dev/null 2>&1
+	fi
+    fi
+    
+    files=("/etc/wpa_supplicant/wpa_supplicant.conf" "/etc/pistar-css.ini" "/etc/ircddbgateway" "/etc/mmdvmhost" "/etc/dstarrepeater" "/etc/dapnetgateway"
+	   "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver" "/etc/dstar-radio.*"
+	   "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/mobilegps" "/usr/local/etc/RSSI.dat"
+	   "/var/www/dashboard/config/ircddblocal.php" "/var/www/dashboard/config/config.php")
+
+    # Copy files
+    for f in "${files[@]}"; do
+	cp -f $f $backupDir > /dev/null 2>&1
+    done
+    
+    zip -j $backupZip $backupDir/* > /dev/null 2>&1
+
+    timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+
+    _rw
+    
+    mkdir -p $BACKUP_ROOT_DIR/$timestamp
+    mv $backupZip $BACKUP_ROOT_DIR/$timestamp
+
+    echo -e "\b\b\b: DONE."
+    
+    ## Add entry, or replace entry (according to $2), to the catalog
+    if [ -z "$oldTS" ]; then
+	echo "$backupName:$timestamp" >> $BACKUP_CATALOG
+    else
+	declare -a lines
+	
+	while read l; do
+	    lines+=("$l")
+	done < $BACKUP_CATALOG
+	
+	rm -f $BACKUP_CATALOG > /dev/null 2>&1
+	
+	for l in "${lines[@]}"; do
+	    name=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
+	    location=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
+
+	    ## Change location for this one
+	    if [[ "$oldTS" == "$location" ]]; then
+		echo "$name:$timestamp" >> $BACKUP_CATALOG
+	    else
+		echo "$l" >> $BACKUP_CATALOG
+	    fi
+	done
+    fi
+    
+    _ro
+    
+    echo "[OK] ** \"$backupName\" backed up."
+}
+
+## Lookup for backup location matching name ($1)
+function LookupBackup() {
+    n="$1"
+    if [ -f $BACKUP_CATALOG ]; then
+	while read l; do
+	    name=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
+	    location=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
+	    
+	    if [[ "$n" == "$name" ]]; then
+		echo "$location"
+		return 0
+	    fi
+	done < $BACKUP_CATALOG
+    fi
+    
+    # Not found
+    echo ""
+    return 1
+}
+
+## Backup current configuration
+function BackupCurrentConfig() {
+    replaceTS=""
+
+    while true; do
+	echo -n "Give a name to this backup (no colon ':' allowed) ?> "
+	read a
+
+	if [ ! -z "$a" ]; then
+	    
+	    ## Lookup existing backup with same name
+	    r=$(echo "$a" | tr -s \: _)
+	    b=$(LookupBackup "$r")
+
+	    if [ -z "$b" ]; then
+		break
+	    else
+		## Exist. Replace ?
+		echo -n "A backup with the same name already exists (timestamp: $b), do you want to override it ? (y/N): ?> "
+		read ov
+
+		case "$ov" in
+		    "y"|"Y")
+			## Remove old backup dir
+			_rw
+			rm -rf $BACKUP_ROOT_DIR/$b > /dev/null 2>&1
+			_ro
+			replaceTS="$b"
+			break
+			;;
+		esac
+		##echo -e "[ERR] ** A backup with an identical name already exists. Name it differently.\n"
+	    fi
+	else
+	    ##echo -e "[ERR] ** Empty name isn't allowed.\n"
+	    # Cancel
+	    echo "[OK] ** Canceled"
+	    return 1
+	fi
+    done
+
+    DoBackup "$r" "$replaceTS"
+}
+
+## List all available backups
+function ListAvailableBackups() {
+    echo -e "\n   Available backups:"
+    echo "   -----------------"
+    if [ -f $BACKUP_CATALOG -a -s $BACKUP_CATALOG ]; then
+	while read l; do
+	    name=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
+	    location=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
+
+	    if [ ! -z "$name" -a -e "$BACKUP_ROOT_DIR/$location/config_backup.zip" -a -s "$BACKUP_ROOT_DIR/$location/config_backup.zip" ]; then
+		echo "     -> \"$name\" (timestamp: $location)"
+	    fi
+	done < $BACKUP_CATALOG
+    else
+	echo "[NONE]"
+    fi
+}
+
+## Execute backup restoration, restarts services
+function DoRestore() {
+    backupLocation="$BACKUP_ROOT_DIR/$1"    
+    backupName="$2"
+    restoreDir="/tmp/config_restore"
+    
+    rm -rf $restoreDir > /dev/null 2>&1
+    mkdir -p $restoreDir > /dev/null 2>&1
+    unzip $backupLocation/config_backup.zip -d $restoreDir > /dev/null 2>&1
+
+    systemctl stop cron.service
+    /usr/local/sbin/pistar-services stop
+
+    echo -n "Restoring files..."
+    _rw
+    
+    ## Moving files
+    rm -f /etc/dstar-radio.* > /dev/null 2>&1
+    mv -f /tmp/config_restore/RSSI.dat /usr/local/etc/ > /dev/null 2>&1
+    mv -f /tmp/config_restore/ircddblocal.php /var/www/dashboard/config/ > /dev/null 2>&1
+    mv -f /tmp/config_restore/config.php /var/www/dashboard/config/ > /dev/null 2>&1
+    mv -v -f /tmp/config_restore/wpa_supplicant.conf /etc/wpa_supplicant/ > /dev/null 2>&1
+    mv -v -f /tmp/config_restore/* /etc/ > /dev/null 2>&1
+    
+    ## Restore the timezone
+    timeZone=$(grep date /var/www/dashboard/config/config.php | grep -o "'.*'" | sed "s/'//g")
+    timedatectl set-timezone $timeZone
+    
+    ## Restore ircDDGBateway link manager password
+    ircRemotePassword=$(grep remotePassword /etc/ircddbgateway | awk -F'=' '{print $2}')
+    sed -i "/password=/c\\password=$ircRemotePassword" /root/.Remote\ Control
+
+    _ro
+
+    echo -e "\b\b\b: DONE."
+    
+    /usr/local/sbin/pistar-services start
+    if [ $(grep "pistar-upnp.service" /etc/crontab | cut -c 1) != "#" ]; then
+	systemctl start pistar-upnp.service > /dev/null 2>&1
+    fi
+    systemctl start cron.service > /dev/null 2>&1
+
+    echo "[OK] ** \"$backupName\" restored."
+}
+
+## Menu to select a backup to restore
+function RestoreBackup() {
+    echo -e "\n   Available backups:"
+    echo "   -----------------"
+    if [ -f $BACKUP_CATALOG -a -s $BACKUP_CATALOG ]; then
+	let n=0
+	declare -a names locations
+	
+	while read l; do
+	    names[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
+	    locations[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
+	    echo "     $n -> \"${names[n]}\""
+
+	    ((n++))
+	done < $BACKUP_CATALOG
+
+	echo "    [EMPTY] -> Cancels Operation"
+	echo "Enter the number to restore"
+	echo -n "?> "
+	
+	read o
+	let offset=-1
+
+	if [ ! -z $o ]; then
+	    offset=$(($o))
+	fi
+
+	# Check in boundaries
+	if [ $offset -ge 0 -a $offset -lt ${#locations[@]} ]; then
+	    DoRestore "${locations[offset]}" "${names[offset]}"
+	fi
+
+    else
+	echo "[NONE]"
+    fi
+}
+
+## Menu to select a backup to delete
+function DeleteBackup() {
+    echo -e "\n   Available backups:"
+    echo "   -----------------"
+    if [ -f $BACKUP_CATALOG -a -s $BACKUP_CATALOG ]; then
+	let n=0
+	declare -a names locations
+	
+	while read l; do
+	    names[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
+	    locations[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
+	    echo "     $n -> \"${names[$n]}\" (timestamp: ${locations[$n]})"
+
+	    ((n++))
+	done < $BACKUP_CATALOG
+
+	echo "    [EMPTY] -> Cancels Operation"
+	echo "Enter the number to delete"
+	echo -n "?> "
+	
+	read o
+	let offset=-1
+
+	if [ ! -z $o ]; then
+	    offset=$(($o))
+	fi
+
+	# Check in boundaries
+	let fCount=${#locations[@]}
+	if [ $offset -ge 0 -a $offset -lt $fCount ]; then
+	    # Delete backup directory
+	    _rw
+	    rm -rf $BACKUP_ROOT_DIR/${locations[$offset]} > /dev/null 2>&1
+	    
+	    # Recreate catalog
+	    rm -f $BACKUP_CATALOG > /dev/null 2>&1
+	    for n in $(seq 0 $(($fCount - 1))); do
+		if [ $n -ne $offset ]; then
+	    	    echo "${names[n]}:${locations[n]}" >> $BACKUP_CATALOG
+		fi
+	    done
+	    _ro
+	    
+	    echo "[OK] ** Backup \"${names[$offset]}\" deleted."
+	else
+	    echo "[ERR] ** Specified offset is out of boundaries."
+	fi
+	
+
+    else
+	echo "[NONE]"
+    fi
+}
+
+## Backup/Restore submenu
+function MenuBackupRestore() {
+    while true; do
+	echo -e "\n   Backup/Restore:"
+	echo "   --------------"
+	echo "   1: List available backups"
+	echo "   2: Backup current configuration"
+	echo "   3: Restore a backup"
+	echo "   4: Delete a backup"
+	MenuPrompt
+	r=$?
+	
+	case "$r" in
+	    1)
+		ListAvailableBackups
+		;;
+	    2)
+		BackupCurrentConfig
+		break
+		;;
+	    3)
+		RestoreBackup
+		break
+		;;
+	    4)
+		DeleteBackup
+		;;
+	    113|81)
+		break
+		;;
+	    *)
+		echo "[ERR]"
+		;;
+	esac
+    done
+}
+
+## Sanity configuration checking
+function SanityCheck() {
+    if [ ! -d $BACKUP_ROOT_DIR ]; then
+	_rw
+	mkdir -p $BACKUP_ROOT_DIR
+	_ro
+    else
+	RebuildBackupCatalog
+    fi
+}
+
+## Handles Ctrl-C keystroke
+function CtrlC() {
+    echo -ne "\n   <Ctrl-C> has been pressed. Do you want to quit (y/N) ?> "
+    read c
+    
+    case "$c" in
+	y|yes|Y|YES)
+	    exit 1
+	    ;;
+	*)
+	    return 0
+	    ;;
+    esac
+}
+
+## Main
+trap "CtrlC" INT
+
+SanityCheck
+
+let loop=1
+while [ $loop == 1 ]; do
+    echo -e "\n   Main Menu:"
+    echo "   ---------"
+    echo "   1: Services"
+    echo "   2: Backup/Restore"
+    MenuPrompt
+    r=$?
+
+    case "$r" in
+	1)
+	    MenuServices
+	    ;;
+	
+	2)
+	    MenuBackupRestore
+	    ;;
+	
+	113|81)
+	    let loop=0
+	    ;;
+	*)
+	    echo "[ERR]"
+	    ;;
+    esac
+done
+
+exit 0
