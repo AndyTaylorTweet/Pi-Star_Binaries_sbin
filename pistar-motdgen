@@ -52,7 +52,7 @@ let pos/=2
 for i in $(seq 0 $(($pos - 1))); do
     echo -n " " >> /etc/motd
 done
-echo -e "[1;34mhttp://$(hostname)/  http://$(hostname).local/   http://$(hostname -I | awk '{print $1}')/
+echo -e "[1;34m${pistarHosts}
 
 [0;0m    Pi-Star's disk is read-only by default, enable read-write with \"[1;93mrpi-rw[0;0m\".
    Pi-Star built by Andy Taylor ([1;37mMW0MWZ[0;0m), pi-star tools all start \"[1;93mpistar-[0;0m\".
