@@ -797,6 +797,18 @@ EOF
 		fi
 	;;
 	3.4.22)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.22/3.4.23/g' /etc/pistar-release
+
+			# Re-create the MOTD
+			/usr/local/sbin/pistar-motdgen
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.23..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.23)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -1004,6 +1016,15 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC9..."
 	;;
 	4.0.0-RC9)
+		sed -i 's/4.0.0-RC9/4.0.0-RC10/g' /etc/pistar-release
+	    
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC10..."
+	;;
+	4.0.0-RC10)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0)
@@ -1184,6 +1205,15 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC7..."
 	;;
 	4.1.0-RC7)
+		sed -i 's/4.1.0-RC7/4.1.0-RC8/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC8..."
+	;;
+	4.1.0-RC8)
 		Message="You are already running the latest version..."
 	;;
 	4.1.0)
