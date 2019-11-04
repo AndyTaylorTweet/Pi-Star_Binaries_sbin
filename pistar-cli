@@ -24,7 +24,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-VERSION_STRING="0.0.1"
+VERSION_STRING="0.0.2"
 BACKUP_ROOT_DIR="/var/backups/pistar"
 BACKUP_CATALOG="$BACKUP_ROOT_DIR/catalog"
 
@@ -39,6 +39,27 @@ function _ro() {
     sync
     mount -o remount,ro /boot
     mount -o remount,ro /
+}
+
+## Handles Ctrl-C keystroke
+function CtrlC() {
+    echo -ne "\n   <Ctrl-C> has been pressed. Do you want to quit (y/N) ?> "
+    read c
+    
+    case "$c" in
+	y|yes|Y|YES)
+	    exit 1
+	    ;;
+	
+	*)
+	    return 0
+	    ;;
+    esac
+}
+
+## Function that does nothing
+function CtrlC_NOOP() {
+    :
 }
 
 ## Handled menu choice
@@ -616,6 +637,17 @@ function ModemTools() {
     done
 }
 
+## Display live logs
+function LiveLogs() {
+    trap "CtrlC_NOOP" INT
+    echo "******************************"
+    echo "*** Press <CTRL>-C to exit ***"
+    echo "******************************"
+    sleep 2s
+    tail -f /var/log/pi-star/*.log
+    trap "CtrlC" INT
+}
+
 ## System submenu
 function MenuSystem() {
     while true; do
@@ -624,8 +656,9 @@ function MenuSystem() {
 	echo "   1: Pi-Star Update"
 	echo "   2: Pi-Star Upgrade"
 	echo "   3: Modem Tools"
-	echo "   4: System Reboot"
-	echo "   5: System Shutdown"
+	echo "   4: Live logs"
+	echo "   5: System Reboot"
+	echo "   6: System Shutdown"
 	MenuPrompt
 	r=$?
 	
@@ -644,15 +677,21 @@ function MenuSystem() {
 		ModemTools
 		break
 		;;
-
 	    4)
-		shutdown --no-wall -r now
-		break
+		LiveLogs
+		break;
 		;;
 
 	    5)
+		echo "*** Rebooting now ***"
+		shutdown --no-wall -r now
+		exit 0
+		;;
+
+	    6)
+		echo "*** Shutting down now ***"
 		shutdown --no-wall -P now
-		break
+		exit 0
 		;;
 	    
 	    113|81)
@@ -675,22 +714,6 @@ function SanityCheck() {
     else
 	RebuildBackupCatalog
     fi
-}
-
-## Handles Ctrl-C keystroke
-function CtrlC() {
-    echo -ne "\n   <Ctrl-C> has been pressed. Do you want to quit (y/N) ?> "
-    read c
-    
-    case "$c" in
-	y|yes|Y|YES)
-	    exit 1
-	    ;;
-	
-	*)
-	    return 0
-	    ;;
-    esac
 }
 
 ## Main
