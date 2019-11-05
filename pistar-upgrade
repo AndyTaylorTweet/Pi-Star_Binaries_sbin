@@ -809,6 +809,21 @@ EOF
 		fi
 	;;
 	3.4.23)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.23/3.4.24/g' /etc/pistar-release
+
+		    # Update ircDDB config for latest binaries (xlx related)
+		    echo -e "xlxEnabled=0\nxlxOverrideLocal=0\nxlxHostsFileUrl=" >> /etc/ircddbgateway
+		    
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.24..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.24)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
