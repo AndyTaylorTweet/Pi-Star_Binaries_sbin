@@ -360,7 +360,7 @@ function RestoreBackup() {
 	while read l; do
 	    names[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
 	    locations[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
-	    echo "     $n -> \"${names[n]}\""
+	    echo "     $n -> \"${names[n]}\" (timestamp: ${locations[n]})"
 
 	    ((n++))
 	done < $BACKUP_CATALOG
@@ -397,7 +397,7 @@ function DeleteBackup() {
 	while read l; do
 	    names[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
 	    locations[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
-	    echo "     $n -> \"${names[$n]}\" (timestamp: ${locations[$n]})"
+	    echo "     $n -> \"${names[n]}\" (timestamp: ${locations[n]})"
 
 	    ((n++))
 	done < $BACKUP_CATALOG
