@@ -146,6 +146,10 @@ function RebuildBackupCatalog() {
 	for l in "${lines[@]}"; do
 	    echo "$l" >> $BACKUP_CATALOG
 	done
+
+	# Sort the catalog
+	sort -t ':' -k1g,1 -o $BACKUP_CATALOG < $BACKUP_CATALOG
+
 	_ro
 	
     fi
@@ -213,8 +217,12 @@ function DoBackup() {
 	    else
 		echo "$l" >> $BACKUP_CATALOG
 	    fi
+
 	done
     fi
+
+    # Sort the catalog
+    sort -t ':' -k1g,1 -o $BACKUP_CATALOG < $BACKUP_CATALOG
     
     _ro
     
