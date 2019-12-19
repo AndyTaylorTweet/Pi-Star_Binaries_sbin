@@ -867,9 +867,12 @@ main_function() {
 		# Fix up random seed
 		# cp /lib/systemd/system/systemd-random-seed.service /etc/systemd/system/systemd-random-seed.service
 		# sed -i '/ExecStart=\/lib\/systemd\/systemd-random-seed load/a ExecStop=\/bin\/mount -o remount,rw \/' /etc/systemd/system/systemd-random-seed.service
-
+		# rm -rf /var/lib/systemd/random-seed
+		
 		# Update systemd and enable new services
 		# systemctl daemon-reload
+		# systemctl stop systemd-random-seed.service
+		# systemctl start systemd-random-seed.service
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
