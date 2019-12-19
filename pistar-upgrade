@@ -863,15 +863,33 @@ main_function() {
 	;;
 	4.1.0-RC6)
 		#sed -i 's/4.1.0-RC6/4.1.0-RC7/g' /etc/pistar-release
+		
+		# Fix up random seed
+		# cp /lib/systemd/system/systemd-random-seed.service /etc/systemd/system/systemd-random-seed.service
+		# sed -i '/ExecStart=\/lib\/systemd\/systemd-random-seed load/a ExecStop=\/bin\/mount -o remount,rw \/' /etc/systemd/system/systemd-random-seed.service
+
+		# Update systemd and enable new services
+		# systemctl daemon-reload
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC7..."
+
 		Message="You are already running the latest version..."
 	;;
 	4.1.0-RC7)
+		#sed -i 's/4.1.0-RC7/4.1.0-RC8/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC8..."
+		Message="You are already running the latest version..."
+	;;
+	4.1.0-RC8)
 		Message="You are already running the latest version..."
 	;;
 	4.1.0)
