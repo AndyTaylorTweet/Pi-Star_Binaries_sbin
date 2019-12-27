@@ -18,7 +18,7 @@ fi
 # Make the "boot" option only work on Pi 4 hardware
 if [ "$1" = "boot" ]; then
     if [ "$(/usr/local/bin/platformDetect.sh | grep "Pi 4 Model" | wc -l)" -eq 0 ]; then
-        exit 1
+        exit 0
     fi
 fi
 
