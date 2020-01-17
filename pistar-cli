@@ -349,7 +349,7 @@ function DoRestore() {
     echo -e "\b\b\b: DONE."
     
     /usr/local/sbin/pistar-services start
-    if [ $(grep "pistar-upnp.service" /etc/crontab | cut -c 1) != "#" ]; then
+    if [ "$(grep "pistar-upnp.service" /etc/crontab | cut -c 1)" != "#" ]; then
 	systemctl start pistar-upnp.service > /dev/null 2>&1
     fi
     systemctl start cron.service > /dev/null 2>&1
