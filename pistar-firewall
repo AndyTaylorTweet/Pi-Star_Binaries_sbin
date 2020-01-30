@@ -77,9 +77,11 @@ iptables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 
 iptables -t mangle -A POSTROUTING -p udp --dport 40000 -j DSCP --set-dscp 46
 
 # Allow Outbound DMR Ports
-iptables -A OUTPUT -p udp --dport 55555 -j ACCEPT #			DMR+ Networking
-iptables -A OUTPUT -p udp --dport 62031 -j ACCEPT #			DMR (BrandMeister) Networking
+iptables -A OUTPUT -p udp --dport 55555 -j ACCEPT #			      DMR+ Networking
+iptables -A OUTPUT -p udp --dport 55570:55580 -j ACCEPT #			HB Link France Networking
+iptables -A OUTPUT -p udp --dport 62031 -j ACCEPT #			      DMR (BrandMeister) Networking
 iptables -t mangle -A POSTROUTING -p udp --dport 55555 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 55570:55580 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
 
 # Allow Outbound XLX Ports
@@ -291,9 +293,11 @@ ip6tables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp
 ip6tables -t mangle -A POSTROUTING -p udp --dport 40000 -j DSCP --set-dscp 46
 
 # Allow Outbound DMR Voice Ports
-ip6tables -A OUTPUT -p udp --dport 55555 -j ACCEPT #  DMR+ Networking
-ip6tables -A OUTPUT -p udp --dport 62031 -j ACCEPT #  DMR (BrandMeister) Networking
+ip6tables -A OUTPUT -p udp --dport 55555 -j ACCEPT #        DMR+ Networking
+ip6tables -A OUTPUT -p udp --dport 55570:55580 -j ACCEPT #  HB France Networking
+ip6tables -A OUTPUT -p udp --dport 62031 -j ACCEPT #        DMR (BrandMeister) Networking
 ip6tables -t mangle -A POSTROUTING -p udp --dport 55555 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 55570:55580 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
 
 # Allow Outbound XLX Voice Ports
