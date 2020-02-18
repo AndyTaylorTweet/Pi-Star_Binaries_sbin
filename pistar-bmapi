@@ -117,7 +117,7 @@ deltg)
 
 	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
 	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
-	REQUEST="Delete TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
+	REQUEST="Delete TG ${targetTG} from TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 ref)
 	# Check that the variable for Reflector has been passed
