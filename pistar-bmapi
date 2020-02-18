@@ -192,7 +192,7 @@ esac
 # Do the magic
 echo " Request to BrandMesiter API: ${REQUEST}"
 #RESULT=$(curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
-RESULT=$(wget -q -O - --header="Content-Type: application/x-www-form-urlencoded" --header="Authorization: Basic ${APIKeyB64}:"  --post-data="${APIDATA}" "${APIURL}" | \
+RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/x-www-form-urlencoded" --header="Authorization: Basic ${APIKeyB64}:"  --post-data="${APIDATA}" "${APIURL}" | \
 	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
 echo "Answer from BrandMesiter API: ${RESULT}"
 echo ""
