@@ -1324,6 +1324,18 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC10..."
 	;;
 	4.1.0-RC10)
+		sed -i 's/4.1.0-RC10/4.1.0-RC11/g' /etc/pistar-release
+		
+		# Fix the missing rng-tools
+		apt-get update && apt-get install --reinstall rng-tools
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC11..."
+	;;
+	4.1.0-RC11)
 		Message="You are already running the latest version..."
 	;;
 	4.1.0)
