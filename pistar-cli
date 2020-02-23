@@ -176,7 +176,8 @@ function DoBackup() {
     
     files=("/etc/wpa_supplicant/wpa_supplicant.conf" "/etc/pistar-css.ini" "/etc/ircddbgateway" "/etc/mmdvmhost" "/etc/dstarrepeater" "/etc/dapnetgateway"
 	   "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver" "/etc/dstar-radio.*"
-	   "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/mobilegps" "/usr/local/etc/RSSI.dat"
+	   "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/mobilegps"
+	   "/etc/tinyfilemanager-auth.php" "/etc/tinyfilemanager-config.php" "/usr/local/etc/RSSI.dat"
 	   "/var/www/dashboard/config/ircddblocal.php" "/var/www/dashboard/config/config.php" "/var/www/dashboard/config/language.php")
 
     # Copy files
