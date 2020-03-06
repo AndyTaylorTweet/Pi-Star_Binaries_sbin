@@ -7,11 +7,11 @@ fi
 
 # Display services active status
 function status_services() {
-    services=("pistar-watchdog.service" "mmdvmhost.service" "dstarrepeater.service" "ircddbgateway.service" "dapnetgateway.service"
+    services=("pistar-watchdog.timer" "pistar-watchdog.service" "mmdvmhost.service" "dstarrepeater.service" "ircddbgateway.service" "dapnetgateway.service"
 	      "p25gateway.service" "p25parrot.service" "nxdngateway.service" "nxdnparrot.service" "ysfgateway.service"
 	      "ysfparrot.service" "ysf2dmr.service" "ysf2p25.service" "ysf2nxdn.service" "dmr2ysf.service" "dmr2nxdn.service"
-              "dmrgateway.service" "mobilegps.service" "timeserver.service")
-
+              "dmrgateway.service" "mobilegps.service" "timeserver.service" "cron.service")
+    
     for s in "${services[@]}"; do
 	status=$(systemctl is-active "$s" | tr [a-z] [A-Z])
 	echo "Service $s -> $status"
@@ -19,94 +19,109 @@ function status_services() {
 }
 
 # Start/Stop all the services...
+# $1 == FULLSTOP
 function stop_services()
 {
-        # Mount the disk RW
-        mount -o remount,rw /
+    # Mount the disk RW
+    mount -o remount,rw /
+    
+    echo -ne "Stopping Pi-Star services..."
+    
+    systemctl stop pistar-watchdog.timer > /dev/null 2>&1
+    systemctl stop pistar-watchdog.service > /dev/null 2>&1
+    systemctl stop mmdvmhost.service > /dev/null 2>&1
+    systemctl stop dstarrepeater.service > /dev/null 2>&1
+    sleep 2
+    systemctl stop ircddbgateway.service > /dev/null 2>&1
+    systemctl stop dapnetgateway.service > /dev/null 2>&1
+    systemctl stop p25gateway.service > /dev/null 2>&1
+    systemctl stop p25parrot.service > /dev/null 2>&1
+    systemctl stop nxdngateway.service > /dev/null 2>&1
+    systemctl stop nxdnparrot.service > /dev/null 2>&1
+    systemctl stop ysfgateway.service > /dev/null 2>&1
+    systemctl stop ysfparrot.service > /dev/null 2>&1
+    systemctl stop ysf2dmr.service > /dev/null 2>&1
+    systemctl stop ysf2p25.service > /dev/null 2>&1
+    systemctl stop ysf2nxdn.service > /dev/null 2>&1
+    systemctl stop dmr2ysf.service > /dev/null 2>&1
+    systemctl stop dmr2nxdn.service > /dev/null 2>&1
+    systemctl stop dmrgateway.service > /dev/null 2>&1
+    systemctl stop mobilegps.service > /dev/null 2>&1
+    systemctl stop timeserver.service > /dev/null 2>&1
+    
+    if [ "$1" == "FULLSTOP" ]; then
+	# Prevent cron to restart services
+	systemctl is-active --quiet cron.service && systemctl stop cron.service
+    fi
 
-        echo -ne "Stopping Pi-Star services..."
-
-        systemctl stop pistar-watchdog.service > /dev/null 2>&1
-        systemctl stop mmdvmhost.service > /dev/null 2>&1
-        systemctl stop dstarrepeater.service > /dev/null 2>&1
-        sleep 2
-        systemctl stop ircddbgateway.service > /dev/null 2>&1
-        systemctl stop dapnetgateway.service > /dev/null 2>&1
-        systemctl stop p25gateway.service > /dev/null 2>&1
-        systemctl stop p25parrot.service > /dev/null 2>&1
-        systemctl stop nxdngateway.service > /dev/null 2>&1
-        systemctl stop nxdnparrot.service > /dev/null 2>&1
-        systemctl stop ysfgateway.service > /dev/null 2>&1
-        systemctl stop ysfparrot.service > /dev/null 2>&1
-        systemctl stop ysf2dmr.service > /dev/null 2>&1
-        systemctl stop ysf2p25.service > /dev/null 2>&1
-        systemctl stop ysf2nxdn.service > /dev/null 2>&1
-        systemctl stop dmr2ysf.service > /dev/null 2>&1
-        systemctl stop dmr2nxdn.service > /dev/null 2>&1
-        systemctl stop dmrgateway.service > /dev/null 2>&1
-        systemctl stop mobilegps.service > /dev/null 2>&1
-        systemctl stop timeserver.service > /dev/null 2>&1
-
-        echo -e "\b\b\b: DONE.\b"
-
-        # Mount the disk RO
-        mount -o remount,ro /
+    echo -e "\b\b\b: DONE.\b"
+    
+    # Mount the disk RO
+    mount -o remount,ro /
 }
 
 function start_services()
 {
-        # Mount the disk RW
-        mount -o remount,rw /
+    # Mount the disk RW
+    mount -o remount,rw /
+    
+    echo -ne "Starting Pi-Star services..."
+    
+    systemctl start mobilegps.service > /dev/null 2>&1
+    systemctl start ircddbgateway.service > /dev/null 2>&1
+    systemctl start dmrgateway.service > /dev/null 2>&1
+    systemctl start dapnetgateway.service > /dev/null 2>&1
+    systemctl start p25gateway.service > /dev/null 2>&1
+    systemctl start p25parrot.service > /dev/null 2>&1
+    systemctl start nxdngateway.service > /dev/null 2>&1
+    systemctl start nxdnparrot.service > /dev/null 2>&1
+    systemctl start ysfgateway.service > /dev/null 2>&1
+    systemctl start ysfparrot.service > /dev/null 2>&1
+    systemctl start ysf2dmr.service > /dev/null 2>&1
+    systemctl start ysf2p25.service > /dev/null 2>&1
+    systemctl start ysf2nxdn.service > /dev/null 2>&1
+    systemctl start dmr2ysf.service > /dev/null 2>&1
+    systemctl start dmr2nxdn.service > /dev/null 2>&1
+    systemctl start timeserver.service > /dev/null 2>&1
+    systemctl start mmdvmhost.service > /dev/null 2>&1
+    systemctl start dstarrepeater.service > /dev/null 2>&1
+    systemctl start pistar-watchdog.service > /dev/null 2>&1
+    systemctl start pistar-watchdog.timer > /dev/null 2>&1
+    
+    # Restart cron service is fullstop was used before
+    systemctl is-active --quiet cron.service || systemctl start cron.service
 
-        echo -ne "Starting Pi-Star services..."
-
-        systemctl start mobilegps.service > /dev/null 2>&1
-        systemctl start ircddbgateway.service > /dev/null 2>&1
-        systemctl start dmrgateway.service > /dev/null 2>&1
-        systemctl start dapnetgateway.service > /dev/null 2>&1
-        systemctl start p25gateway.service > /dev/null 2>&1
-        systemctl start p25parrot.service > /dev/null 2>&1
-        systemctl start nxdngateway.service > /dev/null 2>&1
-        systemctl start nxdnparrot.service > /dev/null 2>&1
-        systemctl start ysfgateway.service > /dev/null 2>&1
-        systemctl start ysfparrot.service > /dev/null 2>&1
-        systemctl start ysf2dmr.service > /dev/null 2>&1
-        systemctl start ysf2p25.service > /dev/null 2>&1
-        systemctl start ysf2nxdn.service > /dev/null 2>&1
-        systemctl start dmr2ysf.service > /dev/null 2>&1
-        systemctl start dmr2nxdn.service > /dev/null 2>&1
-        systemctl start timeserver.service > /dev/null 2>&1
-        systemctl start mmdvmhost.service > /dev/null 2>&1
-        systemctl start dstarrepeater.service > /dev/null 2>&1
-        systemctl start pistar-watchdog.service > /dev/null 2>&1
-
-        echo -e "\b\b\b: DONE.\b"
-
-        # Mount the disk RO
-        mount -o remount,ro /
+    echo -e "\b\b\b: DONE.\b"
+    
+    # Mount the disk RO
+    mount -o remount,ro /
 }
 
 case "$1" in
-        start)
-                start_services
+    start)
+        start_services
         ;;
-
-        stop)
-                stop_services
+    
+    stop)
+        stop_services
         ;;
-
-	status)
-	        status_services
+    
+    fullstop)
+        stop_services "FULLSTOP"
+        ;;
+    
+    status)
+	status_services
 	;;
-	
-        restart)
-                stop_services
-                start_services
+    
+    restart)
+        stop_services
+        start_services
         ;;
-
-        *)
-                echo -e "`basename $0` {start|stop|restart}\n"
-                exit 1
+    
+    *)
+        echo -e "`basename $0` {start|stop|fullstop|restart}\n"
+        exit 1
         ;;
 esac
 

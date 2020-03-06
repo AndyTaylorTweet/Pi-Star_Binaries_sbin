@@ -86,8 +86,9 @@ function MenuServices() {
 	echo "   --------"
 	echo "   1: Start Services"
 	echo "   2: Stop Services"
-	echo "   3: Restart Services"
-	echo "   4: Services Status."
+	echo "   3: Full Stop Services"
+	echo "   4: Restart Services"
+	echo "   5: Services Status."
 	MenuPrompt
 	r=$?
 	
@@ -103,11 +104,16 @@ function MenuServices() {
 		;;
 
 	    3)
-		/usr/local/sbin/pistar-services restart
+		/usr/local/sbin/pistar-services fullstop
 		echo "[OK]"
 		;;
 
 	    4)
+		/usr/local/sbin/pistar-services restart
+		echo "[OK]"
+		;;
+
+	    5)
 		/usr/local/sbin/pistar-services status
 		echo "[OK]"
 		;;
@@ -322,8 +328,7 @@ function DoRestore() {
     mkdir -p $restoreDir > /dev/null 2>&1
     unzip $backupLocation/config_backup.zip -d $restoreDir > /dev/null 2>&1
 
-    systemctl stop cron.service
-    /usr/local/sbin/pistar-services stop
+    /usr/local/sbin/pistar-services fullstop
 
     echo -n "Restoring files..."
     _rw
