@@ -893,19 +893,25 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC8..."
 	;;
 	4.1.0-RC8)
-		#sed -i 's/4.1.0-RC8/4.1.0-RC9/g' /etc/pistar-release
+		sed -i 's/4.1.0-RC8/4.1.0/g' /etc/pistar-release
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0..."
+	;;
+	4.1.0)
+		#sed -i 's/4.1.0/4.1.1/g' /etc/pistar-release
 		
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
-
+		
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC9..."
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.1..."
 		Message="You are already running the latest version..."
 	;;
-	4.1.0-RC9)
-		Message="You are already running the latest version..."
-	;;
-	4.1.0)
+	4.1.1)
 		Message="You are already running the latest version..."
 	;;
 	*)
