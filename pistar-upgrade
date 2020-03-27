@@ -1416,7 +1416,7 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0..."
 	;;
 	4.1.0)
-		sed -i 's/4.1.0/4.1.0-RMB/g' /etc/pistar-release
+		sed -i 's/4.1.0$/4.1.0-RMB/g' /etc/pistar-release
 		
 		upgradeTo41RMB
 		
