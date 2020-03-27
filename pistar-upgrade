@@ -21,7 +21,78 @@ if ! flock -n 200 ; then
   exit 1
 fi
 
-main_function() {
+function upgradeTo41RMB()
+{
+    # MobileGPS Service
+    echo '[Unit]' > /lib/systemd/system/mobilegps.service
+    echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
+    echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
+    echo 'Before=mmdvmhost.timer' >> /lib/systemd/system/mobilegps.service
+    echo '' >> /lib/systemd/system/mobilegps.service
+    echo '[Service]' >> /lib/systemd/system/mobilegps.service
+    echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
+    echo 'ExecStart=/usr/local/sbin/mobilegps.service start' >> /lib/systemd/system/mobilegps.service
+    echo 'ExecStop=/usr/local/sbin/mobilegps.service stop' >> /lib/systemd/system/mobilegps.service
+    echo 'ExecReload=/usr/local/sbin/mobilegps.service restart' >> /lib/systemd/system/mobilegps.service
+    echo '' >> /lib/systemd/system/mobilegps.service
+    echo '[Install]' >> /lib/systemd/system/mobilegps.service
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
+    
+    # MobileGPS Timer
+    echo '[Timer]' > /lib/systemd/system/mobilegps.timer
+    echo 'OnStartupSec=20' >> /lib/systemd/system/mobilegps.timer
+    echo '' >> /lib/systemd/system/mobilegps.timer
+    echo '[Install]' >> /lib/systemd/system/mobilegps.timer
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.timer
+    
+    # Disable SAMBA
+    systemctl stop smbd
+    systemctl stop nmbd
+    LC_ALL=C systemctl disable smbd > /dev/null 2<&1
+    LC_ALL=C systemctl disable nmbd > /dev/null 2<&1
+    systemctl mask smbd
+    systemctl mask nmbd
+    
+    # Disable agetty on tty1
+    systemctl stop getty@tty1.service
+    systemctl disable getty@tty1.service
+    
+    # Tweaking avahi
+    sed -i 's/^publish-hinfo=.*/publish-hinfo=yes/g;s/^publish-workstation=.*/publish-workstation=yes/g' /etc/avahi/avahi-daemon.conf
+    sed -i 's/^use-ipv6=.*/use-ipv6=no/g' /etc/avahi/avahi-daemon.conf
+    
+    # HTTP and SSH avahi services
+    cat << EOF > /etc/avahi/services/http.service 
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+<name replace-wildcards="yes">%h Pi-Star Web Interface</name>
+<service>
+<type>_http._tcp</type>
+<port>80</port>
+</service>
+</service-group>
+EOF
+    cat << EOF > /etc/avahi/services/ssh.service 
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+<name replace-wildcards="yes">%h Pi-Star SSH</name>
+<service>
+<type>_ssh._tcp</type>
+<port>22</port>
+</service>
+</service-group>
+EOF
+
+    systemctl restart avahi-daemon
+    
+    systemctl daemon-reload
+    systemctl enable mobilegps.timer
+}
+
+function main_function()
+{
 	# Get the current Modem
 	if [ -f /etc/dstar-radio.mmdvmhost ]; then
 		pistarModem=$(awk -F "=" '/Hardware/ {print $2}' /etc/dstar-radio.mmdvmhost)
@@ -1343,9 +1414,21 @@ EOF
 		
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0..."
-		;;
+	;;
 	4.1.0)
-	    ;;
+		sed -i 's/4.1.0-RC11/4.1.0-RMB/g' /etc/pistar-release
+		
+		upgradeTo41RMB
+		
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RMB..."
+	;;
+	4.1.0-RMB)
+		Message="You are already running the latest version..."
+	;;
 	4.1.1)
 		Message="You are already running the latest version..."
 	;;
