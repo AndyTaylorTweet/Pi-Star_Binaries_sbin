@@ -895,6 +895,18 @@ EOF
 		fi
 	;;
 	3.4.24)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.24$/3.4.25-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.25-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.25-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
