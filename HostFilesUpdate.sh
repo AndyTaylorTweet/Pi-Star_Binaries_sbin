@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.45                      #
+#                     Version 2.5                       #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -165,8 +165,9 @@ if [ -f "/root/XLXHosts.txt" ]; then
                 if [[ $line != \#* ]] && [[ $line = *";"* ]]
                 then
                         xlxid=`echo $line | awk -F  ";" '{print $1}'`
-                        xlxroom=`echo $line | awk -F  ";" '{print $3}'`
-                        xlxip=`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt | awk -F  ";" '{print $2}'`
+			xlxip=`echo $line | awk -F  ";" '{print $2}'`
+                        #xlxip=`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt | awk -F  ";" '{print $2}'`
+			xlxroom=`echo $line | awk -F  ";" '{print $3}'`
                         xlxNewLine="${xlxid};${xlxip};${xlxroom}"
                         /bin/sed -i "/^$xlxid\;/c\\$xlxNewLine" /usr/local/etc/XLXHosts.txt
                 fi
