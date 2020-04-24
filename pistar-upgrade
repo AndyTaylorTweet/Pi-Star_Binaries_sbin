@@ -1439,9 +1439,31 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RMB..."
 	;;
 	4.1.0-RMB)
+		#sed -i 's/4.1.0-RMB/4.1.1-RMB/g' /etc/pistar-release
+
+		# Fix up issues with missing ralink firmware
+		#apt-get update && apt-get install --reinstall -y firmware-ralink
+	    
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
 		Message="You are already running the latest version..."
 	;;
 	4.1.1)
+		#sed -i 's/4.1.1$/4.1.1-RMB/g' /etc/pistar-release
+
+		#upgradeTo41RMB
+	    
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
+		Message="You are already running the latest version..."
+	;;
+	4.1.1-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
