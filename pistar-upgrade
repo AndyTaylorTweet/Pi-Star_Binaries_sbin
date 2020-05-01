@@ -1444,6 +1444,11 @@ EOF
 		# Fix up issues with missing ralink firmware
 		#apt-get update && apt-get install --reinstall -y firmware-ralink
 	    
+		# Disable unattended-upgrades
+		#systemctl stop unattended-upgrades
+		#LC_ALL=C systemctl disable unattended-upgrades > /dev/null 2<&1
+		#systemctl mask unattended-upgrades
+    
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
