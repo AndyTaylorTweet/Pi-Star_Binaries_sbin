@@ -43,6 +43,9 @@ git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
 # Update the Binaries (sbin)
 git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
 
+# Install security updates, etc, if any.
+#/usr/bin/unattended-upgrade > /dev/null 2<&1
+
 # Purge the logs older than 2 days
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
 rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)
