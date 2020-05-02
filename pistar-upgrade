@@ -902,17 +902,16 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0..."
 	;;
 	4.1.0)
-		#sed -i 's/4.1.0/4.1.1/g' /etc/pistar-release
+		sed -i 's/4.1.0/4.1.1/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Fix up issues with missing ralink firmware
-		#apt-get update && apt-get install --reinstall -y firmware-ralink
+		apt-get update && apt-get install --reinstall -y firmware-ralink
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.1..."
-		Message="You are already running the latest version..."
+		Message="Upgraded from ${pistarCurVersion} to 4.1.1..."
 	;;
 	4.1.1)
 		#sed -i 's/4.1.1/4.1.2/g' /etc/pistar-release
