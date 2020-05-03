@@ -1439,37 +1439,41 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RMB..."
 	;;
 	4.1.0-RMB)
-		#sed -i 's/4.1.0-RMB/4.1.1-RMB/g' /etc/pistar-release
+		sed -i 's/4.1.0-RMB/4.1.1-RMB/g' /etc/pistar-release
 
 		# Fix up issues with missing ralink firmware
-		#apt-get update && apt-get install --reinstall -y firmware-ralink
+		apt-get update && apt-get install --reinstall -y firmware-ralink
 	    
 		# Disable unattended-upgrades, no background python process please,
 		# this is a RPi (zero possibly).
 		# Now, it's triggered by the pistar daily cron job (waaayyyyy enough)
-		## REMINDER: enable unattended-upgrade in pistar-daily.cron
-		#systemctl stop unattended-upgrades
-		#LC_ALL=C systemctl disable unattended-upgrades > /dev/null 2<&1
-		#systemctl mask unattended-upgrades
+		systemctl stop unattended-upgrades
+		LC_ALL=C systemctl disable unattended-upgrades > /dev/null 2<&1
+		systemctl mask unattended-upgrades
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
-		Message="You are already running the latest version..."
+		Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
 	;;
 	4.1.1)
-		#sed -i 's/4.1.1$/4.1.1-RMB/g' /etc/pistar-release
+		sed -i 's/4.1.1$/4.1.1-RMB/g' /etc/pistar-release
 
-		#upgradeTo41RMB
+		upgradeTo41RMB
 	    
+		# Disable unattended-upgrades, no background python process please,
+		# this is a RPi (zero possibly).
+		# Now, it's triggered by the pistar daily cron job (waaayyyyy enough)
+		systemctl stop unattended-upgrades
+		LC_ALL=C systemctl disable unattended-upgrades > /dev/null 2<&1
+		systemctl mask unattended-upgrades
+
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
-		Message="You are already running the latest version..."
+		Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
 	;;
 	4.1.1-RMB)
 		Message="You are already running the latest version..."
