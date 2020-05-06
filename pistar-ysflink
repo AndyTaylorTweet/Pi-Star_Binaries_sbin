@@ -38,15 +38,20 @@ then
       echo "To unlink from any connected reflector, use: pistar-ysflink unlink"
       echo "To link to YSF31672, use: pistar-ysflink ysf31672"
       echo "To link to FCS002-90, use: pistar-ysflink fcs00290"
+      echo ""
       exit 0
 fi
 
 case ${1} in
-*unlink)
+unlink)
   (cd /var/log/pi-star/; ${cmd} ${port} YSFUnLink)
   exit 0
 ;;
 *)
+  if [ ${#1} -ne 8 ]; then
+    echo -e "Unknown target ${1}"
+    exit 1
+  fi
   (cd /var/log/pi-star/; ${cmd} ${port} Link${1^^})
   exit 0
 ;;
