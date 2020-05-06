@@ -49,7 +49,7 @@ unlink)
 ;;
 *)
   if [ ${#1} -ne 8 ]; then
-    echo -e "Unknown target ${1}"
+    echo -e "Invalid target ${1}"
     exit 1
   fi
   (cd /var/log/pi-star/; ${cmd} ${port} Link${1^^})
