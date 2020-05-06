@@ -37,15 +37,20 @@ if [ -z "$1" ]
 then
       echo "To unlink from any connected TG, use: pistar-p25link unlink"
       echo "To link to TG31672, use: pistar-p25link 31672"
+      echo ""
       exit 0
 fi
 
 case ${1} in
-*unlink)
+unlink)
   (cd /var/log/pi-star/; ${cmd} ${port} TalkGroup9999)
   exit 0
 ;;
 *)
+  if ! [[ "${1}" =~ ^[0-9]+$ ]]; then
+    echo -e "Invalid target ${1}"
+    exit 1
+  fi
   (cd /var/log/pi-star/; ${cmd} ${port} TalkGroup${1^^})
   exit 0
 ;;
