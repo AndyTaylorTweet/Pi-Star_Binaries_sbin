@@ -44,7 +44,7 @@ fi
 
 case ${1} in
 unlink)
-  (cd /var/log/pi-star/; ${cmd} ${port} YSFUnLink)
+  (cd /var/log/pi-star/; ${cmd} ${port} UnLink)
   exit 0
 ;;
 *)
