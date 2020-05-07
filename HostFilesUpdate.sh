@@ -64,8 +64,8 @@ update_file() {
 		curl --fail -o "${file}".$$ -s ${url} --user-agent "Pi-Star_${pistarCurVersion}"
 
 		# Look for prepend / append files
-		[[ -r ${LOCAL_FILE}/${file}-prepend ]] && prepend=${LOCAL_FILE}/${file}-prepend || prepend=''
-		[[ -r ${LOCAL_FILE}/${file}-append ]] && prepend=${LOCAL_FILE}/${file}-append || append=''
+		[[ -r ${LOCAL_DIR}/${file}-prepend ]] && prepend=${LOCAL_DIR}/${file}-prepend || prepend=''
+		[[ -r ${LOCAL_DIR}/${file}-append ]] && append=${LOCAL_DIR}/${file}-append || append=''
 
 		# create the DIST_DIR file
 		cat ${prepend} ${file}.$$ ${append} > ${DIST_DIR}/${file}
