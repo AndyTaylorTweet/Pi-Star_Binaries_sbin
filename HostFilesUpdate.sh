@@ -124,7 +124,7 @@ ${TGLISTYSF}"
 
 for file in ${FILES}
 do
-  BACKUPCOUNT=$(ls ${BACKUP_DIR}/${file}.* | wc -l)
+  BACKUPCOUNT=$(ls -1 ${BACKUP_DIR}/${file}.* | wc -l)
   BACKUPSTODELETE=$(expr ${BACKUPCOUNT} - ${FILEBACKUP})
   if [ ${BACKUPCOUNT} -gt ${FILEBACKUP} ]; then
 	for f in $(ls -tr ${BACKUP_DIR}/${file}.* | head -${BACKUPSTODELETE})
