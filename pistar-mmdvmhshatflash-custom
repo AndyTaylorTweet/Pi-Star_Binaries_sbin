@@ -33,6 +33,7 @@ then
   echo ""
   echo "Use this script and the generated firmware at your own risk!"
   echo "Usage: $(basename ${0}) <firmware.bin>"
+  echo "Use '-' for firmware filename to use standard input."
   echo ""
   exit 0
 fi
@@ -40,54 +41,81 @@ fi
 # OK we know what the modem is, let get the firmware string from the log...
 #
 tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
-read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
+
+# create a temporary directory to create files
+scratch=$(mktemp -d -t tmp.XXXXXXXXXX)
+function finish {
+  rm -rf "$scratch"
+}
+trap finish EXIT
+
+# check input filename
+if [ "x$1" = "x-" ]; then
+  prompt=false
+  pretty_filename="stdin"
+  filename="$scratch/stdin.bin"
+  dd of=$filename   # copy stdin to a temp file
+elif [ -f "$1" ]; then
+  prompt=true
+  pretty_filename="$1"
+  filename="$1"
+else
+  echo "Firmware file '$1' not found! Aborting."
+  exit 1
+fi
+
+$prompt && read -n 1 -s -r -p "Press any key to flash '$pretty_filename' to the modem or Ctrl-C to quit..."
 echo ""
-#
-# Download the correct firmware
-#
-if [ "$1" ]
-then
-  if [ ! -e "$1" ]; then
-     echo "Firmware file $1 not found! Aborting."
-  else
-    # Download STM32F10X_Lib (only for binary tools)
-    if [ ! -d "./STM32F10X_Lib/utils" ]; then
-      git clone https://github.com/juribeparada/STM32F10X_Lib
-    fi
 
-    # Configure vars depending on OS
-    if [ $(uname -s) == "Linux" ]; then
-      DEV_USB_SER="/dev/ttyACM0"
-      if [ $(uname -m) == "armv7l" ]; then
-        echo "Raspberry Pi 3 detected"
-        DFU_RST="./STM32F10X_Lib/utils/rpi32/upload-reset"
-        DFU_UTIL="./STM32F10X_Lib/utils/rpi32/dfu-util"
-        ST_FLASH="./STM32F10X_Lib/utils/rpi32/st-flash"
-        STM32FLASH="./STM32F10X_Lib/utils/rpi32/stm32flash"
-      elif [ $(uname -m) == "armv6l" ]; then
-        echo "Raspberry Pi 2 or Pi Zero W detected"
-        DFU_RST="./STM32F10X_Lib/utils/rpi32/upload-reset"
-        DFU_UTIL="./STM32F10X_Lib/utils/rpi32/dfu-util"
-        ST_FLASH="./STM32F10X_Lib/utils/rpi32/st-flash"
-        STM32FLASH="./STM32F10X_Lib/utils/rpi32/stm32flash"
-      fi
-    fi
+# Download STM32F10X_Lib (only for binary tools)
+stmlib="./STM32F10X_Lib"
+if [ ! -d "$stmlib/utils" ]; then
+  echo "Downloading firmware flash tool."
+  stmlib="$scratch/STM32F10X_Lib"
+  git clone https://github.com/juribeparada/STM32F10X_Lib $stmlib
+fi
 
-    # Stop MMDVMHost process to free serial port
-    sudo killall MMDVMHost >/dev/null 2>&1
-
-    # Upload the firmware
-    eval sudo $STM32FLASH -v -w "$1" -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0
-    echo ""
-
-    rm -rf STM32F10X_Lib
-
-    read -n 1 -s -r -p "Flashing ${1} to your modem complete, press any key to reboot your Pi-Star System..."
-    echo ""
-
-    shutdown -r now
-    exit 0
-
+# Configure vars depending on OS
+if [ $(uname -s) == "Linux" ]; then
+  DEV_USB_SER="/dev/ttyACM0"
+  if [ $(uname -m) == "armv7l" ]; then
+    echo "Raspberry Pi 3 detected"
+    DFU_RST="$stmlib/utils/rpi32/upload-reset"
+    DFU_UTIL="$stmlib/utils/rpi32/dfu-util"
+    ST_FLASH="$stmlib/utils/rpi32/st-flash"
+    STM32FLASH="$stmlib/utils/rpi32/stm32flash"
+  elif [ $(uname -m) == "armv6l" ]; then
+    echo "Raspberry Pi 2 or Pi Zero W detected"
+    DFU_RST="$stmlib/utils/rpi32/upload-reset"
+    DFU_UTIL="$stmlib/utils/rpi32/dfu-util"
+    ST_FLASH="$stmlib/utils/rpi32/st-flash"
+    STM32FLASH="$stmlib/utils/rpi32/stm32flash"
   fi
 fi
-exit 0
+
+# Stop MMDVM service to free serial port
+restart=false
+if systemctl is-active --quiet mmdvmhost.service; then
+  echo "Stopping MMDVM service."
+  systemctl stop mmdvmhost.service
+  restart=true
+fi
+
+# Upload the firmware
+echo "Flashing '$pretty_filename' to modem."
+$STM32FLASH -v -w "$filename" -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0
+result=$?
+echo ""
+
+if $restart; then
+  $prompt && read -n 1 -s -r -p "Flashing '$pretty_filename' to your modem complete, press any key to restart MMDVM..."
+  echo ""
+
+  # restart MMDVM service
+  echo "Restarting MMDVM service."
+  systemctl start mmdvmhost.service
+else
+  echo "MMDVM was not running... skipping restart."
+fi
+
+exit $result
