@@ -1472,10 +1472,33 @@ EOF
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
+		# Disable the Load/Save RFKill status - it complains on every boot.
+		#systemctl mask systemd-rfkill.service
+		#systemctl mask systemd-rfkill.socket
+		# Clean up some other broken services
+		#rm -rf /etc/systemd/system/multi-user.target.wants/exim4.service
+		#rm -rf /etc/systemd/system/multi-user.target.wants/wifi-country.service
+		# Reload systemctl and clean out some remaining files
+		#systemctl daemon-reload
+		#rm -rf /var/lib/systemd/rfkill/platform-*
+
+		# Remove the exim4 stuff from fstab
+		#sed -i '/exim4/d' /etc/fstab
+
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
 	;;
 	4.1.1-RMB)
+		Message="You are already running the latest version..."
+	;;
+	4.1.2)
+		#sed -i 's/4.1.2/4.1.3/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
 		Message="You are already running the latest version..."
 	;;
 	*)
