@@ -929,6 +929,9 @@ main_function() {
 		#systemctl daemon-reload
 		#rm -rf /var/lib/systemd/rfkill/platform-*
 
+		# Remove the exim4 stuff from fstab
+		#sed -i '/exim4/d' /etc/fstab
+
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
 		Message="You are already running the latest version..."
