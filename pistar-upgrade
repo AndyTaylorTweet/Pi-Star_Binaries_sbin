@@ -1472,6 +1472,15 @@ EOF
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
+	;;
+	4.1.1-RMB)
+		#sed -i 's/4.1.1-RMB/4.1.2-RMB/g' /etc/pistar-release
+	    
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
 		# Disable the Load/Save RFKill status - it complains on every boot.
 		#systemctl mask systemd-rfkill.service
 		#systemctl mask systemd-rfkill.socket
@@ -1486,19 +1495,29 @@ EOF
 		#sed -i '/exim4/d' /etc/fstab
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.1-RMB..."
-	;;
-	4.1.1-RMB)
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.2-RMB..."
 		Message="You are already running the latest version..."
 	;;
 	4.1.2)
-		#sed -i 's/4.1.2/4.1.3/g' /etc/pistar-release
+		#sed -i 's/4.1.2$/4.1.2-RMB/g' /etc/pistar-release
+
+		#upgradeTo41RMB
+	    
+		# Disable unattended-upgrades, no background python process please,
+		# this is a RPi (zero possibly).
+		# Now, it's triggered by the pistar daily cron job (waaayyyyy enough)
+		#systemctl stop unattended-upgrades
+		#LC_ALL=C systemctl disable unattended-upgrades > /dev/null 2<&1
+		#systemctl mask unattended-upgrades
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.2-RMB..."
+		Message="You are already running the latest version..."
+	;;
+	4.1.2-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
