@@ -97,7 +97,6 @@ done
 curl --fail -o ${APRSHOSTS} -s http://www.pistar.uk/downloads/APRS_Hosts.txt
 curl --fail -o ${DCSHOSTS} -s http://www.pistar.uk/downloads/DCS_Hosts.txt
 curl --fail -o ${DMRHOSTS} -s http://www.pistar.uk/downloads/DMR_Hosts.txt
-wget https://www.dropbox.com/s/ofefbhkko3uc6wq/DMR_Hosts.txt -O /root/HBLink_Hosts.txt
 if [ -f /etc/hostfiles.nodextra ]; then
   # Move XRFs to DPlus Protocol
   curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_WithXRF_Hosts.txt
@@ -123,9 +122,6 @@ curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
-fi
-if [ -f "/root/HBLink_Hosts.txt" ]; then
-	cat /root/HBLink_Hosts.txt >> ${DMRHOSTS}
 fi
 
 # Fix DMRGateway issues with brackets
