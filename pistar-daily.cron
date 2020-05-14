@@ -43,9 +43,13 @@ git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
 # Update the Binaries (sbin)
 git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
 
-# Install security updates, etc, if any.
-/usr/bin/apt-get update > /dev/null 2<&1
-/usr/bin/unattended-upgrade > /dev/null 2<&1
+# Install security updates, etc, if any,
+let UPTIME=$(echo $(awk '{print int($1)}' /proc/uptime)/60);
+# if the system is up and running for at least 10 minutes.
+if [ $UPTIME -gt 600 ]; then
+    /usr/bin/apt-get update > /dev/null 2<&1
+    /usr/bin/unattended-upgrade > /dev/null 2<&1
+fi
 
 # Purge the logs older than 2 days
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
