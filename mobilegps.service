@@ -38,6 +38,9 @@ fi
 # Check if we have a config
 if [[ ! -f /etc/mobilegps ]]; then
   # Mount the disk RW and download the base config from github
+  mount -o remount,rw /
+  mount -o remount,rw /boot
+  curl --fail -o /etc/mobilegps -s https://raw.githubusercontent.com/g4klx/MobileGPS/master/MobileGPS.ini
   exit 1;
 fi
 
