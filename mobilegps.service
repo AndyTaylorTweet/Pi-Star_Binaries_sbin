@@ -11,7 +11,7 @@
 #########################################################
 
 # Service Config
-DAEMON=YSF2DMR
+DAEMON=MobileGPS
 DAEMON_PATH=/usr/local/bin/
 CONFIG=/etc/mobilegps
 DAEMON_OPTS=$CONFIG
