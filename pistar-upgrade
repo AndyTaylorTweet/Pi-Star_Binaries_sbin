@@ -931,7 +931,7 @@ main_function() {
 		# MobileGPS Gateway Service
 		#echo '[Unit]' > /lib/systemd/system/mobilegps.service
 		#echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
-		#echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/mobilegps.service
+		#echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
 		#echo '' >> /lib/systemd/system/mobilegps.service
 		#echo '[Service]' >> /lib/systemd/system/mobilegps.service
 		#echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
