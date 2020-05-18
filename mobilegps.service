@@ -29,9 +29,11 @@ test -x ${DAEMON_PATH}${DAEMON} || exit 1
 # if dstarrepeater is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
-# Check if Mobile GPS is enabled in MMDVMHost or not
-if [ `sed -n '/\[Mobile GPS\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	exit 1;
+# Check if Mobile GPS is enabled in MobileGPS or not
+if [[ -f /etc/mobilegps ]]; then
+	if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/mobilegps | cut -c 8` == 0 ]; then
+		exit 1;
+	fi
 fi
 
 # Check if we have a config
