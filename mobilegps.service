@@ -21,7 +21,6 @@ SLEEP=/bin/sleep
 USER=root
 GROUP=mmdvm
 LOGDIR=/var/log/pi-star
-ipVar=`hostname -I | cut -d' ' -f1`
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
@@ -66,11 +65,6 @@ case "$1" in
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 			exit 1;
 		else
-			# Wait for an IP address
-			until [ $ipVar != " " ]; do
-				sleep 10
-				ipVar=`hostname -I`
-			done
 			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
