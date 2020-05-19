@@ -138,10 +138,10 @@ then
 	echo "Similarly the {TimeSlot} should be replaced with your target time"
 	echo "slot number, either 1 or 2"
 	echo ""
-	echo "To set the static TG:            pistar-tgifapi link {TG Number} {TimeSlot Number}"
-	echo "To remove the static TG:         pistar-tgifapi clear {TimeSlot Number}"
+	echo "To set the static TG:	pistar-tgifapi link {TG Number} {TimeSlot Number}"
+	echo "To remove the static TG:	pistar-tgifapi clear {TimeSlot Number}"
 	echo ""
-	echo "Check the current link status with: pistar-tgifapi status"
+	echo "Check the link status:	pistar-tgifapi status"
 	echo ""
 	exit 0
 fi
@@ -188,7 +188,7 @@ link)
 	# Check that the variable to TimeSlot has been passed
 	if [ -z "$3" ]
 	then
-		TS="1"
+		TS="2"
 	else
 		TS=$3
 	fi
@@ -200,7 +200,7 @@ clear)
 	# Check that the variable to TimeSlot has been passed
 	if [ -z "$2" ]
 	then
-		TS="1"
+		TS="2"
 	else
 		TS=$2
 	fi
