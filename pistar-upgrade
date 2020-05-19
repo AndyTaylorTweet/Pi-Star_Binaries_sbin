@@ -1515,7 +1515,10 @@ EOF
 	;;
 	4.1.2)
 		#sed -i 's/4.1.2$/4.1.2-RMB/g' /etc/pistar-release
-
+	    
+		#systemctl disable mobilegps.service
+		#systemctl daemon-reload
+	    
 		#upgradeTo41RMB
 	    
 		# Disable unattended-upgrades, no background python process please,
