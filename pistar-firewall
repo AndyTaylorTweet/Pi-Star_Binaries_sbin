@@ -83,6 +83,7 @@ iptables -A OUTPUT -p udp --dport 62031 -j ACCEPT #			      DMR (BrandMeister) N
 #iptables -t mangle -A POSTROUTING -p udp --dport 55555 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 55550:55580 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
+iptables -A OUTPUT -p tcp --dport 5040 -j ACCEPT #            tgif.network API
 
 # Allow Outbound XLX Ports
 iptables -A OUTPUT -p udp --dport 62030 -j ACCEPT #			XLX Networking

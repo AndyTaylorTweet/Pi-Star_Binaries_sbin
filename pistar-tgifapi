@@ -1,0 +1,98 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                          Pi-Star TGIF API Tool                             #
+#                                                                            #
+#     Version 0.1, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#                 Added the option to manage TalkGroups                      #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Setup some variables
+APIURL="http://tgif.network:5040/api/sessions/update/"
+STATUS=$(wget -q -O - --user-agent="Pi-Star TGIF API" "http://tgif.network/RPTRR/index.php?action=getsessions")
+STATUS=${STATUS:2:-1}
+TS1=$(echo ${STATUS} | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["tg"]')
+TS2=$(echo ${STATUS} | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["tg0"]')
+DMRID=$(echo ${STATUS} | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["repeater_id"]')
+
+if [ -z "$1" ]
+then
+	echo "NOTE: In the below example commands, please replace {TG Number} with"
+	echo "the number of the Talkgroup you wish to link. For example 31665."
+	echo ""
+	echo "Similarly the {TimeSlot} should be replaced with your target time"
+	echo "slot number, either 1 or 2"
+	echo ""
+	echo "To set the static TG:            pistar-tgifapi link {TG Number} {TimeSlot Number}"
+	echo "To remove the static TG:         pistar-tgifapi clear {TimeSlot Number}"
+	echo ""
+	echo "Check the current link status with: pistar-tgifapi status"
+	echo ""
+	exit 0
+fi
+
+case ${1} in
+status)
+	echo "Your DMR ID is: ${DMRID}"
+	echo "TS1 is linked to TG ${TS1}"
+	echo "TS2 is linked to TG ${TS2}"
+	exit 0
+;;
+link)
+	# Check that the variable for TalkGroup has been passed
+	if [ -z "$2" ]
+	then
+		echo "No TG Specfified"
+		exit 0
+	else
+		targetTG=$2
+	fi
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$3" ]
+	then
+		TS="1"
+	else
+		TS=$3
+	fi
+
+	APIURL="${APIURL}${DMRID}/$((${TS}-1))/${targetTG}"
+	REQUEST="Set TimeSlot ${TS} to TG ${targetTG} for DMR ID ${DMRID}"
+;;
+clear)
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$2" ]
+	then
+		TS="1"
+	else
+		TS=$2
+	fi
+
+	APIURL="${APIURL}${DMRID}/$((${TS}-1))/4000"
+	REQUEST="Clear TG from TimeSlot ${TS} for DMR ID ${DMRID}"
+;;
+*)
+	echo "ERROR: Unknown Command Specified"
+	exit 0
+;;
+esac
+
+
+# Do the magic
+echo " Request to TGIF API: ${REQUEST}"
+RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/x-www-form-urlencoded" "${APIURL}")
+if [[ ${RESULT} == 200 ]]; then
+	RESULT="OK"
+else
+	RESULT="Somthing went wrong with this request"
+fi
+echo "Answer from TGIF API: ${RESULT}"
+echo ""
+exit 0

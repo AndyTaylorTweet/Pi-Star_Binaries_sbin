@@ -1491,6 +1491,21 @@ EOF
 		#systemctl daemon-reload
 		#rm -rf /var/lib/systemd/rfkill/platform-*
 
+		# Modify the /boot/config.txt to bring it up to date
+		#sed -i '/USB Current/d' /boot/config.txt
+		#sed -i '/max_usb_current/d' /boot/config.txt
+		#sed -i '/Buster Support/d' /boot/config.txt
+		#sed -i '/dtoverlay=vc4-fkms-v3d/d' /boot/config.txt
+		#sed -i 's/pi3-miniuart-bt/miniuart-bt/g' /boot/config.txt
+		#echo "" >> /boot/config.txt
+		#echo "[pi4]" >> /boot/config.txt
+		#echo "# Enable DRM VC4 V3D driver on top of the dispmanx display stack" >> /boot/config.txt
+		#echo "dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+		#echo "max_framebuffers=2" >> /boot/config.txt
+		#echo "" >> /boot/config.txt
+		#echo "[all]" >> /boot/config.txt
+		#echo "#dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+	    
 		# Remove the exim4 stuff from fstab
 		#sed -i '/exim4/d' /etc/fstab
 
