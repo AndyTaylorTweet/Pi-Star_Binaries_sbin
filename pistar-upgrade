@@ -964,6 +964,77 @@ main_function() {
 		# Remove the exim4 stuff from fstab
 		#sed -i '/exim4/d' /etc/fstab
 
+		# Add Captive Portal enhancement
+		#echo "address=/www.msftconnecttest.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/www.msftncsi.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/clients3.google.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/connectivitycheck.gstatic.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/connectivitycheck.android.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/www.appleiphonecell.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/captive.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/www.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		#echo "address=/.apple.com.edgekey.net/192.168.50.1" >>/etc/dnsmasq.conf
+
+		# Add the Captive Portal to nginx
+		#echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "server {" >> /etc/nginx/sites-available
+		#echo "	listen 80;" >> /etc/nginx/sites-available
+		#echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
+		#echo "}" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "server {" >> /etc/nginx/sites-available
+		#echo "	listen 80;" >> /etc/nginx/sites-available
+		#echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
+		#echo "}" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "server {" >> /etc/nginx/sites-available
+		#echo "	listen 80;" >> /etc/nginx/sites-available
+		#echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
+		#echo "}" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "server {" >> /etc/nginx/sites-available
+		#echo "	listen 80;" >> /etc/nginx/sites-available
+		#echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
+		#echo "}" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "server {" >> /etc/nginx/sites-available
+		#echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available
+		#echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "	try_files $uri $uri/ /index.php;" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "		#echo "        location ^~ /admin {" >> /etc/nginx/sites-available
+		#echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available
+		#echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available
+		#echo "		deny	all;" >> /etc/nginx/sites-available
+		#echo "		try_files $uri $uri/ =404;" >> /etc/nginx/sites-available
+		#echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "	# Load the defaults" >> /etc/nginx/sites-available
+		#echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available
+		#echo "	}" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "	location ~ /\.git {" >> /etc/nginx/sites-available
+		#echo "		deny all;" >> /etc/nginx/sites-available
+		#echo "	}" >> /etc/nginx/sites-available
+		#echo "" >> /etc/nginx/sites-available
+		#echo "	# Load the defaults" >> /etc/nginx/sites-available
+		#echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available
+		#echo "}" >> /etc/nginx/sites-available
+
+		# Link the new site into site-enabled
+		#cd /etc/nginx/sites-enabled
+		#ln -s ../sites-available/captive-portal ./
+		#cd
+
+		# Restart nginx to complete the setup
+		#systemctl restart nginx
+
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
 		Message="You are already running the latest version..."
