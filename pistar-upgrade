@@ -1600,12 +1600,11 @@ EOF
 		LC_ALL=C systemctl disable unattended-upgrades > /dev/null 2<&1
 		systemctl mask unattended-upgrades
 		
+		systemctl daemon-reload
 		systemctl enable mobilegps.service
 		
-		systemctl daemon-reload
-	    
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.2-RMB..."
