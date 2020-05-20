@@ -914,130 +914,129 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.1.1..."
 	;;
 	4.1.1)
-		#sed -i 's/4.1.1/4.1.2/g' /etc/pistar-release
+		sed -i 's/4.1.1/4.1.2/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Disable the Load/Save RFKill status - it complains on every boot.
-		#systemctl mask systemd-rfkill.service
-		#systemctl mask systemd-rfkill.socket
+		systemctl mask systemd-rfkill.service
+		systemctl mask systemd-rfkill.socket
 		# Clean up some other broken services
-		#rm -rf /etc/systemd/system/multi-user.target.wants/exim4.service
-		#rm -rf /etc/systemd/system/multi-user.target.wants/wifi-country.service
+		rm -rf /etc/systemd/system/multi-user.target.wants/exim4.service
+		rm -rf /etc/systemd/system/multi-user.target.wants/wifi-country.service
 		# Clean out some remaining files
-		#rm -rf /var/lib/systemd/rfkill/platform-*
+		rm -rf /var/lib/systemd/rfkill/platform-*
 
 		# MobileGPS Gateway Service
-		#echo '[Unit]' > /lib/systemd/system/mobilegps.service
-		#echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
-		#echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
-		#echo '' >> /lib/systemd/system/mobilegps.service
-		#echo '[Service]' >> /lib/systemd/system/mobilegps.service
-		#echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
-		#echo 'ExecStart=/usr/local/sbin/mobilegps.service start' >> /lib/systemd/system/mobilegps.service
-		#echo 'ExecStop=/usr/local/sbin/mobilegps.service stop' >> /lib/systemd/system/mobilegps.service
-		#echo 'ExecReload=/usr/local/sbin/mobilegps.service restart' >> /lib/systemd/system/mobilegps.service
-		#echo '' >> /lib/systemd/system/mobilegps.service
-		#echo '[Install]' >> /lib/systemd/system/mobilegps.service
-		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
+		echo '[Unit]' > /lib/systemd/system/mobilegps.service
+		echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
+		echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
+		echo '' >> /lib/systemd/system/mobilegps.service
+		echo '[Service]' >> /lib/systemd/system/mobilegps.service
+		echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecStart=/usr/local/sbin/mobilegps.service start' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecStop=/usr/local/sbin/mobilegps.service stop' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecReload=/usr/local/sbin/mobilegps.service restart' >> /lib/systemd/system/mobilegps.service
+		echo '' >> /lib/systemd/system/mobilegps.service
+		echo '[Install]' >> /lib/systemd/system/mobilegps.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
 		
 		# Enable the service
-		#systemctl daemon-reload
-		#systemctl enable mobilegps.service
+		systemctl daemon-reload
+		systemctl enable mobilegps.service
 		
 		# Modify the /boot/config.txt to bring it up to date
-		#sed -i '/USB Current/d' /boot/config.txt
-		#sed -i '/max_usb_current/d' /boot/config.txt
-		#sed -i '/Buster Support/d' /boot/config.txt
-		#sed -i '/dtoverlay=vc4-fkms-v3d/d' /boot/config.txt
-		#sed -i 's/pi3-miniuart-bt/miniuart-bt/g' /boot/config.txt
-		#echo "" >> /boot/config.txt
-		#echo "[pi4]" >> /boot/config.txt
-		#echo "# Enable DRM VC4 V3D driver on top of the dispmanx display stack" >> /boot/config.txt
-		#echo "dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
-		#echo "max_framebuffers=2" >> /boot/config.txt
-		#echo "" >> /boot/config.txt
-		#echo "[all]" >> /boot/config.txt
-		#echo "#dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+		sed -i '/USB Current/d' /boot/config.txt
+		sed -i '/max_usb_current/d' /boot/config.txt
+		sed -i '/Buster Support/d' /boot/config.txt
+		sed -i '/dtoverlay=vc4-fkms-v3d/d' /boot/config.txt
+		sed -i 's/pi3-miniuart-bt/miniuart-bt/g' /boot/config.txt
+		echo "" >> /boot/config.txt
+		echo "[pi4]" >> /boot/config.txt
+		echo "# Enable DRM VC4 V3D driver on top of the dispmanx display stack" >> /boot/config.txt
+		echo "dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+		echo "max_framebuffers=2" >> /boot/config.txt
+		echo "" >> /boot/config.txt
+		echo "[all]" >> /boot/config.txt
+		echo "#dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
 
 		# Remove the exim4 stuff from fstab
-		#sed -i '/exim4/d' /etc/fstab
+		sed -i '/exim4/d' /etc/fstab
 
 		# Add Captive Portal enhancement
-		#echo "address=/www.msftconnecttest.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/www.msftncsi.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/clients3.google.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/connectivitycheck.gstatic.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/connectivitycheck.android.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/www.appleiphonecell.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/captive.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/www.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
-		#echo "address=/.apple.com.edgekey.net/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.msftconnecttest.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.msftncsi.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/clients3.google.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/connectivitycheck.gstatic.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/connectivitycheck.android.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.appleiphonecell.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/captive.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/.apple.com.edgekey.net/192.168.50.1" >>/etc/dnsmasq.conf
 
 		# Add the Captive Portal to nginx
-		#echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "server {" >> /etc/nginx/sites-available/captive-portal
-		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
-		#echo "}" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "server {" >> /etc/nginx/sites-available/captive-portal
-		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
-		#echo "}" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "server {" >> /etc/nginx/sites-available/captive-portal
-		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
-		#echo "}" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "server {" >> /etc/nginx/sites-available/captive-portal
-		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
-		#echo "}" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "server {" >> /etc/nginx/sites-available/captive-portal
-		#echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available/captive-portal
-		#echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "	try_files \$uri \$uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "        location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
-		#echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available/captive-portal
-		#echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available/captive-portal
-		#echo "		deny	all;" >> /etc/nginx/sites-available/captive-portal
-		#echo "		try_files \$uri \$uri/ =404;" >> /etc/nginx/sites-available/captive-portal
-		#echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
-		#echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	}" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "	location ~ /\.git {" >> /etc/nginx/sites-available/captive-portal
-		#echo "		deny all;" >> /etc/nginx/sites-available/captive-portal
-		#echo "	}" >> /etc/nginx/sites-available/captive-portal
-		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
-		#echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available/captive-portal
-		#echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available/captive-portal
+		echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	try_files \$uri \$uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "        location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
+		echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available/captive-portal
+		echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available/captive-portal
+		echo "		deny	all;" >> /etc/nginx/sites-available/captive-portal
+		echo "		try_files \$uri \$uri/ =404;" >> /etc/nginx/sites-available/captive-portal
+		echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available/captive-portal
+		echo "	}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	location ~ /\.git {" >> /etc/nginx/sites-available/captive-portal
+		echo "		deny all;" >> /etc/nginx/sites-available/captive-portal
+		echo "	}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
 
 		# Link the new site into site-enabled
-		#cd /etc/nginx/sites-enabled
-		#ln -s ../sites-available/captive-portal ./
-		#cd
+		cd /etc/nginx/sites-enabled
+		ln -s ../sites-available/captive-portal ./
+		cd
 
 		# Restart nginx to complete the setup
-		#systemctl restart nginx
+		systemctl restart nginx
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
-		Message="You are already running the latest version..."
+		Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
 	;;
 	4.1.2)
 		#sed -i 's/4.1.2/4.1.3/g' /etc/pistar-release
