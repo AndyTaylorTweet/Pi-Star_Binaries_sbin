@@ -976,56 +976,56 @@ main_function() {
 		#echo "address=/.apple.com.edgekey.net/192.168.50.1" >>/etc/dnsmasq.conf
 
 		# Add the Captive Portal to nginx
-		#echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "server {" >> /etc/nginx/sites-available
-		#echo "	listen 80;" >> /etc/nginx/sites-available
-		#echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
-		#echo "}" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "server {" >> /etc/nginx/sites-available
-		#echo "	listen 80;" >> /etc/nginx/sites-available
-		#echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
-		#echo "}" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "server {" >> /etc/nginx/sites-available
-		#echo "	listen 80;" >> /etc/nginx/sites-available
-		#echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
-		#echo "}" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "server {" >> /etc/nginx/sites-available
-		#echo "	listen 80;" >> /etc/nginx/sites-available
-		#echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available
-		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available
-		#echo "}" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "server {" >> /etc/nginx/sites-available
-		#echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available
-		#echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "	try_files $uri $uri/ /index.php;" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "		#echo "        location ^~ /admin {" >> /etc/nginx/sites-available
-		#echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available
-		#echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available
-		#echo "		deny	all;" >> /etc/nginx/sites-available
-		#echo "		try_files $uri $uri/ =404;" >> /etc/nginx/sites-available
-		#echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "	# Load the defaults" >> /etc/nginx/sites-available
-		#echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available
-		#echo "	}" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "	location ~ /\.git {" >> /etc/nginx/sites-available
-		#echo "		deny all;" >> /etc/nginx/sites-available
-		#echo "	}" >> /etc/nginx/sites-available
-		#echo "" >> /etc/nginx/sites-available
-		#echo "	# Load the defaults" >> /etc/nginx/sites-available
-		#echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available
-		#echo "}" >> /etc/nginx/sites-available
+		#echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "server {" >> /etc/nginx/sites-available/captive-portal
+		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		#echo "}" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "server {" >> /etc/nginx/sites-available/captive-portal
+		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		#echo "}" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "server {" >> /etc/nginx/sites-available/captive-portal
+		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		#echo "}" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "server {" >> /etc/nginx/sites-available/captive-portal
+		#echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		#echo "}" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "server {" >> /etc/nginx/sites-available/captive-portal
+		#echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available/captive-portal
+		#echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "	try_files $uri $uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "		#echo "        location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
+		#echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available/captive-portal
+		#echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available/captive-portal
+		#echo "		deny	all;" >> /etc/nginx/sites-available/captive-portal
+		#echo "		try_files $uri $uri/ =404;" >> /etc/nginx/sites-available/captive-portal
+		#echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		#echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	}" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "	location ~ /\.git {" >> /etc/nginx/sites-available/captive-portal
+		#echo "		deny all;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	}" >> /etc/nginx/sites-available/captive-portal
+		#echo "" >> /etc/nginx/sites-available/captive-portal
+		#echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		#echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available/captive-portal
+		#echo "}" >> /etc/nginx/sites-available/captive-portal
 
 		# Link the new site into site-enabled
 		#cd /etc/nginx/sites-enabled
