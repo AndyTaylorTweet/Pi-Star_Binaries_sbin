@@ -1006,13 +1006,13 @@ main_function() {
 		#echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available/captive-portal
 		#echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available/captive-portal
 		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "	try_files $uri $uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
+		#echo "	try_files \$uri \$uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
 		#echo "" >> /etc/nginx/sites-available/captive-portal
-		#echo "		#echo "        location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
+		#echo "		location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
 		#echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available/captive-portal
 		#echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available/captive-portal
 		#echo "		deny	all;" >> /etc/nginx/sites-available/captive-portal
-		#echo "		try_files $uri $uri/ =404;" >> /etc/nginx/sites-available/captive-portal
+		#echo "		try_files \$uri \$uri/ =404;" >> /etc/nginx/sites-available/captive-portal
 		#echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available/captive-portal
 		#echo "" >> /etc/nginx/sites-available/captive-portal
 		#echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
