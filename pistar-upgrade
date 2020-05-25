@@ -1079,7 +1079,11 @@ main_function() {
 
 		# Enable the service
 		#systemctl daemon-reload
+		#systemctl stop nextiondriver.service
+		#/usr/bin/killall NextionDriver
 		#systemctl enable nextiondriver.service
+		#systemctl restart nextiondriver.service
+		#systemctl restart mmdvmhost.service
 
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
