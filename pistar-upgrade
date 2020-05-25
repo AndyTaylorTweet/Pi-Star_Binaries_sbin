@@ -135,7 +135,7 @@ function upgradeTo413RMB()
     
     systemctl reload nginx.service
     
-    echo "WARNING: please execute 'sudo pistar-update' NOW."
+    echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW."
 }
 
 function main_function()
@@ -954,6 +954,135 @@ EOF
 		fi
 	;;
 	3.4.25-RMB)
+	    if [ "x" == "y" ]; then
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.25-RMB/3.4.26-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    
+		    # Disable the Load/Save RFKill status - it complains on every boot.
+		    systemctl mask systemd-rfkill.service
+		    # Clean out some remaining files
+		    rm -rf /var/lib/systemd/rfkill/platform-*
+
+		    # Enable the service
+		    systemctl daemon-reload
+		    
+		    # Modify the /boot/config.txt to bring it up to date
+		    sed -i '/USB Current/d' /boot/config.txt
+		    sed -i '/max_usb_current/d' /boot/config.txt
+		    sed -i '/Buster Support/d' /boot/config.txt
+		    sed -i '/dtoverlay=vc4-fkms-v3d/d' /boot/config.txt
+		    sed -i 's/pi3-miniuart-bt/miniuart-bt/g' /boot/config.txt
+		    echo "" >> /boot/config.txt
+		    echo "[pi4]" >> /boot/config.txt
+		    echo "# Enable DRM VC4 V3D driver on top of the dispmanx display stack" >> /boot/config.txt
+		    echo "dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+		    echo "max_framebuffers=2" >> /boot/config.txt
+		    echo "" >> /boot/config.txt
+		    echo "[all]" >> /boot/config.txt
+		    echo "#dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+		    
+		    # Remove the exim4 stuff from fstab
+		    sed -i '/exim4/d' /etc/fstab
+		    
+		    # Add Captive Portal enhancement
+		    echo "address=/www.msftconnecttest.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/www.msftncsi.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/clients3.google.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/connectivitycheck.gstatic.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/connectivitycheck.android.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/www.appleiphonecell.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/captive.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/www.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		    echo "address=/.apple.com.edgekey.net/192.168.50.1" >>/etc/dnsmasq.conf
+		    
+		    # Add the Captive Portal to nginx
+		    echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "server {" >> /etc/nginx/sites-available/captive-portal
+		    echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		    echo "}" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "server {" >> /etc/nginx/sites-available/captive-portal
+		    echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		    echo "}" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "server {" >> /etc/nginx/sites-available/captive-portal
+		    echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		    echo "}" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "server {" >> /etc/nginx/sites-available/captive-portal
+		    echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		    echo "}" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "server {" >> /etc/nginx/sites-available/captive-portal
+		    echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available/captive-portal
+		    echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "	try_files \$uri \$uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "        location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
+		    echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available/captive-portal
+		    echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available/captive-portal
+		    echo "		deny	all;" >> /etc/nginx/sites-available/captive-portal
+		    echo "		try_files \$uri \$uri/ =404;" >> /etc/nginx/sites-available/captive-portal
+		    echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		    echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	}" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "	location ~ /\.git {" >> /etc/nginx/sites-available/captive-portal
+		    echo "		deny all;" >> /etc/nginx/sites-available/captive-portal
+		    echo "	}" >> /etc/nginx/sites-available/captive-portal
+		    echo "" >> /etc/nginx/sites-available/captive-portal
+		    echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		    echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available/captive-portal
+		    echo "}" >> /etc/nginx/sites-available/captive-portal
+		    
+		    # Link the new site into site-enabled
+		    cd /etc/nginx/sites-enabled
+		    ln -s ../sites-available/captive-portal ./
+		    cd
+		    		    
+		    # Enable localhost-only for shellinabox (along with nginx proxy)
+		    echo "    location ^~ /shell/ {" > /etc/nginx/default.d/shellinabox.conf
+		    echo "         proxy_pass http://127.0.0.1:2222;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         proxy_redirect default;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         proxy_set_header Host \$host;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         proxy_set_header X-Real-IP \$remote_addr;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         proxy_buffering off;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         tcp_nodelay on;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "         access_log off;" >> /etc/nginx/default.d/shellinabox.conf
+		    echo "    }" >> /etc/nginx/default.d/shellinabox.conf
+
+		    grep -q 'SHELLINABOX_ARGS' /etc/default/shellinabox && (grep -q '^SHELLINABOX_ARGS=.*localhost\-only' /etc/default/shellinabox || (sed -i 's/^SHELLINABOX_ARGS\=\"--no-beep/SHELLINABOX_ARGS\=\"--no-beep --localhost-only/g' /etc/default/shellinabox))
+		    
+		    systemctl reload nginx.service
+		    
+		    echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW."
+
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.26-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	    else		
+		Message="You are already running the latest version..."
+	    fi
+	;;
+	3.4.26-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
