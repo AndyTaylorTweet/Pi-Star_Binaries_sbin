@@ -132,10 +132,13 @@ function upgradeTo413RMB()
     echo "    }" >> /etc/nginx/default.d/shellinabox.conf
 
     grep -q 'SHELLINABOX_ARGS' /etc/default/shellinabox && (grep -q '^SHELLINABOX_ARGS=.*localhost\-only' /etc/default/shellinabox || (sed -i 's/^SHELLINABOX_ARGS\=\"--no-beep/SHELLINABOX_ARGS\=\"--no-beep --localhost-only/g' /etc/default/shellinabox))
+
+    # Change default font
+    grep -q 'font-family' /etc/shellinabox/options-available/00_White\ On\ Black.css || (echo -e '#vt100 #console, #vt100 #alt_console, #vt100 #cursor, #vt100 #lineheight {\n  font-family: monospace;\n  font-size: 12pt;\n}\n' >> /etc/shellinabox/options-available/00_White\ On\ Black.css)
     
     systemctl reload nginx.service
     
-    echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW."
+    echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW, then reboot."
 }
 
 function main_function()
@@ -1070,9 +1073,12 @@ EOF
 
 		    grep -q 'SHELLINABOX_ARGS' /etc/default/shellinabox && (grep -q '^SHELLINABOX_ARGS=.*localhost\-only' /etc/default/shellinabox || (sed -i 's/^SHELLINABOX_ARGS\=\"--no-beep/SHELLINABOX_ARGS\=\"--no-beep --localhost-only/g' /etc/default/shellinabox))
 		    
+		    # Change default font
+		    grep -q 'font-family' /etc/shellinabox/options-available/00_White\ On\ Black.css || (echo -e '#vt100 #console, #vt100 #alt_console, #vt100 #cursor, #vt100 #lineheight {\n  font-family: monospace;\n  font-size: 12pt;\n}\n' >> /etc/shellinabox/options-available/00_White\ On\ Black.css)
+
 		    systemctl reload nginx.service
 		    
-		    echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW."
+		    echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW, then reboot"
 
 		    Message="Upgraded from ${pistarCurVersion} to 3.4.26-RMB..."
 		else
