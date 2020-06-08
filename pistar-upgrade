@@ -137,6 +137,26 @@ function upgradeTo413RMB()
     grep -q 'font-family' /etc/shellinabox/options-available/00_White\ On\ Black.css || (echo -e '#vt100 #console, #vt100 #alt_console, #vt100 #cursor, #vt100 #lineheight {\n  font-family: monospace;\n  font-size: 12pt;\n}\n' >> /etc/shellinabox/options-available/00_White\ On\ Black.css)
     
     systemctl reload nginx.service
+
+    # Add pistar-service bash completion
+    DEST="/usr/share/bash-completion/completions/pistar-services"
+    echo "#!/bin/bash" > $DEST
+    echo "" >> $DEST
+    echo "_pistar_services()" >> $DEST
+    echo "{" >> $DEST
+    echo "    local cur prev words cword" >> $DEST
+    echo "    _init_completion -n = || return" >> $DEST
+    echo "" >> $DEST
+    echo "    _expand || return 0" >> $DEST
+    echo "" >> $DEST
+    echo "    COMPREPLY=( \$( compgen -W 'start stop restart fullstop status' -- \"\$cur\" ) )" >> $DEST
+    echo "" >> $DEST
+    echo "} &&" >> $DEST
+    echo "complete -F _pistar_services pistar-services" >> $DEST
+    echo "" >> $DEST
+    chown root:root $DEST
+    chmod 0644 $DEST
+    
     
     echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW, then reboot."
 }
