@@ -17,6 +17,7 @@ PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 ipVar=`hostname -I | cut -d' ' -f1`
+DESC=pistar
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
@@ -28,37 +29,37 @@ fi
 
 case "$1" in
 	start)
-#		$DAEMON -a $ipVar 22 22 TCP > /dev/null 2>&1 &
-#		$DAEMON -a $ipVar 80 80 TCP > /dev/null 2>&1 &
-#		$DAEMON -a $ipVar 10022 10022 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 20001 20001 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 30001 30001 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 30051 30051 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 30061 30061 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 30062 30062 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 30063 30063 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 30064 30064 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 40000 40000 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 42000 42000 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 42001 42001 UDP > /dev/null 2>&1 &
-                $DAEMON -a $ipVar 42010 42010 UDP > /dev/null 2>&1 &
+#		$DAEMON -e $DESC -a $ipVar 22 22 TCP > /dev/null 2>&1 &
+#		$DAEMON -e $DESC -a $ipVar 80 80 TCP > /dev/null 2>&1 &
+#		$DAEMON -e $DESC -a $ipVar 10022 10022 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 20001 20001 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 30001 30001 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 30051 30051 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 30061 30061 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 30062 30062 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 30063 30063 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 30064 30064 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 40000 40000 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 42000 42000 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 42001 42001 UDP > /dev/null 2>&1 &
+                $DAEMON -e $DESC -a $ipVar 42010 42010 UDP > /dev/null 2>&1 &
 		;;
 
 	stop)
-                $DAEMON -d $ipVar 22 22 TCP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 80 80 TCP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 10022 10022 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 20001 20001 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 30001 30001 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 30051 30051 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 30061 30061 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 30062 30062 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 30063 30063 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 30064 30064 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 40000 40000 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 42000 42000 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 42001 42001 UDP > /dev/null 2>&1 &
-                $DAEMON -d $ipVar 42010 42010 UDP > /dev/null 2>&1 &
+                $DAEMON -d 22 TCP > /dev/null 2>&1 &
+                $DAEMON -d 80 TCP > /dev/null 2>&1 &
+                $DAEMON -d 10022 UDP > /dev/null 2>&1 &
+                $DAEMON -d 20001 UDP > /dev/null 2>&1 &
+                $DAEMON -d 30001 UDP > /dev/null 2>&1 &
+                $DAEMON -d 30051 UDP > /dev/null 2>&1 &
+                $DAEMON -d 30061 UDP > /dev/null 2>&1 &
+                $DAEMON -d 30062 UDP > /dev/null 2>&1 &
+                $DAEMON -d 30063 UDP > /dev/null 2>&1 &
+                $DAEMON -d 30064 UDP > /dev/null 2>&1 &
+                $DAEMON -d 40000 UDP > /dev/null 2>&1 &
+                $DAEMON -d 42000 UDP > /dev/null 2>&1 &
+                $DAEMON -d 42001 UDP > /dev/null 2>&1 &
+                $DAEMON -d 42010 UDP > /dev/null 2>&1 &
 		;;
 
 	*)
