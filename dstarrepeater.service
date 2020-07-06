@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.1                       #
+#                     Version 1.3                       #
 #                                                       #
 #########################################################
 
@@ -19,7 +19,7 @@ PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 USER=root
-GROUP=root
+GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 ipVar=`hostname -I | cut -d' ' -f1`
 
@@ -30,6 +30,15 @@ test -r $CONFIG || exit 1
 # if MMDVMHost is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.mmdvmhost || exit 1
 test -r /etc/dstar-radio.dstarrepeater || exit 1
+
+if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
+fi
+
+# if ircDDBGAteway is configured for Icom Repeater, dont run DStarRepeater
+if [[ $(grep "repeaterType1" /etc/ircddbgateway | cut -c 15) -ge 1 ]]; then
+  exit 1;
+fi
 
 if [ `$PGREP "MMDVMHost"` ]; then
   echo "Service 'MMDVMHost' is already running, cannot start $DAEMON"
@@ -54,7 +63,12 @@ case "$1" in
 				sleep 10
 				ipVar=`hostname -I`
 			done
-			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
+				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
+				$PGREP $DAEMON > /run/dstarrepeater.pid
+			else
+				nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			fi
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
 		fi
@@ -76,12 +90,22 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
-			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
+				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
+				$PGREP $DAEMON > /run/dstarrepeater.pid
+			else
+				nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			fi
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
+				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
+				$PGREP $DAEMON > /run/dstarrepeater.pid
+			else
+				nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			fi
 			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		fi

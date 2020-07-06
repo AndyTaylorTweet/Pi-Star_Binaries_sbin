@@ -1,4 +1,14 @@
 #!/bin/bash
+
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Make the disk RW
+mount -o remount,rw /
+
 # Host Files Update
 /usr/local/sbin/HostFilesUpdate.sh
 
@@ -11,6 +21,7 @@ systemctl stop mmdvmhost.service > /dev/null 2>&1
 systemctl stop dstarrepeater.service > /dev/null 2>&1
 sleep 2
 systemctl stop ircddbgateway.service > /dev/null 2>&1
+systemctl stop dapnetgateway.service > /dev/null 2>&1
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
 systemctl stop nxdngateway.service > /dev/null 2>&1
@@ -79,9 +90,37 @@ if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt 
 	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 fi
 
+if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
+        if [[ $(cat /etc/ircddbgateway | grep -o "xlx" | wc -l) -eq 0 ]]; then
+                echo "xlxEnabled=0" >> /etc/ircddbgateway
+                echo "xlxOverrideLocal=0" >> /etc/ircddbgateway
+                echo "xlxHostsFileUrl=" >> /etc/ircddbgateway
+        fi
+
+        if [[ $(cat /etc/ircddbgateway | grep -o "aprsPassword" | wc -l) -eq 0 ]]; then
+                echo "aprsPassword=00000" >> /etc/ircddbgateway
+        fi
+
+        if [[ $(cat /etc/ircddbgateway | grep -o "mobileGPS" | wc -l) -eq 0 ]]; then
+                echo "mobileGPSEnabled=0" >> /etc/ircddbgateway
+                echo "mobileGPSAddress=127.0.0.1" >> /etc/ircddbgateway
+                echo "mobileGPSPort=7834" >> /etc/ircddbgateway
+        fi
+
+        if [[ $(cat /etc/dstarrepeater | grep -o "mmdvmRXInvert" | wc -l) -eq 0 ]]; then
+                echo "mmdvmRXInvert=0" >> /etc/dstarrepeater
+                echo "mmdvmTXInvert=0" >> /etc/dstarrepeater
+                echo "mmdvmPTTInvert=0" >> /etc/dstarrepeater
+                echo "mmdvmTXDelay=50" >> /etc/dstarrepeater
+                echo "mmdvmRXLevel=100" >> /etc/dstarrepeater
+                echo "mmdvmTXLevel=100" >> /etc/dstarrepeater
+        fi
+fi
+
 # Start all the services...
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
+systemctl start dapnetgateway.service > /dev/null 2>&1
 systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
 systemctl start nxdngateway.service > /dev/null 2>&1

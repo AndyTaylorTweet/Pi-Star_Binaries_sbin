@@ -1,0 +1,228 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                          Pi-Star TGIF API Tool                             #
+#                                                                            #
+#     Version 0.1, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#                 Added the option to manage TalkGroups                      #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Setup some variables
+APIURL="http://tgif.network:5040/api/sessions/update/"
+STATUSURL="http://tgif.network/RPTRR/index.php?action=getsessions"
+MODE="None"
+ENABLED="0"
+
+# Curl error codes
+curlErrorCodes[1]="Unsupported protocol. This build of curl has no support for this protocol."
+curlErrorCodes[2]="Failed to initialize."
+curlErrorCodes[3]="URL malformed. The syntax was not correct."
+curlErrorCodes[4]="A feature or option that was needed to perform the desired request was not enabled or was explicitly disabled at build-time. To make curl able to do this, you probably need another build of libcurl!"
+curlErrorCodes[5]="Couldn't resolve proxy. The given proxy host could not be resolved."
+curlErrorCodes[6]="Couldn't resolve host. The given remote host was not resolved."
+curlErrorCodes[7]="Failed to connect to host."
+curlErrorCodes[22]="HTTP page not retrieved. The requested url was not found or returned another error with the HTTP error code being 400 or above. This return code only appears if -f, --fail is used."
+curlErrorCodes[23]="Write error. Curl couldn't write data to a local filesystem or similar."
+curlErrorCodes[26]="Read error. Various reading problems."
+curlErrorCodes[27]="Out of memory. A memory allocation request failed."
+curlErrorCodes[28]="Operation timeout. The specified time-out period was reached according to the conditions."
+curlErrorCodes[33]="HTTP range error. The range \"command\" didn't work."
+curlErrorCodes[34]="HTTP post error. Internal post-request generation error."
+curlErrorCodes[35]="SSL connect error. The SSL handshaking failed."
+curlErrorCodes[37]="FILE couldn't read file. Failed to open the file. Permissions?"
+curlErrorCodes[42]="Aborted by callback. An application told curl to abort the operation."
+curlErrorCodes[43]="Internal error. A function was called with a bad parameter."
+curlErrorCodes[45]="Interface error. A specified outgoing interface could not be used."
+curlErrorCodes[47]="Too many redirects. When following redirects, curl hit the maximum amount."
+curlErrorCodes[48]="Unknown option specified to libcurl. This indicates that you passed a weird option to curl that was passed on to libcurl and rejected. Read up in the manual!"
+curlErrorCodes[51]="The peer's SSL certificate or SSH MD5 fingerprint was not OK."
+curlErrorCodes[52]="The server didn't reply anything, which here is considered an error."
+curlErrorCodes[53]="SSL crypto engine not found."
+curlErrorCodes[54]="Cannot set SSL crypto engine as default."
+curlErrorCodes[55]="Failed sending network data."
+curlErrorCodes[56]="Failure in receiving network data."
+curlErrorCodes[58]="Problem with the local certificate."
+curlErrorCodes[59]="Couldn't use specified SSL cipher."
+curlErrorCodes[60]="Peer certificate cannot be authenticated with known CA certificates."
+curlErrorCodes[61]="Unrecognized transfer encoding."
+curlErrorCodes[63]="Maximum file size exceeded."
+curlErrorCodes[65]="Sending the data requires a rewind that failed."
+curlErrorCodes[66]="Failed to initialise SSL Engine."
+curlErrorCodes[67]="The user name, password, or similar was not accepted and curl failed to log in."
+curlErrorCodes[75]="Character conversion failed."
+curlErrorCodes[76]="Character conversion functions required."
+curlErrorCodes[77]="Problem with reading the SSL CA cert (path? access rights?)."
+curlErrorCodes[78]="The resource referenced in the URL does not exist."
+curlErrorCodes[79]="An unspecified error occurred during the SSH session."
+curlErrorCodes[80]="Failed to shut down the SSL connection."
+curlErrorCodes[82]="Could not load CRL file, missing or wrong format (added in 7.19.0)."
+curlErrorCodes[83]="Issuer check failed (added in 7.19.0)."
+curlErrorCodes[85]="RTSP: mismatch of CSeq numbers"
+curlErrorCodes[86]="RTSP: mismatch of Session Identifiers"
+curlErrorCodes[89]="No connection available, the session will be queued"
+
+# Are we using MMDVMHost or DMRGateway
+if [[ $(grep -c "Address=tgif.network" /etc/mmdvmhost) -ge 1 ]]; then
+	MODE="MMDVMHost"
+	ENABLED=$(sed -n '/^\[DMR\]/,/^$/p' /etc/mmdvmhost | grep "Enable" | awk -F "=" '{print $2}')
+	if [[ ${ENABLED:0:1} == 1 ]]; then
+		DMRIDCONF=$(sed -n '/^\[DMR\]/,/^Id/p' /etc/mmdvmhost | grep "Id" | awk -F "=" '{print $2}')
+	fi
+elif [[ $(grep -c "Address=tgif.network" /etc/dmrgateway) -ge 1 ]]; then
+	MODE="DMRGateway"
+	DMRGWCONFIG1ENABLE=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG1ADDRESS=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	if [[ ${DMRGWCONFIG1ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG1ADDRESS}" == "tgif.network"  ]]; then
+		DMRIDCONF=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+	fi
+	DMRGWCONFIG2ENABLE=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG2ADDRESS=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	if [[ ${DMRGWCONFIG2ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG2ADDRESS}" == "tgif.network"  ]]; then
+		DMRIDCONF=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+	fi
+	DMRGWCONFIG3ENABLE=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG3ADDRESS=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	if [[ ${DMRGWCONFIG3ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG3ADDRESS}" == "tgif.network"  ]]; then
+		DMRIDCONF=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+	fi
+	DMRGWCONFIG4ENABLE=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG4ADDRESS=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	if [[ ${DMRGWCONFIG4ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG4ADDRESS}" == "tgif.network"  ]]; then
+		DMRIDCONF=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+	fi
+	DMRGWCONFIG5ENABLE=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG5ADDRESS=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	if [[ ${DMRGWCONFIG5ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG5ADDRESS}" == "tgif.network"  ]]; then
+		DMRIDCONF=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+	fi
+fi
+
+# Function to get status
+function get_status () {
+  STATUS=$(curl -f -S -s -H "Content-Type: application/json" -H "User-Agent: Pi-Star TGIF API Tool" -X GET ${STATUSURL} 2>&1)
+  ret=$?
+
+  # Check curl return code
+  if [ "$ret" != "0" ]; then
+    APIOUTPUT="ERROR: ($ret) ${curlErrorCodes[ret]}"
+  else
+    # Check if there are any connected repeaters;
+    if [[ ${STATUS} == *id* ]]; then
+      APIOUTPUT=${STATUS}
+    else
+      APIOUTPUT="No connection to TGIF detected, if you only just rebooted/re-connected you may need to wait a little longer."
+    fi
+  fi
+}
+
+# Parse JSON
+function jsonValue() {
+  KEY=$1
+  num=$2
+  awk -F"[,:}]" '{for(i=1;i<=NF;i++){if($i~/'$KEY'\042/){print $(i+1)}}}' | tr -d '"' | sed -n ${num}p
+}
+
+if [ -z "$1" ]
+then
+	echo "NOTE: In the below example commands, please replace {TG Number} with"
+	echo "the number of the Talkgroup you wish to link. For example 31665."
+	echo ""
+	echo "Similarly the {TimeSlot} should be replaced with your target time"
+	echo "slot number, either 1 or 2"
+	echo ""
+	echo "To set the static TG:		pistar-tgifapi link {TG Number} {TimeSlot}"
+	echo "To remove the static TG:	pistar-tgifapi clear {TimeSlot}"
+	echo ""
+	echo "Check the link status:		pistar-tgifapi status"
+	echo ""
+	exit 0
+fi
+
+case ${1} in
+status)
+	get_status
+	if [[ ${APIOUTPUT} == *id* ]]; then
+		REPEATERCOUNT=$(echo ${APIOUTPUT} | jsonValue repeater_id | wc -w)
+		if [[ ${REPEATERCOUNT} -eq 1 ]]; then
+			TS1=$(echo ${APIOUTPUT} | jsonValue tg0 1)
+			TS2=$(echo ${APIOUTPUT} | jsonValue tg 1)
+		else
+			COUNTER=1
+			until [ ${COUNTER} -gt ${REPEATERCOUNT} ]; do
+				REPEATERIDAPI=$(echo ${APIOUTPUT} | jsonValue repeater_id ${COUNTER})
+				if [[ ${REPEATERIDAPI} -eq ${DMRIDCONF} ]]; then
+					REPNUM=${COUNTER}
+				fi
+				((COUNTER++))
+			done
+			TS1=$(echo ${APIOUTPUT} | jsonValue tg0 ${REPNUM})
+			TS2=$(echo ${APIOUTPUT} | jsonValue tg ${REPNUM})
+		fi
+
+	else
+		echo ${APIOUTPUT}
+		exit 1
+	fi
+	echo "Your DMR ID is: ${DMRIDCONF}"
+	echo "TS1 is linked to TG ${TS1}"
+	echo "TS2 is linked to TG ${TS2}"
+	exit 0
+;;
+link)
+	# Check that the variable for TalkGroup has been passed
+	if [ -z "$2" ]
+	then
+		echo "No TG Specfified"
+		exit 0
+	else
+		targetTG=$2
+	fi
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$3" ]
+	then
+		TS="2"
+	else
+		TS=$3
+	fi
+
+	APIURL="${APIURL}${DMRIDCONF}/$((${TS}-1))/${targetTG}"
+	REQUEST="Set TimeSlot ${TS} to TG ${targetTG} for DMR ID ${DMRIDCONF}"
+;;
+clear)
+	# Check that the variable to TimeSlot has been passed
+	if [ -z "$2" ]
+	then
+		TS="2"
+	else
+		TS=$2
+	fi
+
+	APIURL="${APIURL}${DMRIDCONF}/$((${TS}-1))/4000"
+	REQUEST="Clear TG from TimeSlot ${TS} for DMR ID ${DMRIDCONF}"
+;;
+*)
+	echo "ERROR: Unknown Command Specified"
+	exit 0
+;;
+esac
+
+
+# Do the magic
+echo " Request to TGIF API: ${REQUEST}"
+RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/x-www-form-urlencoded" "${APIURL}")
+if [[ ${RESULT} == 200 ]]; then
+	RESULT="OK"
+else
+	RESULT="Somthing went wrong with this request"
+fi
+echo "Answer from TGIF API: ${RESULT}"
+echo ""
+exit 0

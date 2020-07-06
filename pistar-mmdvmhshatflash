@@ -24,18 +24,47 @@ then
   echo "please choose form the list below..."
   echo ""
   echo "To flash HS_HAT (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat"
-  echo "To flash HS_HAT (12.288MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat-12mhz"
-  echo "To flash HS_DUAL_HAT connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat"
+  echo "To flash HS_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat-12mhz"
+  echo "To flash HS_DUAL_HAT (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat"
+  echo "To flash HS_DUAL_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_dual_hat-12mhz"
+  echo "To flash HS_HAT_AMBE (14.7456MHz TCXO) connected to GPIO, run: pistar-mmdvmhshatflash hs_hat_ambe"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
-  echo "To flash MMDVM_HS Nano Hat devices please use pistar-nanohsflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-vyehsflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
+  echo ""
+  # Get the pretty name for the chosen Modem according to the dashboard.
+  if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
+    # Get the modem that the user has selected.
+    modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
+    modemSelected=${modemSelected#*=}
+
+    # Get the user friendly version of the selected Modem.
+    modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
+    modemSelectedHuman=${modemSelectedHuman#*\">}
+    modemSelectedHuman=${modemSelectedHuman::-9}
+    echo "Selected Modem:     ${modemSelectedHuman}"
+  fi
+
+  # Get the Modem info from the Log
+  numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+  if [[ ${numLogs} -gt 0 ]]; then
+    # Get the physically connected modem from the logs
+    modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
+    echo "Connected Hardware: ${modemLog}"
+    
+    # Get the TCXO data
+    if [[ ${modemLog} == *"MHz"* ]]; then
+      tcxoData=$(echo ${modemLog} | awk '{print $3}')
+      echo "TCXO Value:         ${tcxoData}"
+    fi
+  fi
   exit 0
 fi
 #
 # OK we know what the modem is, let get the firmware string from the log...
 #
-tac /var/log/pi-star/MMDVM-*.log | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
+tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
 read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
 echo ""
 #
@@ -80,6 +109,36 @@ then
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    chmod +x /tmp/mmdvmhshatfirmware/flash.sh
+    cd  /tmp/mmdvmhshatfirmware
+    ./flash.sh
+    echo ""
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+  hs_dual_hat-12mhz)
+    # Flashing MMDVM_HS_DUAL Modem with 12.288 MHz TCXO
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    echo "Flashing your ${1} modem to the latest version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    chmod +x /tmp/mmdvmhshatfirmware/flash.sh
+    cd  /tmp/mmdvmhshatfirmware
+    ./flash.sh
+    echo ""
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+    hs_hat_ambe)
+    # Flashing MMDVM_HS Hat Modem
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    echo "Flashing your ${1} modem to the latest version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_d2rg_mmdvmhs.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
     cd  /tmp/mmdvmhshatfirmware
     ./flash.sh

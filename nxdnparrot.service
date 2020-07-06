@@ -20,7 +20,7 @@ KILL=/bin/kill
 SLEEP=/bin/sleep
 LOGDIR=/var/log/pi-star
 USER=root
-GROUP=root
+GROUP=mmdvm
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Pre-flight checks...

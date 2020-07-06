@@ -1,0 +1,224 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                         Pi-Star Find Modem Tool.                           #
+#                                                                            #
+#     Version 1.2, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#              Make it simple to find the attached MMDVM Modem               #
+#                                                                            #
+##############################################################################
+#
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Kill any MMDVMHost or DStarRepeater processes
+if [[ $(/usr/bin/pgrep MMDVMHost) ]]; then
+        systemctl stop mmdvmhost > /dev/null 2>&1
+        svcRestart=mmdvmhost
+fi
+if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
+        systemctl stop dstarrepeaterd > /dev/null 2>&1
+        svcRestart=dstarrepeaterd
+fi
+
+# Random Filename
+randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+function readDevice {
+        # Setup the variables
+        serialProtocol=$1
+        serialSpeed=$2
+
+        # Talk to the hardware
+        stty -F ${modemDevice} ${serialSpeed} raw -echo                         # Configure the serial port, its always 115200
+        exec 3<${modemDevice}                                                   # Redirect the output from serial to file descriptor 3
+        cat <&3 > /tmp/${randomFilename} &                                      # Get the content of FD3 and punt it to a file
+        PID=$!                                                                  # Save the PID for the cat command, to dump it later
+
+        # Case switch makes much more sense here since we now have a few protocols
+        case ${serialProtocol} in
+                mmdvm)
+                        echo -en '\xE0\x03\x00' > ${modemDevice}                # Send the "Get Version" command to the port
+                ;;
+                dvmega)
+                        echo -en '\xD0\x01\x00\x11\x00\x0B' > ${modemDevice}    # Send the "Get Version" command to the port
+                ;;
+                nextion)
+                        echo -en '\xFF\xFF\xFF' > ${modemDevice}                # Send the "Clear" command to the port
+                        echo -en 'connect' > ${modemDevice}                     # Send the "Connect" command to the port
+                        echo -en '\xFF\xFF\xFF' > ${modemDevice}                # Send the "Clear" command to the port
+                ;;
+        esac
+
+        sleep 0.2s                                                              # Wait for a responce
+        kill -9 $PID > /dev/null 2>&1                                           # Kill the cat!
+        exec 3<&- 1> /dev/stdout 2> /dev/null                                   # Free up FD3
+}
+
+
+# Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* /dev/ttyS* and /dev/ttyUSB*)
+for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); do
+        # Ignore the /dev/ttyS[0-3] ports on the Odroid Platform.
+        if [[ $(platformDetect.sh) == *"Odroid"* && ${modemDevice} == *"ttyS"* && ${modemDevice} != *"ttySAC"* ]]; then
+                continue
+        fi
+
+        # Ignore /dev/ttyS0 on the NanoPi Platform
+        if [[ $(platformDetect.sh) == *"sun8i"* && ${modemDevice} == *"ttyS0"* ]]; then
+                continue
+        fi
+
+        # Ignore /dev/ttyS0 and /dev/ttySC* devices
+        if [[ ${modemDevice} == *"ttySC"* || ${modemDevice} == *"ttyS0" ]]; then
+                continue
+        fi
+
+        # Make sure the output file exists
+        touch /tmp/${randomFilename}                                            # Make the output File
+
+        # Send the MMDVM "Get Version" command to test the ports.
+        readDevice mmdvm 115200                                                 # Try MMDVM Protocol
+
+        # Read the output, and make it pretty for humans...
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
+                # OK we have some output, clean up the modem version string and remove non-printables
+                modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g' | sed 's/^.D2RG_MMDVM/D2RG_MMDVM/g' | sed 's/^.ZUMspot/ZUMspot/g' | sed 's/^.Nano_/Nano_/g')
+
+                # OK we have some output, format it into somthing useful.
+                case ${modemData} in
+                        MMDVM_HS*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        MMDVM*)
+                                mmdvmClass="MMDVM   "
+                        ;;
+                        D2RG_MMDVM_HS*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        HS_Hat*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        ZUMspot*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        Nano_*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        DVMEGA*)
+                                mmdvmClass="DV-Mega "
+                        ;;
+                        DV-MEGA*)
+                                mmdvmClass="DV-Mega "
+                        ;;
+                        *u-blox*)
+                                mmdvmClass="GPS     "
+                        ;;
+                        *)
+                                mmdvmClass="Unknown "
+                        ;;
+                esac
+
+                case ${modemDevice} in
+                        /dev/ttyS*)
+                                mmdvmPort="(GPIO)"
+                        ;;
+                        /dev/ttyAMA*)
+                                mmdvmPort="(GPIO)"
+                        ;;
+                        /dev/ttyACM*)
+                                mmdvmPort="(USB) "
+                        ;;
+                        /dev/ttyUSB*)
+                                mmdvmPort="(USB) "
+                        ;;
+                esac
+
+                if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "D2RG_MMDVM_HS"* || ${modemData} == "ZUMspot"* || ${modemData} == "Nano_"* ]]; then
+                        # Print the output
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
+                elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
+                        # Print the output
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData} - MMDMVM Protocol)"
+                elif [[ ${modemData} == *"u-blox"* ]]; then
+                        # Print the output
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (u-blox GPS Device)"
+                fi
+                
+                echo "" > /tmp/${randomFilename}
+        fi
+
+        # Sent the DVMega "Get Version" Command
+        readDevice dvmega 115200                                                # Try DVMega Protocol
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
+                # OK we have some output, clean up the string and remove non-printables
+                dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
+                
+                # Sanity check the output from the DV-Mega
+                if [[ ${dvmegaData} == *"DV-MEGA"* ]]; then
+                        # Clean up the port information
+                        if [[ ${modemDevice} == *"USB"* ]]; then
+                                dvmegaPort="(USB) "
+                        else
+                                dvmegaPort="(GPIO)"
+                        fi
+                fi
+
+                if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
+                        # Print the output
+                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData}  - DStarRepeater Protocol)"
+                fi
+                if [[ ${dvmegaData} == *"u-blox"* ]]; then
+                        # Print the output
+                        echo -e "Detected GPS      ${dvmegaPort}: ${modemDevice} (u-blox GPS Device)"
+                fi
+                echo "" > /tmp/${randomFilename}
+        fi
+
+        # Send the Nextion "Connect" command to test the ports.
+        readDevice nextion 9600                                                 # Try Nextion Protocol
+
+        # Read the output, and make it pretty for humans...
+        if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
+                # OK we have some output, clean up the string and remove non-printables
+                nextionData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
+
+                # OK we have some output (example below), format it into somthing useful.
+                # comok 1,37697-0,NX3224T024_011R,99,61488,DE6788B2935E5731,4194304???
+                if [[ $(grep "comok" /tmp/${randomFilename}) && ${nextionData} == *"NX"* ]]; then
+                        nextionModel=$(echo ${nextionData} | awk -F',' '{print $3}')
+                        nextionTouch=$(echo ${nextionData} | awk -F',' '{print $1}')
+                        nextionSerial=$(echo ${nextionData} | awk -F',' '{print $6}')
+
+                        # Clean up the port information
+                        if [[ ${modemDevice} == *"USB"* ]]; then
+                                nextionPort="(USB) "
+                        else
+                                nextionPort="(GPIO)"
+                        fi
+
+                        # Show Touchscreen support
+                        if [[ ${nextionTouch} ]]; then
+                                nextionTouch="Yes"
+                        else
+                                nextionTouch="No"
+                        fi
+
+                        # Print the output
+                        echo -e "Detected Nextion  ${nextionPort}: ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
+                fi
+                echo "" > /tmp/${randomFilename}
+        fi
+
+        # Dump the temp file we used
+        rm -rf /tmp/${randomFilename}
+done
+
+# Restart the service(s) if I stopped them
+if [[ -v svcRestart ]]; then
+        systemctl start ${svcRestart} > /dev/null 2>&1
+fi

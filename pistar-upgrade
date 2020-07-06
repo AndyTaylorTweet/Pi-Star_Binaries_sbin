@@ -612,13 +612,492 @@ main_function() {
 		fi
 	;;
 	3.4.15)
-		Message="You are already running the lastest version..."
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.15/3.4.16/g' /etc/pistar-release
+        		sed -i 's/3.4.15/3.4.16/g' /etc/motd
+
+			# DAPNet Gateway Service
+			echo '[Unit]' > /lib/systemd/system/dapnetgateway.service
+			echo 'Description=Pi-Star DAPNet Gateway Service' >> /lib/systemd/system/dapnetgateway.service
+			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dapnetgateway.service
+			echo '' >> /lib/systemd/system/dapnetgateway.service
+			echo '[Service]' >> /lib/systemd/system/dapnetgateway.service
+			echo 'Type=forking' >> /lib/systemd/system/dapnetgateway.service
+			echo 'ExecStart=/usr/local/sbin/dapnetgateway.service start' >> /lib/systemd/system/dapnetgateway.service
+			echo 'ExecStop=/usr/local/sbin/dapnetgateway.service stop' >> /lib/systemd/system/dapnetgateway.service
+			echo 'ExecReload=/usr/local/sbin/dapnetgateway.service restart' >> /lib/systemd/system/dapnetgateway.service
+			echo '' >> /lib/systemd/system/dapnetgateway.service
+			echo '[Install]' >> /lib/systemd/system/dapnetgateway.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dapnetgateway.service
+
+			# DAPNet Gateway Timer
+			echo '[Timer]' > /lib/systemd/system/dapnetgateway.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/dapnetgateway.timer
+			echo '' >> /lib/systemd/system/dapnetgateway.timer
+			echo '[Install]' >> /lib/systemd/system/dapnetgateway.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dapnetgateway.timer
+
+			# Update systemd and enable new services
+			systemctl daemon-reload
+			systemctl enable dapnetgateway.timer
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.16..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
 	;;
-	3.5.0-Beta)
-		Message="You are already running the lastest version..."
+	3.4.16)
+		if [ ! -z "${pistarHardware}" ]; then
+			sed -i 's/3.4.16/3.4.17/g' /etc/pistar-release
+       			sed -i 's/3.4.16/3.4.17/g' /etc/motd
+
+			# Update all the startup timers
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/pistar-upnp.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/dmrgateway.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ircddbgateway.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/nxdnparrot.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/p25parrot.timer
+			sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ysfparrot.timer
+
+			# Update systemd and enable new services
+			systemctl daemon-reload
+
+			Message="Upgraded from ${pistarCurVersion} to 3.4.17..."
+		else
+			Message="In-place upgrades from 3.4.4 are not supported..."
+		fi		
 	;;
-	3.5.0)
-		Message="You are already running the lastest version..."
+	3.4.17)
+		Message="You are already running the latest version..."
+	;;
+	4.0.0-Beta)
+		Message="This release will not recieve upgrades..."
+	;;
+	4.0.0-RC1)
+		sed -i 's/4.0.0-RC1/4.0.0-RC2/g' /etc/pistar-release
+
+		# Update all the startup timers
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/pistar-upnp.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/dmrgateway.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ircddbgateway.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/nxdnparrot.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/p25parrot.timer
+		sed -i "/OnStartupSec=/c\\OnStartupSec=20" /lib/systemd/system/ysfparrot.timer
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+
+		# Fix some broken libs
+		apt-get update && apt-get install --reinstall libraspberrypi0 libraspberrypi-dev libraspberrypi-bin
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC2..."
+	;;
+	4.0.0-RC2)
+		sed -i 's/4.0.0-RC2/4.0.0-RC3/g' /etc/pistar-release
+
+		# apt-daily.service
+		echo '[Unit]' > /etc/systemd/system/apt-daily.service
+		echo 'Description=Daily apt download activities' >> /etc/systemd/system/apt-daily.service
+		echo 'Documentation=man:apt(8)' >> /etc/systemd/system/apt-daily.service
+		echo 'ConditionACPower=true' >> /etc/systemd/system/apt-daily.service
+		echo 'After=network-online.target' >> /etc/systemd/system/apt-daily.service
+		echo 'Wants=network-online.target' >> /etc/systemd/system/apt-daily.service
+		echo '' >> /etc/systemd/system/apt-daily.service
+		echo '[Service]' >> /etc/systemd/system/apt-daily.service
+		echo 'Type=oneshot' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily.service
+		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily update' >> /etc/systemd/system/apt-daily.service
+
+		#apt-daily-upgrade.service 
+		echo '[Unit]' > /etc/systemd/system/apt-daily-upgrade.service
+		echo 'Description=Daily apt upgrade and clean activities' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'Documentation=man:apt(8)' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ConditionACPower=true' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'After=apt-daily.service' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo '' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo '[Service]' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'Type=oneshot' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily install' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'KillMode=process' >> /etc/systemd/system/apt-daily-upgrade.service
+		echo 'TimeoutStopSec=900' >> /etc/systemd/system/apt-daily-upgrade.service
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC3..."
+	;;
+	4.0.0-RC3)
+		sed -i 's/4.0.0-RC3/4.0.0-RC4/g' /etc/pistar-release
+
+		echo '#!/bin/sh' > /usr/local/avrdude
+		echo '' >> /usr/local/avrdude
+		echo 'sudo strace -o "|autoreset" -eioctl /usr/bin/avrdude-original $@' >> /usr/local/avrdude
+
+		# apt-daily.service
+ 		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily.service
+ 		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily.service
+
+  		#apt-daily-upgrade.service 
+ 		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily-upgrade.service
+ 		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily-upgrade.service
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC4..."
+	;;
+	4.0.0-RC4)
+		Message="You are already running the latest version..."
+	;;
+	4.0.0)
+		Message="You are already running the latest version..."
+	;;
+	4.1.0-Beta)
+		Message="This release will not recieve upgrades..."
+	;;
+	4.1.0-RC1)
+		sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
+
+		# Clean up for the new version of Buster going to release
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 04EE7237B7D453EC
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 648ACFD622F3D138
+		apt-get update --allow-releaseinfo-change
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
+	;;
+	4.1.0-RC2)
+		sed -i 's/4.1.0-RC2/4.1.0-RC3/g' /etc/pistar-release
+
+		# logrotate issues;
+		if [[ -f /etc/logrotate.d/alternatives ]]; then
+			rm -rf /etc/logrotate.d/alternatives
+		fi
+		if [[ -f /etc/logrotate.d/btmp ]]; then
+			rm -rf /etc/logrotate.d/btmp
+		fi
+		if [[ -f /etc/logrotate.d/wtmp ]]; then
+			rm -rf /etc/logrotate.d/wtmp
+		fi
+		if [[ -f /etc/logrotate.d/rsyslog.dpkg-dist ]]; then
+			rm -rf /etc/logrotate.d/rsyslog.dpkg-dist
+		fi
+		if [[ $(grep "copytruncate" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
+			sed -i "s/sharedscripts/sharedscripts\n\tcopytruncate/g" /etc/logrotate.d/rsyslog
+		fi
+		if [[ $(grep "pgrep" /etc/logrotate.d/rsyslog | wc -l) -eq 0 ]]; then
+			sed -i "/invoke-rc.d/c\\\t\t# invoke-rc.d rsyslog rotate > /dev/null\n\t\tkill -s 1 \$(pgrep rsyslog) > /dev/null" /etc/logrotate.d/rsyslog
+		fi
+		systemctl restart logrotate
+
+		# Add some missing firemwares
+		apt-get update && apt-get install -y firmware-misc-nonfree
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
+	;;
+	4.1.0-RC3)
+		sed -i 's/4.1.0-RC3/4.1.0-RC4/g' /etc/pistar-release
+
+		# Check / Reset the GPIO pins on boot (specifically on the Pi 4 hardware)
+		sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/{N;N;s/$/\n# Reset the GPIO Pins on Pi4 Only\n\/usr\/local\/sbin\/pistar-mmdvmhshatreset boot\n/}' /etc/rc.local
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
+	;;
+	4.1.0-RC4)
+		sed -i 's/4.1.0-RC4/4.1.0-RC5/g' /etc/pistar-release
+
+		# Fix up some minor issues with resolvconf's config
+		sed -i '2ifi' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+		sed -i '2i\\ttouch /var/lib/dhcpcd5/resolv.conf' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+		sed -i '2iif [ ! -f "/var/lib/dhcpcd5/resolv.conf" ]; then' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+		sed -i '2i\\n' /etc/dhcp/dhclient-enter-hooks.d/resolvconf
+
+		# Fix fstab to accunt for the change
+		sed -i "/\/var\/lib\/dhcpcd5/c\\tmpfs\t\t\t\/var\/lib\/dhcpcd5\ttmpfs\tnodev,noatime,nosuid,mode=1777,size=32k\t\t0\t0" /etc/fstab
+
+		# Change the filesystem to match
+		cp /etc/resolv.conf /var/lib/dhcpcd5/resolv.conf
+		rm -rf /etc/resolv.conf
+		rm -rf /etc/resolv.conf.bak
+		ln -s /var/lib/dhcpcd5/resolv.conf /etc/resolv.conf
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC5..."
+	;;
+	4.1.0-RC5)
+		sed -i 's/4.1.0-RC5/4.1.0-RC6/g' /etc/pistar-release
+
+		# Fix issue with sysctl.conf not being applied in Raspbian Buster
+		sed -i '3i/etc/init.d/procps restart' /etc/network/if-up.d/pistar-motdgen
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC6..."
+	;;
+	4.1.0-RC6)
+		sed -i 's/4.1.0-RC6/4.1.0-RC7/g' /etc/pistar-release
+
+		# Fix up random seed
+		cp /lib/systemd/system/systemd-random-seed.service /etc/systemd/system/systemd-random-seed.service
+		sed -i '/ExecStart=\/lib\/systemd\/systemd-random-seed load/a ExecStop=\/bin\/mount -o remount,rw \/' /etc/systemd/system/systemd-random-seed.service
+		rm -rf /var/lib/systemd/random-seed
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+		systemctl stop systemd-random-seed.service
+		systemctl start systemd-random-seed.service
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC7..."
+	;;
+	4.1.0-RC7)
+		sed -i 's/4.1.0-RC7/4.1.0-RC8/g' /etc/pistar-release
+
+		# Fix the missing rng-tools
+		apt-get update && apt-get install --reinstall rng-tools
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC8..."
+	;;
+	4.1.0-RC8)
+		sed -i 's/4.1.0-RC8/4.1.0/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.0..."
+	;;
+	4.1.0)
+		sed -i 's/4.1.0/4.1.1/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Fix up issues with missing ralink firmware
+		apt-get update && apt-get install --reinstall -y firmware-ralink
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.1..."
+	;;
+	4.1.1)
+		sed -i 's/4.1.1/4.1.2/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Disable the Load/Save RFKill status - it complains on every boot.
+		systemctl mask systemd-rfkill.service
+		systemctl mask systemd-rfkill.socket
+		# Clean up some other broken services
+		rm -rf /etc/systemd/system/multi-user.target.wants/exim4.service
+		rm -rf /etc/systemd/system/multi-user.target.wants/wifi-country.service
+		# Clean out some remaining files
+		rm -rf /var/lib/systemd/rfkill/platform-*
+
+		# MobileGPS Gateway Service
+		echo '[Unit]' > /lib/systemd/system/mobilegps.service
+		echo 'Description=Pi-Star MobileGPS Service' >> /lib/systemd/system/mobilegps.service
+		echo 'After=syslog.target network.target' >> /lib/systemd/system/mobilegps.service
+		echo '' >> /lib/systemd/system/mobilegps.service
+		echo '[Service]' >> /lib/systemd/system/mobilegps.service
+		echo 'Type=forking' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecStart=/usr/local/sbin/mobilegps.service start' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecStop=/usr/local/sbin/mobilegps.service stop' >> /lib/systemd/system/mobilegps.service
+		echo 'ExecReload=/usr/local/sbin/mobilegps.service restart' >> /lib/systemd/system/mobilegps.service
+		echo '' >> /lib/systemd/system/mobilegps.service
+		echo '[Install]' >> /lib/systemd/system/mobilegps.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
+		
+		# Enable the service
+		systemctl daemon-reload
+		systemctl enable mobilegps.service
+		
+		# Modify the /boot/config.txt to bring it up to date
+		sed -i '/USB Current/d' /boot/config.txt
+		sed -i '/max_usb_current/d' /boot/config.txt
+		sed -i '/Buster Support/d' /boot/config.txt
+		sed -i '/dtoverlay=vc4-fkms-v3d/d' /boot/config.txt
+		sed -i 's/pi3-miniuart-bt/miniuart-bt/g' /boot/config.txt
+		echo "" >> /boot/config.txt
+		echo "[pi4]" >> /boot/config.txt
+		echo "# Enable DRM VC4 V3D driver on top of the dispmanx display stack" >> /boot/config.txt
+		echo "dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+		echo "max_framebuffers=2" >> /boot/config.txt
+		echo "" >> /boot/config.txt
+		echo "[all]" >> /boot/config.txt
+		echo "#dtoverlay=vc4-fkms-v3d" >> /boot/config.txt
+
+		# Remove the exim4 stuff from fstab
+		sed -i '/exim4/d' /etc/fstab
+
+		# Add Captive Portal enhancement
+		echo "address=/www.msftconnecttest.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.msftncsi.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/clients3.google.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/connectivitycheck.gstatic.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/connectivitycheck.android.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.appleiphonecell.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/captive.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/www.apple.com/192.168.50.1" >>/etc/dnsmasq.conf
+		echo "address=/.apple.com.edgekey.net/192.168.50.1" >>/etc/dnsmasq.conf
+
+		# Add the Captive Portal to nginx
+		echo "server_names_hash_bucket_size 64;" > /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name www.msftconnecttest.com www.msftncsi.com clients3.google.com;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name connectivitycheck.gstatic.com connectivitycheck.android.com;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name www.appleiphonecell.com captive.apple.com www.apple.com;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "	listen 80;" >> /etc/nginx/sites-available/captive-portal
+		echo "	server_name *.apple.com.edgekey.net;" >> /etc/nginx/sites-available/captive-portal
+		echo "	return 302 http://192.168.50.1/index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "server {" >> /etc/nginx/sites-available/captive-portal
+		echo "        listen 192.168.50.1:80;" >> /etc/nginx/sites-available/captive-portal
+		echo "        root /var/www/dashboard;" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	try_files \$uri \$uri/ /index.php;" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "        location ^~ /admin {" >> /etc/nginx/sites-available/captive-portal
+		echo "		deny	192.168.50.1;" >> /etc/nginx/sites-available/captive-portal
+		echo "		allow	192.168.50.0/24;" >> /etc/nginx/sites-available/captive-portal
+		echo "		deny	all;" >> /etc/nginx/sites-available/captive-portal
+		echo "		try_files \$uri \$uri/ =404;" >> /etc/nginx/sites-available/captive-portal
+		echo "		client_max_body_size 512K;" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		echo "	include             /etc/nginx/default.d/php.conf;" >> /etc/nginx/sites-available/captive-portal
+		echo "	}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	location ~ /\.git {" >> /etc/nginx/sites-available/captive-portal
+		echo "		deny all;" >> /etc/nginx/sites-available/captive-portal
+		echo "	}" >> /etc/nginx/sites-available/captive-portal
+		echo "" >> /etc/nginx/sites-available/captive-portal
+		echo "	# Load the defaults" >> /etc/nginx/sites-available/captive-portal
+		echo "	include             /etc/nginx/default.d/*.conf;" >> /etc/nginx/sites-available/captive-portal
+		echo "}" >> /etc/nginx/sites-available/captive-portal
+
+		# Link the new site into site-enabled
+		cd /etc/nginx/sites-enabled
+		ln -s ../sites-available/captive-portal ./
+		cd
+
+		# Restart nginx to complete the setup
+		systemctl restart nginx
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
+	;;
+	4.1.2)
+		#sed -i 's/4.1.2/4.1.3/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# Setup systemd unit files for Nextion Driver
+		#echo '[Unit]' > /lib/systemd/system/nextiondriver.service
+		#echo 'Description=NextionDriver service' >> /lib/systemd/system/nextiondriver.service
+		#echo 'DefaultDependencies=no' >> /lib/systemd/system/nextiondriver.service
+		#echo 'After=local-fs.target wifi-country.service network-online.target' >> /lib/systemd/system/nextiondriver.service
+		#echo 'Before=timers.target' >> /lib/systemd/system/nextiondriver.service
+		#echo '' >> /lib/systemd/system/nextiondriver.service
+		#echo '[Service]' >> /lib/systemd/system/nextiondriver.service
+		#echo 'User=root' >> /lib/systemd/system/nextiondriver.service
+		#echo 'Type=forking' >> /lib/systemd/system/nextiondriver.service
+		#echo 'WorkingDirectory=/usr/local/etc/' >> /lib/systemd/system/nextiondriver.service
+		#echo 'ExecStart=/usr/local/bin/NextionDriver -c /etc/mmdvmhost -i' >> /lib/systemd/system/nextiondriver.service
+		#echo 'ExecStop=/usr/bin/killall NextionDriver' >> /lib/systemd/system/nextiondriver.service
+		#echo '' >> /lib/systemd/system/nextiondriver.service
+		#echo '[Install]' >> /lib/systemd/system/nextiondriver.service
+		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nextiondriver.service
+		#echo 'WantedBy=network-online.target' >> /lib/systemd/system/nextiondriver.service
+		#echo 'RequiredBy=mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
+
+		#echo '[Unit]' > /lib/systemd/system/mmdvmhost.service
+		#echo 'Description=MMDVMHost Radio Service' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'After=syslog.target network.target' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'Requires=nextiondriver.service' >> /lib/systemd/system/mmdvmhost.service
+		#echo '' >> /lib/systemd/system/mmdvmhost.service
+		#echo '[Service]' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'Type=forking' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'ExecStart=/usr/local/sbin/mmdvmhost.service start' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'ExecStop=/usr/local/sbin/mmdvmhost.service stop' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'ExecReload=/usr/local/sbin/mmdvmhost.service restart' >> /lib/systemd/system/mmdvmhost.service
+		#echo '' >> /lib/systemd/system/mmdvmhost.service
+		#echo '[Install]' >> /lib/systemd/system/mmdvmhost.service
+		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mmdvmhost.service
+
+		# Enable the service
+		#systemctl daemon-reload
+		#systemctl stop nextiondriver.service
+		#/usr/bin/killall NextionDriver
+		#systemctl enable nextiondriver.service
+		#systemctl restart nextiondriver.service
+		#systemctl restart mmdvmhost.service
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
+		Message="You are already running the latest version..."
+	;;
+	4.1.3)
+		#sed -i 's/4.1.3/4.1.4/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.4..."
+		Message="You are already running the latest version..."
 	;;
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"

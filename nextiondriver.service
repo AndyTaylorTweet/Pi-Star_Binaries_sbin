@@ -1,47 +1,37 @@
 #!/bin/bash
 #########################################################
 #                                                       #
-#              P25Parrot Service Handler                #
+#            NextionDriver Service Handler              #
 #                                                       #
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
-#               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.1                       #
+#            By Lieven De Samblanx (ON7LDS)             #
+#                                                       #
+#         based on work of Andy Taylor (MW0MWZ)         #
+#                                                       #
+#                     Version 1.0                       #
 #                                                       #
 #########################################################
 
 # Service Config
-DAEMON=P25Parrot
+DAEMON=NextionDriver
 DAEMON_PATH=/usr/local/bin/
-DAEMON_OPTS=42011
-LOGDIR=/var/log/pi-star
+CONFIG=/etc/mmdvmhost
+DAEMON_OPTS="-c $CONFIG -i"
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 USER=root
 GROUP=mmdvm
-ipVar=`hostname -I | cut -d' ' -f1`
+LOGDIR=/var/log/pi-star
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -r $CONFIG || exit 1
 
-# if dstarrepeater is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.dstarrepeater || exit 1
-
-if [ `sed -n '/\[P25 Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	if [ `sed -n '/\[System Fusion\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-		exit 1;
-	elif [ -f '/etc/ysf2p25' ] && [ `sed -n '/\[Enabled\]/{n;p;}' /etc/ysf2p25 | cut -c 9` == 0 ]; then
-		exit 1;
-	elif [ -f '/etc/ysf2p25' ] && [ `sed -n '/\[Enabled\]/{n;p;}' /etc/ysf2p25 | cut -c 9` == 1 ]; then
-		test=pass
-	else
-		exit 1;
-	fi
-fi
-
-# Verify the logging directory exists, if not create it and setup the ownership / permissions
+#We start very early in the bootprocess, so we
+# verify the logging directory exists,
+# if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
   chown ${USER}:${GROUP} $LOGDIR
@@ -54,12 +44,7 @@ case "$1" in
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 			exit 1;
 		else
-			# Wait for an IP address
-			until [ $ipVar != " " ]; do
-				sleep 10
-				ipVar=`hostname -I`
-			done
-			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
+			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
 		fi
@@ -69,6 +54,7 @@ case "$1" in
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
+			if [ `${PGREP} ${DAEMON}` ]; then killall ${DAEMON}; fi
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
@@ -81,12 +67,12 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
-			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
+			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		fi

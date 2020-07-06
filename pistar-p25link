@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                      Pi-Star P25Gateway link Tool                          #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#         Make it simple to link reflectors from the CLI on Pi-Star.         #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Make sure config is present
+if [ "$(grep -o 'Remote Commands' /etc/p25gateway | wc -l)" -eq "0" ]; then
+  echo -e "Remote Commands not enabled...\n"
+  exit 1
+fi
+
+# Setup some variables
+cmd=/usr/local/bin/RemoteCommand
+enable=$(grep -A1 'Remote Commands' /etc/p25gateway | tail -n 1 | awk -F "=" '{print $2}')
+port=$(grep -A2 'Remote Commands' /etc/p25gateway | tail -n 1 | awk -F "=" '{print $2}')
+
+# Make sure that remote commands are turned on
+if [ "${enable}" -eq "0" ]; then
+  echo -e "Remote Commands not enabled...\n"
+  exit 1
+fi
+
+
+if [ -z "$1" ]
+then
+      echo "To unlink from any connected TG, use: pistar-p25link unlink"
+      echo "To link to TG31672, use: pistar-p25link 31672"
+      echo ""
+      exit 0
+fi
+
+case ${1} in
+unlink)
+  (cd /var/log/pi-star/; ${cmd} ${port} TalkGroup9999)
+  exit 0
+;;
+*)
+  if ! [[ "${1}" =~ ^[0-9]+$ ]]; then
+    echo -e "Invalid target ${1}"
+    exit 1
+  fi
+  (cd /var/log/pi-star/; ${cmd} ${port} TalkGroup${1^^})
+  exit 0
+;;
+esac
+
+exit 0

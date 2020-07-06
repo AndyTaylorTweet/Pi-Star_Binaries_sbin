@@ -19,7 +19,7 @@ PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 USER=root
-GROUP=root
+GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 ipVar=`hostname -I | cut -d' ' -f1`
 
@@ -36,6 +36,10 @@ fi
 
 if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/nxdn2dmr | cut -c 9` != 1 ]; then
 	exit 1;
+fi
+
+if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
 fi
 
 # Make sure I am supposed to be used

@@ -19,7 +19,7 @@ PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 USER=root
-GROUP=root
+GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 
 # Pre-flight checks...
@@ -36,6 +36,10 @@ if [ -f /etc/dstar-radio.mmdvmhost ]; then
         if [ `sed -n '/\[D-Star Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
            exit 1;
         fi
+fi
+
+if [[ $(egrep -h -i "M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
