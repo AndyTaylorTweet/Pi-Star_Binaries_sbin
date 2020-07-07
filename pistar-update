@@ -59,6 +59,9 @@ git_update() {
 		# Re-check that the updates are now good
 		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
 			echo "Updates were not successfull, reverting to Pi-Star original files..."
+			if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
+				rm -rf ${gitFolder}/pistar-upnp.service
+			fi
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
 		fi
 	else
