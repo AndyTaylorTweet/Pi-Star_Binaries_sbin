@@ -124,6 +124,11 @@ if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
 fi
 
+# Add custom YSF Hosts
+if [ -f "/root/YSFHosts.txt" ]; then
+	cat /root/YSFHosts.txt >> ${YSFHOSTS}
+fi
+
 # Fix DMRGateway issues with brackets
 if [ -f "/etc/dmrgateway" ]; then
 	sed -i '/Name=.*(/d' /etc/dmrgateway
