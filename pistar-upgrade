@@ -1915,6 +1915,7 @@ EOF
 		systemctl stop nextiondriver.service
 		/usr/bin/killall NextionDriver
 		systemctl disable nextiondriver.service
+		systemctl mask nextiondriver.service
 
  		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
