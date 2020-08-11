@@ -75,7 +75,7 @@ service_handle() {
 
 	systemctl ${doWhat} pistar-watchdog.service > /dev/null 2>&1
 	systemctl ${doWhat} pistar-remote.service > /dev/null 2>&1
-	systemctl ${doWhat} mobilegps.service > /dev/null 2>&1
+	systemctl ${doWhat} gpsd.service > /dev/null 2>&1
 	systemctl ${doWhat} dmrgateway.service > /dev/null 2>&1
 	systemctl ${doWhat} dapnetgateway.service > /dev/null 2>&1
 	systemctl ${doWhat} ircddbgateway.service > /dev/null 2>&1
@@ -279,11 +279,11 @@ main_function() {
         	        echo "aprsPassword=00000" >> /etc/ircddbgateway
         	fi
 
-		if [[ $(cat /etc/ircddbgateway | grep -o "mobileGPS" | wc -l) -eq 0 ]]; then
-                	echo "Adding MobileGPS Config to /etc/ircddbgateway"
-                	echo "mobileGPSEnabled=0" >> /etc/ircddbgateway
-                	echo "mobileGPSAddress=127.0.0.1" >> /etc/ircddbgateway
-                	echo "mobileGPSPort=7834" >> /etc/ircddbgateway
+		if [[ $(cat /etc/ircddbgateway | grep -o "gpsd" | wc -l) -eq 0 ]]; then
+                	echo "Adding GPSd Config to /etc/ircddbgateway"
+                	echo "gpsdEnabled=0" >> /etc/ircddbgateway
+                	echo "gpsdAddress=127.0.0.1" >> /etc/ircddbgateway
+                	echo "gpsdPort=2947" >> /etc/ircddbgateway
         	fi
 
 		if [[ $(cat /etc/dstarrepeater | grep -o "mmdvmRXInvert" | wc -l) -eq 0 ]]; then

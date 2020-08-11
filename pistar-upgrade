@@ -156,7 +156,16 @@ function upgradeTo413RMB()
     echo "" >> $DEST
     chown root:root $DEST
     chmod 0644 $DEST
+
+    # Remove obsolete MobileGPS service
+    systemctl stop mobilegps.timer
+    systemctl stop mobilegps.service
+    systemctl disable mobilegps.timer
+    systemctl disable mobilegps.service
+    rm -f /lib/systemd/system/mobilegps.timer
+    rm -f /lib/systemd/system/mobilegps.service
     
+    systemctl daemon-reload
     
     echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW, then reboot."
 }
