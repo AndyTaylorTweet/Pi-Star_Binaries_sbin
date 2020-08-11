@@ -1088,7 +1088,7 @@ EOF
 		    
 		    # Link the new site into site-enabled
 		    cd /etc/nginx/sites-enabled
-		    ln -s ../sites-available/captive-portal ./
+		    ln -sf ../sites-available/captive-portal ./
 		    cd
 		    		    
 		    # Enable localhost-only for shellinabox (along with nginx proxy)
@@ -1821,7 +1821,7 @@ EOF
 
 		# Link the new site into site-enabled
 		cd /etc/nginx/sites-enabled
-		ln -s ../sites-available/captive-portal ./
+		ln -sf ../sites-available/captive-portal ./
 		cd
 
 		# Restart nginx to complete the setup
