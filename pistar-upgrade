@@ -1910,6 +1910,16 @@ EOF
 		Message="You are already running the latest version..."
 	;;
 	4.1.3-RMB)
+		sed -i 's/4.1.3-RMB/4.1.4-RMB/g' /etc/pistar-release
+
+		systemctl stop nextiondriver.service
+		/usr/bin/killall NextionDriver
+		systemctl disable nextiondriver.service
+
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+	;;
+	4.1.4-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
