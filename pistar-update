@@ -119,6 +119,23 @@ main_function() {
 		fi
 	fi
 
+	# Check for gpsd
+	if [ ! -f /lib/systemd/system/gpsd.socket ]; then
+	    # Install GPSd
+	    apt-get install -y libgps-dev gpsd
+
+	    # Fix IPv6 problem on 3.x
+	    PISTAR_VERSION=$(grep 'Version' /etc/pistar-release | cut -f 2 -d '=' | tr -d ' ')
+	    PISTAR_VERSION_INFO=( ${PISTAR_VERSION//./ })
+
+	    if [ ${PISTAR_VERSION_INFO[0]} -eq 3 ]; then
+		sed -i 's/ListenStream=\[\:\:1\]\:2947/#ListenStream=\[\:\:1\]\:2947/g' /lib/systemd/system/gpsd.socket
+		systemctl daemon-reload
+		systemctl restart gpsd
+	    fi
+	fi
+	
+
 	echo "Stopping Services..."
 	service_handle stop
 	echo "Done"
