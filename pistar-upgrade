@@ -1158,6 +1158,41 @@ EOF
 	    fi
 	;;
 	3.4.26-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.26-RMB/3.4.27-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    systemctl stop nextiondriver.service
+		    /usr/bin/killall NextionDriver
+		    systemctl disable nextiondriver.service
+		    systemctl mask nextiondriver.service
+		    
+		    rm -f /lib/systemd/system/nextiondriver.service
+		    
+		    echo '[Unit]' > /lib/systemd/system/mmdvmhost.service
+		    echo 'Description=MMDVMHost Radio Service' >> /lib/systemd/system/mmdvmhost.service
+		    echo 'After=syslog.target network.target' >> /lib/systemd/system/mmdvmhost.service
+		    echo '' >> /lib/systemd/system/mmdvmhost.service
+		    echo '[Service]' >> /lib/systemd/system/mmdvmhost.service
+		    echo 'Type=forking' >> /lib/systemd/system/mmdvmhost.service
+		    echo 'ExecStart=/usr/local/sbin/mmdvmhost.service start' >> /lib/systemd/system/mmdvmhost.service
+		    echo 'ExecStop=/usr/local/sbin/mmdvmhost.service stop' >> /lib/systemd/system/mmdvmhost.service
+		    echo 'ExecReload=/usr/local/sbin/mmdvmhost.service restart' >> /lib/systemd/system/mmdvmhost.service
+		    echo '' >> /lib/systemd/system/mmdvmhost.service
+		    echo '[Install]' >> /lib/systemd/system/mmdvmhost.service
+		    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mmdvmhost.service
+		    
+		    systemctl daemon-reload
+		    systemctl restart mmdvmhost.service
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.27-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.27-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -1917,8 +1952,28 @@ EOF
 		systemctl disable nextiondriver.service
 		systemctl mask nextiondriver.service
 
+		rm -f /lib/systemd/system/nextiondriver.service
+
+		echo '[Unit]' > /lib/systemd/system/mmdvmhost.service
+		echo 'Description=MMDVMHost Radio Service' >> /lib/systemd/system/mmdvmhost.service
+		echo 'After=syslog.target network.target' >> /lib/systemd/system/mmdvmhost.service
+		echo '' >> /lib/systemd/system/mmdvmhost.service
+		echo '[Service]' >> /lib/systemd/system/mmdvmhost.service
+		echo 'Type=forking' >> /lib/systemd/system/mmdvmhost.service
+		echo 'ExecStart=/usr/local/sbin/mmdvmhost.service start' >> /lib/systemd/system/mmdvmhost.service
+		echo 'ExecStop=/usr/local/sbin/mmdvmhost.service stop' >> /lib/systemd/system/mmdvmhost.service
+		echo 'ExecReload=/usr/local/sbin/mmdvmhost.service restart' >> /lib/systemd/system/mmdvmhost.service
+		echo '' >> /lib/systemd/system/mmdvmhost.service
+		echo '[Install]' >> /lib/systemd/system/mmdvmhost.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mmdvmhost.service
+		
+		systemctl daemon-reload
+		systemctl restart mmdvmhost.service
+		
  		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.4-RMB..."
 	;;
 	4.1.4-RMB)
 		Message="You are already running the latest version..."
