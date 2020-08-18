@@ -46,6 +46,7 @@ function stop_services()
     systemctl stop dmr2ysf.service > /dev/null 2>&1
     systemctl stop dmr2nxdn.service > /dev/null 2>&1
     systemctl stop dmrgateway.service > /dev/null 2>&1
+    systemctl stop aprsgateway.service > /dev/null 2>&1
     systemctl stop gpsd.service > /dev/null 2>&1
     systemctl stop timeserver.service > /dev/null 2>&1
     
@@ -68,6 +69,7 @@ function start_services()
     echo -ne "Starting Pi-Star services..."
     
     systemctl start gpsd.service > /dev/null 2>&1
+    systemctl start aprsgateway.service > /dev/null 2>&1
     systemctl start ircddbgateway.service > /dev/null 2>&1
     systemctl start dmrgateway.service > /dev/null 2>&1
     systemctl start dapnetgateway.service > /dev/null 2>&1

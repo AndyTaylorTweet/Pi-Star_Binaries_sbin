@@ -20,6 +20,7 @@ systemctl stop pistar-watchdog.service > /dev/null 2>&1
 systemctl stop mmdvmhost.service > /dev/null 2>&1
 systemctl stop dstarrepeater.service > /dev/null 2>&1
 sleep 2
+systemctl stop aprsgateway.service > /dev/null 2>&1
 systemctl stop ircddbgateway.service > /dev/null 2>&1
 systemctl stop dapnetgateway.service > /dev/null 2>&1
 systemctl stop p25gateway.service > /dev/null 2>&1
@@ -122,6 +123,7 @@ if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]
 fi
 
 # Start all the services...
+systemctl start aprsgateway.service > /dev/null 2>&1
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
 systemctl start dapnetgateway.service > /dev/null 2>&1

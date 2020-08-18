@@ -173,6 +173,34 @@ function upgradeTo413RMB()
     echo "WARNING: please update your Pi-Star using the Web interface or execute 'sudo pistar-update' NOW, then reboot."
 }
 
+function upgradeTo415RMB()
+{
+    # APRSGateway Service
+    echo '[Unit]' > /lib/systemd/system/aprsgateway.service
+    echo 'Description=Pi-Star APRS Gateway Service' >> /lib/systemd/system/aprsgateway.service
+    echo 'After=syslog.target network.target' >> /lib/systemd/system/aprsgateway.service
+    echo 'Before=mmdvmhost.timer' >> /lib/systemd/system/aprsgateway.service
+    echo '' >> /lib/systemd/system/aprsgateway.service
+    echo '[Service]' >> /lib/systemd/system/aprsgateway.service
+    echo 'Type=forking' >> /lib/systemd/system/aprsgateway.service
+    echo 'ExecStart=/usr/local/sbin/aprsgateway.service start' >> /lib/systemd/system/aprsgateway.service
+    echo 'ExecStop=/usr/local/sbin/aprsgateway.service stop' >> /lib/systemd/system/aprsgateway.service
+    echo 'ExecReload=/usr/local/sbin/aprsgateway.service restart' >> /lib/systemd/system/aprsgateway.service
+    echo '' >> /lib/systemd/system/aprsgateway.service
+    echo '[Install]' >> /lib/systemd/system/aprsgateway.service
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.service
+    
+    # MobileGPS Timer
+    echo '[Timer]' > /lib/systemd/system/aprsgateway.timer
+    echo 'OnStartupSec=20' >> /lib/systemd/system/aprsgateway.timer
+    echo '' >> /lib/systemd/system/aprsgateway.timer
+    echo '[Install]' >> /lib/systemd/system/aprsgateway.timer
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.timer
+    
+    systemctl daemon-reload
+    systemctl enable aprsgateway.timer
+}
+
 function main_function()
 {
 	# Get the current Modem
@@ -1193,6 +1221,20 @@ EOF
 		fi
 	;;
 	3.4.27-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.27-RMB/3.4.28-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    upgradeTo415RMB
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.28-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.28-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -1976,6 +2018,16 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.4-RMB..."
 	;;
 	4.1.4-RMB)
+		sed -i 's/4.1.4-RMB/4.1.5-RMB/g' /etc/pistar-release
+
+		upgradeTo415RMB
+		
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.5-RMB..."
+	;;
+	4.1.5-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
