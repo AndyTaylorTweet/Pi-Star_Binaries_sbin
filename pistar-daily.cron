@@ -105,10 +105,6 @@ if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]
                 echo "xlxHostsFileUrl=" >> /etc/ircddbgateway
         fi
 
-        if [[ $(cat /etc/ircddbgateway | grep -o "aprsPassword" | wc -l) -eq 0 ]]; then
-                echo "aprsPassword=00000" >> /etc/ircddbgateway
-        fi
-
         if [[ $(cat /etc/ircddbgateway | grep -o "gpsd" | wc -l) -eq 0 ]]; then
                 echo "gpsdSEnabled=0" >> /etc/ircddbgateway
                 echo "gpsdAddress=127.0.0.1" >> /etc/ircddbgateway
