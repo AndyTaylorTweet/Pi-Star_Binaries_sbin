@@ -179,7 +179,7 @@ function upgradeTo415RMB()
     echo '[Unit]' > /lib/systemd/system/aprsgateway.service
     echo 'Description=Pi-Star APRS Gateway Service' >> /lib/systemd/system/aprsgateway.service
     echo 'After=syslog.target network.target' >> /lib/systemd/system/aprsgateway.service
-    echo 'Before=mmdvmhost.timer' >> /lib/systemd/system/aprsgateway.service
+    echo 'Before=mmdvmhost.timer ircddbgateway.timer' >> /lib/systemd/system/aprsgateway.service
     echo '' >> /lib/systemd/system/aprsgateway.service
     echo '[Service]' >> /lib/systemd/system/aprsgateway.service
     echo 'Type=forking' >> /lib/systemd/system/aprsgateway.service
@@ -190,7 +190,7 @@ function upgradeTo415RMB()
     echo '[Install]' >> /lib/systemd/system/aprsgateway.service
     echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.service
     
-    # MobileGPS Timer
+    # APRSGateway Timer
     echo '[Timer]' > /lib/systemd/system/aprsgateway.timer
     echo 'OnStartupSec=20' >> /lib/systemd/system/aprsgateway.timer
     echo '' >> /lib/systemd/system/aprsgateway.timer

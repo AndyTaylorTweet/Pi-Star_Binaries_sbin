@@ -28,9 +28,6 @@ ipVar=`hostname -I | cut -d' ' -f1`
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -r $CONFIG || exit 1
 
-# if dstarrepeater is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.dstarrepeater || exit 1
-
 if [ "$(grep aprsEnabled /etc/ircddbgateway | awk -F '=' '{print $2}')" != "1" ]; then
     exit 1;
 fi
