@@ -292,11 +292,6 @@ main_function() {
         	        echo "xlxHostsFileUrl=http://xlxapi.rlx.lu/api.php?do=GetXLXDMRMaster" >> /etc/ircddbgateway
         	fi
 
-        	if [[ $(cat /etc/ircddbgateway | grep -o "aprsPassword" | wc -l) -eq 0 ]]; then
-        	        echo "Adding APRS Password to /etc/ircddbgateway"
-        	        echo "aprsPassword=00000" >> /etc/ircddbgateway
-        	fi
-
 		if [[ $(cat /etc/ircddbgateway | grep -o "gpsd" | wc -l) -eq 0 ]]; then
                 	echo "Adding GPSd Config to /etc/ircddbgateway"
                 	echo "gpsdEnabled=0" >> /etc/ircddbgateway
