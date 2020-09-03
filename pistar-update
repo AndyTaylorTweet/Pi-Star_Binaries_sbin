@@ -27,8 +27,8 @@ git_checkUpdateRequired() {
 	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
 
 	# Git check / update function
-	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | cut -c 1-8)
-	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --abbrev=8 --pretty=format:"%h" -1)
+	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | cut -c 1-12)
+	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --abbrev=12 --pretty=format:"%h" -1)
 
 	# Return the output
 	if [[ ${gitStatusRemote} != ${gitStatusLocal} ]]; then
@@ -42,7 +42,7 @@ git_update() {
 	# Set the function variables
 	gitFolder=${1}
 
-	# Handle the special case for /usr/loca/sbin
+	# Handle the special case for /usr/local/sbin
 	if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
 		# Assume unchanged for pistar-upnp.service
 		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged pistar-upnp.service
