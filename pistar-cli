@@ -2,7 +2,7 @@
 # -*- mode: shell-script; -*-
 
 # Script that manage few things on Pi-Star
-# Copyright (C) 2019 F1RMB - Daniel Caujolle-Bert <f1rmb.daniel@gmail.com>
+# Copyright (C) 2019-2020 F1RMB - Daniel Caujolle-Bert <f1rmb.daniel@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-VERSION_STRING="0.0.2"
+VERSION_STRING="0.0.3"
 BACKUP_ROOT_DIR="/var/backups/pistar"
 BACKUP_CATALOG="$BACKUP_ROOT_DIR/catalog"
 
@@ -261,9 +261,13 @@ function BackupCurrentConfig() {
     replaceTS=""
 
     while true; do
-	echo -n "Give a name to this backup (no colon ':' allowed) ?> "
-	read a
-
+	if [ -z "$1" ]; then
+	    echo -n "Give a name to this backup (no colon ':' allowed) ?> "
+	    read a
+	else
+	    a="$1"
+	fi
+	
 	if [ ! -z "$a" ]; then
 	    
 	    ## Lookup existing backup with same name
@@ -273,10 +277,14 @@ function BackupCurrentConfig() {
 	    if [ -z "$b" ]; then
 		break
 	    else
-		## Exist. Replace ?
-		echo -n "A backup with the same name already exists (timestamp: $b), do you want to override it ? (y/N): ?> "
-		read ov
-
+		if [ -z "$1" ]; then
+		    ## Exist. Replace ?
+		    echo -n "A backup with the same name already exists (timestamp: $b), do you want to override it ? (y/N): ?> "
+		    read ov
+		else
+		    ov="Y"
+		fi
+		    
 		case "$ov" in
 		    "y"|"Y")
 			## Remove old backup dir
@@ -297,6 +305,9 @@ function BackupCurrentConfig() {
 	fi
     done
 
+    if [ ! -z "$1" ]; then
+	echo "Backing up \"$r\"."
+    fi
     DoBackup "$r" "$replaceTS"
 }
 
@@ -305,12 +316,18 @@ function ListAvailableBackups() {
     echo -e "\n   Available backups:"
     echo "   -----------------"
     if [ -f $BACKUP_CATALOG -a -s $BACKUP_CATALOG ]; then
+	let n=0
 	while read l; do
 	    name=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
 	    location=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
 
 	    if [ ! -z "$name" -a -e "$BACKUP_ROOT_DIR/$location/config_backup.zip" -a -s "$BACKUP_ROOT_DIR/$location/config_backup.zip" ]; then
-		echo "     -> \"$name\" (timestamp: $location)"
+		if [ "$1" == "count" ]; then
+		    echo " $n -> \"$name\" (timestamp: $location)"
+		    ((n++))
+		else
+		    echo "     -> \"$name\" (timestamp: $location)"
+		fi
 	    fi
 	done < $BACKUP_CATALOG
     else
@@ -366,36 +383,68 @@ function DoRestore() {
 
 ## Menu to select a backup to restore
 function RestoreBackup() {
-    echo -e "\n   Available backups:"
-    echo "   -----------------"
+    if [ -z "$1" ]; then
+	echo -e "\n   Available backups:"
+	echo "   -----------------"
+    fi
+    
     if [ -f $BACKUP_CATALOG -a -s $BACKUP_CATALOG ]; then
 	let n=0
 	declare -a names locations
+	offsetToRestore=""
+	nameToRestore=""
+
+	if [ ! -z "$1" ]; then
+	    re='^[0-9]+$'
+	    if ! [[ $1 =~ $re ]] ; then
+		nameToRestore="$1"
+	    else
+		numberToRestore="$1"
+	    fi
+	fi
+
 	
 	while read l; do
 	    names[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $1 }')
 	    locations[n]=$(echo "$l" | awk 'BEGIN { FS=":" } { print $2 }')
-	    echo "     $n -> \"${names[n]}\" (timestamp: ${locations[n]})"
-
+	    
+	    if [ -z "$1" ]; then
+		echo "     $n -> \"${names[n]}\" (timestamp: ${locations[n]})"
+	    else
+		if [ ! -z "$nameToRestore" -a -z "$numberToRestore" ]; then
+		    if [[ "$nameToRestore" == "${names[n]}" ]]; then
+			numberToRestore=$n
+		    fi
+		fi
+	    fi
+	    
 	    ((n++))
 	done < $BACKUP_CATALOG
 
-	echo "    [EMPTY] -> Cancels Operation"
-	echo "Enter the number to restore"
-	echo -n "?> "
-	
-	read o
-	let offset=-1
+	if [ -z "$1" ]; then
+	    echo "    [EMPTY] -> Cancels Operation"
+	    echo "Enter the number to restore"
+	    echo -n "?> "
+	    
+	    read o
 
+	else
+	    o=$numberToRestore
+	fi
+	    
+ 	let offset=-1
+	
 	if [ ! -z $o ]; then
 	    offset=$(($o))
 	fi
-
+	
 	# Check in boundaries
 	if [ $offset -ge 0 -a $offset -lt ${#locations[@]} ]; then
+	    if [ ! -z "$1" ]; then
+		echo "Restoring \"${names[offset]}\"."
+	    fi
 	    DoRestore "${locations[offset]}" "${names[offset]}"
 	fi
-
     else
 	echo "[NONE]"
     fi
@@ -733,42 +782,66 @@ function SanityCheck() {
 }
 
 ## Main
-trap "CtrlC" INT
+if [[ $# -eq 0 ]]; then
+    trap "CtrlC" INT
+fi
 
 SanityCheck
 
-let loop=1
-while [ $loop == 1 ]; do
-    echo "`basename $0` v$VERSION_STRING"
-    echo -e "\n   Main Menu:"
-    echo "   ---------"
-    echo "   1: Services"
-    echo "   2: Backup/Restore"
-    echo "   3: System"
-    MenuPrompt
-    r=$?
 
-    case "$r" in
-	1)
-	    MenuServices
+# Command line arguments
+if [[ $# -gt 0 ]]; then
+    
+    case "$1" in
+	"backup")
+	    BackupCurrentConfig "$2"
 	    ;;
-	
-	2)
-	    MenuBackupRestore
+	"restore")
+	    RestoreBackup "$2"
 	    ;;
-
-	3)
-	    MenuSystem
+	"list")
+	    ListAvailableBackups "count"
 	    ;;
-	
-	113|81)
-	    let loop=0
-	    ;;
-	
 	*)
 	    echo "[ERR]"
 	    ;;
     esac
-done
-
+    
+else # Interactive
+    
+    let loop=1
+    while [ $loop == 1 ]; do
+	echo "`basename $0` v$VERSION_STRING"
+	echo -e "\n   Main Menu:"
+	echo "   ---------"
+	echo "   1: Services"
+	echo "   2: Backup/Restore"
+	echo "   3: System"
+	MenuPrompt
+	r=$?
+	
+	case "$r" in
+	    1)
+		MenuServices
+		;;
+	    
+	    2)
+		MenuBackupRestore
+		;;
+	    
+	    3)
+		MenuSystem
+		;;
+	    
+	    113|81)
+		let loop=0
+		;;
+	    
+	    *)
+		echo "[ERR]"
+		;;
+	esac
+    done
+    
+fi
 exit 0
