@@ -108,7 +108,7 @@ else
   echo "Setting ${MODULE} to ${NEW_STATUS} and restarting MMDVMHost..."
   mount -o remount,rw /
   sed -i "/\[${MODULE}\]/{n;s/${CUR_STATUS}/${NEW_STATUS}/}" ${MMDVMCONFIG}
+  systemctl restart ${SYSCTL_MMDVMHOST}
   sleep 2
   mount -o remount,ro /
-  systemctl restart ${SYSCTL_MMDVMHOST}
 fi
