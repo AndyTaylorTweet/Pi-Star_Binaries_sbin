@@ -1,10 +1,14 @@
 #!/bin/bash
-
 #
-# Basic script to enable/disable MMDVMHost Features
-# Written for DV-Scotland by Andy Taylor (MW0MWZ)
-#
-
+###############################################################################
+#                                                                             #
+#                      Pi-Star MMDVMHost Module Tool                          #
+#                                                                             #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).      #
+#                                                                             #
+#    Make it simple to turn on/off MMDVMHost modules from the CLI or Cron.    #
+#                                                                             #
+###############################################################################
 #
 # Specify some Variables
 #
