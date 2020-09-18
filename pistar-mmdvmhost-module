@@ -1,10 +1,12 @@
 #!/bin/bash
+# -*- mode: shell-script; -*-
 #
 ###############################################################################
 #                                                                             #
 #                      Pi-Star MMDVMHost Module Tool                          #
 #                                                                             #
 #     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).      #
+#     Version 1.1, Cleanups/enhancements by Daniel Caujolle-Bert (F1RMB).     #
 #                                                                             #
 #    Make it simple to turn on/off MMDVMHost modules from the CLI or Cron.    #
 #                                                                             #
@@ -18,78 +20,89 @@ SYSCTL_MMDVMHOST="mmdvmhost"
 # Check to make sure we are root, and bail out if we are not
 #
 if [ "$(id -u)" != "0" ]; then
-  echo -e "You need to be root to run this command...\n"
-  exit 1
+    echo -e "You need to be root to run this command...\n"
+    exit 1
 fi
 #
 # Output some usefull information when no variables are passed
 #
 if [ -z "$1" ]; then
-  THIS_SCRIPT=$(basename "$0")
-  echo "This script needs arguments, the first should be the"
-  echo "MMDVMHost module you want to turn on/off, and the second"
-  echo "should be what you want to do with it, either enable or"
-  echo "dissable."
-  echo ""
-  echo "Ex: ${THIS_SCRIPT} D-Star Enable     - enable D-Star mode and restart MMDVMHost"
-  echo "Ex: ${THIS_SCRIPT} D-Star Disable    - disable D-Star mode and restart MMDVMHost"
-  echo ""
-  echo "Valid module names are D-Star, DMR, YSF, P25 and NXDN"
-  echo ""
-  exit 0
+    THIS_SCRIPT=$(basename "$0")
+    echo "Usage:"
+    echo "      ${THIS_SCRIPT} <module> [state]"
+    echo ""
+    echo "This script needs arguments, the first should be the MMDVMHost module you want"
+    echo "to turn on/off, and the second should be what you want to do with it, either"
+    echo "enable or disable."
+    echo ""
+    echo " Module could be: D-Star, DMR, YSF, NXDN or P25"
+    echo " State could be: enable, disable, 1 or 0"
+    echo "   - If no state is specified, the actual one will be displayed."
+    echo ""
+    echo "Examples:"
+    echo " ${THIS_SCRIPT} D-Star enable     : enable D-Star mode and restart MMDVMHost"
+    echo " ${THIS_SCRIPT} DMR disable       : disable DMR mode and restart MMDVMHost"
+    echo ""
+    exit 0
 fi
 #
 # Check the first Argument
 #
-if [ "$1" ]; then
-  case ${1} in
-  ([Dd]-[Ss][Tt][Aa][Rr])
-    CUR_STATUS=$(sed -n "/\[D-Star\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
-    MODULE="D-Star"
-  ;;
-  ([Dd][Mm][Rr])
-    CUR_STATUS=$(sed -n "/\[DMR\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
-    MODULE="DMR"
-  ;;
-  ([Yy][Ss][Ff])
-    CUR_STATUS=$(sed -n "/\[System Fusion\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
-    MODULE="System Fusion"
-  ;;
-  ([Nn][Xx][Dd][Nn])
-    CUR_STATUS=$(sed -n "/\[NXDN\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
-    MODULE="NXDN"
-  ;;
-  ([Pp]25)
-    CUR_STATUS=$(sed -n "/\[P25\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
-    MODULE="P25"
-  ;;
-  *)
-    # Catch All
-    echo "Unknown MMDVMHost Module ${1}"
-    exit 1
-  ;;
-  esac
+if [ ! -z "$1" ]; then
+    case "${1^^}" in
+	"D-STAR")
+	    CUR_STATUS=$(sed -n "/\[D-Star\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
+	    MODULE="D-Star"
+	    ;;
+	"DMR")
+	    CUR_STATUS=$(sed -n "/\[DMR\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
+	    MODULE="DMR"
+	    ;;
+	"YSF")
+	    CUR_STATUS=$(sed -n "/\[System Fusion\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
+	    MODULE="System Fusion"
+	    ;;
+	"NXDN")
+	    CUR_STATUS=$(sed -n "/\[NXDN\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
+	    MODULE="NXDN"
+	    ;;
+	"P25")
+	    CUR_STATUS=$(sed -n "/\[P25\]/{n;p;}" ${MMDVMCONFIG} | awk -F '=' '{print $2}')
+	    MODULE="P25"
+	    ;;
+	*)
+	    # Catch All
+	    echo "Unknown MMDVMHost Module ${1}"
+	    exit 1
+	    ;;
+    esac
 fi
 #
 # Check the second Argument
 #
-if [ "$2" ]; then
-  case ${2} in
-  ([Ee][Nn][Aa][Bb][Ll][Ee])
-    NEW_STATUS="1"
-  ;;
-  ([Dd][Ii][Ss][Aa][Bb][Ll][Ee])
-    NEW_STATUS="0"
-  ;;
-  *)
-    # Catch All
-    echo "Unknown option ${2}"
-    exit 1
-  ;;
-  esac
+if [ ! -z "$2" ]; then
+    case "${2^^}" in
+	"ENABLE"|"1")
+	    NEW_STATUS="1"
+	    ;;
+	"DISABLE"|"0")
+	    NEW_STATUS="0"
+	    ;;
+	*)
+	    # Catch All
+	    echo "Unknown option ${2}"
+	    exit 1
+	    ;;
+    esac
 else
-  echo "Did you want ${MODULE} to be Enabled or Disabled?"
-  exit 1
+    echo -n " ** Module ${MODULE} status is "
+    if [ "${CUR_STATUS}" == "1" ]; then
+	echo "enabled."
+    else
+	echo "disabled"
+    fi
+    
+    exit 0
 fi
 #
 # Is this host configured for MMDVMHost
@@ -100,15 +113,17 @@ test -r /etc/dstar-radio.mmdvmhost || exit 1
 # Flight Checks passed... Do some logic
 #
 if [ "${CUR_STATUS}" == "${NEW_STATUS}" ]; then
-  # Nothing to do
-  echo "${MODULE} is already set to ${NEW_STATUS}, nothing to do."
-  exit 0
+    # Nothing to do
+    echo "${MODULE} is already set to ${NEW_STATUS}, nothing to do."
+    exit 0
 else
-  # Change required, so lets change it...
-  echo "Setting ${MODULE} to ${NEW_STATUS} and restarting MMDVMHost..."
-  mount -o remount,rw /
-  sed -i "/\[${MODULE}\]/{n;s/${CUR_STATUS}/${NEW_STATUS}/}" ${MMDVMCONFIG}
-  systemctl restart ${SYSCTL_MMDVMHOST}
-  sleep 2
-  mount -o remount,ro /
+    # Change required, so lets change it...
+    echo "Setting ${MODULE} to ${NEW_STATUS} and restarting MMDVMHost..."
+    mount -o remount,rw /
+    sed -i "/\[${MODULE}\]/{n;s/${CUR_STATUS}/${NEW_STATUS}/}" ${MMDVMCONFIG}
+    sync
+    mount -o remount,ro /
+    systemctl restart ${SYSCTL_MMDVMHOST}
 fi
+
+exit 0
