@@ -972,6 +972,9 @@ EOF
 			# Re-create the MOTD
 			/usr/local/sbin/pistar-motdgen
 
+			## Force system update (required in 3.4.x)
+			apt-get update && apt-get dist-upgrade -y
+			
 			Message="Upgraded from ${pistarCurVersion} to 3.4.22..."
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
@@ -1023,7 +1026,6 @@ EOF
 
 		    # Re-create the MOTD
 		    /usr/local/sbin/pistar-motdgen
-
 		    
 		    # Disable the Load/Save RFKill status - it complains on every boot.
 		    systemctl mask systemd-rfkill.service
