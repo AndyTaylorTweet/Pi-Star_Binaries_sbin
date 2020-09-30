@@ -564,7 +564,7 @@ function ShowModem() {
     fi
     
     # Get the Modem info from the Log
-    numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+    numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log 2>/dev/null | wc -l)
     if [[ ${numLogs} -gt 0 ]]; then
 	# Get the physically connected modem from the logs
 	modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
