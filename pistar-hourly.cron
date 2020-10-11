@@ -25,9 +25,10 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 #fi
 
 # Clean up systemd logs
-journalctl --rotate
-journalctl --vacuum-time=24h
-journalctl --vacuum-size=5M
+/usr/bin/find /var/run/log/journal -type f -iname "*~" -exec rm {} \;
+/bin/journalctl --rotate
+/bin/journalctl --vacuum-time=24h
+/bin/journalctl --vacuum-size=5M
 
 # Mount the disk RO
 mount -o remount,ro /
