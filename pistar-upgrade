@@ -201,6 +201,26 @@ function upgradeTo415RMB()
     systemctl enable aprsgateway.timer
 }
 
+function upgradeTo416RMB()
+{
+    # Update APRSGateway service Before rule
+    echo '[Unit]' > /lib/systemd/system/aprsgateway.service
+    echo 'Description=Pi-Star APRS Gateway Service' >> /lib/systemd/system/aprsgateway.service
+    echo 'After=syslog.target network.target' >> /lib/systemd/system/aprsgateway.service
+    echo 'Before=mmdvmhost.timer ircddbgateway.timer ysfgateway.timer nxdngateway.timer' >> /lib/systemd/system/aprsgateway.service
+    echo '' >> /lib/systemd/system/aprsgateway.service
+    echo '[Service]' >> /lib/systemd/system/aprsgateway.service
+    echo 'Type=forking' >> /lib/systemd/system/aprsgateway.service
+    echo 'ExecStart=/usr/local/sbin/aprsgateway.service start' >> /lib/systemd/system/aprsgateway.service
+    echo 'ExecStop=/usr/local/sbin/aprsgateway.service stop' >> /lib/systemd/system/aprsgateway.service
+    echo 'ExecReload=/usr/local/sbin/aprsgateway.service restart' >> /lib/systemd/system/aprsgateway.service
+    echo '' >> /lib/systemd/system/aprsgateway.service
+    echo '[Install]' >> /lib/systemd/system/aprsgateway.service
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.service
+    
+    systemctl daemon-reload
+}
+
 function main_function()
 {
 	# Get the current Modem
@@ -1237,6 +1257,20 @@ EOF
 		fi
 	;;
 	3.4.28-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.28-RMB/3.4.29-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    upgradeTo416RMB
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.29-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.29-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -2030,6 +2064,16 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.5-RMB..."
 	;;
 	4.1.5-RMB)
+		sed -i 's/4.1.5-RMB/4.1.6-RMB/g' /etc/pistar-release
+
+		upgradeTo416RMB
+		
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.6-RMB..."
+	;;
+	4.1.6-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
