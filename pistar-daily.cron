@@ -158,8 +158,4 @@ if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
 	systemctl restart nginx.service
 fi
 
-# temporary hack due to YSFGateway problem with UDP socket.
-shutdown -r now
-
-
 exit 0
