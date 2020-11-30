@@ -1094,6 +1094,12 @@ main_function() {
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
+		
+		# Randomise Daily Cron on boot
+		#sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/a \\n# Shuffle the time for the daily crontab jobs' /etc/rc.local
+		#sed -i '/^# Shuffle the time for the daily crontab jobs/a cronMins=$(shuf -i 0-59 -n 1)' /etc/rc.local
+		#sed -i '/^cronMins=*/a cronHours=$(shuf -i 3-4 -n1)' /etc/rc.local
+		#sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
 
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.4..."
