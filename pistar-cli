@@ -184,8 +184,9 @@ function DoBackup() {
 	   "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver" "/etc/dstar-radio.*"
 	   "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/aprsgateway" "/etc/default/gpsd"
 	   "/etc/tinyfilemanager-auth.php" "/etc/tinyfilemanager-config.php" "/usr/local/etc/RSSI.dat"
-	   "/var/www/dashboard/config/ircddblocal.php" "/var/www/dashboard/config/config.php" "/var/www/dashboard/config/language.php")
-
+	   "/var/www/dashboard/config/ircddblocal.php" "/var/www/dashboard/config/config.php" "/var/www/dashboard/config/language.php"
+	   "/root/*Hosts.txt")
+    
     # Copy files
     for f in "${files[@]}"; do
 	cp -f $f $backupDir > /dev/null 2>&1
@@ -357,6 +358,7 @@ function DoRestore() {
     mv -f /tmp/config_restore/ircddblocal.php /var/www/dashboard/config/ > /dev/null 2>&1
     mv -f /tmp/config_restore/config.php /var/www/dashboard/config/ > /dev/null 2>&1
     mv -f /tmp/config_restore/language.php /var/www/dashboard/config/ > /dev/null 2>&1
+    mv -f /tmp/config_restore/*Hosts.txt /root/ > /dev/null 2>&1
     mv -v -f /tmp/config_restore/wpa_supplicant.conf /etc/wpa_supplicant/ > /dev/null 2>&1
     mv -v -f /tmp/config_restore/* /etc/ > /dev/null 2>&1
     
@@ -368,6 +370,9 @@ function DoRestore() {
     ircRemotePassword=$(grep remotePassword /etc/ircddbgateway | awk -F'=' '{print $2}')
     sed -i "/password=/c\\password=$ircRemotePassword" /root/.Remote\ Control
 
+    ## Updating hostfiles
+    /usr/local/sbin/HostFilesUpdate.sh
+    
     _ro
 
     echo -e "\b\b\b: DONE."
