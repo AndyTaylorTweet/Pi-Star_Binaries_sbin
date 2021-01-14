@@ -110,8 +110,9 @@ fi
 ## Get DMRIds from two different sources, then merge them
 curl --fail -o /tmp/DMRIds_1.dat -s http://www.pistar.uk/downloads/DMRIds.dat
 curl --fail -o /tmp/DMRIds_2.dat -s http://registry.dstar.su/dmr/DMRIds2.php
-cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat | grep -v ^# | awk '$1 > 9999 { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
-rm -f /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat
+curl --fail -s "http://theshield.site/local_subscriber_ids.json" | python3 -c "exec('import sys, json\nresults = json.load(sys.stdin)[\'results\']\nfor entry in results:\n\ttry:\n\t\tprint(\'{}\\t{}\\t{}\'.format(entry[\'id\'], entry[\'callsign\'], entry[\'fname\'].encode(\'utf-8\', \'ignore\').decode()))\n\texcept:\n\t\tpass\n')" > /tmp/DMRIds_3.dat
+cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat | grep -v ^# | awk '$1 > 9999 { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
+rm -f /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat
 
 curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
 curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
