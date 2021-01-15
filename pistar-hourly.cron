@@ -30,5 +30,8 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 /bin/journalctl --vacuum-time=24h
 /bin/journalctl --vacuum-size=5M
 
+# Remove extraneous PHP session files (PiStar 3 and 4 support)
+(cd /var/lib/php*/sessions/ && rm -f \!\("sess_pistardashsess"\))
+
 # Mount the disk RO
 mount -o remount,ro /
