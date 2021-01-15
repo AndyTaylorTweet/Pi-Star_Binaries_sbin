@@ -1335,6 +1335,22 @@ EOF
 		fi
 	;;
 	3.4.30-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.30-RMB/3.4.31-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    echo -e "#!/bin/bash\n/usr/local/sbin/pistar-hourly.cron\n" > /etc/cron.hourly/pistar-hourly
+		    chown root:root /etc/cron.hourly/pistar-hourly
+		    chmod 0755 /etc/cron.hourly/pistar-hourly
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.31-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.31-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)

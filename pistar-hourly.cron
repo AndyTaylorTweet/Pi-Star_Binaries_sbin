@@ -26,9 +26,9 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
 # Clean up systemd logs
 /usr/bin/find /var/run/log/journal -type f -iname "*~" -exec rm {} \;
-/bin/journalctl --rotate
-/bin/journalctl --vacuum-time=24h
-/bin/journalctl --vacuum-size=5M
+/bin/journalctl --rotate > /dev/null 2<&1
+/bin/journalctl --vacuum-time=24h  > /dev/null 2<&1
+/bin/journalctl --vacuum-size=5M > /dev/null 2<&1
 
 # Remove extraneous PHP session files (PiStar 3 and 4 support)
 (cd /var/lib/php*/sessions/ && rm -f \!\("sess_pistardashsess"\))
