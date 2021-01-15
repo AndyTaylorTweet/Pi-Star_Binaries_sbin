@@ -371,7 +371,8 @@ function DoRestore() {
     sed -i "/password=/c\\password=$ircRemotePassword" /root/.Remote\ Control
 
     ## Updating hostfiles
-    /usr/local/sbin/HostFilesUpdate.sh
+    #echo -n " Updating hosts file (may take some time)..."
+    #/usr/local/sbin/HostFilesUpdate.sh
     
     _ro
 
