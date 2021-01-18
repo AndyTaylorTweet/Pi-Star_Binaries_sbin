@@ -352,7 +352,7 @@ function DoRestore() {
     _rw
     
     ## Moving files
-    rm -f /etc/dstar-radio.* > /dev/null 2>&1
+    rm -f /etc/dstar-radio.* /etc/bmapi.key /etc/dapnetapi.key > /dev/null 2>&1
     mv -f /tmp/config_restore/RSSI.dat /usr/local/etc/ > /dev/null 2>&1
     mv -f /tmp/config_restore/gpsd /etc/default/ > /dev/null 2>&1
     mv -f /tmp/config_restore/ircddblocal.php /var/www/dashboard/config/ > /dev/null 2>&1
