@@ -271,6 +271,12 @@ function upgradeTo417RMB()
     sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
 }
 
+function upgradeTo3431RMB()
+{
+    # Fix fstab phpsession size
+    sed -i "/\/var\/lib\/php5\/sessions/c\\tmpfs\t\t\t\/var\/lib\/php5\/sessions\ttmpfs\tnodev,noatime,nosuid,mode=0777,size=128k\t0\t0" /etc/fstab
+}
+
 function upgradeTo418RMB()
 {
     # Fix fstab phpsession size
@@ -1363,7 +1369,7 @@ EOF
 		    # Re-create the MOTD
 		    /usr/local/sbin/pistar-motdgen
 
-		    upgradeTo418RMB
+		    upgradeTo3431RMB
 		    
 		    Message="Upgraded from ${pistarCurVersion} to 3.4.32-RMB..."
 		else
