@@ -271,6 +271,12 @@ function upgradeTo417RMB()
     sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
 }
 
+function upgradeTo418RMB()
+{
+    # Fix fstab phpsession size
+    sed -i "/\/var\/lib\/php\/sessions/c\\tmpfs\t\t\t\/var\/lib\/php\/sessions\ttmpfs\tnodev,noatime,nosuid,mode=0777,size=128k\t0\t0" /etc/fstab
+}
+
 function main_function()
 {
 	# Get the current Modem
@@ -1351,6 +1357,20 @@ EOF
 		fi
 	;;
 	3.4.31-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.31-RMB/3.4.32-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    upgradeTo418RMB
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.32-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.32-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -2122,6 +2142,16 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.7-RMB..."
 	;;
 	4.1.7-RMB)
+		sed -i 's/4.1.7-RMB/4.1.8-RMB/g' /etc/pistar-release
+
+		upgradeTo418RMB
+		
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.8-RMB..."
+	;;
+	4.1.8-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
