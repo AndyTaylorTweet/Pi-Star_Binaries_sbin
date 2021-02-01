@@ -1079,6 +1079,31 @@ main_function() {
 		#echo '' >> /lib/systemd/system/aprsgateway.timer
 		#echo '[Install]' >> /lib/systemd/system/aprsgateway.timer
 		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.timer
+		
+		# APRS Gateway Config
+		#echo '[General]' > /etc/aprsgateway
+		#echo 'Callsign=MW0MWZ' >> /etc/aprsgateway
+		#echo 'Debug=0' >> /etc/aprsgateway
+		#echo 'Daemon=1' >> /etc/aprsgateway
+		#echo '' >> /etc/aprsgateway
+		#echo '[APRS-IS]' >> /etc/aprsgateway
+		#echo 'Server=rotate.aprs2.net' >> /etc/aprsgateway
+		#echo 'Port=14580' >> /etc/aprsgateway
+		#echo 'Password=22946' >> /etc/aprsgateway
+		#echo '' >> /etc/aprsgateway
+		#echo '[Log]' >> /etc/aprsgateway
+		#echo 'DisplayLevel=0' >> /etc/aprsgateway
+		#echo 'FileLevel=1' >> /etc/aprsgateway
+		#echo 'FilePath=/var/log/pi-star' >> /etc/aprsgateway
+		#echo 'FileRoot=APRSGateway' >> /etc/aprsgateway
+		#echo 'FileRotate=1' >> /etc/aprsgateway
+		#echo '' >> /etc/aprsgateway
+		#echo '[Network]' >> /etc/aprsgateway
+		#echo 'Address=127.0.0.1' >> /etc/aprsgateway
+		#echo 'Port=8673' >> /etc/aprsgateway
+		#echo '' >> /etc/aprsgateway
+		#echo '[Enabled]' >> /etc/aprsgateway
+		#echo 'Enabled=0' >> /etc/aprsgateway
 
 		# Update systemd and enable new services
 		#systemctl daemon-reload
