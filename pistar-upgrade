@@ -1082,14 +1082,14 @@ main_function() {
 		
 		# APRS Gateway Config
 		#echo '[General]' > /etc/aprsgateway
-		#echo 'Callsign=MW0MWZ' >> /etc/aprsgateway
+		#echo 'Callsign=M1ABC' >> /etc/aprsgateway
 		#echo 'Debug=0' >> /etc/aprsgateway
 		#echo 'Daemon=1' >> /etc/aprsgateway
 		#echo '' >> /etc/aprsgateway
 		#echo '[APRS-IS]' >> /etc/aprsgateway
 		#echo 'Server=rotate.aprs2.net' >> /etc/aprsgateway
 		#echo 'Port=14580' >> /etc/aprsgateway
-		#echo 'Password=22946' >> /etc/aprsgateway
+		#echo 'Password=9999' >> /etc/aprsgateway
 		#echo '' >> /etc/aprsgateway
 		#echo '[Log]' >> /etc/aprsgateway
 		#echo 'DisplayLevel=0' >> /etc/aprsgateway
