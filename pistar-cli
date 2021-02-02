@@ -180,9 +180,9 @@ function DoBackup() {
 	fi
     fi
     
-    files=("/etc/wpa_supplicant/wpa_supplicant.conf" "/etc/pistar-css.ini" "/etc/ircddbgateway" "/etc/mmdvmhost" "/etc/dstarrepeater" "/etc/dapnetgateway"
-	   "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver" "/etc/dstar-radio.*"
-	   "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/aprsgateway" "/etc/default/gpsd"
+    files=("/etc/wpa_supplicant/wpa_supplicant.conf" "/etc/hostapd/hostapd.conf" "/etc/pistar-css.ini" "/etc/ircddbgateway" "/etc/mmdvmhost" "/etc/dstarrepeater"
+	   "/etc/dapnetgateway" "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver"
+	   "/etc/dstar-radio.*" "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/aprsgateway" "/etc/default/gpsd"
 	   "/etc/tinyfilemanager-auth.php" "/etc/tinyfilemanager-config.php" "/usr/local/etc/RSSI.dat"
 	   "/var/www/dashboard/config/ircddblocal.php" "/var/www/dashboard/config/config.php" "/var/www/dashboard/config/language.php"
 	   "/root/*Hosts.txt")
@@ -359,6 +359,7 @@ function DoRestore() {
     mv -f /tmp/config_restore/config.php /var/www/dashboard/config/ > /dev/null 2>&1
     mv -f /tmp/config_restore/language.php /var/www/dashboard/config/ > /dev/null 2>&1
     mv -f /tmp/config_restore/*Hosts.txt /root/ > /dev/null 2>&1
+    mv -v -f /tmp/config_restore/hostapd.conf /etc/hostapd/ > /dev/null 2>&1
     mv -v -f /tmp/config_restore/wpa_supplicant.conf /etc/wpa_supplicant/ > /dev/null 2>&1
     mv -v -f /tmp/config_restore/* /etc/ > /dev/null 2>&1
     
@@ -371,8 +372,8 @@ function DoRestore() {
     sed -i "/password=/c\\password=$ircRemotePassword" /root/.Remote\ Control
 
     ## Updating hostfiles
-    #echo -n " Updating hosts file (may take some time)..."
-    #/usr/local/sbin/HostFilesUpdate.sh
+    echo -n " Updating hosts file (may take some time)..."
+    /usr/local/sbin/HostFilesUpdate.sh
     
     _ro
 
