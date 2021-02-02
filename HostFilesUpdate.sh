@@ -34,6 +34,9 @@ TGLISTP25=/usr/local/etc/TGList_P25.txt
 TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
 TGLISTYSF=/usr/local/etc/TGList_YSF.txt
 
+ICONV_TO_ASCII="iconv -f utf-8 -t ascii//TRANSLIT"
+ICONV_PRUNE="iconv -f utf-8 -t ascii//IGNORE"
+
 # How many backups
 FILEBACKUP=1
 
@@ -114,16 +117,17 @@ curl --fail -s "http://theshield.site/local_subscriber_ids.json" | python3 -c "e
 cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat | grep -v ^# | awk '$1 > 9999 { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
 rm -f /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat
 
-curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
-curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
+# Some downloaded files are badly encoded, fix this on the fly.
+curl --fail -s http://www.pistar.uk/downloads/P25_Hosts.txt | ${ICONV_TO_ASCII} > ${P25HOSTS}
+curl --fail -s http://www.pistar.uk/downloads/YSF_Hosts.txt | ${ICONV_TO_ASCII} > ${YSFHOSTS}
 curl --fail -o ${FCSHOSTS} -s http://www.pistar.uk/downloads/FCS_Hosts.txt
 #curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
 curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
 curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv
-curl --fail -o ${NXDNHOSTS} -s http://www.pistar.uk/downloads/NXDN_Hosts.txt
+curl --fail -s http://www.pistar.uk/downloads/NXDN_Hosts.txt | ${ICONV_TO_ASCII} > ${NXDNHOSTS}
 curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt
-curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt
-curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt
+curl --fail -s http://www.pistar.uk/downloads/TGList_P25.txt | ${ICONV_PRUNE} > ${TGLISTP25}
+curl --fail -s http://www.pistar.uk/downloads/TGList_NXDN.txt | ${ICONV_PRUNE} > ${TGLISTNXDN}
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
