@@ -2117,6 +2117,20 @@ EOF
 		
 		Message="Upgraded from ${pistarCurVersion} to 4.1.4-RMB..."
 	;;
+	4.1.4)
+		sed -i 's/4.1.4$/4.1.3-RMB/g' /etc/pistar-release
+	    
+		upgradeTo410RMB
+		upgradeTo411RMB
+		upgradeTo412RMB
+		upgradeTo413RMB
+	    
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.3-RMB..."
+	;;
 	4.1.4-RMB)
 		sed -i 's/4.1.4-RMB/4.1.5-RMB/g' /etc/pistar-release
 
