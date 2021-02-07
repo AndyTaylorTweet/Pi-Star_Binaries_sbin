@@ -283,6 +283,16 @@ function upgradeTo418RMB()
     sed -i "/\/var\/lib\/php\/sessions/c\\tmpfs\t\t\t\/var\/lib\/php\/sessions\ttmpfs\tnodev,noatime,nosuid,mode=0777,size=128k\t0\t0" /etc/fstab
 }
 
+function upgradeTo419RMB()
+{
+    ## Remove damn Microsoft repo
+    if [ -e /etc/apt/sources.list.d/vscode.list ]; then
+	rm -f /etc/apt/sources.list.d/vscode.list
+	apt-get update
+    fi
+}
+
+
 function main_function()
 {
 	# Get the current Modem
@@ -1377,6 +1387,20 @@ EOF
 		fi
 	;;
 	3.4.32-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.32-RMB/3.4.33-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    upgradeTo419RMB
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.33-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.33-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -2172,6 +2196,16 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.8-RMB..."
 	;;
 	4.1.8-RMB)
+		sed -i 's/4.1.8-RMB/4.1.9-RMB/g' /etc/pistar-release
+
+		upgradeTo419RMB
+		
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.9-RMB..."
+	;;
+	4.1.9-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
