@@ -114,7 +114,7 @@ fi
 curl --fail -o /tmp/DMRIds_1.dat -s http://www.pistar.uk/downloads/DMRIds.dat
 curl --fail -o /tmp/DMRIds_2.dat -s http://registry.dstar.su/dmr/DMRIds2.php
 curl --fail -s "http://theshield.site/local_subscriber_ids.json" | python3 -c "exec('import sys, json\nresults = json.load(sys.stdin)[\'results\']\nfor entry in results:\n\ttry:\n\t\tprint(\'{}\\t{}\\t{}\'.format(entry[\'id\'], entry[\'callsign\'], entry[\'fname\'].encode(\'utf-8\', \'ignore\').decode()))\n\texcept:\n\t\tpass\n')" > /tmp/DMRIds_3.dat
-cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat | grep -v ^# | awk '$1 > 9999 { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
+cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat | grep -v ^# | awk '($1 > 9999) && ($1 < 10000000) { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
 rm -f /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat
 
 # Some downloaded files are badly encoded, fix this on the fly.
