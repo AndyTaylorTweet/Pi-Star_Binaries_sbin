@@ -342,6 +342,38 @@ function upgradeTo4110RMB()
     systemctl restart mmdvmhost.service
 }
 
+function upgradeTo4111RMB()
+{
+    systemctl stop mmdvmhost.service
+    systemctl stop nextiondriver.service
+    /usr/bin/killall -9 NextionDriver
+    
+    # Setup systemd unit files for Nextion Driver
+    echo '[Unit]' > /lib/systemd/system/nextiondriver.service
+    echo 'Description=NextionDriver service' >> /lib/systemd/system/nextiondriver.service
+    echo 'DefaultDependencies=no' >> /lib/systemd/system/nextiondriver.service
+    echo 'After=local-fs.target wifi-country.service network-online.target' >> /lib/systemd/system/nextiondriver.service
+    echo 'Before=timers.target' >> /lib/systemd/system/nextiondriver.service
+    echo '' >> /lib/systemd/system/nextiondriver.service
+    echo '[Service]' >> /lib/systemd/system/nextiondriver.service
+    echo 'User=root' >> /lib/systemd/system/nextiondriver.service
+    echo 'Type=forking' >> /lib/systemd/system/nextiondriver.service
+    echo 'WorkingDirectory=/usr/local/etc/' >> /lib/systemd/system/nextiondriver.service
+    echo 'ExecStart=/usr/local/sbin/nextiondriver.service start' >> /lib/systemd/system/nextiondriver.service
+    echo 'ExecStop=/usr/local/sbin/nextiondriver.service stop' >> /lib/systemd/system/nextiondriver.service
+    echo 'ExecReload=/usr/local/sbin/nextiondriver.service restart' >> /lib/systemd/system/nextiondriver.service
+    echo '' >> /lib/systemd/system/nextiondriver.service
+    echo '[Install]' >> /lib/systemd/system/nextiondriver.service
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nextiondriver.service
+    echo 'WantedBy=network-online.target' >> /lib/systemd/system/nextiondriver.service
+    echo 'RequiredBy=mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
+
+    # Enable the service
+    systemctl daemon-reload
+    systemctl enable nextiondriver.service
+    systemctl restart nextiondriver.service
+    systemctl restart mmdvmhost.service
+}
 
 function main_function()
 {
@@ -1465,6 +1497,20 @@ EOF
 		fi
 	;;
 	3.4.34-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.34-RMB/3.4.35-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    upgradeTo4111RMB
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.35-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.35-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -2280,6 +2326,16 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.10-RMB..."
 	;;
 	4.1.10-RMB)
+		sed -i 's/4.1.10-RMB/4.1.11-RMB/g' /etc/pistar-release
+
+		upgradeTo4111RMB
+		
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.11-RMB..."
+	;;
+	4.1.11-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
