@@ -330,7 +330,7 @@ function upgradeTo4110RMB()
     echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mmdvmhost.service
 
     curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
-    bzcat ./stripped.csv.bz2 > /usr/local/etc/stripped.csv    
+    bzcat /usr/local/sbin/stripped.csv.bz2 > /usr/local/etc/stripped.csv    
     systemctl unmask nextiondriver.service
 		
     # Enable the service
