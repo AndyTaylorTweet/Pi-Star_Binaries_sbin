@@ -132,6 +132,8 @@ curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 
 # NextionDriver stuff
 curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
+curl --fail -o /usr/local/etc/stripped.csv -s https://database.radioid.net/static/user.csv
+
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
