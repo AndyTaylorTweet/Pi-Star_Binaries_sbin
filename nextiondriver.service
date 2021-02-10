@@ -38,6 +38,13 @@ if [ ! -d $LOGDIR ]; then
   chmod 775 $LOGDIR
 fi
 
+
+## Ensure NextionDriver is enabled
+if [ `sed -nr "/^\[NextionDriver\]/,/^\[/{ :l /^\s*[^#].*/ p; n; /^\[/ q; b l; }" /etc/mmdvmhost | grep "Enable" | cut -d= -f 2` != "1" ]; then
+	exit 1;
+fi
+
+
 case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
@@ -54,7 +61,10 @@ case "$1" in
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
-			if [ `${PGREP} ${DAEMON}` ]; then killall ${DAEMON}; fi
+			$SLEEP 3s
+			if [ `${PGREP} ${DAEMON}` ]; then
+			    killall -9 ${DAEMON};
+			fi
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
@@ -66,7 +76,7 @@ case "$1" in
 		if [ `$PGREP $DAEMON` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
-			$SLEEP 3
+			$SLEEP 3s
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;

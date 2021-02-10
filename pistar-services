@@ -7,10 +7,10 @@ fi
 
 # Display services active status
 function status_services() {
-    services=("pistar-watchdog.timer" "pistar-watchdog.service" "mmdvmhost.service" "dstarrepeater.service" "ircddbgateway.service" "dapnetgateway.service"
-	      "p25gateway.service" "p25parrot.service" "nxdngateway.service" "nxdnparrot.service" "ysfgateway.service"
-	      "ysfparrot.service" "ysf2dmr.service" "ysf2p25.service" "ysf2nxdn.service" "dmr2ysf.service" "dmr2nxdn.service"
-              "dmrgateway.service" "aprsgateway.service" "gpsd.service" "timeserver.service" "cron.service")
+    services=("pistar-watchdog.timer" "pistar-watchdog.service" "nextiondriver.service" "mmdvmhost.service" "dstarrepeater.service"
+	      "ircddbgateway.service" "dapnetgateway.service" "p25gateway.service" "p25parrot.service" "nxdngateway.service"
+	      "nxdnparrot.service" "ysfgateway.service" "ysfparrot.service" "ysf2dmr.service" "ysf2p25.service" "ysf2nxdn.service"
+	      "dmr2ysf.service" "dmr2nxdn.service" "dmrgateway.service" "aprsgateway.service" "gpsd.service" "timeserver.service" "cron.service")
     
     for s in "${services[@]}"; do
 	status=$(systemctl is-active "$s" | tr [a-z] [A-Z])
@@ -49,6 +49,7 @@ function stop_services()
     systemctl stop aprsgateway.service > /dev/null 2>&1
     systemctl stop gpsd.service > /dev/null 2>&1
     systemctl stop timeserver.service > /dev/null 2>&1
+    systemctl stop nextiondriver.service > /dev/null 2>&1
     
     if [ "$1" == "FULLSTOP" ]; then
 	# Prevent cron to restart services
@@ -68,6 +69,7 @@ function start_services()
     
     echo -ne "Starting Pi-Star services..."
     
+    systemctl start nextiondriver.service > /dev/null 2>&1
     systemctl start gpsd.service > /dev/null 2>&1
     systemctl start aprsgateway.service > /dev/null 2>&1
     systemctl start ircddbgateway.service > /dev/null 2>&1

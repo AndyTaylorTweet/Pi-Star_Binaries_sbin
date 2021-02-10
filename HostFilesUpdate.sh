@@ -130,6 +130,9 @@ curl --fail -s http://www.pistar.uk/downloads/TGList_P25.txt | ${ICONV_PRUNE} > 
 curl --fail -s http://www.pistar.uk/downloads/TGList_NXDN.txt | ${ICONV_PRUNE} > ${TGLISTNXDN}
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 
+# NextionDriver stuff
+curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
+
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}

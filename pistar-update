@@ -73,6 +73,7 @@ service_handle() {
 	# What do we want do to?
 	doWhat=${1}
 
+	systemctl ${doWhat} nextiondriver.service > /dev/null 2>&1
 	systemctl ${doWhat} pistar-watchdog.service > /dev/null 2>&1
 	systemctl ${doWhat} pistar-remote.service > /dev/null 2>&1
 	systemctl ${doWhat} gpsd.service > /dev/null 2>&1

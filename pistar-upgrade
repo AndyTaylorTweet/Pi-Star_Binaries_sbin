@@ -292,6 +292,56 @@ function upgradeTo419RMB()
     fi
 }
 
+function upgradeTo4110RMB()
+{
+    systemctl stop mmdvmhost.service
+    
+    # Setup systemd unit files for Nextion Driver
+    echo '[Unit]' > /lib/systemd/system/nextiondriver.service
+    echo 'Description=NextionDriver service' >> /lib/systemd/system/nextiondriver.service
+    echo 'DefaultDependencies=no' >> /lib/systemd/system/nextiondriver.service
+    echo 'After=local-fs.target wifi-country.service network-online.target' >> /lib/systemd/system/nextiondriver.service
+    echo 'Before=timers.target' >> /lib/systemd/system/nextiondriver.service
+    echo '' >> /lib/systemd/system/nextiondriver.service
+    echo '[Service]' >> /lib/systemd/system/nextiondriver.service
+    echo 'User=root' >> /lib/systemd/system/nextiondriver.service
+    echo 'Type=forking' >> /lib/systemd/system/nextiondriver.service
+    echo 'WorkingDirectory=/usr/local/etc/' >> /lib/systemd/system/nextiondriver.service
+    echo 'ExecStart=/usr/local/bin/NextionDriver -c /etc/mmdvmhost -i' >> /lib/systemd/system/nextiondriver.service
+    echo 'ExecStop=/usr/bin/killall NextionDriver' >> /lib/systemd/system/nextiondriver.service
+    echo '' >> /lib/systemd/system/nextiondriver.service
+    echo '[Install]' >> /lib/systemd/system/nextiondriver.service
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nextiondriver.service
+    echo 'WantedBy=network-online.target' >> /lib/systemd/system/nextiondriver.service
+    echo 'RequiredBy=mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
+
+    echo '[Unit]' > /lib/systemd/system/mmdvmhost.service
+    echo 'Description=MMDVMHost Radio Service' >> /lib/systemd/system/mmdvmhost.service
+    echo 'After=syslog.target network.target' >> /lib/systemd/system/mmdvmhost.service
+    echo 'Requires=nextiondriver.service' >> /lib/systemd/system/mmdvmhost.service
+    echo '' >> /lib/systemd/system/mmdvmhost.service
+    echo '[Service]' >> /lib/systemd/system/mmdvmhost.service
+    echo 'Type=forking' >> /lib/systemd/system/mmdvmhost.service
+    echo 'ExecStart=/usr/local/sbin/mmdvmhost.service start' >> /lib/systemd/system/mmdvmhost.service
+    echo 'ExecStop=/usr/local/sbin/mmdvmhost.service stop' >> /lib/systemd/system/mmdvmhost.service
+    echo 'ExecReload=/usr/local/sbin/mmdvmhost.service restart' >> /lib/systemd/system/mmdvmhost.service
+    echo '' >> /lib/systemd/system/mmdvmhost.service
+    echo '[Install]' >> /lib/systemd/system/mmdvmhost.service
+    echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mmdvmhost.service
+
+    curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
+    bzcat ./stripped.csv.bz2 > /usr/local/etc/stripped.csv    
+    systemctl unmask nextiondriver.service
+		
+    # Enable the service
+    systemctl daemon-reload
+    systemctl stop nextiondriver.service
+    /usr/bin/killall -9 NextionDriver
+    systemctl enable nextiondriver.service
+    systemctl restart nextiondriver.service
+    systemctl restart mmdvmhost.service
+}
+
 
 function main_function()
 {
@@ -1401,6 +1451,20 @@ EOF
 		fi
 	;;
 	3.4.33-RMB)
+		if [ ! -z "${pistarHardware}" ]; then
+		    sed -i 's/3.4.33-RMB/3.4.34-RMB/g' /etc/pistar-release
+
+		    # Re-create the MOTD
+		    /usr/local/sbin/pistar-motdgen
+
+		    upgradeTo4110RMB
+		    
+		    Message="Upgraded from ${pistarCurVersion} to 3.4.34-RMB..."
+		else
+		    Message="In-place upgrades from 3.4.4 are not supported..."
+		fi
+	;;
+	3.4.34-RMB)
 		Message="You are already running the latest version..."
 	;;
 	4.0.0-Beta)
@@ -2206,6 +2270,16 @@ EOF
 		Message="Upgraded from ${pistarCurVersion} to 4.1.9-RMB..."
 	;;
 	4.1.9-RMB)
+		sed -i 's/4.1.9-RMB/4.1.10-RMB/g' /etc/pistar-release
+
+		upgradeTo4110RMB
+		
+ 		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+		
+		Message="Upgraded from ${pistarCurVersion} to 4.1.10-RMB..."
+	;;
+	4.1.10-RMB)
 		Message="You are already running the latest version..."
 	;;
 	*)
