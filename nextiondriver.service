@@ -40,7 +40,7 @@ fi
 
 
 ## Ensure NextionDriver is enabled
-if [ `sed -nr "/^\[NextionDriver\]/,/^\[/{ :l /^\s*[^#].*/ p; n; /^\[/ q; b l; }" /etc/mmdvmhost | grep "Enable" | cut -d= -f 2` != "1" ]; then
+if [ "`sed -nr "/^\[NextionDriver\]/,/^\[/{ :l /^\s*[^#].*/ p; n; /^\[/ q; b l; }" /etc/mmdvmhost | grep "Enable" | cut -d= -f 2`" != "1" ]; then
 	exit 1;
 fi
 
