@@ -37,14 +37,14 @@ then
     modemSelected=${modemSelected#*=}
 
     # Get the user friendly version of the selected Modem.
-    modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
+    modemSelectedHuman=$(grep ${modemSelected} /var/www/dashboard/admin/configure.php)
     modemSelectedHuman=${modemSelectedHuman#*\">}
     modemSelectedHuman=${modemSelectedHuman::-9}
     echo "Selected Modem:     ${modemSelectedHuman}"
   fi
 
   # Get the physically connected modem from the logs
-  numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log 2>/dev/null | wc -l)
+  numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
   if [[ ${numLogs} -gt 0 ]]; then
     modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
     echo "Connected Hardware: ${modemLog}"
@@ -54,10 +54,7 @@ fi
 #
 # OK we know what the modem is, let get the firmware string from the log...
 #
-numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log 2>/dev/null | wc -l)
-if [[ ${numLogs} -gt 0 ]]; then
-    tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
-fi
+tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
 read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
 echo ""
 #
@@ -71,7 +68,8 @@ then
     rm -rf /tmp/nanohsfirmware 2> /dev/null
     mkdir /tmp/nanohsfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanohs.sh' | wget --base=http://github.com/ -i - -O /tmp/nanohsfirmware/flash.sh
+    #curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanohs.sh' | wget --base=http://github.com/ -i - -O /tmp/nanohsfirmware/flash.sh
+    curl -s -L https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | egrep -o '/VR2VYE/MMDVM_HS_firmware/releases/download/v[0-9.]*/install_fw_nanohs.sh' | wget --base=http://github.com/ -i - -O /tmp/nanohsfirmware/flash.sh
     chmod +x /tmp/nanohsfirmware/flash.sh
     cd  /tmp/nanohsfirmware
     ./flash.sh
