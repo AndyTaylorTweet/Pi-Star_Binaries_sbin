@@ -133,8 +133,9 @@ curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 # NextionDriver stuff
 curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
 if [ ! -e /root/NO_STRIPPED_FILE ]; then
-	curl --fail -o /usr/local/etc/stripped.csv -s https://database.radioid.net/static/user.csv
-	cat /tmp/stripped.csv >> /usr/local/etc/stripped.csv
+    curl --fail -o /tmp/stripped_upstream.csv -s https://database.radioid.net/static/user.csv
+    cat /tmp/stripped_upstream.csv /tmp/stripped.csv | sort -un -k1n -o /usr/local/etc/stripped.csv
+    rm -f /tmp/stripped_upstream.csv
 fi
 rm -f /tmp/stripped.csv
 
