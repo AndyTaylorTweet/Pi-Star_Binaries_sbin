@@ -24,7 +24,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-VERSION_STRING="0.0.3"
+VERSION_STRING="0.0.9"
 BACKUP_ROOT_DIR="/var/backups/pistar"
 BACKUP_CATALOG="$BACKUP_ROOT_DIR/catalog"
 
@@ -181,7 +181,8 @@ function DoBackup() {
     fi
     
     files=("/etc/wpa_supplicant/wpa_supplicant.conf" "/etc/hostapd/hostapd.conf" "/etc/pistar-css.ini" "/etc/ircddbgateway" "/etc/mmdvmhost" "/etc/dstarrepeater"
-	   "/etc/dapnetgateway" "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver"
+	   "/etc/dapnetgateway" "/etc/p25gateway" "/etc/ysfgateway" "/etc/nxdngateway" "/etc/ysf2dmr" "/etc/ysf2nxdn" "/etc/ysf2p25" 
+	   "/etc/dmr2nxdn" "/etc/dmr2ysf" "/etc/nxdn2dmr" "/etc/dmrgateway" "/etc/starnetserver" "/etc/timeserver"
 	   "/etc/dstar-radio.*" "/etc/pistar-remote" "/etc/hosts" "/etc/hostname" "/etc/bmapi.key" "/etc/dapnetapi.key" "/etc/aprsgateway" "/etc/default/gpsd"
 	   "/etc/tinyfilemanager-auth.php" "/etc/tinyfilemanager-config.php" "/usr/local/etc/RSSI.dat"
 	   "/var/www/dashboard/config/ircddblocal.php" "/var/www/dashboard/config/config.php" "/var/www/dashboard/config/language.php"
@@ -788,6 +789,20 @@ function SanityCheck() {
     fi
 }
 
+function Usage() {
+	echo "Usage: `basename $0` [OPTION]"
+	echo ""
+	echo "Without any option specified, interactive mode is started."
+	echo ""
+	echo "OPTION could be:"
+	echo "  backup,  --backup <name>                  : Create a backup named <name>."
+	echo "  restore, --restore <name|number>          : Restore backup named <name> or using its index number (see --list)."
+	echo "  list,    --list                           : List available backups."
+	echo "  version, --version                        : Display current version then exit."
+	echo "  help,    --help                           : Display help text then exit."
+	echo ""
+}
+
 ## Main
 if [[ $# -eq 0 ]]; then
     trap "CtrlC" INT
@@ -800,14 +815,20 @@ SanityCheck
 if [[ $# -gt 0 ]]; then
     
     case "$1" in
-	"backup")
+	"backup"|"--backup")
 	    BackupCurrentConfig "$2"
 	    ;;
-	"restore")
+	"restore"|"--restore")
 	    RestoreBackup "$2"
 	    ;;
-	"list")
+	"list"|"--list")
 	    ListAvailableBackups "count"
+	    ;;
+	"version"|"--version")
+	    echo "`basename $0` v$VERSION_STRING"
+	    ;;
+	"help"|"--help")
+	    Usage
 	    ;;
 	*)
 	    echo "[ERR]"
