@@ -264,11 +264,14 @@ function upgradeTo416RMB()
 
 function upgradeTo417RMB()
 {
-    # Randomise Daily Cron on boot
-    sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/a \\n# Shuffle the time for the daily crontab jobs' /etc/rc.local
-    sed -i '/^# Shuffle the time for the daily crontab jobs/a cronMins=$(shuf -i 0-59 -n 1)' /etc/rc.local
-    sed -i '/^cronMins=*/a cronHours=$(shuf -i 3-4 -n1)' /etc/rc.local
-    sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
+    $(grep "# Shuffle the time" /etc/rc.local > /dev/null 2<&1)
+    if [ $? -ne 0 ]; then
+	# Randomise Daily Cron on boot
+	sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/a \\n# Shuffle the time for the daily crontab jobs' /etc/rc.local
+	sed -i '/^# Shuffle the time for the daily crontab jobs/a cronMins=$(shuf -i 0-59 -n 1)' /etc/rc.local
+	sed -i '/^cronMins=*/a cronHours=$(shuf -i 3-4 -n1)' /etc/rc.local
+	sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
+    fi
 }
 
 function upgradeTo3431RMB()
