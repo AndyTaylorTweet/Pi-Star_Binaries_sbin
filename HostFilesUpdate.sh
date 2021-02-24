@@ -113,14 +113,16 @@ fi
 ## Get DMRIds from two different sources, then merge them
 curl --fail -o /tmp/DMRIds_1.dat -s http://www.pistar.uk/downloads/DMRIds.dat
 curl --fail -o /tmp/DMRIds_2.dat -s http://registry.dstar.su/dmr/DMRIds2.php
-curl --fail -s "http://theshield.site/local_subscriber_ids.json" | tee >(python3 -c "exec('import sys, json\nresults = json.load(sys.stdin)[\'results\']\nfor entry in results:\n\ttry:\n\t\tprint(\'{}\\t{}\\t{}\'.format(entry[\'id\'], entry[\'callsign\'], entry[\'fname\'].encode(\'utf-8\', \'ignore\').decode()))\n\texcept:\n\t\tpass\n')" > /tmp/DMRIds_3.dat) >(python3 -c "exec('import sys, json\nresults = json.load(sys.stdin)[\'results\']\nfor entry in results:\n\ttry:\n\t\tplaceHolder=\"\"\n\t\tfname=\"\"\n\t\tcity=\"\"\n\\t\tstate=\"\"\n\t\tcountry=\"\"\n\t\ttry:\n\t\t\tfname=entry[\'fname\'].encode(\'utf-8\', \'ignore\').decode()\n\t\t\tcity=entry[\'city\'].encode(\'utf-8\', \'ignore\').decode()\n\t\t\tstate=entry[\'state\'].encode(\'utf-8\', \'ignore\').decode()\n\t\t\tcountry=entry[\'country\'].encode(\'utf-8\', \'ignore\').decode()\n\t\texcept:\n\t\t\tpass\n\t\tprint(\'{},{},{},{},{},{},{},{}\'.format(entry[\'id\'], entry[\'callsign\'], fname, placeHolder, city, state, country, placeHolder))\n\texcept:\n\t\tpass')" > /tmp/stripped.csv) > /dev/null 2<&1
+if [ -f "/etc/theshield.enabled" ]; then
+    curl --fail -s "http://theshield.site/local_subscriber_ids.json" | tee >(python3 -c "exec('import sys, json\nresults = json.load(sys.stdin)[\'results\']\nfor entry in results:\n\ttry:\n\t\tprint(\'{}\\t{}\\t{}\'.format(entry[\'id\'], entry[\'callsign\'], entry[\'fname\'].encode(\'utf-8\', \'ignore\').decode()))\n\texcept:\n\t\tpass\n')" > /tmp/DMRIds_3.dat) >(python3 -c "exec('import sys, json\nresults = json.load(sys.stdin)[\'results\']\nfor entry in results:\n\ttry:\n\t\tplaceHolder=\"\"\n\t\tfname=\"\"\n\t\tcity=\"\"\n\\t\tstate=\"\"\n\t\tcountry=\"\"\n\t\ttry:\n\t\t\tfname=entry[\'fname\'].encode(\'utf-8\', \'ignore\').decode()\n\t\t\tcity=entry[\'city\'].encode(\'utf-8\', \'ignore\').decode()\n\t\t\tstate=entry[\'state\'].encode(\'utf-8\', \'ignore\').decode()\n\t\t\tcountry=entry[\'country\'].encode(\'utf-8\', \'ignore\').decode()\n\t\texcept:\n\t\t\tpass\n\t\tprint(\'{},{},{},{},{},{},{},{}\'.format(entry[\'id\'], entry[\'callsign\'], fname, placeHolder, city, state, country, placeHolder))\n\texcept:\n\t\tpass')" > /tmp/stripped.csv) > /dev/null 2<&1
 
-## Wait for the processing to finish
-while [ ! -z "$(ps ax | grep "python3 -c exec('import sys, json" | grep -v grep)" ]; do
+    ## Wait for the processing to finish
+    while [ ! -z "$(ps ax | grep "python3 -c exec('import sys, json" | grep -v grep)" ]; do
 	sleep 1s
-done
+    done
+fi
 
-cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat | grep -v ^# | awk '($1 > 9999) && ($1 < 10000000) { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
+cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat 2>/dev/null | grep -v ^# | awk '($1 > 9999) && ($1 < 10000000) { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
 rm -f /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat
 
 # Some downloaded files are badly encoded, fix this on the fly.
@@ -140,7 +142,7 @@ curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 if [ "`sed -nr "/^\[NextionDriver\]/,/^\[/{ :l /^\s*[^#].*/ p; n; /^\[/ q; b l; }" /etc/mmdvmhost | grep "Enable" | cut -d= -f 2`" == "1" ]; then
     curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
     curl --fail -o /tmp/stripped_upstream.csv -s https://database.radioid.net/static/user.csv
-    cat /tmp/stripped_upstream.csv /tmp/stripped.csv | sort -un -k1n -o /usr/local/etc/stripped.csv
+    cat /tmp/stripped_upstream.csv /tmp/stripped.csv 2>/dev/null | sort -un -k1n -o /usr/local/etc/stripped.csv
     rm -f /tmp/stripped_upstream.csv
 fi
 rm -f /tmp/stripped.csv
