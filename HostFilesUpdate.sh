@@ -137,8 +137,8 @@ curl --fail -s http://www.pistar.uk/downloads/TGList_NXDN.txt | ${ICONV_PRUNE} >
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt
 
 # NextionDriver stuff
-curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
-if [ ! -e /root/NO_STRIPPED_FILE ]; then
+if [ "`sed -nr "/^\[NextionDriver\]/,/^\[/{ :l /^\s*[^#].*/ p; n; /^\[/ q; b l; }" /etc/mmdvmhost | grep "Enable" | cut -d= -f 2`" == "1" ]; then
+    curl --fail -k -o /usr/local/etc/groups.txt -s https://api.brandmeister.network/v1.0/groups/
     curl --fail -o /tmp/stripped_upstream.csv -s https://database.radioid.net/static/user.csv
     cat /tmp/stripped_upstream.csv /tmp/stripped.csv | sort -un -k1n -o /usr/local/etc/stripped.csv
     rm -f /tmp/stripped_upstream.csv
