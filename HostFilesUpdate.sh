@@ -122,7 +122,7 @@ if [ -f "/etc/theshield.enabled" ]; then
     done
 fi
 
-cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat 2>/dev/null | grep -v ^# | awk '($1 > 9999) && ($1 < 10000000) { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
+cat /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat 2>/dev/null | grep -v ^# | awk '($1 > 999999) && ($1 < 10000000) { print $0 }' | sort -un -k1n -o ${DMRIDFILE}
 rm -f /tmp/DMRIds_1.dat /tmp/DMRIds_2.dat /tmp/DMRIds_3.dat
 
 # Some downloaded files are badly encoded, fix this on the fly.
