@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.2                       #
+#                     Version 1.3                       #
 #                                                       #
 #########################################################
 
@@ -35,13 +35,13 @@ if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
 fi
 
 # Make sure DMR Networking is on
-if [ `sed -n '/\[DMR Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	exit 1;
+if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Enable=" | awk -F "=" '/Enable=/ {print $2}') == 0 ]; then
+        exit 1;
 fi
 
 # Make sure I am supposed to be used
-if [ `sed -n '/\[DMR Network\]/{n;p;n;p;}' /etc/mmdvmhost | sed '1d' | awk -F = '{print $2}'` != 127.0.0.1 ]; then
-	exit 1;
+if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}') != 127.0.0.1 ]; then
+        exit 1;
 fi
 
 # Reconfigure to use old style service if the config is not ready
