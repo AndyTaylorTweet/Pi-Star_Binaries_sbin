@@ -1179,8 +1179,11 @@ main_function() {
 	esac
 
 	echo $Message
-	echo "Sleeping a few seconds before making the disk Read-Only..."
-	sleep 3
+	echo "Upgrade process complete, syncing disk cache before making the disk Read-Only"
+	# Make the disk read-only
+	/bin/sync
+	/bin/sync
+	/bin/sync
 	mount -o remount,ro /
         mount -o remount,ro /boot
 	echo "Finished"
