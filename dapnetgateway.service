@@ -1,7 +1,7 @@
 #!/bin/bash
 #########################################################
 #                                                       #
-#              P25Parrot Service Handler                #
+#              MMDVMHost Service Handler                #
 #                                                       #
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
@@ -11,13 +11,14 @@
 #########################################################
 
 # Service Config
-DAEMON=P25Parrot
+DAEMON=DAPNETGateway
 DAEMON_PATH=/usr/local/bin/
-DAEMON_OPTS=42011
-LOGDIR=/var/log/pi-star
+CONFIG=/etc/dapnetgateway
+DAEMON_OPTS=$CONFIG
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
+LOGDIR=/var/log/pi-star
 USER=root
 GROUP=mmdvm
 ipVar=`hostname -I | cut -d' ' -f1`
@@ -29,16 +30,12 @@ test -r $CONFIG || exit 1
 # if dstarrepeater is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
-if [ `sed -n '/\[P25 Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-	if [ `sed -n '/\[System Fusion\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
-		exit 1;
-	elif [ -f '/etc/ysf2p25' ] && [ `sed -n '/\[Enabled\]/{n;p;}' /etc/ysf2p25 | cut -c 9` == 0 ]; then
-		exit 1;
-	elif [ -f '/etc/ysf2p25' ] && [ `sed -n '/\[Enabled\]/{n;p;}' /etc/ysf2p25 | cut -c 9` == 1 ]; then
-		test=pass
-	else
-		exit 1;
-	fi
+if [ `sed -n '/\[POCSAG Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` -ne 1 ]; then
+  exit 1;
+fi
+
+if [[ $(egrep -h -i "TOPSECRET|M1ABC" /etc/dapnetgateway | wc -l) -gt 0 ]]; then
+  exit 1;
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
@@ -81,7 +78,7 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
-			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else

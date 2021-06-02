@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.30                      #
+#                     Version 2.6                       #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -16,6 +16,9 @@
 if [ "$(expr length `hostname -I | cut -d' ' -f1`x)" == "1" ]; then
 	exit 0
 fi
+
+# Get the Pi-Star Version
+pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
 
 APRSHOSTS=/usr/local/etc/APRSHosts.txt
 DCSHOSTS=/usr/local/etc/DCS_Hosts.txt
@@ -32,6 +35,7 @@ NXDNHOSTS=/usr/local/etc/NXDNHosts.txt
 TGLISTBM=/usr/local/etc/TGList_BM.txt
 TGLISTP25=/usr/local/etc/TGList_P25.txt
 TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
+TGLISTYSF=/usr/local/etc/TGList_YSF.txt
 
 # How many backups
 FILEBACKUP=1
@@ -59,6 +63,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d)
 	cp ${TGLISTP25} ${TGLISTP25}.$(date +%Y%m%d)
 	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d)
+	cp ${TGLISTYSF} ${TGLISTYSF}.$(date +%Y%m%d)
 fi
 
 # Prune backups
@@ -76,7 +81,8 @@ ${NXDNIDFILE}
 ${NXDNHOSTS}
 ${TGLISTBM}
 ${TGLISTP25}
-${TGLISTNXDN}"
+${TGLISTNXDN}
+${TGLISTYSF}"
 
 for file in ${FILES}
 do
@@ -91,33 +97,45 @@ do
 done
 
 # Generate Host Files
-curl --fail -o ${APRSHOSTS} -s http://www.pistar.uk/downloads/APRS_Hosts.txt
-curl --fail -o ${DCSHOSTS} -s http://www.pistar.uk/downloads/DCS_Hosts.txt
-curl --fail -o ${DMRHOSTS} -s http://www.pistar.uk/downloads/DMR_Hosts.txt
+curl --fail -o ${APRSHOSTS} -s http://www.pistar.uk/downloads/APRS_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${DCSHOSTS} -s http://www.pistar.uk/downloads/DCS_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${DMRHOSTS} -s http://www.pistar.uk/downloads/DMR_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 if [ -f /etc/hostfiles.nodextra ]; then
   # Move XRFs to DPlus Protocol
-  curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_WithXRF_Hosts.txt
-  curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_NoXRF_Hosts.txt
+  curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_WithXRF_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+  curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_NoXRF_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 else
   # Normal Operation
-  curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_Hosts.txt
-  curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_Hosts.txt
+  curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+  curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 fi
-curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat
-curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt
-curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt
-curl --fail -o ${FCSHOSTS} -s http://www.pistar.uk/downloads/FCS_Hosts.txt
-#curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt >> ${DExtraHOSTS}
-curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt
-curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv
-curl --fail -o ${NXDNHOSTS} -s http://www.pistar.uk/downloads/NXDN_Hosts.txt
-curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt
-curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt
-curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt
+curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${FCSHOSTS} -s http://www.pistar.uk/downloads/FCS_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+#curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}" >> ${DExtraHOSTS}
+curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${NXDNHOSTS} -s http://www.pistar.uk/downloads/NXDN_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
 	cat /root/DMR_Hosts.txt >> ${DMRHOSTS}
+fi
+
+# Add custom YSF Hosts
+if [ -f "/root/YSFHosts.txt" ]; then
+	cat /root/YSFHosts.txt >> ${YSFHOSTS}
+fi
+
+# Fix DMRGateway issues with brackets
+if [ -f "/etc/dmrgateway" ]; then
+	sed -i '/Name=.*(/d' /etc/dmrgateway
+	sed -i '/Name=.*)/d' /etc/dmrgateway
 fi
 
 # Add some fixes for P25Gateway
@@ -129,9 +147,20 @@ if [ -f "/root/P25Hosts.txt" ]; then
 	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
 fi
 
+# Fix up new NXDNGateway Config Hostfile setup
+if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
+	sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
+fi
+if [ ! -f "/root/NXDNHosts.txt" ]; then
+	touch /root/NXDNHosts.txt
+fi
+if [ ! -f "/usr/local/etc/NXDNHostsLocal.txt" ]; then
+	touch /usr/local/etc/NXDNHostsLocal.txt
+fi
+
 # Add custom NXDN Hosts
 if [ -f "/root/NXDNHosts.txt" ]; then
-	cat /root/NXDNHosts.txt >> /usr/local/etc/NXDNHosts.txt
+	cat /root/NXDNHosts.txt > /usr/local/etc/NXDNHostsLocal.txt
 fi
 
 # If there is an XLX over-ride
@@ -140,10 +169,9 @@ if [ -f "/root/XLXHosts.txt" ]; then
                 if [[ $line != \#* ]] && [[ $line = *";"* ]]
                 then
                         xlxid=`echo $line | awk -F  ";" '{print $1}'`
-                        xlxroom=`echo $line | awk -F  ";" '{print $3}'`
                         xlxip=`echo $line | awk -F  ";" '{print $2}'`
                         [ -z "$xlxip" ] && xlxip=`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt | awk -F  ";" '{print $2}'`
-                        [ -z "$xlxip" ] && continue;
+                        xlxroom=`echo $line | awk -F  ";" '{print $3}'`
                         xlxNewLine="${xlxid};${xlxip};${xlxroom}"
                         if [ -z "`grep "^${xlxid}" /usr/local/etc/XLXHosts.txt`" ]; then
                                 [ -s /usr/local/etc/XLXHosts.txt ] && [ "`tail -c1 /usr/local/etc/XLXHosts.txt | xxd -u -p`" != "0A" ] && echo >> /usr/local/etc/XLXHosts.txt
@@ -153,6 +181,32 @@ if [ -f "/root/XLXHosts.txt" ]; then
                         fi
                 fi
         done < /root/XLXHosts.txt
+fi
+
+# Yaesu FT-70D radios only do upper case
+if [ -f "/etc/hostfiles.ysfupper" ]; then
+	sed -i 's/\(.*\)/\U\1/' ${YSFHOSTS}
+	sed -i 's/\(.*\)/\U\1/' ${FCSHOSTS}
+fi
+
+# Fix up ircDDBGateway Host Files on v4
+if [ -d "/usr/local/etc/ircddbgateway" ]; then
+	if [[ -f "/usr/local/etc/ircddbgateway/DCS_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DCS_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DCS_Hosts.txt
+		ln -s /usr/local/etc/DCS_Hosts.txt /usr/local/etc/ircddbgateway/DCS_Hosts.txt
+	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/DExtra_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DExtra_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DExtra_Hosts.txt
+		ln -s /usr/local/etc/DExtra_Hosts.txt /usr/local/etc/ircddbgateway/DExtra_Hosts.txt
+	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/DPlus_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/DPlus_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
+		ln -s /usr/local/etc/DPlus_Hosts.txt /usr/local/etc/ircddbgateway/DPlus_Hosts.txt
+	fi
+	if [[ -f "/usr/local/etc/ircddbgateway/CCS_Hosts.txt" && ! -L "/usr/local/etc/ircddbgateway/CCS_Hosts.txt" ]]; then
+		rm -rf /usr/local/etc/ircddbgateway/CCS_Hosts.txt
+		ln -s /usr/local/etc/CCS_Hosts.txt /usr/local/etc/ircddbgateway/CCS_Hosts.txt
+	fi
 fi
 
 exit 0

@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 #                        Pi-Star Partition Expander                           #
 #                                                                             #
-#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.1, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #    This script will expand your root file system to fill the SD Card        #
 #                                                                             #
@@ -39,33 +39,28 @@ else
 	ROOT_PART=$(readlink /dev/root)
 fi
 
-PART_NUM=${ROOT_PART#mmcblk0p}
-if [ "$PART_NUM" = "$ROOT_PART" ]; then
-	echo "$ROOT_PART is not an SD card. Don't know how to expand"
-	return 0
-fi
-	if [ "$PART_NUM" -ne 2 ]; then
+if [ "${ROOT_PART:0:6}" != "mmcblk" ] || [ "${ROOT_PART:8:1}" != "2" ]; then
 	echo "Your partition layout is not currently supported by this tool, or your root filesystem is already expanded."
 	return 0
 fi
 
-LAST_PART_NUM=$(parted /dev/mmcblk0 -ms unit s p | tail -n 1 | cut -f 1 -d:)
-if [ $LAST_PART_NUM -ne $PART_NUM ]; then
+LAST_PART_NUM=$(parted /dev/${ROOT_PART:0:7} -ms unit s p | tail -n 1 | cut -f 1 -d:)
+if [ $LAST_PART_NUM -ne ${ROOT_PART:8:1} ]; then
 	echo "$ROOT_PART is not the last partition. Don't know how to expand"
 	return 0
 fi
 # Get the starting offset of the root partition
-PART_START=$(parted /dev/mmcblk0 -ms unit s p | grep "^${PART_NUM}" | cut -f 2 -d: | sed 's/[^0-9]//g')
+PART_START=$(parted /dev/${ROOT_PART:0:7} -ms unit s p | grep "^${ROOT_PART:8:1}" | cut -f 2 -d: | sed 's/[^0-9]//g')
 [ "$PART_START" ] || return 1
 # Return value will likely be error for fdisk as it fails to reload the
 # partition table because the root fs is mounted
-fdisk /dev/mmcblk0 <<EOF
+fdisk /dev/${ROOT_PART:0:7} <<EOF
 p
 d
-$PART_NUM
+${ROOT_PART:8:1}
 n
 p
-$PART_NUM
+${ROOT_PART:8:1}
 $PART_START
 
 p

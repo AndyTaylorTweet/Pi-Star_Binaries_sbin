@@ -23,11 +23,10 @@ then
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
-  echo "To flash a ZUMSpot connected to GPIO, run:         pistar-zumspotflash rpi"
-  echo "To flash a ZUMSpot duplex connected to GPIO, run:  pistar-zumspotflash rpi_duplex"
-  echo "To flash a ZUMSpot USB Key, run:                   pistar-zumspotflash usb"
-  echo "To flash a USB Connected Libre Modem, run:         pistar-zumspotflash libre"
+  echo "To flash a NANO_DV connected to GPIO by BG4TGO, run:    pistar-nanodvflash pi"
+  echo "To flash a NANO_DV connected to USB by BG4TGO, run:     pistar-nanodvflash usb"
   echo ""
+  echo "To flash ZUMSpot devices please use pistar-zumspotflash"
   echo "To flash MMDVM_HS Hat devices by DB9MAT & DF2ET please use pistar-mmdvmhshatflash"
   echo "To flash MMDVM_HS Nano Hat devices please use pistar-vyehsflash"
   echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
@@ -65,62 +64,32 @@ echo ""
 if [ "$1" ]
 then
   case ${1} in
-  rpi)
-    # Flashing RPi GPIO Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
+  pi)
+    # Flashing GPIO Modem
+    rm -rf /tmp/nanodvfirmware 2> /dev/null
+    mkdir /tmp/nanodvfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_rpi.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanodv_npi.sh' | wget --base=http://github.com/ -i - -O /tmp/nanodvfirmware/flash.sh
+    chmod +x /tmp/nanodvfirmware/flash.sh
+    cd  /tmp/nanodvfirmware
     ./flash.sh
     echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
-  rpi_duplex)
-    # Flashing RPi Duplex GPIO Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_duplex.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
+    rm -rf /tmp/nanodvfirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
     shutdown -r now
     exit 0
   ;;
   usb)
     # Flashing USB Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
+    rm -rf /tmp/nanodvfirmware 2> /dev/null
+    mkdir /tmp/nanodvfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_usb.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanodv_usb.sh' | wget --base=http://github.com/ -i - -O /tmp/nanodvfirmware/flash.sh
+    chmod +x /tmp/nanodvfirmware/flash.sh
+    cd  /tmp/nanodvfirmware
     ./flash.sh
     echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
-  libre)
-    # Flashing Libre Kit Modem
-    rm -rf /tmp/zumfirmware 2> /dev/null
-    mkdir /tmp/zumfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_librekit.sh' | wget --base=http://github.com/ -i - -O /tmp/zumfirmware/flash.sh
-    chmod +x /tmp/zumfirmware/flash.sh
-    cd  /tmp/zumfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/zumfirmware 2> /dev/null
+    rm -rf /tmp/nanodvfirmware 2> /dev/null
     read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
     shutdown -r now
     exit 0

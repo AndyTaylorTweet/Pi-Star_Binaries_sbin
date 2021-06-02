@@ -1,0 +1,192 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                   Pi-Star RPT_Hat Firmware Update Tool                      #
+#                                                                             #
+#    Version 0.1, Code, Design and Development by Florian Wolters (DF2ET).    #
+#                                                                             #
+#                 Make it simple to update the Firmware                       #
+#                                                                             #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+#
+
+if [ -z "$1" ]
+then
+  echo "This tool is used to flash your MMDVM_HS Hat Modem"
+  echo "to use the command, you will need to pass the name of your modem,"
+  echo "please choose form the list below..."
+  echo ""
+  echo "To flash RPT_HAT (12.0000MHz TCXO) connected to GPIO, run: pistar-mmdvmrpthatflash rpt_hat"
+  echo "To flash RPT_HAT (12.2880MHz TCXO) connected to GPIO, run: pistar-mmdvmrpthatflash rpt_hat-12.288mhz"
+  echo "To flash RPT_HAT (14.4000MHz TCXO) connected to GPIO, run: pistar-mmdvmrpthatflash rpt_hat-14.4mhz"
+  echo "To flash RPT_HAT (19.2000MHz TCXO) connected to GPIO, run: pistar-mmdvmrpthatflash rpt_hat-19.2mhz"
+  echo ""
+# Get the pretty name for the chosen Modem according to the dashboard.
+  if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
+    # Get the modem that the user has selected.
+    modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
+    modemSelected=${modemSelected#*=}
+
+    # Get the user friendly version of the selected Modem.
+    modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
+    modemSelectedHuman=${modemSelectedHuman#*\">}
+    modemSelectedHuman=${modemSelectedHuman::-9}
+    echo "Selected Modem:     ${modemSelectedHuman}"
+  fi
+  
+  # Get the Modem info from the Log
+  numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+  if [[ ${numLogs} -gt 0 ]]; then
+    # Get the physically connected modem from the logs
+    modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
+    echo "Connected Hardware: ${modemLog}"
+    
+    # Get the TCXO data
+    if [[ ${modemLog} == *"MHz"* ]]; then
+      tcxoData=$(echo ${modemLog} | sed -e "s/.*\s\(\w\+\.\w\+ MHz\)\s.*/\1/")
+      echo "TCXO Value:         ${tcxoData}"
+    fi
+  fi
+  exit 0
+fi
+
+#
+# OK we know what the modem is, let get the firmware string from the log...
+#
+tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
+read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
+echo ""
+
+#
+# Download the correct firmware
+#
+if [ "$1" ]
+then
+  rm -rf /tmp/mmdvmrpthatfirmware 2> /dev/null
+  mkdir /tmp/mmdvmrpthatfirmware 2> /dev/null
+  echo "Preparing tools ..."
+  cd /tmp/mmdvmrpthatfirmware
+  rm -rf stm32flash-code
+  git clone git://git.code.sf.net/p/stm32flash/code stm32flash-code
+  cd stm32flash-code
+  make
+  cd ..
+  
+  # Stop MMDVMHost process to free serial port
+  sudo killall MMDVMHost >/dev/null 2>&1
+
+  echo "Resetting MCU to DFU mode ..."
+  echo 20 > /sys/class/gpio/export
+  echo 21 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio20/direction
+  echo out > /sys/class/gpio/gpio21/direction
+  echo 1 > /sys/class/gpio/gpio20/value
+  echo 0 > /sys/class/gpio/gpio21/value
+  sleep 2
+  echo 1 > /sys/class/gpio/gpio21/value
+  sleep 2
+    
+  case ${1} in
+  rpt_hat)
+    echo "Flashing your ${1} modem to the latest version"
+    wget https://www.df2et.de/mmdvm/RPT_Hat-12mhz.bin
+    wget https://www.df2et.de/mmdvm/RPT_Hat-12mhz.bin.sha256
+    sha256sum -c RPT_Hat-12mhz.bin.sha256
+    if [ $? -ne 0 ]; then
+      echo "Validating fimrware checksum failed!"
+      exit 2
+    fi
+    echo "Flashing MMDVM_RPT_Hat"
+    stm32flash-code/stm32flash -w RPT_Hat-12mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    # Flashing always fails the first time. for some reason So just try it again ...
+    stm32flash-code/stm32flash -w RPT_Hat-12mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    echo 0 > /sys/class/gpio/gpio20/value
+    echo ""
+    rm -rf /tmp/mmdvmrpthatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+  rpt_hat-12.288mhz)
+    echo "Flashing your ${1} modem to the latest version"
+    wget https://www.df2et.de/mmdvm/RPT_Hat-12.288mhz.bin
+    wget https://www.df2et.de/mmdvm/RPT_Hat-12.288mhz.bin.sha256
+    sha256sum -c RPT_Hat-12.288mhz.bin.sha256
+    if [ $? -ne 0 ]; then
+      echo "Validating fimrware checksum failed!"
+      exit 2
+    fi
+    echo "Flashing MMDVM_RPT_Hat"
+    stm32flash-code/stm32flash -w RPT_Hat-12.288mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    # Flashing always fails the first time. for some reason So just try it again ...
+    stm32flash-code/stm32flash -w RPT_Hat-12.288mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    echo 0 > /sys/class/gpio/gpio20/value
+    echo ""
+    rm -rf /tmp/mmdvmrpthatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+  rpt_hat-14.4mhz)
+    echo "Flashing your ${1} modem to the latest version"
+    wget https://www.df2et.de/mmdvm/RPT_Hat-14.4mhz.bin
+    wget https://www.df2et.de/mmdvm/RPT_Hat-14.4mhz.bin.sha256
+    sha256sum -c RPT_Hat-14.4mhz.bin.sha256
+    if [ $? -ne 0 ]; then
+      echo "Validating fimrware checksum failed!"
+      exit 2
+    fi
+    echo "Flashing MMDVM_RPT_Hat"
+    stm32flash-code/stm32flash -w RPT_Hat-14.4mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    # Flashing always fails the first time. for some reason So just try it again ...
+    stm32flash-code/stm32flash -w RPT_Hat-14.4mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    echo 0 > /sys/class/gpio/gpio20/value
+    echo ""
+    rm -rf /tmp/mmdvmrpthatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+  rpt_hat-19.2mhz)
+    echo "Flashing your ${1} modem to the latest version"
+    wget https://www.df2et.de/mmdvm/RPT_Hat-19.2mhz.bin
+    wget https://www.df2et.de/mmdvm/RPT_Hat-19.2mhz.bin.sha256
+    sha256sum -c RPT_Hat-19.2mhz.bin.sha256
+    if [ $? -ne 0 ]; then
+      echo "Validating fimrware checksum failed!"
+      exit 2
+    fi
+    echo "Flashing MMDVM_RPT_Hat"
+    stm32flash-code/stm32flash -w RPT_Hat-19.2mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    # Flashing always fails the first time. for some reason So just try it again ...
+    stm32flash-code/stm32flash -w RPT_Hat-19.2mhz.bin -g 0x0 -R /dev/ttyAMA0
+    sleep 1
+    echo 0 > /sys/class/gpio/gpio20/value
+    echo ""
+    rm -rf /tmp/mmdvmrpthatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;    
+  *)
+    # Un-recognised modem choice
+    echo "Your Choice of ${1} modem is not supported by this update tool"
+    exit 1
+  ;;
+  esac
+fi
+
+exit 0
