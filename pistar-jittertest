@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                          Pi-Star Jitter Tester                              #
+#                                                                             #
+#    Version 0.1, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+exec 200>/var/lock/pistar-jitter.lock || exit 1
+if ! flock -n 200 ; then
+  echo -e "Another instance is already running...\n"
+  exit 1
+fi
+
+pingTest() {
+	# Clean up the Hostname
+	vanityName=$(tr -dc '[[:print:]]' <<< "${2}")
+	if [ ${#vanityName} -le 23 ] && [ ${#vanityName} -gt 15 ]; then
+		vanityName="${vanityName}\t"
+	elif [ ${#vanityName} -le 15 ] && [ ${#vanityName} -gt 7 ]; then
+		vanityName="${vanityName}\t\t"
+	elif [ ${#vanityName} -le 7 ]; then
+		vanityName="${vanityName}\t\t\t"
+	else
+		vanityName="${vanityName::31}"
+	fi
+
+	# Ping Test
+	if ping -W 2 -c 1 ${1} &> /dev/null; then
+		pingResult=$(ping -W 2 -n -c 5 ${1} | grep "from" | tail -n 3 | awk -F 'time=' '{print $2}' | awk '{print $1}' | sort -g)
+		pingTestLow=$(echo ${pingResult} | awk '{print $1}')
+		pingTestMid=$(echo ${pingResult} | awk '{print $2}')
+		pingTestHigh=$(echo ${pingResult} | awk '{print $3}')
+		pingTestTotal=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} + ${pingTestMid} + ${pingTestLow} }")
+		pingTestAvg=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestTotal} / 3 }     ")
+		pingTestPeakDev=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} - ${pingTestLow} }")
+		printf "${vanityName}\tAvg RTT: ${pingTestAvg}ms\tPeak Deviation: ${pingTestPeakDev}ms\n"
+	else
+		printf "${vanityName}\tunreachable...\n"
+	fi
+}
+
+main_function() {
+	while IFS="" read -r hostLine || [ -n "$p" ]
+	do
+		if [[ ${hostLine} == ${1}_* ]]; then
+			vanityName=$(echo ${hostLine} | awk '{print $1}')
+			host=$(echo ${hostLine} | awk '{print $3}')
+			pingTest ${host} ${vanityName} &
+		fi
+	done < /usr/local/etc/DMR_Hosts.txt
+}
+
+if [ -z "$1" ]; then
+	thisScript="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+	echo "This script ${thisScript} takes a single argument,"
+	echo "the prefix of the group of hosts you want to check"
+	echo "as used in the /usr/local/etc/DMR_Hosts.txt file."
+	echo ""
+	echo "For example: ${thisScript} BM"
+	echo "This will test against all hosts starting with BM"
+	exit 0
+fi
+
+if [ -t 1 ]; then
+  # run via terminal, only output to screen
+  main_function ${1}
+  wait
+else
+  # if not run via terminal, log everything into a log file
+  main_function ${1} >> /var/log/pi-star/pi-star_icmptest.log 2>&1
+  wait
+fi
+
+exit 0

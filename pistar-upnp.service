@@ -6,7 +6,7 @@
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.2                       #
+#                     Version 1.3                       #
 #                                                       #
 #########################################################
 
@@ -16,8 +16,9 @@ DAEMON_PATH=/usr/bin/
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
-ipVar=`hostname -I | cut -d' ' -f1`
-DESC=pistar
+ipVar=$(hostname -I | cut -d' ' -f1)
+hostVar=$(hostname | cut -d'.' -f1)
+timeOut=600
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
@@ -29,20 +30,20 @@ fi
 
 case "$1" in
 	start) (
-#		$DAEMON -e $DESC -a $ipVar 22 22 TCP > /dev/null 2>&1
-#		$DAEMON -e $DESC -a $ipVar 80 80 TCP > /dev/null 2>&1
-#		$DAEMON -e $DESC -a $ipVar 10022 10022 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 20001 20001 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 30001 30001 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 30051 30051 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 30061 30061 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 30062 30062 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 30063 30063 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 30064 30064 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 40000 40000 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 42000 42000 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 42001 42001 UDP > /dev/null 2>&1
-                $DAEMON -e $DESC -a $ipVar 42010 42010 UDP > /dev/null 2>&1
+#		$DAEMON -e $hostVar -a $ipVar 22 22 TCP $timeOut > /dev/null 2>&1
+#		$DAEMON -e $hostVar -a $ipVar 80 80 TCP $timeOut > /dev/null 2>&1
+#		$DAEMON -e $hostVar -a $ipVar 10022 10022 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 20001 20001 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 30001 30001 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 30051 30051 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 30061 30061 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 30062 30062 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 30063 30063 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 30064 30064 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 40000 40000 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 42000 42000 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 42001 42001 UDP $timeOut > /dev/null 2>&1
+                $DAEMON -e $hostVar -a $ipVar 42010 42010 UDP $timeOut > /dev/null 2>&1
 		)& ;;
 
 	stop) (

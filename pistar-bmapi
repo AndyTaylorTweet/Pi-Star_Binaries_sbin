@@ -51,8 +51,6 @@ then
 	echo ""
 	echo "To add a static TG:            pistar-bmapi addtg {TG Number} {TimeSlot Number}"
 	echo "To remove a static TG:         pistar-bmapi deltg {TG Number} {TimeSlot Number}"
-	echo "To Link to a reflector:        pistar-bmapi ref {Reflector Number}"
-	echo "To Unlink from a reflector:    pistar-bmapi ref 4000"
 	echo "To drop all Dynamic TGs:       pistar-bmapi dropdyn {TimeSlot Number}"
 	echo "To drop the current QSO:       pistar-bmapi dropqso {TimeSlot Number}"
 	echo "To set the current position:   pistar-bmapi setpos {Lattitude} {Longitude} {Altitude}"
@@ -118,19 +116,6 @@ deltg)
 	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
 	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
 	REQUEST="Delete TG ${targetTG} from TimeSlot ${TS} for DMR ID ${DMRID}"
-;;
-ref)
-	# Check that the variable for Reflector has been passed
-	if [ -z "$2" ]
-	then
-		echo "No Reflector Specfified"
-		exit 0
-	else
-		targetREF=$2
-	fi
-	APIURL="${APIURL}reflector/setActiveReflector.php?id=${DMRID}"
-	APIDATA="reflector=${targetREF}"
-	REQUEST="Connect to Reflector ${targetREF} for DMR ID ${DMRID}"
 ;;
 dropdyn)
 	# Check that the variable to TimeSlot has been passed

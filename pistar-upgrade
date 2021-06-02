@@ -1039,7 +1039,81 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
 	;;
 	4.1.2)
-		#sed -i 's/4.1.2/4.1.3/g' /etc/pistar-release
+		sed -i 's/4.1.2/4.1.3/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Randomise Daily Cron on boot
+		sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/a \\n# Shuffle the time for the daily crontab jobs' /etc/rc.local
+		sed -i '/^# Shuffle the time for the daily crontab jobs/a cronMins=$(shuf -i 0-59 -n 1)' /etc/rc.local
+		sed -i '/^cronMins=*/a cronHours=$(shuf -i 3-4 -n1)' /etc/rc.local
+		sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
+	;;
+	4.1.3)
+		sed -i 's/4.1.3/4.1.4/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# APRS Gateway Service
+		echo '[Unit]' > /lib/systemd/system/aprsgateway.service
+		echo 'Description=Pi-Star APRS Gateway Service' >> /lib/systemd/system/aprsgateway.service
+		echo 'After=syslog.target network.target' >> /lib/systemd/system/aprsgateway.service
+		echo '' >> /lib/systemd/system/aprsgateway.service
+		echo '[Service]' >> /lib/systemd/system/aprsgateway.service
+		echo 'Type=forking' >> /lib/systemd/system/aprsgateway.service
+		echo 'ExecStart=/usr/local/sbin/aprsgateway.service start' >> /lib/systemd/system/aprsgateway.service
+		echo 'ExecStop=/usr/local/sbin/aprsgateway.service stop' >> /lib/systemd/system/aprsgateway.service
+		echo 'ExecReload=/usr/local/sbin/aprsgateway.service restart' >> /lib/systemd/system/aprsgateway.service
+		echo '' >> /lib/systemd/system/aprsgateway.service
+		echo '[Install]' >> /lib/systemd/system/aprsgateway.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.service
+
+		# APRS Gateway Timer
+		echo '[Timer]' > /lib/systemd/system/aprsgateway.timer
+		echo 'OnStartupSec=20' >> /lib/systemd/system/aprsgateway.timer
+		echo '' >> /lib/systemd/system/aprsgateway.timer
+		echo '[Install]' >> /lib/systemd/system/aprsgateway.timer
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.timer
+		
+		# APRS Gateway Config
+		echo '[General]' > /etc/aprsgateway
+		echo 'Callsign=M1ABC' >> /etc/aprsgateway
+		echo 'Debug=0' >> /etc/aprsgateway
+		echo 'Daemon=1' >> /etc/aprsgateway
+		echo '' >> /etc/aprsgateway
+		echo '[APRS-IS]' >> /etc/aprsgateway
+		echo 'Server=rotate.aprs2.net' >> /etc/aprsgateway
+		echo 'Port=14580' >> /etc/aprsgateway
+		echo 'Password=9999' >> /etc/aprsgateway
+		echo '' >> /etc/aprsgateway
+		echo '[Log]' >> /etc/aprsgateway
+		echo 'DisplayLevel=0' >> /etc/aprsgateway
+		echo 'FileLevel=1' >> /etc/aprsgateway
+		echo 'FilePath=/var/log/pi-star' >> /etc/aprsgateway
+		echo 'FileRoot=APRSGateway' >> /etc/aprsgateway
+		echo 'FileRotate=1' >> /etc/aprsgateway
+		echo '' >> /etc/aprsgateway
+		echo '[Network]' >> /etc/aprsgateway
+		echo 'Address=127.0.0.1' >> /etc/aprsgateway
+		echo 'Port=8673' >> /etc/aprsgateway
+		echo '' >> /etc/aprsgateway
+		echo '[Enabled]' >> /etc/aprsgateway
+		echo 'Enabled=0' >> /etc/aprsgateway
+
+		# Update systemd and enable new services
+		systemctl daemon-reload
+		systemctl enable aprsgateway.timer
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.1.4..."
+	;;
+	4.1.4)
+		#sed -i 's/4.1.3/4.1.4/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
@@ -1086,17 +1160,17 @@ main_function() {
 		#systemctl restart mmdvmhost.service
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.5..."
 		Message="You are already running the latest version..."
 	;;
-	4.1.3)
-		#sed -i 's/4.1.3/4.1.4/g' /etc/pistar-release
+	4.1.5)
+		#sed -i 's/4.1.5/4.1.6/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.4..."
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.6..."
 		Message="You are already running the latest version..."
 	;;
 	*)
@@ -1105,8 +1179,11 @@ main_function() {
 	esac
 
 	echo $Message
-	echo "Sleeping a few seconds before making the disk Read-Only..."
-	sleep 3
+	echo "Upgrade process complete, syncing disk cache before making the disk Read-Only"
+	# Make the disk read-only
+	/bin/sync
+	/bin/sync
+	/bin/sync
 	mount -o remount,ro /
         mount -o remount,ro /boot
 	echo "Finished"

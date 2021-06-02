@@ -1,19 +1,19 @@
 #!/bin/bash
 #########################################################
 #                                                       #
-#              MMDVMHost Service Handler                #
+#             APRSGateway Service Handler               #
 #                                                       #
 # Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 1.3                       #
+#                     Version 0.1                       #
 #                                                       #
 #########################################################
 
 # Service Config
-DAEMON=DMRGateway
+DAEMON=APRSGateway
 DAEMON_PATH=/usr/local/bin/
-CONFIG=/etc/dmrgateway
+CONFIG=/etc/aprsgateway
 DAEMON_OPTS=$CONFIG
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
@@ -27,26 +27,12 @@ ipVar=`hostname -I | cut -d' ' -f1`
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 test -r $CONFIG || exit 1
 
-# if dstarrepeater is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.dstarrepeater || exit 1
-
 if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
   exit 1;
 fi
 
-# Make sure DMR Networking is on
-if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Enable=" | awk -F "=" '/Enable=/ {print $2}') == 0 ]; then
-        exit 1;
-fi
-
-# Make sure I am supposed to be used
-if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}') != 127.0.0.1 ]; then
-        exit 1;
-fi
-
-# Reconfigure to use old style service if the config is not ready
-if [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "0" ]]; then
-	DAEMON=DMRGateway_old
+if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/aprsgateway | cut -c 9` != 1 ]; then
+	exit 1;
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
@@ -76,7 +62,7 @@ case "$1" in
 	stop)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			$KILL -9 `${PGREP} ${DAEMON}`
+			$KILL `${PGREP} ${DAEMON}`
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
@@ -87,7 +73,7 @@ case "$1" in
 	restart)
 		if [ `$PGREP $DAEMON` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
-			$KILL -9 `${PGREP} ${DAEMON}`
+			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
 			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
