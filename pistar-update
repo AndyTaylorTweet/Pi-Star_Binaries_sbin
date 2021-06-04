@@ -279,6 +279,10 @@ main_function() {
 		chmod 664 /usr/local/etc/*.indx
 		echo "Done"
 	fi
+	if [[ ! -f /usr/local/etc/ircddbgateway/pt_PT.ambe ]]; then
+		cp -p /usr/local/etc/pt_PT.* /usr/local/etc/ircddbgateway/
+		cp -p /usr/local/etc/TIME_pt_PT.* /usr/local/etc/ircddbgateway/
+	fi
 
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
 		echo "Updating P25Gateway config..."
