@@ -279,6 +279,16 @@ main_function() {
 		chmod 664 /usr/local/etc/*.indx
 		echo "Done"
 	fi
+	if [[ ! -f /usr/local/etc/ircddbgateway/pt_PT.ambe ]]; then
+		echo "Downloading Portuguese Voice Files for ircDDBGateway..."
+		curl --fail -o /usr/local/etc/ircddbgateway/pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.ambe
+		curl --fail -o /usr/local/etc/ircddbgateway/pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.indx
+		curl --fail -o /usr/local/etc/ircddbgateway/TIME_pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.ambe
+		curl --fail -o /usr/local/etc/ircddbgateway/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
+		chmod 664 /usr/local/etc/ircddbgateway/*.ambe
+		chmod 664 /usr/local/etc/ircddbgateway/*.indx
+		echo "Done"
+	fi
 
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
 		echo "Updating P25Gateway config..."
