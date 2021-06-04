@@ -275,6 +275,8 @@ main_function() {
 		curl --fail -o /usr/local/etc/pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.indx
 		curl --fail -o /usr/local/etc/TIME_pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.ambe
 		curl --fail -o /usr/local/etc/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
+		chmod 664 /usr/local/etc/*.ambe
+		chmod 664 /usr/local/etc/*.indx
 		echo "Done"
 	fi
 
