@@ -47,23 +47,20 @@ git_update() {
 		# Assume unchanged for pistar-upnp.service
 		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged pistar-upnp.service
 	fi
-	#if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
-	#	# Assume unchanged for pistar-upnp.service
-	#	git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged config/ircddblocal.php
-	#fi
 
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
 		echo "Updating ${gitFolder}..."
+		# If this script is updated, re-run the update with the new version.
 		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
                         git fetch
                         [ -n $(git diff --name-only origin/master | grep pistar-update) ] && {
                                 echo "Found a new version of pistar-update..."
                                 git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
-                                        echo "Update was not successfull, reverting to Pi-Star original files..."
+                                        echo "Update to new version of pistar-update was not successfull, forcing update..."
                                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
                                 fi
-                                echo "Restarting update with new version..."
+                                echo "Restarting update process with the new version..."
                                 exec "$0" "$@"
                                 exit 1
                         }
