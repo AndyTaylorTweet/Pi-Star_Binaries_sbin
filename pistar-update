@@ -151,12 +151,18 @@ main_function() {
 	        sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
 	fi
 	needsTypeLine=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Type=" | wc -l)
+	dmrAddress=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}')
 	if [ ${needsTypeLine} \< 1 ]; then
-		dmrAddress=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}')
 		if [[ "${dmrAddress}" == "127.0.0.1" ]]; then
 			sed -i 's/\[DMR Network\]/\[DMR Network\]\nType=Gateway/g' /etc/mmdvmhost
 		else
 			sed -i 's/\[DMR Network\]/\[DMR Network\]\nType=Direct/g' /etc/mmdvmhost
+		fi
+	else
+		if [[ "${dmrAddress}" == "127.0.0.1" ]]; then
+			sed -i "/Type=Dire/c\\Type=Gateway" /etc/mmdvmhost
+		else
+			sed -i "/Type=Gate/c\\Type=Direct" /etc/mmdvmhost
 		fi
 	fi
 
