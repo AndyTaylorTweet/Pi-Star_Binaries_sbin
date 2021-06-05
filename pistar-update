@@ -113,7 +113,8 @@ main_function() {
 			sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
 			systemctl daemon-reload
 			systemctl restart nginx.service
-			echo "nginx config has been repaired - please re-run pistar-update"
+			echo "nginx config has been repaired - re-running pistar-update"
+                        exec "$0" "$@"
 			exit 1
 		fi
 	fi
