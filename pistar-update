@@ -54,7 +54,23 @@ git_update() {
 
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
 		echo "Updating ${gitFolder}..."
-		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
+                        git fetch
+                        [ -n $(git diff --name-only origin/master | grep pistar-update) ] && {
+                                echo "Found a new version of pistar-update..."
+                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                                if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+                                        echo "Update was not successfull, reverting to Pi-Star original files..."
+                                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+                                fi
+                                echo "Restarting update with new version..."
+                                exec "$0" "$@"
+                                exit 1
+                        }
+                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                else
+                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                fi
 
 		# Re-check that the updates are now good
 		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
