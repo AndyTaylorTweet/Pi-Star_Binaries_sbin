@@ -12,6 +12,7 @@ journalctl --vacuum-time=24h
 journalctl --vacuum-size=5M
 
 # Make sure the update isnt running
+exec 200>/var/lock/pistar-hourly.lock || exit 1
 if ! flock -n 200 ; then
   # Update is running - bail out
   exit 1
