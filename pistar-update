@@ -53,7 +53,7 @@ git_update() {
 		# If this script is updated, re-run the update with the new version.
 		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
                         git fetch
-                        if [[ $(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master | grep $0 | wc -l) -gt 0 ]] && {
+                        [[ $(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master | grep $0 | wc -l) -gt 0 ]] && {
                                 echo "Found a new version of pistar-update..."
                                 git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
