@@ -2,6 +2,7 @@
 #
 # Pi-Star Hourly Cleanup Script
 #
+
 # Shrink NginX error log to stop it getting out of hand
 echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
