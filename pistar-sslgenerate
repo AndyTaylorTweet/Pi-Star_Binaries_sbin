@@ -21,10 +21,12 @@ if ! flock -n 200 ; then
 	exit 1
 fi
 
+# Option to force re-generaton, cert only lives for 1 year
 if [ "$1" == "force" ]; then
 	rm -rf /etc/ssl/certs/pi-star.crt
 fi
 
+# If the self-signed cert doesnt exist - create it.
 if [ ! -f /etc/ssl/certs/pi-star.crt ]; then
 	# Create the new Private / Public keys
 	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/pi-star.key -out /etc/ssl/certs/pi-star.crt \
