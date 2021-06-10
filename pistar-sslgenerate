@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                          Pi-Star SSL Dashboard                              #
+#                                                                             #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#                       Make it simple to enable SSL.                         #
+#                                                                             #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+	echo -e "You need to be root to run this command...\n"
+	exit 1
+fi
+
+exec 200>/var/lock/pistar-ssl.lock || exit 1
+if ! flock -n 200 ; then
+	echo -e "Another instance is already running...\n"
+	exit 1
+fi
+
+if [ "$1" == "force" ]; then
+	rm -rf /etc/ssl/certs/pi-star.crt
+fi
+
+if [ ! -f /etc/ssl/certs/pi-star.crt ]; then
+	# Create the new Private / Public keys
+	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/pi-star.key -out /etc/ssl/certs/pi-star.crt \
+	  -subj "/C=GB/ST=London/L=London/O=Team Pi-Star/OU=IT Department/CN=pi-star/subjectAltName=DNS:pi-star,DNS:pi-star.local,DNS:pi-star*,DNS:pi-star*.local"
+
+	# Configure NginX
+cat << 'EOF' > /etc/nginx/sites-available/pi-star
+server {
+	listen 80 default_server;
+	listen 443 ssl http2;
+	root /var/www/dashboard;
+
+	ssl_certificate /etc/ssl/certs/pi-star.crt;
+	ssl_certificate_key /etc/ssl/private/pi-star.key;
+	ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+
+	location ^~ /admin {
+	try_files $uri $uri/ =404;
+		auth_basic "Restricted";
+		auth_basic_user_file /var/www/.htpasswd;
+		client_max_body_size 512K;
+
+		# Load the defaults
+		include	/etc/nginx/default.d/php.conf;
+	}
+
+	location ~ /\.git {
+		deny all;
+	}
+
+	# Load the defaults
+	include	/etc/nginx/default.d/*.conf;
+}
+EOF
+
+	# Restart NginX with the new config.
+	systemctl restart nginx
+
+fi
