@@ -11,6 +11,12 @@ journalctl --rotate
 journalctl --vacuum-time=24h
 journalctl --vacuum-size=5M
 
+# Make sure the update isnt running
+if ! flock -n 200 ; then
+  # Update is running - bail out
+  exit 1
+fi
+
 # Mount the disk RO
 /bin/sync
 /bin/sync
