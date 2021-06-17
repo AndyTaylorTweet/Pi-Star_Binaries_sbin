@@ -70,7 +70,7 @@ if [ "$1" ]
 then
   case ${1} in
   skybridge)
-    # Flashing MMDVM_HS Hat Modem
+    # Flashing BridgeCom Hat Modem
     rm -rf /tmp/bridgecomflashfirmware 2> /dev/null
     mkdir /tmp/bridgecomflashfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
