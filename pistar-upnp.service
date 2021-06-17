@@ -18,7 +18,7 @@ KILL=/bin/kill
 SLEEP=/bin/sleep
 ipVar=$(hostname -I | cut -d' ' -f1)
 hostVar=$(hostname | cut -d'.' -f1)
-timeOut=600
+timeOut=$(( ($(date +%s -d "tomorrow 3:59") - $(date +%s)) % 86400 ))
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
