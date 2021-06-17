@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                      Pi-Star Firmware Update Tool                           #
+#                                                                             #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#                 Make it simple to update the Firmware                       #
+#                                                                             #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+#
+# Output some usefull information when no variables are passed
+#
+if [ -z "$1" ]
+then
+  echo "This tool is used to flash your BridgeComm Systems Hat Modem"
+  echo "to use the command, you will need to pass the name of your modem,"
+  echo "please choose form the list below..."
+  echo ""
+  echo "To flash SkyBridge (14.7456MHz TCXO) connected to GPIO, run: pistar-bridgecomflash skybridge"
+  echo ""
+  echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
+  echo "To flash MMDVM_HS Nano Hat devices please use pistar-vyehsflash"
+  echo "To flash your BD7KLE/BG3MDO devices please use pistar-mdoflash"
+  echo ""
+  # Get the pretty name for the chosen Modem according to the dashboard.
+  if [ -f '/etc/dstar-radio.mmdvmhost' ]; then
+    # Get the modem that the user has selected.
+    modemSelected=$(grep 'Hardware=' /etc/dstar-radio.mmdvmhost)
+    modemSelected=${modemSelected#*=}
+
+    # Get the user friendly version of the selected Modem.
+    modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
+    modemSelectedHuman=${modemSelectedHuman#*\">}
+    modemSelectedHuman=${modemSelectedHuman::-9}
+    echo "Selected Modem:     ${modemSelectedHuman}"
+  fi
+
+  # Get the Modem info from the Log
+  numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
+  if [[ ${numLogs} -gt 0 ]]; then
+    # Get the physically connected modem from the logs
+    modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
+    echo "Connected Hardware: ${modemLog}"
+    
+    # Get the TCXO data
+    if [[ ${modemLog} == *"MHz"* ]]; then
+      tcxoData=$(echo ${modemLog} | awk '{print $3}')
+      echo "TCXO Value:         ${tcxoData}"
+    fi
+  fi
+  exit 0
+fi
+#
+# OK we know what the modem is, let get the firmware string from the log...
+#
+tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
+read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
+echo ""
+#
+# Download the correct firmware
+#
+if [ "$1" ]
+then
+  case ${1} in
+  skybridge)
+    # Flashing MMDVM_HS Hat Modem
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    echo "Flashing your ${1} modem to the latest version"
+    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_skybridge_rpi.sh' | wget --base=http://github.com/ -i - -O /tmp/bridgecomflashfirmware/flash.sh
+    chmod +x /tmp/bridgecomflashfirmware/flash.sh
+    cd  /tmp/bridgecomflashfirmware
+    ./flash.sh
+    echo ""
+    rm -rf /tmp/bridgecomflashfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
+  *)
+    # Un-recognised modem choice
+    echo "Your Choice of ${1} modem is not supported by this update tool"
+    exit 1
+  ;;
+  esac
+fi
+exit 0
