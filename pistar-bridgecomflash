@@ -71,8 +71,8 @@ then
   case ${1} in
   skybridge)
     # Flashing MMDVM_HS Hat Modem
-    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
-    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    rm -rf /tmp/bridgecomflashfirmware 2> /dev/null
+    mkdir /tmp/bridgecomflashfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
     curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_skybridge_rpi.sh' | wget --base=http://github.com/ -i - -O /tmp/bridgecomflashfirmware/flash.sh
     chmod +x /tmp/bridgecomflashfirmware/flash.sh
