@@ -1209,58 +1209,38 @@ main_function() {
                 exit 1
 	;;
 	4.1.4)
-		#sed -i 's/4.1.3/4.1.4/g' /etc/pistar-release
+		sed -i 's/4.1.4/4.1.5/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
-
-		# Setup systemd unit files for Nextion Driver
-		#echo '[Unit]' > /lib/systemd/system/nextiondriver.service
-		#echo 'Description=NextionDriver service' >> /lib/systemd/system/nextiondriver.service
-		#echo 'DefaultDependencies=no' >> /lib/systemd/system/nextiondriver.service
-		#echo 'After=local-fs.target wifi-country.service network-online.target' >> /lib/systemd/system/nextiondriver.service
-		#echo 'Before=timers.target' >> /lib/systemd/system/nextiondriver.service
-		#echo '' >> /lib/systemd/system/nextiondriver.service
-		#echo '[Service]' >> /lib/systemd/system/nextiondriver.service
-		#echo 'User=root' >> /lib/systemd/system/nextiondriver.service
-		#echo 'Type=forking' >> /lib/systemd/system/nextiondriver.service
-		#echo 'WorkingDirectory=/usr/local/etc/' >> /lib/systemd/system/nextiondriver.service
-		#echo 'ExecStart=/usr/local/bin/NextionDriver -c /etc/mmdvmhost -i' >> /lib/systemd/system/nextiondriver.service
-		#echo 'ExecStop=/usr/bin/killall NextionDriver' >> /lib/systemd/system/nextiondriver.service
-		#echo '' >> /lib/systemd/system/nextiondriver.service
-		#echo '[Install]' >> /lib/systemd/system/nextiondriver.service
-		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/nextiondriver.service
-		#echo 'WantedBy=network-online.target' >> /lib/systemd/system/nextiondriver.service
-		#echo 'RequiredBy=mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
-
-		#echo '[Unit]' > /lib/systemd/system/mmdvmhost.service
-		#echo 'Description=MMDVMHost Radio Service' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'After=syslog.target network.target' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'Requires=nextiondriver.service' >> /lib/systemd/system/mmdvmhost.service
-		#echo '' >> /lib/systemd/system/mmdvmhost.service
-		#echo '[Service]' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'Type=forking' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'ExecStart=/usr/local/sbin/mmdvmhost.service start' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'ExecStop=/usr/local/sbin/mmdvmhost.service stop' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'ExecReload=/usr/local/sbin/mmdvmhost.service restart' >> /lib/systemd/system/mmdvmhost.service
-		#echo '' >> /lib/systemd/system/mmdvmhost.service
-		#echo '[Install]' >> /lib/systemd/system/mmdvmhost.service
-		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mmdvmhost.service
-
-		# Enable the service
-		#systemctl daemon-reload
-		#systemctl stop nextiondriver.service
-		#/usr/bin/killall NextionDriver
-		#systemctl enable nextiondriver.service
-		#systemctl restart nextiondriver.service
-		#systemctl restart mmdvmhost.service
-
+		/usr/local/sbin/pistar-motdgen
+		
+		# Improved pistar-upnp.service unit file
+		echo '[Unit]' > /lib/systemd/system/pistar-upnp.service
+		echo 'Description=PiStar-UPnP network service' >> /lib/systemd/system/pistar-upnp.service
+		echo 'After=network-online.target ircddbgateway.timer' >> /lib/systemd/system/pistar-upnp.service
+		echo 'Wants=network-online.target' >> /lib/systemd/system/pistar-upnp.service
+		echo '' >> /lib/systemd/system/pistar-upnp.service
+		echo '[Service]' >> /lib/systemd/system/pistar-upnp.service
+		echo 'Type=oneshot' >> /lib/systemd/system/pistar-upnp.service
+		echo 'RemainAfterExit=true' >> /lib/systemd/system/pistar-upnp.service
+		echo 'ExecStart=/usr/local/sbin/pistar-upnp.service start' >> /lib/systemd/system/pistar-upnp.service
+		echo 'ExecStopPost=/usr/local/sbin/pistar-upnp.service stop' >> /lib/systemd/system/pistar-upnp.service
+		echo '' >> /lib/systemd/system/pistar-upnp.service
+		echo '[Install]' >> /lib/systemd/system/pistar-upnp.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-upnp.service
+		
+		# Update systemd and enable new services
+		systemctl daemon-reload
+		if [[ $(systemctl | grep pistar-upnp.timer | wc -l) -gt 0 ]]; then
+			systemctl stop pistar-upnp.service
+			systemctl start pistar-upnp.service
+		fi
+		
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.5..."
-		Message="You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="Upgraded from ${pistarCurVersion} to 4.1.5..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.1.5)
 		#sed -i 's/4.1.5/4.1.6/g' /etc/pistar-release
