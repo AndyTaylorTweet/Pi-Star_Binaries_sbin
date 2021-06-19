@@ -18,51 +18,80 @@ KILL=/bin/kill
 SLEEP=/bin/sleep
 ipVar=$(hostname -I | cut -d' ' -f1)
 hostVar=$(hostname | cut -d'.' -f1)
-timeOut=600
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 1
 
 # Check that the network is UP and die if its not
-if [ "$(expr length `hostname -I | cut -d' ' -f1`x)" == "1" ]; then
+if [ "$(expr length ${ipVar}x)" == "1" ]; then
+	exit 0
+fi
+
+# Now we know the network is up - check for a valid IGD, die if there is none
+igdURL=$(upnpc -l | grep "valid IGD" | awk -F " : " '{print $2}')
+if [ "$(expr length ${igdURL}x)" == "1" ]; then
 	exit 0
 fi
 
 case "$1" in
 	start) (
-#		$DAEMON -e $hostVar -a $ipVar 22 22 TCP $timeOut > /dev/null 2>&1
-#		$DAEMON -e $hostVar -a $ipVar 80 80 TCP $timeOut > /dev/null 2>&1
-#		$DAEMON -e $hostVar -a $ipVar 10022 10022 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 20001 20001 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 30001 30001 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 30051 30051 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 30061 30061 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 30062 30062 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 30063 30063 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 30064 30064 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 40000 40000 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 42000 42000 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 42001 42001 UDP $timeOut > /dev/null 2>&1
-                $DAEMON -e $hostVar -a $ipVar 42010 42010 UDP $timeOut > /dev/null 2>&1
+#		$DAEMON -u ${igdURL} -e ${hostVar}_SSH -a $ipVar 22 22 TCP $timeOut > /dev/null 2>&1
+#		$DAEMON -u ${igdURL} -e ${hostVar}_Dash -a $ipVar 80 80 TCP $timeOut > /dev/null 2>&1
+		# Check for running ircDDBGateway, pointless opening ports if we dont use them.
+                if ! pgrep ircDDBGateway &> /dev/null 2>&1; then
+#			$DAEMON -u ${igdURL} -e ${hostVar}_Remote -a $ipVar 10022 10022 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus1 -a $ipVar 20001 20001 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus2 -a $ipVar 20002 20002 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus3 -a $ipVar 20003 20003 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus4 -a $ipVar 20004 20004 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus5 -a $ipVar 20005 20005 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus6 -a $ipVar 20006 20006 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Plus7 -a $ipVar 20007 20007 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra1 -a $ipVar 30001 30001 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra2 -a $ipVar 30002 30002 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra3 -a $ipVar 30003 30003 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra4 -a $ipVar 30004 30004 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra5 -a $ipVar 30005 30005 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra6 -a $ipVar 30006 30006 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_D-Extra7 -a $ipVar 30007 30007 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS1 -a $ipVar 30051 30051 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS2 -a $ipVar 30052 30052 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS3 -a $ipVar 30053 30053 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS4 -a $ipVar 30054 30054 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS5 -a $ipVar 30055 30055 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS6 -a $ipVar 30056 30056 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_DCS7 -a $ipVar 30057 30057 UDP > /dev/null 2>&1
+                        $DAEMON -u ${igdURL} -e ${hostVar}_Icom_G2 -a $ipVar 40000 40000 UDP > /dev/null 2>&1
+		fi
 		)& ;;
 
 	stop) (
-                $DAEMON -d 22 TCP > /dev/null 2>&1
-                $DAEMON -d 80 TCP > /dev/null 2>&1
-                $DAEMON -d 10022 UDP > /dev/null 2>&1
-                $DAEMON -d 20001 UDP > /dev/null 2>&1
-                $DAEMON -d 30001 UDP > /dev/null 2>&1
-                $DAEMON -d 30051 UDP > /dev/null 2>&1
-                $DAEMON -d 30061 UDP > /dev/null 2>&1
-                $DAEMON -d 30062 UDP > /dev/null 2>&1
-                $DAEMON -d 30063 UDP > /dev/null 2>&1
-                $DAEMON -d 30064 UDP > /dev/null 2>&1
-                $DAEMON -d 40000 UDP > /dev/null 2>&1
-                $DAEMON -d 42000 UDP > /dev/null 2>&1
-                $DAEMON -d 42001 UDP > /dev/null 2>&1
-                $DAEMON -d 42010 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 22 TCP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 80 TCP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 10022 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20001 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20002 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20003 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20004 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20005 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20006 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 20007 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30001 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30002 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30003 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30004 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30005 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30006 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30007 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30051 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30052 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30053 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30054 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30055 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30056 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 30057 UDP > /dev/null 2>&1
+		$DAEMON -u ${igdURL} -d 40000 UDP > /dev/null 2>&1
 		)& ;;
-
 	*)
 		echo $"Usage: $0 {start|stop}"
 		exit 1
