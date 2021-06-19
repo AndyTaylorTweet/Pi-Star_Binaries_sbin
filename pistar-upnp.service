@@ -91,7 +91,7 @@ case "$1" in
 		$DAEMON -u ${igdURL} -d 30056 UDP > /dev/null 2>&1
 		$DAEMON -u ${igdURL} -d 30057 UDP > /dev/null 2>&1
 		$DAEMON -u ${igdURL} -d 40000 UDP > /dev/null 2>&1
-		)& ;;
+		) ;;
 	*)
 		echo $"Usage: $0 {start|stop}"
 		exit 1
