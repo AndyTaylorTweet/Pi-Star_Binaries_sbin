@@ -65,14 +65,14 @@ iptables -t mangle -A POSTROUTING -p udp --dport 20000 -j DSCP --set-dscp 46
 
 # Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
 iptables -A OUTPUT -p udp --dport 20001:20007 -j ACCEPT # D-Plus Outbound Voice
-iptables -A OUTPUT -p udp --dport 30001 -j ACCEPT #       DExtra Outbound Voice
-iptables -A OUTPUT -p udp --dport 30051 -j ACCEPT #       DCS Outbound Voice
+iptables -A OUTPUT -p udp --dport 30001:30007 -j ACCEPT # DExtra Outbound Voice
+iptables -A OUTPUT -p udp --dport 30051:30057 -j ACCEPT # DCS Outbound Voice
 iptables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT # CCS Voice
 iptables -A OUTPUT -p udp --dport 40000 -j ACCEPT #       Icom G2 Callsign Routing
 
 iptables -t mangle -A POSTROUTING -p udp --dport 20001:20007 -j DSCP --set-dscp 46
-iptables -t mangle -A POSTROUTING -p udp --dport 30001 -j DSCP --set-dscp 46
-iptables -t mangle -A POSTROUTING -p udp --dport 30051 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 30001:30007 -j DSCP --set-dscp 46
+iptables -t mangle -A POSTROUTING -p udp --dport 30051:30057 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 46
 iptables -t mangle -A POSTROUTING -p udp --dport 40000 -j DSCP --set-dscp 46
 
@@ -143,25 +143,25 @@ then
 fi
 
 # Allow Local Network Name Resolution
-iptables -A OUTPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #	AVAHI Daemon (Name Resolution)
-iptables -A INPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #	AVAHI Daemon (Name Resolution)
-iptables -A OUTPUT -p udp --dport 137:138 -j ACCEPT #			NETBIOS Name Resolution Broadcast Out
-iptables -A INPUT -p udp --dport 137:138 -j ACCEPT #			NETBIOS Name Resolution Broadcast In
-iptables -A INPUT -p tcp --dport 139 -j ACCEPT #			NETBIOS TCP Session In
+iptables -A OUTPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT # AVAHI Daemon (Name Resolution)
+iptables -A INPUT -p udp -d 224.0.0.251 --dport 5353 -j ACCEPT #  AVAHI Daemon (Name Resolution)
+iptables -A OUTPUT -p udp --dport 137:138 -j ACCEPT #             NETBIOS Name Resolution Broadcast Out
+iptables -A INPUT -p udp --dport 137:138 -j ACCEPT #              NETBIOS Name Resolution Broadcast In
+iptables -A INPUT -p tcp --dport 139 -j ACCEPT #                  NETBIOS TCP Session In
 
 # ALlow some DHCP related chatter
-iptables -A INPUT -p udp --dport 68 -j ACCEPT #				UDP directed DHCP Packets
-iptables -A OUTPUT -p udp --dport 67:68 -j ACCEPT #			DHCP Packets
+iptables -A INPUT -p udp --dport 68 -j ACCEPT #     UDP directed DHCP Packets
+iptables -A OUTPUT -p udp --dport 67:68 -j ACCEPT # DHCP Packets
 
 # Allow uPnP Firewall Configuration
-iptables -A OUTPUT -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT #		uPnP Packets
-iptables -A INPUT -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT #		uPnP Packets
-iptables -A INPUT -p udp -s 192.168.0.0/16 --sport 1900 -j ACCEPT #		uPnP Packets
-iptables -A INPUT -p udp -s 172.16.0.0/12 --sport 1900 -j ACCEPT #		uPnP Packets
-iptables -A INPUT -p udp -s 10.0.0.0/8 --sport 1900 -j ACCEPT #			uPnP Packets
-iptables -A OUTPUT -p tcp -d 192.168.0.0/16 --dport 1025:65535 -j ACCEPT #	uPnP Packets
-iptables -A OUTPUT -p tcp -d 172.16.0.0/12 --dport 1025:65535 -j ACCEPT #	uPnP Packets
-iptables -A OUTPUT -p tcp -d 10.0.0.0/8 --dport 1025:65535 -j ACCEPT #		uPnP Packets
+iptables -A OUTPUT -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT #      uPnP Packets
+iptables -A INPUT -p udp -d 239.255.255.250 --dport 1900 -j ACCEPT #       uPnP Packets
+iptables -A INPUT -p udp -s 192.168.0.0/16 --sport 1900 -j ACCEPT #        uPnP Packets
+iptables -A INPUT -p udp -s 172.16.0.0/12 --sport 1900 -j ACCEPT #         uPnP Packets
+iptables -A INPUT -p udp -s 10.0.0.0/8 --sport 1900 -j ACCEPT #            uPnP Packets
+iptables -A OUTPUT -p tcp -d 192.168.0.0/16 --dport 1025:65535 -j ACCEPT # uPnP Packets
+iptables -A OUTPUT -p tcp -d 172.16.0.0/12 --dport 1025:65535 -j ACCEPT #  uPnP Packets
+iptables -A OUTPUT -p tcp -d 10.0.0.0/8 --dport 1025:65535 -j ACCEPT #     uPnP Packets
 
 # Allow ICMP Ping
 iptables -A INPUT -p icmp --icmp-type 8 -s 0/0 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT #	Allow ICMP echo-request in
@@ -169,11 +169,11 @@ iptables -A OUTPUT -p icmp --icmp-type 8 -d 0/0 -m state --state NEW -j ACCEPT #
 iptables -A OUTPUT -p icmp --icmp-type 0 -d 0/0 -m state --state ESTABLISHED,RELATED -j ACCEPT #	Allow ICMP echo-reply out
 
 # Allow Inbound D-Star Voice Ports
-iptables -A INPUT -p udp --dport 20001 -j ACCEPT #        D-Plus Linking
-iptables -A INPUT -p udp --dport 30001 -j ACCEPT #        DExtra Linking
-iptables -A INPUT -p udp --dport 30051 -j ACCEPT #        DCS Linking
-iptables -A INPUT -p udp --dport 30061:30064 -j ACCEPT #  CCS
-iptables -A INPUT -p udp --dport 40000 -j ACCEPT #        Icom G2 Callsign Routing
+iptables -A INPUT -p udp --dport 20001:20007 -j ACCEPT #        D-Plus Linking
+iptables -A INPUT -p udp --dport 30001:30007 -j ACCEPT #        DExtra Linking
+iptables -A INPUT -p udp --dport 30051:30057 -j ACCEPT #        DCS Linking
+iptables -A INPUT -p udp --dport 30061:30064 -j ACCEPT #        CCS
+iptables -A INPUT -p udp --dport 40000 -j ACCEPT #              Icom G2 Callsign Routing
 
 # Allow Inbound YSF Gateway Ports
 iptables -A INPUT -p udp --sport 42000:43000 --dport 1024:65535 -j ACCEPT # YSF Gateway Routing
@@ -283,23 +283,21 @@ ip6tables -A OUTPUT -p tcp --dport 14580 -j ACCEPT #        D-PRS Position Info
 ip6tables -A OUTPUT -p tcp --dport 20001 -j ACCEPT #        D-Plus Outbound Links
 
 # Allow Outbound D-Star Voice Ports (Set the DSCP Markers to EF)
-ip6tables -A OUTPUT -p udp --dport 20001:20007 -j ACCEPT #  D-Plus Outbound Links
-ip6tables -A OUTPUT -p udp --dport 30001 -j ACCEPT #        DExtra Outbound Links
-ip6tables -A OUTPUT -p udp --dport 30051 -j ACCEPT #        DCS Outbound Links
-ip6tables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT #  CCS
-ip6tables -A OUTPUT -p udp --dport 40000 -j ACCEPT #        Icom G2 Callsign Routing
+ip6tables -A OUTPUT -p udp --dport 20001:20007 -j ACCEPT # D-Plus Outbound Links
+ip6tables -A OUTPUT -p udp --dport 30001:30007 -j ACCEPT # DExtra Outbound Links
+ip6tables -A OUTPUT -p udp --dport 30051:30057 -j ACCEPT # DCS Outbound Links
+ip6tables -A OUTPUT -p udp --dport 30061:30064 -j ACCEPT # CCS
+ip6tables -A OUTPUT -p udp --dport 40000 -j ACCEPT #       Icom G2 Callsign Routing
 
 ip6tables -t mangle -A POSTROUTING -p udp --dport 20001:20007 -j DSCP --set-dscp 46
-ip6tables -t mangle -A POSTROUTING -p udp --dport 30001 -j DSCP --set-dscp 46
-ip6tables -t mangle -A POSTROUTING -p udp --dport 30051 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 30001:30007 -j DSCP --set-dscp 46
+ip6tables -t mangle -A POSTROUTING -p udp --dport 30051:30057 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 30061:30064 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 40000 -j DSCP --set-dscp 46
 
 # Allow Outbound DMR Voice Ports
-#ip6tables -A OUTPUT -p udp --dport 55555 -j ACCEPT #        DMR+ Networking
 ip6tables -A OUTPUT -p udp --dport 55550:55580 -j ACCEPT #  HB France Networking
 ip6tables -A OUTPUT -p udp --dport 62031 -j ACCEPT #        DMR (BrandMeister) Networking
-#ip6tables -t mangle -A POSTROUTING -p udp --dport 55555 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 55550:55580 -j DSCP --set-dscp 46
 ip6tables -t mangle -A POSTROUTING -p udp --dport 62031 -j DSCP --set-dscp 46
 
@@ -333,9 +331,9 @@ ip6tables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 ip6tables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connections
 
 # Allow Inbound D-Star Voice Ports
-ip6tables -A INPUT -p udp --dport 20001 -j ACCEPT #       D-Plus Linking
-ip6tables -A INPUT -p udp --dport 30001 -j ACCEPT #       DExtra Linking
-ip6tables -A INPUT -p udp --dport 30051 -j ACCEPT #       DCS Linking
+ip6tables -A INPUT -p udp --dport 20001:20007 -j ACCEPT # D-Plus Linking
+ip6tables -A INPUT -p udp --dport 30001:30007 -j ACCEPT # DExtra Linking
+ip6tables -A INPUT -p udp --dport 30051:30057 -j ACCEPT # DCS Linking
 ip6tables -A INPUT -p udp --dport 30061:30064 -j ACCEPT # CCS
 ip6tables -A INPUT -p udp --dport 40000 -j ACCEPT #       Icom G2 Callsign Routing
 
