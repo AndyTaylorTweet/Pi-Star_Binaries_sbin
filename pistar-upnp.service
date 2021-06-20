@@ -35,8 +35,8 @@ fi
 
 case "$1" in
 	start) (
-#		$DAEMON -u ${igdURL} -e ${hostVar}_SSH -a $ipVar 22 22 TCP $timeOut > /dev/null 2>&1
-#		$DAEMON -u ${igdURL} -e ${hostVar}_Dash -a $ipVar 80 80 TCP $timeOut > /dev/null 2>&1
+#		$DAEMON -u ${igdURL} -e ${hostVar}_SSH -a $ipVar 22 22 TCP > /dev/null 2>&1
+#		$DAEMON -u ${igdURL} -e ${hostVar}_Dash -a $ipVar 80 80 TCP > /dev/null 2>&1
 		# Check for running ircDDBGateway, pointless opening ports if we dont use them.
                 if ! pgrep ircDDBGateway &> /dev/null 2>&1; then
 #			$DAEMON -u ${igdURL} -e ${hostVar}_Remote -a $ipVar 10022 10022 UDP > /dev/null 2>&1
