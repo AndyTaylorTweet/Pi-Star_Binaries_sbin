@@ -28,9 +28,13 @@ if [ "$(expr length ${ipVar}x)" == "1" ]; then
 fi
 
 # Now we know the network is up - check for a valid IGD, die if there is none
-igdURL=$(upnpc -l | grep "valid IGD" | awk -F " : " '{print $2}')
-if [ "$(expr length ${igdURL}x)" == "1" ]; then
+validIGD=$(upnpc -l | grep "valid IGD" | awk -F " : " '{print $2}' | head -n 1)
+if [ "$(expr length ${validIGD}x)" == "1" ]; then
+	# No valid IGD, nothing to do, bail out
 	exit 0
+else
+	# Get the correct IGD URL
+	igdURL=$(upnpc -l | grep desc | grep "$(echo ${validIGD} | awk -F  "/" '{print $3}')" | awk '{print $2}')
 fi
 
 case "$1" in
