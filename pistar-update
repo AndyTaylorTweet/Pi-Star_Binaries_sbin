@@ -58,6 +58,7 @@ git_update() {
                                 git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
                                         echo "Update to new version of pistar-update was not successfull, forcing update..."
+					rm -rf ${gitFolder}/pistar-upnp.service
                                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
                                 fi
                                 echo "Restarting update process with the new version..."
