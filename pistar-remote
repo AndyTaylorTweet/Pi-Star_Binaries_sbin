@@ -90,6 +90,10 @@ if config.has_option('d-star', 'getip'):
 	dstargetip = config.get('d-star', 'getip')
 else:
 	dstargetip = str(999999999999)
+if config.has_option('d-star', 'wifi'):
+	dstargetwifi = config.get('d-star', 'wifi')
+else:
+	dstargetwifi = str(999999999999)
 if config.has_option('d-star', '8Ball'):
         dstar8ball = config.get('d-star', '8Ball')
 else:
@@ -319,6 +323,17 @@ while True:
 					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
 					os.system(txtTransmitBin + ' -text "IP: ' + myIP + '" "' + dstarmodule + '"')
 
+				# D-Star Get the wifi info
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetwifi) in line:
+					# Get the SSID
+					if os.path.isfile('/sys/class/net/wlan0'):
+						ssid = os.popen('/sbin/iwconfig wlan0 | grep ESSID | awk -F ":" \'{print $2}\' | sed \'s/"//g\'').read()
+						rssi = os.popen('/sbin/iwconfig wlan0 | grep -i "signal level" | awk -F "=" \'{print $3}\'').read()
+						os.system(txtTransmitBin + ' -text "WiFi: ' + ssid + ' RSSI: ' + rssi + '" "' + dstarmodule + '"')
+					else:
+						os.system(txtTransmitBin + ' -text "WiFi: Not connected" "' + dstarmodule + '"')
+
 				# D-Star 8Ball
                                 # M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
                                 if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstar8ball) in line:
@@ -460,6 +475,17 @@ while True:
 					# Get the IP
 					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
 					os.system(txtTransmitBin + ' -text "My IP: ' + myIP + '" "' + dstarmodule + '"')
+
+				# D-Star Get the wifi info
+				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
+				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetwifi) in line:
+					# Get the SSID
+					if os.path.isfile('/sys/class/net/wlan0'):
+						ssid = os.popen('/sbin/iwconfig wlan0 | grep ESSID | awk -F ":" \'{print $2}\' | sed \'s/"//g\'').read()
+						rssi = os.popen('/sbin/iwconfig wlan0 | grep -i "signal level" | awk -F "=" \'{print $3}\'').read()
+						os.system(txtTransmitBin + ' -text "WiFi: ' + ssid + ' RSSI: ' + rssi + '" "' + dstarmodule + '"')
+					else:
+						os.system(txtTransmitBin + ' -text "WiFi: Not connected" "' + dstarmodule + '"')
 
 				# D-Star 8Ball
                                 # M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
