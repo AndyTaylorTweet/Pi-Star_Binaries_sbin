@@ -1273,9 +1273,9 @@ main_function() {
 		#echo '' >> /lib/systemd/system/dgidgateway.service
 		#echo '[Service]' >> /lib/systemd/system/dgidgateway.service
 		#echo 'Type=forking' >> /lib/systemd/system/dgidgateway.service
-		#echo 'ExecStart=/usr/local/sbin/ysfgateway.service start' >> /lib/systemd/system/dgidgateway.service
-		#echo 'ExecStop=/usr/local/sbin/ysfgateway.service stop' >> /lib/systemd/system/dgidgateway.service
-		#echo 'ExecReload=/usr/local/sbin/ysfgateway.service restart' >> /lib/systemd/system/dgidgateway.service
+		#echo 'ExecStart=/usr/local/sbin/dgidgateway.service start' >> /lib/systemd/system/dgidgateway.service
+		#echo 'ExecStop=/usr/local/sbin/dgidgateway.service stop' >> /lib/systemd/system/dgidgateway.service
+		#echo 'ExecReload=/usr/local/sbin/dgidgateway.service restart' >> /lib/systemd/system/dgidgateway.service
 		#echo '' >> /lib/systemd/system/dgidgateway.service
 		#echo '[Install]' >> /lib/systemd/system/dgidgateway.service
 		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.service
