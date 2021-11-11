@@ -1266,8 +1266,44 @@ main_function() {
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
+		# Create DGIdGateway Unit files
+		#echo '[Unit]' > /lib/systemd/system/dgidgateway.service
+		#echo 'Description=Yaesu System Fusion Servce' >> /lib/systemd/system/dgidgateway.service
+		#echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dgidgateway.service
+		#echo '' >> /lib/systemd/system/dgidgateway.service
+		#echo '[Service]' >> /lib/systemd/system/dgidgateway.service
+		#echo 'Type=forking' >> /lib/systemd/system/dgidgateway.service
+		#echo 'ExecStart=/usr/local/sbin/ysfgateway.service start' >> /lib/systemd/system/dgidgateway.service
+		#echo 'ExecStop=/usr/local/sbin/ysfgateway.service stop' >> /lib/systemd/system/dgidgateway.service
+		#echo 'ExecReload=/usr/local/sbin/ysfgateway.service restart' >> /lib/systemd/system/dgidgateway.service
+		#echo '' >> /lib/systemd/system/dgidgateway.service
+		#echo '[Install]' >> /lib/systemd/system/dgidgateway.service
+		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.service
+		
+		#echo '[Timer]' > /lib/systemd/system/dgidgateway.timer
+		#echo 'OnStartupSec=20' >> /lib/systemd/system/dgidgateway.timer
+		#echo '' >> /lib/systemd/system/dgidgateway.timer
+		#echo '[Install]' >> /lib/systemd/system/dgidgateway.timer
+		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.timer
+		
+		#systemctl daemon-reload
+		#systemctl enable dgidgateway.timer
+
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.1.6..."
+		Message="You are already running the latest version..."
+		#echo $Message
+		#exec "$0" "$@"
+                #exit 1
+	;;
+	4.1.6)
+		#sed -i 's/4.1.6/4.1.7/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.1.7..."
 		Message="You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
