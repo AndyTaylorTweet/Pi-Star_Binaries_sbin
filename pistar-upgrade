@@ -1261,40 +1261,111 @@ main_function() {
                 exit 1
 	;;
 	4.1.5)
-		#sed -i 's/4.1.5/4.1.6/g' /etc/pistar-release
+		sed -i 's/4.1.5/4.1.6/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Create DGIdGateway Unit files
-		#echo '[Unit]' > /lib/systemd/system/dgidgateway.service
-		#echo 'Description=Yaesu System Fusion DGIdGateway Servce' >> /lib/systemd/system/dgidgateway.service
-		#echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dgidgateway.service
-		#echo '' >> /lib/systemd/system/dgidgateway.service
-		#echo '[Service]' >> /lib/systemd/system/dgidgateway.service
-		#echo 'Type=forking' >> /lib/systemd/system/dgidgateway.service
-		#echo 'ExecStart=/usr/local/sbin/dgidgateway.service start' >> /lib/systemd/system/dgidgateway.service
-		#echo 'ExecStop=/usr/local/sbin/dgidgateway.service stop' >> /lib/systemd/system/dgidgateway.service
-		#echo 'ExecReload=/usr/local/sbin/dgidgateway.service restart' >> /lib/systemd/system/dgidgateway.service
-		#echo '' >> /lib/systemd/system/dgidgateway.service
-		#echo '[Install]' >> /lib/systemd/system/dgidgateway.service
-		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.service
-		
-		#echo '[Timer]' > /lib/systemd/system/dgidgateway.timer
-		#echo 'OnStartupSec=20' >> /lib/systemd/system/dgidgateway.timer
-		#echo '' >> /lib/systemd/system/dgidgateway.timer
-		#echo '[Install]' >> /lib/systemd/system/dgidgateway.timer
-		#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.timer
-		
-		#systemctl daemon-reload
-		#systemctl enable dgidgateway.timer
+		echo '[Unit]' > /lib/systemd/system/dgidgateway.service
+		echo 'Description=Yaesu System Fusion DGIdGateway Servce' >> /lib/systemd/system/dgidgateway.service
+		echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/dgidgateway.service
+		echo '' >> /lib/systemd/system/dgidgateway.service
+		echo '[Service]' >> /lib/systemd/system/dgidgateway.service
+		echo 'Type=forking' >> /lib/systemd/system/dgidgateway.service
+		echo 'ExecStart=/usr/local/sbin/dgidgateway.service start' >> /lib/systemd/system/dgidgateway.service
+		echo 'ExecStop=/usr/local/sbin/dgidgateway.service stop' >> /lib/systemd/system/dgidgateway.service
+		echo 'ExecReload=/usr/local/sbin/dgidgateway.service restart' >> /lib/systemd/system/dgidgateway.service
+		echo '' >> /lib/systemd/system/dgidgateway.service
+		echo '[Install]' >> /lib/systemd/system/dgidgateway.service
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.service
+
+		echo '[Timer]' > /lib/systemd/system/dgidgateway.timer
+		echo 'OnStartupSec=20' >> /lib/systemd/system/dgidgateway.timer
+		echo '' >> /lib/systemd/system/dgidgateway.timer
+		echo '[Install]' >> /lib/systemd/system/dgidgateway.timer
+		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/dgidgateway.timer
+
+		# We are not auto-starting this daemon on purpose, we're not ready for that.
+		systemctl daemon-reload
+
+		# Add the DGIdGateway Config
+		echo '[General]' > /etc/dgidgateway
+		echo 'Callsign=M1ABC' >> /etc/dgidgateway
+		echo 'Suffix=ND' >> /etc/dgidgateway
+		echo 'Id=1234567' >> /etc/dgidgateway
+		echo 'RptAddress=127.0.0.1' >> /etc/dgidgateway
+		echo 'RptPort=3200' >> /etc/dgidgateway
+		echo 'LocalAddress=127.0.0.1' >> /etc/dgidgateway
+		echo 'LocalPort=4200' >> /etc/dgidgateway
+		echo 'RFHangTime=20' >> /etc/dgidgateway
+		echo 'NetHangTime=20' >> /etc/dgidgateway
+		echo 'Bleep=1' >> /etc/dgidgateway
+		echo 'Debug=0' >> /etc/dgidgateway
+		echo 'Daemon=1' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[Info]' >> /etc/dgidgateway
+		echo 'RXFrequency=430000000' >> /etc/dgidgateway
+		echo 'TXFrequency=430000000' >> /etc/dgidgateway
+		echo 'Power=1' >> /etc/dgidgateway
+		echo 'Latitude=50.0' >> /etc/dgidgateway
+		echo 'Longitude=-3.0' >> /etc/dgidgateway
+		echo 'Height=0' >> /etc/dgidgateway
+		echo 'Description=Pi-Star' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[Log]' >> /etc/dgidgateway
+		echo 'DisplayLevel=1' >> /etc/dgidgateway
+		echo 'FileLevel=1' >> /etc/dgidgateway
+		echo 'FilePath=/var/log/pi-star' >> /etc/dgidgateway
+		echo 'FileRoot=DGIdGateway' >> /etc/dgidgateway
+		echo 'FileRotate=0' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[APRS]' >> /etc/dgidgateway
+		echo 'Enable=0' >> /etc/dgidgateway
+		echo 'Address=127.0.0.1' >> /etc/dgidgateway
+		echo 'Port=8673' >> /etc/dgidgateway
+		echo 'Description=APRS Description' >> /etc/dgidgateway
+		echo 'Suffix=Y' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[YSF Network]' >> /etc/dgidgateway
+		echo 'Hosts=/usr/local/etc/YSFHosts.txt' >> /etc/dgidgateway
+		echo 'RFHangTime=20' >> /etc/dgidgateway
+		echo 'NetHangTime=20' >> /etc/dgidgateway
+		echo 'Debug=0' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[FCS Network]' >> /etc/dgidgateway
+		echo 'RFHangTime=20' >> /etc/dgidgateway
+		echo 'NetHangTime=20' >> /etc/dgidgateway
+		echo 'Debug=0' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[IMRS Network]' >> /etc/dgidgateway
+		echo 'RFHangTime=20' >> /etc/dgidgateway
+		echo 'NetHangTime=20' >> /etc/dgidgateway
+		echo 'Debug=0' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[DGId=0]' >> /etc/dgidgateway
+		echo 'Type=Gateway' >> /etc/dgidgateway
+		echo 'Static=1' >> /etc/dgidgateway
+		echo 'Address=127.0.0.1' >> /etc/dgidgateway
+		echo 'Port=42025' >> /etc/dgidgateway
+		echo 'Local=42026' >> /etc/dgidgateway
+		echo 'RFHangTime=120' >> /etc/dgidgateway
+		echo 'NetHangTime=60' >> /etc/dgidgateway
+		echo 'Debug=0' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[GPSD]' >> /etc/dgidgateway
+		echo 'Enable=0' >> /etc/dgidgateway
+		echo 'Address=127.0.0.1' >> /etc/dgidgateway
+		echo 'Port=2947' >> /etc/dgidgateway
+		echo '' >> /etc/dgidgateway
+		echo '[Enabled]' >> /etc/dgidgateway
+		echo 'Enabled=1' >> /etc/dgidgateway
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.6..."
-		Message="You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="Upgraded from ${pistarCurVersion} to 4.1.6..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.1.6)
 		#sed -i 's/4.1.6/4.1.7/g' /etc/pistar-release
