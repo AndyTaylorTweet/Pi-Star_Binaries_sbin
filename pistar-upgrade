@@ -1359,7 +1359,7 @@ main_function() {
 		echo 'Port=2947' >> /etc/dgidgateway
 		echo '' >> /etc/dgidgateway
 		echo '[Enabled]' >> /etc/dgidgateway
-		echo 'Enabled=1' >> /etc/dgidgateway
+		echo 'Enabled=0' >> /etc/dgidgateway
 
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.6..."
