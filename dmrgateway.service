@@ -40,7 +40,7 @@ if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost
 fi
 
 # Make sure I am supposed to be used
-if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}') != 127.0.0.1 ]; then
+if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}' | head -n 1) != 127.0.0.1 ]; then
         exit 1;
 fi
 
