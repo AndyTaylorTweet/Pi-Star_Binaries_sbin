@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                     Pi-Star M17 preview                                    #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Alessio Caiazza (IU5BON)  #
+#                                                                            #
+##############################################################################
+#
+
+set -e
+
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Make the disk RW
+mount -o remount,rw /
+
+pushd /var/www/dashboard
+if [[ $(git remote | grep  nolith) != "nolith" ]] ; then
+    echo "Patching Dashboard"
+    
+    git remote add nolith https://github.com/nolith/Pi-Star_DV_Dash.git
+    git fetch nolith
+    git checkout M17
+fi
+popd
+
+pushd /usr/local/sbin
+if [[ $(git remote | grep  nolith) != "nolith" ]] ; then
+    echo "Patching sbin"
+    
+    git remote add nolith https://github.com/nolith/Pi-Star_Binaries_sbin.git
+    git fetch nolith
+    git checkout M17
+fi
+popd
+
+pushd /usr/local/bin
+if [[ $(git remote | grep  nolith) != "nolith" ]] ; then
+    echo "Patching bin"
+
+    git remote add nolith https://github.com/nolith/Pi-Star_v4_Binaries_bin.git
+    git fetch nolith
+    git checkout M17
+fi
+popd
+
+touch /etc/m17gateway
+
+sync
+mount -o remount,ro /
