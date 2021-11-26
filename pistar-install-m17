@@ -51,6 +51,7 @@ if [[ $(git remote | grep  nolith) != "nolith" ]] ; then
 fi
 popd
 
+pistar-firewall
 touch /etc/m17gateway
 m17gateway.service install
 
