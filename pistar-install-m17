@@ -52,8 +52,9 @@ fi
 popd
 
 touch /etc/m17gateway
+m17gateway.service install
 
 sync
 mount -o remount,ro /
 
-echo "M17 is now available on your system, please make sure your MMDVM FW is >= 1.6.0, you run sudo m17gateway.service  install, and you enabled M17 mode from the web interface"
+echo "M17 is now available on your system, please make sure your MMDVM FW is >= 1.6.0, and you enabled M17 mode from the web interface"

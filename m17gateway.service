@@ -126,6 +126,7 @@ EOS
 		systemctl daemon-reload
 		systemctl enable m17gateway.service
 		systemctl enable m17gateway.timer
+		;;
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status|install}"
