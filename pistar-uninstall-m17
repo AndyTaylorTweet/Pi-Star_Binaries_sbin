@@ -22,16 +22,19 @@ m17gateway.service uninstall
 
 pushd /var/www/dashboard
 git checkout master
+git branch -D M17
 git remote remove nolith
 popd
 
 pushd /usr/local/sbin
 git checkout master
+git branch -D M17
 git remote remove nolith
 popd
 
 pushd /usr/local/bin
 git checkout master
+git branch -D M17
 git remote remove nolith
 popd
 
