@@ -127,8 +127,15 @@ EOS
 		systemctl enable m17gateway.service
 		systemctl enable m17gateway.timer
 		;;
+	uninstall)
+		systemctl stop m17gateway.service
+		systemctl disable m17gateway.timer
+		systemctl disable m17gateway.service
+	        rm /etc/systemd/system/m17gateway.service
+	        rm /etc/systemd/system/m17gateway.timer
+		;;
 
 	*)
-		echo $"Usage: $0 {start|stop|restart|status|install}"
+		echo $"Usage: $0 {start|stop|restart|status|install|uninstall}"
 		exit 1
 esac

@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                     Pi-Star M17 preview                                    #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Alessio Caiazza (IU5BON)  #
+#                                                                            #
+##############################################################################
+
+# Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+
+# Make the disk RW
+mount -o remount,rw /
+
+m17gateway.service uninstall
+
+pushd /var/www/dashboard
+git checkout master
+git remote remove nolith
+popd
+
+pushd /usr/local/sbin
+git checkout master
+git remote remove nolith
+popd
+
+pushd /usr/local/bin
+git checkout master
+git remote remove nolith
+popd
+
+pistar-firewall
+
+sync
+mount -o remount,ro /
+
+echo "Plase reboot your system"
