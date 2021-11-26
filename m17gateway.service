@@ -1,0 +1,133 @@
+#!/bin/bash
+#########################################################
+#                                                       #
+#              M17Gateway Service Handler               #
+#                                                       #
+# Written for Pi-Star (http://www.mw0mwz.co.uk/pi-star) #
+#               By Alessio Caiazza (IU5BON)             #
+#         Based on work by Andy Taylor (MW0MWZ)         #
+#                and Miguel Silva (CT2HRB)              #
+#                                                       #
+#                     Version 0.1                       #
+#                                                       #
+#########################################################
+
+# Service Config
+DAEMON=M17Gateway
+DAEMON_PATH=/usr/local/bin/
+CONFIG=/etc/m17gateway
+DAEMON_OPTS=$CONFIG
+PGREP=/usr/bin/pgrep
+KILL=/bin/kill
+SLEEP=/bin/sleep
+LOGDIR=/var/log/pi-star
+USER=root
+GROUP=mmdvm
+ipVar=`hostname -I | cut -d' ' -f1`
+
+# Pre-flight checks...
+test -x ${DAEMON_PATH}${DAEMON} || exit 1
+test -r $CONFIG || exit 1
+
+# if dstarrepeater is configured or running, dont start this daemon!
+! test -r /etc/dstar-radio.dstarrepeater || exit 1
+
+for _ in once; do
+	if [ -f '/etc/mmdvmhost' ] && [ "`sed -n '/\[M17 Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8`" == 1 ]; then
+		break;
+	fi
+	exit 1;
+done
+
+if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+  exit 1;
+fi
+
+# Verify the logging directory exists, if not create it and setup the ownership / permissions
+if [ ! -d $LOGDIR ]; then
+  mkdir -p $LOGDIR
+  chown ${USER}:${GROUP} $LOGDIR
+  chmod 775 $LOGDIR
+fi
+
+case "$1" in
+	start)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
+			exit 1;
+		else
+			# Wait for an IP address
+			until [ $ipVar != " " ]; do
+				sleep 10
+				ipVar=`hostname -I`
+			done
+			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
+			exit 0;
+		fi
+		;;
+
+	stop)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL `${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			exit 1;
+		fi
+		;;
+
+	restart)
+		if [ `$PGREP $DAEMON` ]; then
+			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
+			$KILL `${PGREP} ${DAEMON}`
+			$SLEEP 3
+			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		else
+			echo -e "$DAEMON is not running"
+			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
+			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
+			exit 0;
+		fi
+		;;
+
+	status)
+		if [ `${PGREP} ${DAEMON}` ]; then
+			echo -e "$DAEMON is running as PID "`${PGREP} ${DAEMON}`
+		else
+			echo -e "$DAEMON is not running"
+		fi
+		;;
+	install)
+	        cat >/etc/systemd/system/m17gateway.service <<EOS
+[Unit]
+Description=M17 Servce
+After=syslog.target network.target mmdvmhost.timer
+
+[Service]
+Type=forking
+ExecStart=/usr/local/sbin/m17gateway.service start
+ExecStop=/usr/local/sbin/m17gateway.service stop
+ExecReload=/usr/local/sbin/m17gateway.service restart
+
+[Install]
+WantedBy=multi-user.target
+EOS
+	        cat >/etc/systemd/system/m17gateway.timer <<EOS
+[Timer]
+OnStartupSec=20
+
+[Install]
+WantedBy=multi-user.target
+EOS
+		systemctl daemon-reload
+		systemctl enable m17gateway.service
+		systemctl enable m17gateway.timer
+
+	*)
+		echo $"Usage: $0 {start|stop|restart|status|install}"
+		exit 1
+esac
