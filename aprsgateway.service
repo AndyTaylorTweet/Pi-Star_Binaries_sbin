@@ -31,7 +31,7 @@ if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
   exit 1;
 fi
 
-if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/aprsgateway | cut -c 9` != 1 ]; then
+if [ `sed -n '/^\[Enabled\]/,/^\[/p' /etc/aprsgateway | grep "^Enable" | awk -F '=' '{print $2}'` != 1 ]; then
 	exit 1;
 fi
 
