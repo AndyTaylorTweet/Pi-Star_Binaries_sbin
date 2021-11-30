@@ -34,16 +34,16 @@ if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
   exit 1;
 fi
 
-if [ `sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "^Enable" | awk -F '=' '{print $2}'` == 0 ]; then
+if [ `sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable" | awk -F '=' '{print $2}'` == 0 ]; then
 	exit 1;
 fi
 
-if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/dmr2nxdn | cut -c 9` != 1 ]; then
+if [ `sed -n '/^\[Enabled\]/,/^\[/p' /etc/dmr2nxdn | grep "^Enable" | awk -F '=' '{print $2}'` != 1 ]; then
 	exit 1;
 fi
 
 # Make sure I am supposed to be used
-if [ `sed -n '/\[DMR Network 3\]/{n;p;}' /etc/dmrgateway | cut -c 8` == 0 ]; then
+if [ `sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "^Enable" | awk -F '=' '{print $2}'` == 0 ]; then
 	exit 1;
 fi
 
