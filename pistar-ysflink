@@ -23,8 +23,8 @@ fi
 
 # Setup some variables
 cmd=/usr/local/bin/RemoteCommand
-enable=$(grep -A1 'Remote Commands' /etc/ysfgateway | tail -n 1 | awk -F "=" '{print $2}')
-port=$(grep -A2 'Remote Commands' /etc/ysfgateway | tail -n 1 | awk -F "=" '{print $2}')
+enable=$(sed -n '/^\[Remote Commands\]/,/^\[/p' /etc/ysfgateway | grep "^Enable" | awk -F '=' '{print $2}')
+port=$(sed -n '/^\[Remote Commands\]/,/^\[/p' /etc/ysfgateway | grep "^Port" | awk -F '=' '{print $2}')
 
 # Make sure that remote commands are turned on
 if [ "${enable}" -eq "0" ]; then
