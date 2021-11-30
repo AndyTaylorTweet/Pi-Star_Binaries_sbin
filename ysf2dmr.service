@@ -30,7 +30,7 @@ test -r $CONFIG || exit 1
 # if dstarrepeater is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
-if [ `sed -n '/\[System Fusion Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
+if [ `sed -n '/^\[System Fusion Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable=" | cut -c 8` == 0 ]; then
 	exit 1;
 fi
 
@@ -43,7 +43,7 @@ if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
 fi
 
 # Make sure I am supposed to be used
-if [ `grep 'YSF2DMRAddress' /etc/ysfgateway | awk -F = '{print $2}'` != 127.0.0.1 ]; then
+if [ `grep '^YSF2DMRAddress' /etc/ysfgateway | awk -F = '{print $2}'` != 127.0.0.1 ]; then
 	exit 1;
 fi
 
