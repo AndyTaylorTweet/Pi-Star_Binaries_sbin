@@ -33,7 +33,7 @@ fi
 
 if [ -f /etc/dstar-radio.mmdvmhost ]; then
         # Running MMDVMHost Mode, check that D-Star Network is enabled
-        if [ `sed -n '/\[D-Star Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` == 0 ]; then
+        if [ `sed -n '/^\[D-Star Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable" | awk -F "=" '{print $2}'` == 0 ]; then
            exit 1;
         fi
 fi
