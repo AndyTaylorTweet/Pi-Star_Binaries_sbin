@@ -30,7 +30,7 @@ test -r $CONFIG || exit 1
 # if dstarrepeater is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.dstarrepeater || exit 1
 
-if [ `sed -n '/\[POCSAG Network\]/{n;p;}' /etc/mmdvmhost | cut -c 8` -ne 1 ]; then
+if [ `sed -n '/^\[POCSAG Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable" | awk -F '=' '{print $2}'` -ne 1 ]; then
   exit 1;
 fi
 
