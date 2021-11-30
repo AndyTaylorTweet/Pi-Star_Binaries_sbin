@@ -22,7 +22,7 @@ APIKeyFile=/etc/bmapi.key
 APIURL="https://api.brandmeister.network/v1.0/repeater/"
 
 # Figure out the DMR ID
-DMRNetHost=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}')
+DMRNetHost=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "^Address=" | head -n 1 | awk -F "=" '/Address=/ {print $2}')
 if [[ "${DMRNetHost}" == "127.0.0.1" ]]; then
         # Using DMRGateway
         DMRID=$(sed -n -e '/DMR Network 1/,/DMR Network 2/p' /etc/dmrgateway | grep "Id" | awk -F "=" '/Id=/ {print $2}')
