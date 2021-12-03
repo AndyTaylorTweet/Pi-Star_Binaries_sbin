@@ -23,15 +23,15 @@ GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
 
 # if dstarrepeater is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.dstarrepeater || exit 1
+! test -r /etc/dstar-radio.dstarrepeater || exit 0
 
 # Check if Mobile GPS is enabled in MobileGPS or not
 if [[ -f /etc/mobilegps ]]; then
 	if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/mobilegps | cut -c 8` == 0 ]; then
-		exit 1;
+		exit 0;
 	fi
 fi
 
@@ -47,12 +47,12 @@ if [[ ! -f /etc/mobilegps ]]; then
     echo -e "[Enabled]" >> /etc/mobilegps
     echo -e "Enabled=0" >> /etc/mobilegps
   fi
-  exit 1;
+  exit 0;
 fi
 
 # Check if the Mobile GPS config is set to enabled also
 if [ `sed -n '/\[Enabled\]/{n;p;}' /etc/mobilegps | cut -c 9` != 1 ]; then
-	exit 1;
+	exit 0;
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
@@ -66,7 +66,7 @@ case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
-			exit 1;
+			exit 0;
 		else
 			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
@@ -81,7 +81,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			exit 1;
+			exit 0;
 		fi
 		;;
 
@@ -111,5 +111,5 @@ case "$1" in
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		exit 1
+		exit 0
 esac

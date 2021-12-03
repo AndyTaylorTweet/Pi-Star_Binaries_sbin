@@ -24,25 +24,25 @@ LOGDIR=/var/log/pi-star
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
-test -r $CONFIG || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
+test -r $CONFIG || exit 0
 
 # if MMDVMHost is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.mmdvmhost || exit 1
-test -r /etc/dstar-radio.dstarrepeater || exit 1
+! test -r /etc/dstar-radio.mmdvmhost || exit 0
+test -r /etc/dstar-radio.dstarrepeater || exit 0
 
 if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
-  exit 1;
+  exit 0;
 fi
 
 # if ircDDBGAteway is configured for Icom Repeater, dont run DStarRepeater
 if [[ $(grep "repeaterType1" /etc/ircddbgateway | cut -c 15) -ge 1 ]]; then
-  exit 1;
+  exit 0;
 fi
 
 if [ `$PGREP "MMDVMHost"` ]; then
   echo "Service 'MMDVMHost' is already running, cannot start $DAEMON"
-  exit 1;
+  exit 0;
 fi
 
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
@@ -56,7 +56,7 @@ case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
-			exit 1;
+			exit 0;
 		else
 			# Wait for an IP Address
 			until [ "$ipVar" != " " ]; do
@@ -81,7 +81,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			exit 1;
+			exit 0;
 		fi
 		;;
 
@@ -121,5 +121,5 @@ case "$1" in
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		exit 1
+		exit 0
 esac

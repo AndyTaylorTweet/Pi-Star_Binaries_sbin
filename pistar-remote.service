@@ -19,19 +19,19 @@ KILL=/bin/kill
 SLEEP=/bin/sleep
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
-test -x ${DAEMON_OPTS} || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
+test -x ${DAEMON_OPTS} || exit 0
 
 # Check the remote app is enabled.
 if grep "enabled" /etc/pistar-remote | grep -q "false" ; then
-	exit 1;
+	exit 0;
 fi
 
 case "$1" in
 	start)
 		if [ `${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"` ]; then
 			echo -e "pistar-remote is already running as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
-			exit 1;
+			exit 0;
 		else
 			${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
 			echo -e "pistar-remote started as PID "`${PGREP} -f "${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}"`
@@ -46,7 +46,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "pistar-remote is not running"
-			exit 1;
+			exit 0;
 		fi
 		;;
 
@@ -76,5 +76,5 @@ case "$1" in
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		exit 1
+		exit 0
 esac

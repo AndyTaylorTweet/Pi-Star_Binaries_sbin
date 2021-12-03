@@ -23,21 +23,21 @@ GROUP=mmdvm
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
-test -r $CONFIG || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
+test -r $CONFIG || exit 0
 
 # if dstarrepeater is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.dstarrepeater || exit 1
+! test -r /etc/dstar-radio.dstarrepeater || exit 0
 
 if [ `sed -n '/^\[P25 Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable" | awk -F '=' '{print $2}'` == 0 ]; then
 	if [ `sed -n '/^\[System Fusion\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable" | awk -F '=' '{print $2}'` == 0 ]; then
-		exit 1;
+		exit 0;
 	elif [ -f '/etc/ysf2p25' ] && [ `sed -n '/^\[Enabled\]/,/^\[/p' /etc/ysf2p25 | grep "^Enable" | awk -F '=' '{print $2}'` == 0 ]; then
-		exit 1;
+		exit 0;
 	elif [ -f '/etc/ysf2p25' ] && [ `sed -n '/^\[Enabled\]/,/^\[/p' /etc/ysf2p25 | grep "^Enable" | awk -F '=' '{print $2}'` == 1 ]; then
 		test=pass
 	else
-		exit 1;
+		exit 0;
 	fi
 fi
 
@@ -52,7 +52,7 @@ case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
-			exit 1;
+			exit 0;
 		else
 			# Wait for an IP address
 			until [ $ipVar != " " ]; do
@@ -72,7 +72,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			exit 1;
+			exit 0;
 		fi
 		;;
 
@@ -102,5 +102,5 @@ case "$1" in
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		exit 1
+		exit 0
 esac

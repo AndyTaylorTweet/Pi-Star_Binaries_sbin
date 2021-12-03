@@ -20,7 +20,7 @@ SLEEP=/bin/sleep
 DNSMASQDAEMON=dnsmasq
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
 test -f "/etc/hostapd/hostapd.conf" || exit 0
 if [ -f "/etc/hostap.off" ]; then
     exit 0
