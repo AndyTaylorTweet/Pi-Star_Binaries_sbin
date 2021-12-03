@@ -55,7 +55,7 @@ timedatectl set-timezone `grep date /var/www/dashboard/config/config.php | grep 
 
 # Clean up
 rm -rf /boot/Pi-Star_Config_*.zip 2>&1
-
+sync: sync; sync;
 reboot
 
 exit 0
