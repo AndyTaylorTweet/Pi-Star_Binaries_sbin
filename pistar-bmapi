@@ -22,19 +22,19 @@ APIKeyFile=/etc/bmapi.key
 APIURL="https://api.brandmeister.network/v1.0/repeater/"
 
 # Figure out the DMR ID
-DMRNetHost=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}')
+DMRNetHost=$(sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Address=" | head -n 1 | awk -F "=" '{print $2}')
 if [[ "${DMRNetHost}" == "127.0.0.1" ]]; then
         # Using DMRGateway
-        DMRID=$(sed -n -e '/DMR Network 1/,/DMR Network 2/p' /etc/dmrgateway | grep "Id" | awk -F "=" '/Id=/ {print $2}')
+        DMRID=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "^Id" | awk -F "=" '{print $2}')
 else
         # Using MMDVMHost
-        DMRMMDVMHostID=$(sed -n -e '/\[DMR\]/,/\[System Fusion\]/p' /etc/mmdvmhost | grep "Id" | awk -F "=" '/Id=/ {print $2}')
+        DMRMMDVMHostID=$(sed -n '/^\[DMR\]/,/^\[/p' /etc/mmdvmhost | grep "^Id" | awk -F "=" '{print $2}')
         if [[ ${DMRMMDVMHostID} ]]; then
                 # ID Specified in the DMR section
                 DMRID=${DMRMMDVMHostID}
         else
                 # No ID in the DMR Section
-                DMRID=$(grep -m 1 'Id=' /etc/mmdvmhost | tac | tail -1 | awk -F "=" '/Id/ {print $2}')
+                DMRID=$(grep -m 1 '^Id=' /etc/mmdvmhost | awk -F "=" '{print $2}')
         fi
 fi
 

@@ -70,38 +70,38 @@ curlErrorCodes[86]="RTSP: mismatch of Session Identifiers"
 curlErrorCodes[89]="No connection available, the session will be queued"
 
 # Are we using MMDVMHost or DMRGateway
-if [[ $(grep -c "Address=tgif.network" /etc/mmdvmhost) -ge 1 ]]; then
+if [[ $(grep -c "^Address=tgif.network" /etc/mmdvmhost) -ge 1 ]]; then
 	MODE="MMDVMHost"
-	ENABLED=$(sed -n '/^\[DMR\]/,/^$/p' /etc/mmdvmhost | grep "Enable" | awk -F "=" '{print $2}')
+	ENABLED=$(sed -n '/^\[DMR\]/,/^$/p' /etc/mmdvmhost | grep "^Enable" | awk -F "=" '{print $2}')
 	if [[ ${ENABLED:0:1} == 1 ]]; then
 		DMRIDCONF=$(sed -n '/^\[DMR\]/,/^Id/p' /etc/mmdvmhost | grep "Id" | awk -F "=" '{print $2}')
 	fi
 elif [[ $(grep -c "Address=tgif.network" /etc/dmrgateway) -ge 1 ]]; then
 	MODE="DMRGateway"
-	DMRGWCONFIG1ENABLE=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
-	DMRGWCONFIG1ADDRESS=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	DMRGWCONFIG1ENABLE=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "^Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG1ADDRESS=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "^Address" | awk -F "=" '{print $2}')
 	if [[ ${DMRGWCONFIG1ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG1ADDRESS}" == "tgif.network"  ]]; then
-		DMRIDCONF=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+		DMRIDCONF=$(sed -n '/^\[DMR Network 1\]/,/^\[/p' /etc/dmrgateway | grep "^Id" | awk -F "=" '{print $2}')
 	fi
-	DMRGWCONFIG2ENABLE=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
-	DMRGWCONFIG2ADDRESS=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	DMRGWCONFIG2ENABLE=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "^Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG2ADDRESS=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "^Address" | awk -F "=" '{print $2}')
 	if [[ ${DMRGWCONFIG2ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG2ADDRESS}" == "tgif.network"  ]]; then
-		DMRIDCONF=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+		DMRIDCONF=$(sed -n '/^\[DMR Network 2\]/,/^\[/p' /etc/dmrgateway | grep "^Id" | awk -F "=" '{print $2}')
 	fi
-	DMRGWCONFIG3ENABLE=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
-	DMRGWCONFIG3ADDRESS=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	DMRGWCONFIG3ENABLE=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "^Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG3ADDRESS=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "^Address" | awk -F "=" '{print $2}')
 	if [[ ${DMRGWCONFIG3ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG3ADDRESS}" == "tgif.network"  ]]; then
-		DMRIDCONF=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+		DMRIDCONF=$(sed -n '/^\[DMR Network 3\]/,/^\[/p' /etc/dmrgateway | grep "^Id" | awk -F "=" '{print $2}')
 	fi
-	DMRGWCONFIG4ENABLE=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
-	DMRGWCONFIG4ADDRESS=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	DMRGWCONFIG4ENABLE=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "^Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG4ADDRESS=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "^Address" | awk -F "=" '{print $2}')
 	if [[ ${DMRGWCONFIG4ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG4ADDRESS}" == "tgif.network"  ]]; then
-		DMRIDCONF=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+		DMRIDCONF=$(sed -n '/^\[DMR Network 4\]/,/^\[/p' /etc/dmrgateway | grep "^Id" | awk -F "=" '{print $2}')
 	fi
-	DMRGWCONFIG5ENABLE=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "Enable" | awk -F "=" '{print $2}')
-	DMRGWCONFIG5ADDRESS=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "Address" | awk -F "=" '{print $2}')
+	DMRGWCONFIG5ENABLE=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "^Enable" | awk -F "=" '{print $2}')
+	DMRGWCONFIG5ADDRESS=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "^Address" | awk -F "=" '{print $2}')
 	if [[ ${DMRGWCONFIG5ENABLE:0:1} == 1 ]] && [[ "${DMRGWCONFIG5ADDRESS}" == "tgif.network"  ]]; then
-		DMRIDCONF=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "Id" | awk -F "=" '{print $2}')
+		DMRIDCONF=$(sed -n '/^\[DMR Network 5\]/,/^\[/p' /etc/dmrgateway | grep "^Id" | awk -F "=" '{print $2}')
 	fi
 fi
 

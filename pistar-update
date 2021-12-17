@@ -163,8 +163,8 @@ main_function() {
 	        sed -i "/GwyAddress=/c\\GatewayAddress=127.0.0.1" /etc/mmdvmhost
 	        sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
 	fi
-	needsTypeLine=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Type=" | wc -l)
-	dmrAddress=$(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "^Address=" | awk -F "=" '/Address=/ {print $2}')
+	needsTypeLine=$(sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Type=" | wc -l)
+	dmrAddress=$(sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Address=" | awk -F "=" '/Address=/ {print $2}')
 	if [ ${needsTypeLine} \< 1 ]; then
 		if [[ "${dmrAddress}" == "127.0.0.1" ]]; then
 			sed -i 's/\[DMR Network\]/\[DMR Network\]\nType=Gateway/g' /etc/mmdvmhost

@@ -17,7 +17,7 @@ fi
 
 # Setup some variables
 cmd=/usr/local/bin/RemoteCommand
-port=$(sed -n '/\[Remote Control\]/{n;p;n;p;}' /etc/mmdvmhost | grep "Port" | awk -F "=" '{print $2}')
+port=$(sed -n '/^\[Remote Control\]/,/^\[/p' /etc/mmdvmhost | grep "^Port" | awk -F "=" '{print $2}')
 
 if [ -z "$1" ]; then
       echo "This is a wrapper script to make it more simple to use the MMDVMHost"

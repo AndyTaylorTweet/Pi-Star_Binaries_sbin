@@ -24,24 +24,24 @@ LOGDIR=/var/log/pi-star
 ipVar=`hostname -I | cut -d' ' -f1`
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
-test -r $CONFIG || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
+test -r $CONFIG || exit 0
 
 # if dstarrepeater is configured or running, dont start this daemon!
-! test -r /etc/dstar-radio.dstarrepeater || exit 1
+! test -r /etc/dstar-radio.dstarrepeater || exit 0
 
 if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
-  exit 1;
+  exit 0;
 fi
 
 # Make sure DMR Networking is on
-if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Enable=" | awk -F "=" '/Enable=/ {print $2}') == 0 ]; then
-        exit 1;
+if [ $(sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Enable" | awk -F '=' '{print $2}') == 0 ]; then
+        exit 0;
 fi
 
 # Make sure I am supposed to be used
-if [ $(sed -n -e '/\[DMR Network\]/,/\[System Fusion Network\]/p' /etc/mmdvmhost | grep "Address=" | awk -F "=" '/Address=/ {print $2}' | head -n 1) != 127.0.0.1 ]; then
-        exit 1;
+if [ $(sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Address=" | awk -F '=' '{print $2}' | head -n 1) != 127.0.0.1 ]; then
+        exit 0;
 fi
 
 # Reconfigure to use old style service if the config is not ready
@@ -60,7 +60,7 @@ case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
-			exit 1;
+			exit 0;
 		else
 			# Wait for an IP address
 			until [ $ipVar != " " ]; do
@@ -80,7 +80,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			exit 1;
+			exit 0;
 		fi
 		;;
 
@@ -110,5 +110,5 @@ case "$1" in
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		exit 1
+		exit 0
 esac

@@ -26,8 +26,8 @@ GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 
 # Pre-flight checks...
-test -x ${DAEMON_PATH}${DAEMON} || exit 1
-test -r $CONFIG || exit 1
+test -x ${DAEMON_PATH}${DAEMON} || exit 0
+test -r $CONFIG || exit 0
 
 #We start very early in the bootprocess, so we
 # verify the logging directory exists,
@@ -42,7 +42,7 @@ case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
-			exit 1;
+			exit 0;
 		else
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
@@ -58,7 +58,7 @@ case "$1" in
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
-			exit 1;
+			exit 0;
 		fi
 		;;
 
@@ -88,5 +88,5 @@ case "$1" in
 
 	*)
 		echo $"Usage: $0 {start|stop|restart|status}"
-		exit 1
+		exit 0
 esac
