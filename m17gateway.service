@@ -25,6 +25,44 @@ USER=root
 GROUP=mmdvm
 ipVar=`hostname -I | cut -d' ' -f1`
 
+case "$1" in
+	install)
+	        cat >/etc/systemd/system/m17gateway.service <<EOS
+[Unit]
+Description=M17 Servce
+After=syslog.target network.target mmdvmhost.timer
+
+[Service]
+Type=forking
+ExecStart=/usr/local/sbin/m17gateway.service start
+ExecStop=/usr/local/sbin/m17gateway.service stop
+ExecReload=/usr/local/sbin/m17gateway.service restart
+
+[Install]
+WantedBy=multi-user.target
+EOS
+	        cat >/etc/systemd/system/m17gateway.timer <<EOS
+[Timer]
+OnStartupSec=20
+
+[Install]
+WantedBy=multi-user.target
+EOS
+		systemctl daemon-reload
+		systemctl enable m17gateway.service
+		systemctl enable m17gateway.timer
+                exit 0
+		;;
+	uninstall)
+		systemctl stop m17gateway.service
+		systemctl disable m17gateway.timer
+		systemctl disable m17gateway.service
+	        rm /etc/systemd/system/m17gateway.service
+	        rm /etc/systemd/system/m17gateway.timer
+                exit 0
+		;;
+esac
+
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 0
 test -r $CONFIG || exit 0
@@ -98,39 +136,6 @@ case "$1" in
 		else
 			echo -e "$DAEMON is not running"
 		fi
-		;;
-	install)
-	        cat >/etc/systemd/system/m17gateway.service <<EOS
-[Unit]
-Description=M17 Servce
-After=syslog.target network.target mmdvmhost.timer
-
-[Service]
-Type=forking
-ExecStart=/usr/local/sbin/m17gateway.service start
-ExecStop=/usr/local/sbin/m17gateway.service stop
-ExecReload=/usr/local/sbin/m17gateway.service restart
-
-[Install]
-WantedBy=multi-user.target
-EOS
-	        cat >/etc/systemd/system/m17gateway.timer <<EOS
-[Timer]
-OnStartupSec=20
-
-[Install]
-WantedBy=multi-user.target
-EOS
-		systemctl daemon-reload
-		systemctl enable m17gateway.service
-		systemctl enable m17gateway.timer
-		;;
-	uninstall)
-		systemctl stop m17gateway.service
-		systemctl disable m17gateway.timer
-		systemctl disable m17gateway.service
-	        rm /etc/systemd/system/m17gateway.service
-	        rm /etc/systemd/system/m17gateway.timer
 		;;
 
 	*)
