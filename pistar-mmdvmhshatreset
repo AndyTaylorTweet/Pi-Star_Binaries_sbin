@@ -17,7 +17,6 @@ fi
 
 # Detect Pi4 Hardware
 if [ "$(/usr/local/bin/platformDetect.sh | grep "Pi 4 Model" | wc -l)" -eq 0 ]; then
-  echo -e "Pi 4 Detected"
   model="Pi4"
 else
   model=""
