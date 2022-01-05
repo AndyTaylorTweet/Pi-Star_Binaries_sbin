@@ -373,7 +373,7 @@ while True:
 
 								# YSF Stop MMDVMHost
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
-								if str('Trying to find non existent ') and str(ysfstop) in lineysf:
+								if str('Trying to find non existent') and str(ysfstop) in lineysf:
 									# Kill the Services
 									os.system(r'systemctl stop mmdvmhost.timer')
 									os.system(r'systemctl stop pistar-watchdog.timer')
@@ -382,26 +382,26 @@ while True:
 
 								# YSF Restart MMDVMHost
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
-								if str('Trying to find non existent ') and str(ysfrestart) in lineysf:
+								if str('Trying to find non existent') and str(ysfrestart) in lineysf:
 									# Restart the Services
 									os.system(r'systemctl restart ysfgateway.service')
 									os.system(r'systemctl restart mmdvmhost.service')
 
 								# YSF Reboot the OS
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
-								if str('Trying to find non existent ') and str(ysfreboot) in lineysf:
+								if str('Trying to find non existent') and str(ysfreboot) in lineysf:
 									# Reboot the OS
 									os.system(r'shutdown -r now')
 
 								# YSF Shutdown the OS
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
-								if str('Trying to find non existent ') and str(ysfshutdown) in lineysf:
+								if str('Trying to find non existent') and str(ysfshutdown) in lineysf:
 									# Shutdown the OS
 									os.system(r'shutdown -h now')
 
 								# YSF Update the Hostfiles
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
-								if str('Trying to find non existent ') and str(ysfhostfiles) in lineysf:
+								if str('Trying to find non existent') and str(ysfhostfiles) in lineysf:
 									# Update the host files
 									os.system(r'/bin/mount -o remount,rw /')
 									os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
