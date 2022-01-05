@@ -220,6 +220,7 @@ while True:
 					# Restart the Services
 					os.system(r'systemctl restart mmdvmhost.service')
 					os.system(r'systemctl restart dmrgateway.service')
+					time.sleep(30)
 
 				# DMR Restart the OS
 				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
@@ -255,6 +256,7 @@ while True:
                                         # Restart the Services
                                         os.system(r'systemctl restart mmdvmhost.service')
                                         os.system(r'systemctl restart dmrgateway.service')
+					time.sleep(30)
 
                                 # P25 Restart the OS
                                 # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
@@ -294,6 +296,7 @@ while True:
 					time.sleep(5)
                                         os.system(r'systemctl restart ircddbgateway.service')
                                         os.system(r'systemctl restart mmdvmhost.service')
+					time.sleep(30)
 
 				# D-Star Reboot the OS
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -386,6 +389,7 @@ while True:
 									# Restart the Services
 									os.system(r'systemctl restart ysfgateway.service')
 									os.system(r'systemctl restart mmdvmhost.service')
+									time.sleep(30)
 
 								# YSF Reboot the OS
 								# M: 2017-07-13 19:24:59.704 Trying to find non existent reflector with an id of 12345
