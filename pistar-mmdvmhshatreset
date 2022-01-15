@@ -47,7 +47,7 @@ if [ -z "${1}" ]; then
 fi
 
 case ${modemSelected} in
-  mmdvmhshat | mmdvmhsdualhatgpio | zumspotgpio | mmdvmvyehatdual | zumradiopigpio)
+  mmdvmhshat | mmdvmhsdualhatgpio | zumspotgpio | mmdvmvyehatdual | zumradiopigpio | stm32dvm)
     # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
     echo 20 > /sys/class/gpio/export
     echo 21 > /sys/class/gpio/export
