@@ -31,13 +31,13 @@ function resetGPIOModem {
 if [[ $(/usr/bin/pgrep MMDVMHost) ]]; then
         systemctl stop mmdvmhost > /dev/null 2>&1
         svcRestart=mmdvmhost
-        resetGPIOModem
 fi
 if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
         systemctl stop dstarrepeaterd > /dev/null 2>&1
         svcRestart=dstarrepeaterd
-        resetGPIOModem
 fi
+resetGPIOModem
+
 
 # Random Filename
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -271,7 +271,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 done
 
 # Restart the service(s) if I stopped them
+resetGPIOModem
 if [[ -v svcRestart ]]; then
-        resetGPIOModem
         systemctl start ${svcRestart} > /dev/null 2>&1
 fi
