@@ -26,6 +26,15 @@ if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
         svcRestart=dstarrepeaterd
 fi
 
+# Reset GPIO connected Modems
+echo 21 > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio21/direction
+sleep 0.5
+echo 0 > /sys/class/gpio/gpio21/value
+echo 1 > /sys/class/gpio/gpio21/value
+sleep 0.5
+echo 21 > /sys/class/gpio/unexport
+
 # Random Filename
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
@@ -124,12 +133,15 @@ function checkMMDVMoutput {
                 if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "D2RG_MMDVM_HS"* || ${modemData} == "ZUMspot"* || ${modemData} == "Nano_"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (${modemData})"
+                        boardDetected="true"
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (${modemData} - MMDMVM Protocol)"
+                        boardDetected="true"
                 elif [[ ${modemData} == *"u-blox"* ]]; then
                         # Print the output
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (u-blox GPS Device)"
+                        boardDetected="true"
                 fi
                 
                 echo "" > /tmp/${randomFilename}
@@ -155,10 +167,12 @@ function checkDVMEGAoutput {
                 if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
                         # Print the output
                         echo -e "Detected DV-Mega  ${dvmegaPort} (${serialSpeed}): ${modemDevice} (${dvmegaData}  - DStarRepeater Protocol)"
+                        boardDetected="true"
                 fi
                 if [[ ${dvmegaData} == *"u-blox"* ]]; then
                         # Print the output
                         echo -e "Detected GPS      ${dvmegaPort} (${serialSpeed}): ${modemDevice} (u-blox GPS Device)"
+                        boardDetected="true"
                 fi
                 echo "" > /tmp/${randomFilename}
         fi
@@ -194,6 +208,7 @@ function checkNEXTIONoutput {
 
                         # Print the output
                         echo -e "Detected Nextion  ${nextionPort} (${serialSpeed}): ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
+                        boardDetected="true"
                 fi
                 echo "" > /tmp/${randomFilename}
         fi
