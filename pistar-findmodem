@@ -60,31 +60,8 @@ function readDevice {
         exec 3<&- 1> /dev/stdout 2> /dev/null                                   # Free up FD3
 }
 
-
-# Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* /dev/ttyS* and /dev/ttyUSB*)
-for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); do
-        # Ignore the /dev/ttyS[0-3] ports on the Odroid Platform.
-        if [[ $(platformDetect.sh) == *"Odroid"* && ${modemDevice} == *"ttyS"* && ${modemDevice} != *"ttySAC"* ]]; then
-                continue
-        fi
-
-        # Ignore /dev/ttyS0 on the NanoPi Platform
-        if [[ $(platformDetect.sh) == *"sun8i"* && ${modemDevice} == *"ttyS0"* ]]; then
-                continue
-        fi
-
-        # Ignore /dev/ttyS0 and /dev/ttySC* devices
-        if [[ ${modemDevice} == *"ttySC"* || ${modemDevice} == *"ttyS0" ]]; then
-                continue
-        fi
-
-        # Make sure the output file exists
-        touch /tmp/${randomFilename}                                            # Make the output File
-
-        # Send the MMDVM "Get Version" command to test the ports.
-        readDevice mmdvm 115200                                                 # Try MMDVM Protocol
-
-        # Read the output, and make it pretty for humans...
+function checkMMDVMoutput {
+        serialSpeed=$1
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the modem version string and remove non-printables
                 modemData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename} | sed 's/^.MMDVM/MMDVM/g' | sed 's/^.D2RG_MMDVM/D2RG_MMDVM/g' | sed 's/^.ZUMspot/ZUMspot/g' | sed 's/^.Nano_/Nano_/g')
@@ -140,20 +117,21 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                 if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "D2RG_MMDVM_HS"* || ${modemData} == "ZUMspot"* || ${modemData} == "Nano_"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData})"
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (${modemData})"
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (${modemData} - MMDMVM Protocol)"
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (${modemData} - MMDMVM Protocol)"
                 elif [[ ${modemData} == *"u-blox"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort}: ${modemDevice} (u-blox GPS Device)"
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (u-blox GPS Device)"
                 fi
                 
                 echo "" > /tmp/${randomFilename}
         fi
+}
 
-        # Sent the DVMega "Get Version" Command
-        readDevice dvmega 115200                                                # Try DVMega Protocol
+function checkDVMEGAoutput {
+        serialSpeed=$1
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
@@ -170,18 +148,18 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
 
                 if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected DV-Mega  ${dvmegaPort}: ${modemDevice} (${dvmegaData}  - DStarRepeater Protocol)"
+                        echo -e "Detected DV-Mega  ${dvmegaPort} (${serialSpeed}): ${modemDevice} (${dvmegaData}  - DStarRepeater Protocol)"
                 fi
                 if [[ ${dvmegaData} == *"u-blox"* ]]; then
                         # Print the output
-                        echo -e "Detected GPS      ${dvmegaPort}: ${modemDevice} (u-blox GPS Device)"
+                        echo -e "Detected GPS      ${dvmegaPort} (${serialSpeed}): ${modemDevice} (u-blox GPS Device)"
                 fi
                 echo "" > /tmp/${randomFilename}
         fi
+}
 
-        # Send the Nextion "Connect" command to test the ports.
-        readDevice nextion 9600                                                 # Try Nextion Protocol
-
+function checkNEXTIONoutput {
+        serialSpeed=$1
         # Read the output, and make it pretty for humans...
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
@@ -209,10 +187,43 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
                         fi
 
                         # Print the output
-                        echo -e "Detected Nextion  ${nextionPort}: ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
+                        echo -e "Detected Nextion  ${nextionPort} (${serialSpeed}): ${modemDevice} (Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch})"
                 fi
                 echo "" > /tmp/${randomFilename}
         fi
+}
+
+# Find all the possible devices (only looking at /dev/ttyAMA* /dev/ttyACM* /dev/ttyS* and /dev/ttyUSB*)
+for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); do
+        # Ignore the /dev/ttyS[0-3] ports on the Odroid Platform.
+        if [[ $(platformDetect.sh) == *"Odroid"* && ${modemDevice} == *"ttyS"* && ${modemDevice} != *"ttySAC"* ]]; then
+                continue
+        fi
+
+        # Ignore /dev/ttyS0 on the NanoPi Platform
+        if [[ $(platformDetect.sh) == *"sun8i"* && ${modemDevice} == *"ttyS0"* ]]; then
+                continue
+        fi
+
+        # Ignore /dev/ttyS0 and /dev/ttySC* devices
+        if [[ ${modemDevice} == *"ttySC"* || ${modemDevice} == *"ttyS0" ]]; then
+                continue
+        fi
+
+        # Make sure the output file exists
+        touch /tmp/${randomFilename}                                            # Make the output File
+
+        # Send the MMDVM "Get Version" command to test the ports.
+        readDevice mmdvm 115200                                                 # Try MMDVM Protocol
+        checkMMDVMoutput 115200
+
+        # Sent the DVMega "Get Version" Command
+        readDevice dvmega 115200                                                # Try DVMega Protocol
+        checkDVMEGAoutput 115200
+
+        # Send the Nextion "Connect" command to test the ports.
+        readDevice nextion 9600                                                 # Try Nextion Protocol
+        checkNEXTIONoutput 9600
 
         # Dump the temp file we used
         rm -rf /tmp/${randomFilename}
