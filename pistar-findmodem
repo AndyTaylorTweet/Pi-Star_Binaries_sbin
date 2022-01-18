@@ -64,7 +64,7 @@ function checkMMDVMoutput {
         serialSpeed=$1
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the modem version string and remove non-printables
-                modemData=$(tr -cd '[[:print:]]' < /tmp/${randomFilename} | sed 's/^.*MMDVM/MMDVM/g' | sed 's/^.*D2RG_MMDVM/D2RG_MMDVM/g' | sed 's/^.*ZUMspot/ZUMspot/g' | sed 's/^.*Nano_/Nano_/g')
+                modemData=$(tr -cd '[[:print:]]' < /tmp/${randomFilename} | sed 's/^.*MMDVM/MMDVM/g' | sed 's/^.*DVMEGA/DVMEGA/g' | sed 's/^.*D2RG_MMDVM/D2RG_MMDVM/g' | sed 's/^.*ZUMspot/ZUMspot/g' | sed 's/^.*Nano_/Nano_/g' | sed 's/^.*OpenGD77_HS/OpenGD77_HS/g' | sed 's/^.*SkyBridge/SkyBridge/g')
 
                 # OK we have some output, format it into somthing useful.
                 case ${modemData} in
@@ -84,6 +84,12 @@ function checkMMDVMoutput {
                                 mmdvmClass="MMDVM_HS"
                         ;;
                         Nano_*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        OpenGD77_HS*)
+                                mmdvmClass="MMDVM_HS"
+                        ;;
+                        SkyBridge*)
                                 mmdvmClass="MMDVM_HS"
                         ;;
                         DVMEGA*)
