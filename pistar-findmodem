@@ -16,24 +16,28 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+function resetGPIOModem {
+        # Reset GPIO connected Modems
+        echo 21 > /sys/class/gpio/export
+        echo out > /sys/class/gpio/gpio21/direction
+        sleep 0.5
+        echo 0 > /sys/class/gpio/gpio21/value
+        echo 1 > /sys/class/gpio/gpio21/value
+        sleep 1.0
+        echo 21 > /sys/class/gpio/unexport
+}
+
 # Kill any MMDVMHost or DStarRepeater processes
 if [[ $(/usr/bin/pgrep MMDVMHost) ]]; then
         systemctl stop mmdvmhost > /dev/null 2>&1
         svcRestart=mmdvmhost
+        resetGPIOModem
 fi
 if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
         systemctl stop dstarrepeaterd > /dev/null 2>&1
         svcRestart=dstarrepeaterd
+        resetGPIOModem
 fi
-
-# Reset GPIO connected Modems
-echo 21 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio21/direction
-sleep 0.5
-echo 0 > /sys/class/gpio/gpio21/value
-echo 1 > /sys/class/gpio/gpio21/value
-sleep 1.0
-echo 21 > /sys/class/gpio/unexport
 
 # Random Filename
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -268,5 +272,6 @@ done
 
 # Restart the service(s) if I stopped them
 if [[ -v svcRestart ]]; then
+        resetGPIOModem
         systemctl start ${svcRestart} > /dev/null 2>&1
 fi
