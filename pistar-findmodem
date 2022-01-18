@@ -235,6 +235,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         touch /tmp/${randomFilename}                                            # Make the output File
 
         # Send the MMDVM "Get Version" command to test the ports.
+        boardDetected="false"
         for speed in 115200 230400 460800
         do
                 # Try MMDVM Protocol
@@ -243,9 +244,12 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         done
 
         # Sent the DVMega "Get Version" Command
+        boardDetected="false"
         readDevice dvmega 115200                                                # Try DVMega Protocol
         checkDVMEGAoutput 115200
 
+        # Detect Nextion Screens
+        boardDetected="false"
         for speed in 2400 4800 9600 19200 31250 38400 57600 115200 230400 250000 256000 512000 921600
         do
                 # Try Nextion Protocol
