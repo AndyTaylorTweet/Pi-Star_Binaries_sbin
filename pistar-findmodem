@@ -231,7 +231,7 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         readDevice dvmega 115200                                                # Try DVMega Protocol
         checkDVMEGAoutput 115200
 
-        for speed in 9600 19200 28800 38400 57600 76800 115200 230400 460800 576000
+        for speed in 2400 4800 9600 19200 31250 38400 57600 115200 230400 250000 256000 512000 921600
         do
                 # Try Nextion Protocol
                 rreadDevice nextion ${speed}
