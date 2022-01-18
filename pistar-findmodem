@@ -143,7 +143,6 @@ function checkMMDVMoutput {
                         echo -e "Detected ${mmdvmClass} ${mmdvmPort} (${serialSpeed}): ${modemDevice} (u-blox GPS Device)"
                         boardDetected="true"
                 fi
-                
                 echo "" > /tmp/${randomFilename}
         fi
 }
@@ -153,7 +152,7 @@ function checkDVMEGAoutput {
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the string and remove non-printables
                 dvmegaData=$(tr -cd '\11\12\15\40-\176' < /tmp/${randomFilename})
-                
+
                 # Sanity check the output from the DV-Mega
                 if [[ ${dvmegaData} == *"DV-MEGA"* ]]; then
                         # Clean up the port information
@@ -239,6 +238,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         for speed in 115200 230400 460800
         do
                 # Try MMDVM Protocol
+                if [ "${boardDetected}" == "true" ]; then
+                        break
+                fi
                 readDevice mmdvm ${speed}
                 checkMMDVMoutput ${speed}
         done
@@ -253,6 +255,9 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         for speed in 2400 4800 9600 19200 31250 38400 57600 115200 230400 250000 256000 512000 921600
         do
                 # Try Nextion Protocol
+                if [ "${boardDetected}" == "true" ]; then
+                        break
+                fi
                 readDevice nextion ${speed}
                 checkNEXTIONoutput ${speed}
         done
