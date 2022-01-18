@@ -4,7 +4,7 @@
 #                                                                            #
 #                         Pi-Star Find Modem Tool.                           #
 #                                                                            #
-#     Version 1.2, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#     Version 1.3, Code, Design and Development by Andy Taylor (MW0MWZ).     #
 #                                                                            #
 #              Make it simple to find the attached MMDVM Modem               #
 #                                                                            #
@@ -214,16 +214,23 @@ for modemDevice in $(find /dev/tty* ! -type l | grep -E "tty(AMA|ACM|USB|S)."); 
         touch /tmp/${randomFilename}                                            # Make the output File
 
         # Send the MMDVM "Get Version" command to test the ports.
-        readDevice mmdvm 115200                                                 # Try MMDVM Protocol
-        checkMMDVMoutput 115200
+        for speed in 115200 230400 460800
+        do
+                # Try MMDVM Protocol
+                readDevice mmdvm ${speed}
+                checkMMDVMoutput ${speed}
+        done
 
         # Sent the DVMega "Get Version" Command
         readDevice dvmega 115200                                                # Try DVMega Protocol
         checkDVMEGAoutput 115200
 
-        # Send the Nextion "Connect" command to test the ports.
-        readDevice nextion 9600                                                 # Try Nextion Protocol
-        checkNEXTIONoutput 9600
+        for speed in 9600 19200 28800 38400 57600 76800 115200 230400 460800 576000
+        do
+                # Try Nextion Protocol
+                rreadDevice nextion ${speed}
+                checkNEXTIONoutput ${speed}
+        done
 
         # Dump the temp file we used
         rm -rf /tmp/${randomFilename}
