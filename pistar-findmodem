@@ -23,7 +23,9 @@ function resetGPIOModem {
         sleep 0.5
         echo 0 > /sys/class/gpio/gpio21/value
         echo 1 > /sys/class/gpio/gpio21/value
-        sleep 1.0
+        sleep 0.2
+        echo 0 > /sys/class/gpio/gpio21/value
+        sleep 1.0        
         echo 21 > /sys/class/gpio/unexport
 }
 
