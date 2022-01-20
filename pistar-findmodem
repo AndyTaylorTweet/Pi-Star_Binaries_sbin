@@ -145,10 +145,10 @@ function checkMMDVMoutput {
 
                 case ${protocolVersion} in
                         01)
-                              mmdvmProtocolVer="1"
+                              mmdvmProtocolVer="V1"
                         ;;
                         02)
-                              mmdvmProtocolVer="2"
+                              mmdvmProtocolVer="V2"
                         ;;
                         *)
                               mmdvmProtocolVer="Unknown"
