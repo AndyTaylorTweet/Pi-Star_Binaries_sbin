@@ -33,6 +33,8 @@ function resetGPIOModem {
         sleep 0.5
         echo 20 > /sys/class/gpio/unexport
         echo 21 > /sys/class/gpio/unexport
+        # Let the modem boot, or this script cant find it
+        sleep 2
 }
 
 # Kill any MMDVMHost or DStarRepeater processes
@@ -45,7 +47,6 @@ if [[ $(/usr/bin/pgrep dstarrepeaterd) ]]; then
         svcRestart=dstarrepeaterd
 fi
 resetGPIOModem
-
 
 # Random Filename
 randomFilename=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -87,7 +88,7 @@ function checkMMDVMoutput {
                 # OK we have some output, clean up the modem version string and remove non-printables
                 modemData=$(tr -cd '[[:print:]]' < /tmp/${randomFilename} | sed 's/^.*MMDVM/MMDVM/g' | sed 's/^.*DVMEGA/DVMEGA/g' | sed 's/^.*D2RG_MMDVM/D2RG_MMDVM/g' | sed 's/^.*ZUMspot/ZUMspot/g' | sed 's/^.*Nano_/Nano_/g' | sed 's/^.*OpenGD77_HS/OpenGD77_HS/g' | sed 's/^.*SkyBridge/SkyBridge/g')
                 protocolVersion=$(xxd -p -l1 -s 3 /tmp/${randomFilename})
-                
+
                 # OK we have some output, format it into somthing useful.
                 case ${modemData} in
                         MMDVM_HS*)
