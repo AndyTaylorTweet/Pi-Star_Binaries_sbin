@@ -68,12 +68,11 @@ echo 1 > /sys/class/gpio/gpio21/value
 sleep 1
 echo 0 > /sys/class/gpio/gpio20/value
 echo 1 > /sys/class/gpio/gpio20/value
-if [ "${model}" != "Pi4" ]; then
-  echo 0 > /sys/class/gpio/gpio20/value
-fi
+echo 0 > /sys/class/gpio/gpio20/value
 sleep 0.5
 echo 20 > /sys/class/gpio/unexport
 echo 21 > /sys/class/gpio/unexport
+sleep 2
 message="Modem reset complete"
 
 # If there are no arguments (like "boot") then start the service...
