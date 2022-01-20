@@ -130,16 +130,16 @@ function checkMMDVMoutput {
 
                 case ${modemDevice} in
                         /dev/ttyS*)
-                                mmdvmPort="(GPIO)"
+                                mmdvmPort="GPIO"
                         ;;
                         /dev/ttyAMA*)
-                                mmdvmPort="(GPIO)"
+                                mmdvmPort="GPIO"
                         ;;
                         /dev/ttyACM*)
-                                mmdvmPort="(USB) "
+                                mmdvmPort="USB"
                         ;;
                         /dev/ttyUSB*)
-                                mmdvmPort="(USB) "
+                                mmdvmPort="USB"
                         ;;
                 esac
 
@@ -182,9 +182,9 @@ function checkDVMEGAoutput {
                 if [[ ${dvmegaData} == *"DV-MEGA"* ]]; then
                         # Clean up the port information
                         if [[ ${modemDevice} == *"USB"* ]]; then
-                                dvmegaPort="(USB) "
+                                dvmegaPort="USB"
                         else
-                                dvmegaPort="(GPIO)"
+                                dvmegaPort="GPIO"
                         fi
                 fi
 
@@ -218,9 +218,9 @@ function checkNEXTIONoutput {
 
                         # Clean up the port information
                         if [[ ${modemDevice} == *"USB"* ]]; then
-                                nextionPort="(USB) "
+                                nextionPort="USB"
                         else
-                                nextionPort="(GPIO)"
+                                nextionPort="GPIO"
                         fi
 
                         # Show Touchscreen support
