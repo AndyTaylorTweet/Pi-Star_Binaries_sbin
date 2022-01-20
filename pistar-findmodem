@@ -144,10 +144,10 @@ function checkMMDVMoutput {
                 esac
 
                 case ${protocolVersion} in
-                        0x01)
+                        01)
                               mmdvmProtocolVer="1"
                         ;;
-                        0x02)
+                        02)
                               mmdvmProtocolVer="2"
                         ;;
                         *)
