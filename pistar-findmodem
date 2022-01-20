@@ -157,15 +157,15 @@ function checkMMDVMoutput {
 
                 if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "D2RG_MMDVM_HS"* || ${modemData} == "ZUMspot"* || ${modemData} == "Nano_"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} Protocol: ${mmdvmProtocolVer} \n\t Modem Data: ${modemData}"
+                        echo -e "Detected ${mmdvmClass} Device: ${modemDevice} (${mmdvmPort}) Baud: ${serialSpeed} Protocol: ${mmdvmProtocolVer} \n\t Modem Data: ${modemData}"
                         boardDetected="true"
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} Protocol: ${mmdvmProtocolVer} \n\t Modem Data: ${modemData} - MMDMVM Protocol"
+                        echo -e "Detected ${mmdvmClass} Device: ${modemDevice} (${mmdvmPort}) Baud: ${serialSpeed} Protocol: ${mmdvmProtocolVer} \n\t Modem Data: ${modemData} - MMDMVM Protocol"
                         boardDetected="true"
                 elif [[ ${modemData} == *"u-blox"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} \n\t Modem Data: u-blox GPS Device"
+                        echo -e "Detected ${mmdvmClass} Device: ${modemDevice} (${mmdvmPort}) Baud: ${serialSpeed} \n\t Modem Data: u-blox GPS Device"
                         boardDetected="true"
                 fi
                 echo "" > /tmp/${randomFilename}
@@ -190,12 +190,12 @@ function checkDVMEGAoutput {
 
                 if [[ ${dvmegaData} == "DV-MEGA"* || ${dvmegaData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected DV-Mega  ${dvmegaPort} Device: ${modemDevice} Baud: ${serialSpeed} \n\t Modem Data: ${dvmegaData}  - DStarRepeater Protocol"
+                        echo -e "Detected DV-Mega  Device: ${modemDevice} (${dvmegaPort}) Baud: ${serialSpeed} \n\t Modem Data: ${dvmegaData}  - DStarRepeater Protocol"
                         boardDetected="true"
                 fi
                 if [[ ${dvmegaData} == *"u-blox"* ]]; then
                         # Print the output
-                        echo -e "Detected GPS      ${dvmegaPort} Device: ${modemDevice} Baud: ${serialSpeed} \n\t Modem Data: u-blox GPS Device"
+                        echo -e "Detected GPS      Device: ${modemDevice} (${dvmegaPort}) Baud: ${serialSpeed} \n\t Modem Data: u-blox GPS Device"
                         boardDetected="true"
                 fi
                 echo "" > /tmp/${randomFilename}
@@ -231,7 +231,7 @@ function checkNEXTIONoutput {
                         fi
 
                         # Print the output
-                        echo -e "Detected Nextion  ${nextionPort} Device: ${modemDevice} Baud: ${serialSpeed} \n\t Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch}"
+                        echo -e "Detected Nextion  Device: ${modemDevice} (${nextionPort}) Baud: ${serialSpeed} \n\t Model: ${nextionModel} Serial: ${nextionSerial} Touch: ${nextionTouch}"
                         boardDetected="true"
                 fi
                 echo "" > /tmp/${randomFilename}
