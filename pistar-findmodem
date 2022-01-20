@@ -86,7 +86,8 @@ function checkMMDVMoutput {
         if [[ $(cat /tmp/${randomFilename} | wc -c) -ge 16 ]]; then
                 # OK we have some output, clean up the modem version string and remove non-printables
                 modemData=$(tr -cd '[[:print:]]' < /tmp/${randomFilename} | sed 's/^.*MMDVM/MMDVM/g' | sed 's/^.*DVMEGA/DVMEGA/g' | sed 's/^.*D2RG_MMDVM/D2RG_MMDVM/g' | sed 's/^.*ZUMspot/ZUMspot/g' | sed 's/^.*Nano_/Nano_/g' | sed 's/^.*OpenGD77_HS/OpenGD77_HS/g' | sed 's/^.*SkyBridge/SkyBridge/g')
-
+                protocolVersion=$(xxd -p -l1 -s 3 /tmp/${randomFilename})
+                
                 # OK we have some output, format it into somthing useful.
                 case ${modemData} in
                         MMDVM_HS*)
@@ -142,13 +143,25 @@ function checkMMDVMoutput {
                         ;;
                 esac
 
+                case ${protocolVersion} in
+                        0x01)
+                              mmdvmProtocolVer="1"
+                        ;;
+                        0x02)
+                              mmdvmProtocolVer="2"
+                        ;;
+                        *)
+                              mmdvmProtocolVer="Unknown"
+                        ;;
+                esac
+
                 if [[ ${modemData} == "MMDVM"* || ${modemData} == "HS_Hat"* || ${modemData} == "D2RG_MMDVM_HS"* || ${modemData} == "ZUMspot"* || ${modemData} == "Nano_"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} (${modemData})"
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} Protocol: ${mmdvmProtocolVer} (${modemData})"
                         boardDetected="true"
                 elif [[ ${modemData} == "DV-MEGA"* || ${modemData} == "DVMEGA"* ]]; then
                         # Print the output
-                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} (${modemData} - MMDMVM Protocol)"
+                        echo -e "Detected ${mmdvmClass} ${mmdvmPort} Device: ${modemDevice} Baud: ${serialSpeed} Protocol: ${mmdvmProtocolVer} (${modemData} - MMDMVM Protocol)"
                         boardDetected="true"
                 elif [[ ${modemData} == *"u-blox"* ]]; then
                         # Print the output
