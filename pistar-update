@@ -259,7 +259,7 @@ main_function() {
 	# Download M17 Audio files if missing
 	if [[ ! -f /usr/local/etc/M17_Audio/se_SE.indx ]]; then
 		echo "Downloading M17 Voice Files..."
-		mmkdir -p /usr/local/etc/M17_Audio/
+		mkdir -p /usr/local/etc/M17_Audio/
 		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.m17
 		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.indx
 		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.m17
