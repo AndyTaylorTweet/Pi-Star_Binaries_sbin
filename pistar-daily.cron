@@ -35,6 +35,9 @@ systemctl stop dmr2ysf.service > /dev/null 2>&1
 systemctl stop dmr2nxdn.service > /dev/null 2>&1
 systemctl stop dmrgateway.service > /dev/null 2>&1
 systemctl stop timeserver.service > /dev/null 2>&1
+if [ -f /lib/systemd/system/aprsgateway.service ]; then
+  systemctl stop aprsgateway.service > /dev/null 2>&1
+fi
 
 # Update the Binaries
 git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
@@ -133,6 +136,9 @@ systemctl start ysf2nxdn.service > /dev/null 2>&1
 systemctl start dmr2ysf.service > /dev/null 2>&1
 systemctl start dmr2nxdn.service > /dev/null 2>&1
 systemctl start timeserver.service > /dev/null 2>&1
+if [ -f /lib/systemd/system/aprsgateway.service ]; then
+  systemctl start aprsgateway.service > /dev/null 2>&1
+fi
 systemctl start mmdvmhost.service > /dev/null 2>&1
 systemctl start dstarrepeater.service > /dev/null 2>&1
 systemctl start pistar-watchdog.service > /dev/null 2>&1
