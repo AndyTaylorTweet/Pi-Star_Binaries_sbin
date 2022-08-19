@@ -4,7 +4,7 @@
 #                                                                            #
 #                      Pi-Star BrandMeister API Tool                         #
 #                                                                            #
-#     Version 1.03, Code, Design and Development by Andy Taylor (MW0MWZ).    #
+#     Version 1.05, Code, Design and Development by Andy Taylor (MW0MWZ).    #
 #                                                                            #
 #    Make it simple to link / unlink reflectors from the CLI on Pi-Star.     #
 #    Added the option to manage static/dynamic TalkGroups and to be able     #
@@ -19,7 +19,6 @@ fi
 
 # Setup some variables
 APIKeyFile=/etc/bmapi.key
-APIURL="https://api.brandmeister.network/v1.0/repeater/"
 
 # Figure out the DMR ID
 DMRNetHost=$(sed -n '/^\[DMR Network\]/,/^\[/p' /etc/mmdvmhost | grep "^Address=" | head -n 1 | awk -F "=" '{print $2}')
@@ -60,8 +59,18 @@ fi
 
 # Get the stored BM API Key
 if [ -f ${APIKeyFile} ]; then
-	APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
-	APIKeyB64=$(echo -n "${APIKey}:" | base64 | sed 's/=$*//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ //g')
+	if [[ $(wc -c ${APIKeyFile} | awk '{print $1}') > 200 ]]; then
+		echo -e "Using BM API v2"
+		APIURL="https://api.brandmeister.network/v2/device/"
+		APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
+		APIVer="2"
+	else
+		echo -e "Using BM API v1.0"
+		APIURL="https://api.brandmeister.network/v1.0/repeater/"
+		APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
+		APIKeyB64=$(echo -n "${APIKey}:" | base64 | sed 's/=$*//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ //g')
+		APIVer="1.0"
+	fi
 else
 	echo "Unable to find your BrandMesiter API Key, no API commands available."
 	exit 0
@@ -92,8 +101,16 @@ addtg)
 	else
 		TS=$3
 	fi
-	APIURL="${APIURL}talkgroup/?action=ADD&id=${DMRID}"
-	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
+
+	# BM APIv2
+	if [[ ${APIVer} -ge 2 ]]; then
+		APIURL="${APIURL}${DMRID}/talkgroupss"
+		APIDATA="{\"slot\": ${TS}, \"group\": ${targetTG} }"
+		TYPE="POST"
+	else
+		APIURL="${APIURL}talkgroup/?action=ADD&id=${DMRID}"
+		APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
+	fi
 	REQUEST="Add TG ${targetTG} to TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 deltg)
@@ -113,8 +130,14 @@ deltg)
 		TS=$3
 	fi
 
-	APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
-	APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
+	# BM APIv2
+	if [[ ${APIVer} -ge 2 ]]; then
+		APIURL="${APIURL}${DMRID}/talkgroup/${TS}/${targetTG}"
+		TYPE="DELETE"
+	else
+		APIURL="${APIURL}talkgroup/?action=DEL&id=${DMRID}"
+		APIDATA="talkgroup=${targetTG}&timeslot=${TS}"
+	fi
 	REQUEST="Delete TG ${targetTG} from TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 dropdyn)
@@ -125,7 +148,14 @@ dropdyn)
 	else
 		TS=$2
 	fi
-	APIURL="${APIURL}setRepeaterTarantool.php?action=dropDynamicGroups&slot=${TS}&q=${DMRID}"
+
+	# BM APIv2
+	if [[ ${APIVer} -ge 2 ]]; then
+		APIURL="${APIURL}${DMRID}/action/dropDynamicGroups/${TS}"
+		TYPE="GET"
+	else
+		APIURL="${APIURL}setRepeaterTarantool.php?action=dropDynamicGroups&slot=${TS}&q=${DMRID}"
+	fi
 	REQUEST="Drop all Dynamic TG on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 dropqso)
@@ -136,7 +166,14 @@ dropqso)
 	else
 		TS=$2
 	fi
-	APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=${TS}&q=${DMRID}"
+
+	# BM APIv2
+	if [[ ${APIVer} -ge 2 ]]; then
+		APIURL="${APIURL}${DMRID}/action/dropCallRoute/${TS}"
+		TYPE="GET"
+	else
+		APIURL="${APIURL}setRepeaterDbus.php?action=dropCallRoute&slot=${TS}&q=${DMRID}"
+	fi
 	REQUEST="Drop Active QSO on TimeSlot ${TS} for DMR ID ${DMRID}"
 ;;
 setpos)
@@ -163,8 +200,14 @@ setpos)
 		AGL=$4
 	fi
 
-	APIURL="${APIURL}?action=EDIT&id=${DMRID}"
-	APIDATA="lat=${LAT}&lng=${LON}&agl=${AGL}"
+	# BM APIv2
+	if [[ ${APIVer} -ge 2 ]]; then
+		echo "ERROR: Set Position not supported in API v2"
+		exit 0
+	else
+		APIURL="${APIURL}?action=EDIT&id=${DMRID}"
+		APIDATA="lat=${LAT}&lng=${LON}&agl=${AGL}"
+	fi
 	REQUEST="Set the repeater location to Lattitude: ${LAT} Longitude: ${LON} and Altitude: ${AGL}"
 ;;
 *)
@@ -176,9 +219,18 @@ esac
 
 # Do the magic
 echo " Request to BrandMesiter API: ${REQUEST}"
-#RESULT=$(curl -s --user "${APIKey}:" --data "${APIDATA}" "${APIURL}" | \
-RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/x-www-form-urlencoded" --header="Authorization: Basic ${APIKeyB64}:"  --post-data="${APIDATA}" "${APIURL}" | \
-	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
+
+if [[ ${APIVer} -ge 2 ]]; then
+#	RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/json" --header="Accept: application/json" --header="Authorization: Bearer ${APIKey}" --post-data="${APIDATA}" "${APIURL}" | \
+#        	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
+	RESULT=$(curl -s -X "${TYPE}" "${APIURL}" -H "accept: application/json" -H "Authorization: Bearer ${APIKey}" -H "Content-Type: application/json" -d "${APIDATA}")
+#        	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
+
+else
+	RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/x-www-form-urlencoded" --header="Authorization: Basic ${APIKeyB64}:"  --post-data="${APIDATA}" "${APIURL}" | \
+		python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
+
+fi
 echo "Answer from BrandMesiter API: ${RESULT}"
 echo ""
 exit 0
