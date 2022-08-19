@@ -36,6 +36,8 @@ else
                 DMRID=$(grep -m 1 '^Id=' /etc/mmdvmhost | awk -F "=" '{print $2}')
         fi
 fi
+# Fix edge case where there is some additional chars in the DMR ID Fields (DF9FZ)
+DMRID=${DMRID//$'\r'/}
 
 if [ -z "$1" ]
 then
