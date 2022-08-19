@@ -104,7 +104,7 @@ addtg)
 
 	# BM APIv2
 	if [[ ${APIVer} -ge 2 ]]; then
-		APIURL="${APIURL}${DMRID}/talkgroupss"
+		APIURL="${APIURL}${DMRID}/talkgroup"
 		APIDATA="{ \"slot\": ${TS}, \"group\": ${targetTG} }"
 		TYPE="POST"
 	else
