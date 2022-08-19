@@ -105,7 +105,7 @@ addtg)
 	# BM APIv2
 	if [[ ${APIVer} -ge 2 ]]; then
 		APIURL="${APIURL}${DMRID}/talkgroupss"
-		APIDATA="{\"slot\": ${TS}, \"group\": ${targetTG} }"
+		APIDATA="{ \"slot\": ${TS}, \"group\": ${targetTG} }"
 		TYPE="POST"
 	else
 		APIURL="${APIURL}talkgroup/?action=ADD&id=${DMRID}"
@@ -219,7 +219,6 @@ esac
 
 # Do the magic
 echo " Request to BrandMesiter API: ${REQUEST}"
-
 if [[ ${APIVer} -ge 2 ]]; then
 	RESULT=$(curl -s -X "${TYPE}" "${APIURL}" -A "Pi-Star cli tool for: ${DMRID}" -H "accept: application/json" -H "Authorization: Bearer ${APIKey}" -H "Content-Type: application/json" -d "${APIDATA}" > /dev/null 2>&1 && echo OK || echo ERROR)
 else
