@@ -221,15 +221,10 @@ esac
 echo " Request to BrandMesiter API: ${REQUEST}"
 
 if [[ ${APIVer} -ge 2 ]]; then
-#	RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/json" --header="Accept: application/json" --header="Authorization: Bearer ${APIKey}" --post-data="${APIDATA}" "${APIURL}" | \
-#        	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
-	RESULT=$(curl -s -X "${TYPE}" "${APIURL}" -H "accept: application/json" -H "Authorization: Bearer ${APIKey}" -H "Content-Type: application/json" -d "${APIDATA}")
-#        	python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
-
+	RESULT=$(curl -s -X "${TYPE}" "${APIURL}" -A "Pi-Star cli tool for: ${DMRID}" -H "accept: application/json" -H "Authorization: Bearer ${APIKey}" -H "Content-Type: application/json" -d "${APIDATA}" > /dev/null 2>&1 && echo OK || echo ERROR)
 else
 	RESULT=$(wget -q -O - --user-agent="Pi-Star cli tool for: ${DMRID}" --header="Content-Type: application/x-www-form-urlencoded" --header="Authorization: Basic ${APIKeyB64}:"  --post-data="${APIDATA}" "${APIURL}" | \
 		python3 -c "import sys, json; print(json.load(sys.stdin)['message'])")
-
 fi
 echo "Answer from BrandMesiter API: ${RESULT}"
 echo ""
