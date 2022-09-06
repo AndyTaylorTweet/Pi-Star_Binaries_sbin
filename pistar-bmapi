@@ -71,7 +71,7 @@ if [ -f ${APIKeyFile} ]; then
 		APIURL="https://api.brandmeister.network/v1.0/repeater/"
 		APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
 		APIKeyB64=$(echo -n "${APIKey}:" | base64 | sed 's/=$*//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ //g')
-		APIVer="1.0"
+		APIVer="1"
 	fi
 else
 	echo "Unable to find your BrandMesiter API Key, no API commands available."
