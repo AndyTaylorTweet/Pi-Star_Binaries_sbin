@@ -61,7 +61,7 @@ fi
 
 # Get the stored BM API Key
 if [ -f ${APIKeyFile} ]; then
-	if [[ $(wc -c ${APIKeyFile} | awk '{print $1}') > 200 ]]; then
+	if [[ $(wc -c ${APIKeyFile} | awk '{print $1}') -gt 200 ]]; then
 		echo -e "Using BM API v2"
 		APIURL="https://api.brandmeister.network/v2/device/"
 		APIKey=$(grep -m 1 'apikey=' ${APIKeyFile} | awk -F "=" '/apikey/ {print $2}')
