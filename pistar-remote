@@ -64,6 +64,10 @@ if config.has_option('dmr', 'hostfiles'):
 	dmrhostfiles = config.get('dmr', 'hostfiles')
 else:
 	dmrhostfiles = str(999999999999)
+if config.has_option('dmr', 'reconnect'):
+	dmrreconnect = config.get('dmr', 'reconnect')
+else:
+	dmrreconnect = str(999999999999)
 
 # D-Star Control Options
 if config.has_option('d-star', 'svckill'):
@@ -195,10 +199,12 @@ while True:
 		currentLog = mmdvmLogPath + '/' + mmdvmFileRoot + '-' + datenow + '.log'
 		currentLogYSF = ysfGatewayLogPath + '/' + ysfGatewayFileRoot + '-' + datenow + '.log'
 
+		loglist = []
 		# Open the MMDVMHost Log
-		logfile = open(currentLog, 'r')
-		loglist = logfile.readlines()
-		logfile.close()
+		if os.path.isfile(currentLog):		
+			logfile = open(currentLog, 'r')
+			loglist = logfile.readlines()
+			logfile.close()
 
 		# Parse the log lines
 		for line in loglist:
@@ -240,6 +246,13 @@ while True:
 					# Update Host files
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
+					os.system(r'/bin/mount -o remount,ro /')
+
+				# DMR Reconnect WIFI
+				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
+				if str('received RF voice header from ' + keeperCall + ' to ' + dmrreconnect) in line:
+					# trigger reconnect
+					os.system(r'/usr/local/sbin/pistar-reconnect')
 
 				# P25 Stop MMDVMHost
                                 # M: 2017-08-08 08:02:43.352 P25, received RF transmission from M1ABC to TG 123456
@@ -276,6 +289,7 @@ while True:
 					# Update Host Files
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
+					os.system(r'/bin/mount -o remount,ro /')
 
 				# D-Star Stop MMDVMHost
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -322,6 +336,7 @@ while True:
 					time.sleep(5)
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
+					os.system(r'/bin/mount -o remount,ro /')
 
 				# D-Star Get the current IP
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -485,6 +500,7 @@ while True:
 					time.sleep(5)
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
+					os.system(r'/bin/mount -o remount,ro /')
 
 				# D-Star Get the current IP
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00

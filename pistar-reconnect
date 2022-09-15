@@ -1,7 +1,7 @@
 #!/bin/bash
 # Reconfigure/Reconnect WIFI
 #
-#rpi-rw
+#rpi-rw:
 sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
 #
 logger -t "[$$]" "Pi-Star --> Wifi Reconnect initiated <--"
@@ -11,5 +11,5 @@ sleep 3
 sudo ifup wlan0
 sudo wpa_cli scan
 #
-#rpi-ro
+#rpi-ro:
 sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
