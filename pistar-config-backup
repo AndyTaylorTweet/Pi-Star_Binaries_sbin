@@ -46,3 +46,4 @@ sudo zip -j /tmp/$zipfile $backupDir/* 2>&1
 unzip -l /tmp/$zipfile 2>&1
 #
 #sudo rm -r $backupDir 2>&1
+
