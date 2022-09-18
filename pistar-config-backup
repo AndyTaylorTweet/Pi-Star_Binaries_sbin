@@ -1,0 +1,48 @@
+#!/bin/bash
+# backup Pi-Star configuration files from SSH command line
+#
+backupDir='/tmp/config_backup'
+#
+sudo rm -rf $backupDir 2>&1
+sudo mkdir $backupDir 2>&1
+if (cat /etc/dhcpcd.conf | grep "static ip_address" | grep -v "#"); then
+  sudo cp /etc/dhcpcd.conf $backupDir 2>&1
+fi
+sudo cp /etc/wpa_supplicant/wpa_supplicant.conf $backupDir 2>&1
+sudo cp /etc/ircddbgateway $backupDir 2>&1
+sudo cp /etc/mmdvmhost $backupDir 2>&1
+sudo cp /etc/dstarrepeater $backupDir 2>&1
+sudo cp /etc/dapnetgateway $backupDir 2>&1
+sudo cp /etc/p25gateway $backupDir 2>&1
+sudo cp /etc/ysfgateway $backupDir 2>&1
+sudo cp /etc/nxdngateway $backupDir 2>&1
+sudo cp /etc/ysf2dmr $backupDir 2>&1
+sudo cp /etc/dmrgateway $backupDir 2>&1
+sudo cp /etc/mobilegps $backupDir 2>&1
+sudo cp /etc/starnetserver $backupDir 2>&1
+sudo cp /etc/timeserver $backupDir 2>&1
+sudo cp /etc/dstar-radio.* $backupDir 2>&1
+sudo cp /etc/crontab $backupDir 2>&1
+sudo cp /etc/pistar-remote $backupDir 2>&1
+sudo cp /etc/pistar-css.ini $backupDir 2>&1
+sudo cp /etc/hosts $backupDir 2>&1
+sudo cp /etc/hostname $backupDir 2>&1
+sudo cp /etc/bmapi.key $backupDir 2>&1
+sudo cp /etc/dapnetapi.key $backupDir 2>&1
+sudo cp /usr/local/etc/RSSI.dat $backupDir 2>&1
+sudo cp /var/www/dashboard/config/ircddblocal.php $backupDir 2>&1
+sudo cp /var/www/dashboard/config/config.php $backupDir 2>&1
+#
+sudo mkdir $backupDir/Extra 2>&1
+sudo cp /etc/iptables.rules $backupDir/Extra 2>&1
+sudo cp /etc/ip6tables.rules $backupDir/Extra 2>&1
+sudo cp /etc/rc.local $backupDir/Extra 2>&1
+#
+hostNameInfo=$(cat /etc/hostname)
+hostNameInfo=${hostNameInfo^^}
+local_time=$(date +%m-%d-%y-%H%M%S)
+zipfile=$hostNameInfo-Config-$local_time.zip
+sudo zip -j /tmp/$zipfile $backupDir/* 2>&1
+unzip -l /tmp/$zipfile 2>&1
+#
+#sudo rm -r $backupDir 2>&1
