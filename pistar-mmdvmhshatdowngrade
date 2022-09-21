@@ -4,7 +4,7 @@
 #                                                                             #
 #                     Pi-Star Firmware Downgrade Tool                         #
 #                                                                             #
-#    Version 0.1, Code, Design and Development by Florian Wolters (DF2ET).    #
+#    Version 0.2, Code, Design and Development by Florian Wolters (DF2ET).    #
 #                     Idea by Stefan Espringal (DL1BH)                        #
 #                                                                             #
 #                  Based on work by Andy Taylor (MW0MZW)                      #
@@ -117,7 +117,7 @@ then
             rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
             mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
             echo "Flashing your ${1} modem to version ${VERSION}"
-            curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+            wget https://github.com/juribeparada/MMDVM_HS/releases/download/${VERSION}/install_fw_hshat.sh -i - -O /tmp/mmdvmhshatfirmware/flash.sh
             chmod +x /tmp/mmdvmhshatfirmware/flash.sh
             cd  /tmp/mmdvmhshatfirmware
             ./flash.sh
@@ -132,7 +132,7 @@ then
             rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
             mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
             echo "Flashing your ${1} modem to the ${VERSION} version"
-            curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hshat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+            wget https://github.com/juribeparada/MMDVM_HS/releases/download/${VERSION}/install_fw_hshat-12mhz.sh -i - -O /tmp/mmdvmhshatfirmware/flash.sh
             chmod +x /tmp/mmdvmhshatfirmware/flash.sh
             cd  /tmp/mmdvmhshatfirmware
             ./flash.sh
@@ -147,7 +147,7 @@ then
             rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
             mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
             echo "Flashing your ${1} modem to the ${VERSION} version"
-            curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+            wget https://github.com/juribeparada/MMDVM_HS/releases/download/${VERSION}/install_fw_hsdualhat.sh -i - -O /tmp/mmdvmhshatfirmware/flash.sh
             chmod +x /tmp/mmdvmhshatfirmware/flash.sh
             cd  /tmp/mmdvmhshatfirmware
             ./flash.sh
@@ -162,7 +162,7 @@ then
             rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
             mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
             echo "Flashing your ${1} modem to the ${VERSION} version"
-            curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/${VERSION} | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_hsdualhat-12mhz.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+            wget https://github.com/juribeparada/MMDVM_HS/releases/download/${VERSION}/install_fw_hsdualhat-12mhz.sh -i - -O /tmp/mmdvmhshatfirmware/flash.sh
             chmod +x /tmp/mmdvmhshatfirmware/flash.sh
             cd  /tmp/mmdvmhshatfirmware
             ./flash.sh
