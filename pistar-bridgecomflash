@@ -4,7 +4,7 @@
 #                                                                             #
 #                      Pi-Star Firmware Update Tool                           #
 #                                                                             #
-#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.1, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                 Make it simple to update the Firmware                       #
 #                                                                             #
@@ -68,13 +68,14 @@ echo ""
 #
 if [ "$1" ]
 then
+  VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/juribeparada/MMDVM_HS/releases/latest | awk -F "/v" '{print $2}')
   case ${1} in
   skybridge)
     # Flashing BridgeCom Hat Modem
     rm -rf /tmp/bridgecomflashfirmware 2> /dev/null
     mkdir /tmp/bridgecomflashfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_skybridge_rpi.sh' | wget --base=http://github.com/ -i - -O /tmp/bridgecomflashfirmware/flash.sh
+    wget https://github.com/juribeparada/MMDVM_HS/releases/download/v${VERSION}/install_fw_skybridge_rpi.sh -O /tmp/bridgecomflashfirmware/flash.sh
     chmod +x /tmp/bridgecomflashfirmware/flash.sh
     cd  /tmp/bridgecomflashfirmware
     ./flash.sh

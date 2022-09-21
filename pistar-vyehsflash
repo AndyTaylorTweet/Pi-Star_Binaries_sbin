@@ -4,7 +4,7 @@
 #                                                                             #
 #                      Pi-Star Firmware Update Tool                           #
 #                                                                             #
-#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 1.1, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                 Make it simple to update the Firmware                       #
 #                                                                             #
@@ -62,14 +62,14 @@ echo ""
 #
 if [ "$1" ]
 then
+  VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | awk -F "/v" '{print $2}')
   case ${1} in
   nano_hs)
     # Flashing MMDVM_HS Nano Modem
     rm -rf /tmp/nanohsfirmware 2> /dev/null
     mkdir /tmp/nanohsfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    #curl -s -L https://github.com/juribeparada/MMDVM_HS/releases/latest | egrep -o '/juribeparada/MMDVM_HS/releases/download/v[0-9.]*/install_fw_nanohs.sh' | wget --base=http://github.com/ -i - -O /tmp/nanohsfirmware/flash.sh
-    curl -s -L https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | egrep -o '/VR2VYE/MMDVM_HS_firmware/releases/download/v[0-9.]*/install_fw_nanohs.sh' | wget --base=http://github.com/ -i - -O /tmp/nanohsfirmware/flash.sh
+    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_nanohs.sh -O /tmp/nanohsfirmware/flash.sh
     chmod +x /tmp/nanohsfirmware/flash.sh
     cd  /tmp/nanohsfirmware
     ./flash.sh
@@ -84,7 +84,7 @@ then
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    curl -s -L https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | egrep -o '/VR2VYE/MMDVM_HS_firmware/releases/download/v[0-9.]*/install_fw_duplex.sh' | wget --base=http://github.com/ -i - -O /tmp/mmdvmhshatfirmware/flash.sh
+    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_duplex.sh -O /tmp/mmdvmhshatfirmware/flash.sh
     tr -d "\r" < /tmp/mmdvmhshatfirmware/flash.sh > /tmp/mmdvmhshatfirmware/flash2.sh
     mv /tmp/mmdvmhshatfirmware/flash2.sh /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
