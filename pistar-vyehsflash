@@ -84,7 +84,7 @@ then
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
     mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
     echo "Flashing your ${1} modem to the latest version"
-    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_duplex.sh -i - -O /tmp/nanohsfirmware/flash.sh
+    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_duplex.sh -i - -O /tmp/mmdvmhshatfirmware/flash.sh
     tr -d "\r" < /tmp/mmdvmhshatfirmware/flash.sh > /tmp/mmdvmhshatfirmware/flash2.sh
     mv /tmp/mmdvmhshatfirmware/flash2.sh /tmp/mmdvmhshatfirmware/flash.sh
     chmod +x /tmp/mmdvmhshatfirmware/flash.sh
