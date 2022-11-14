@@ -64,38 +64,38 @@ if [ "$1" ]
 then
   VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | awk -F "/v" '{print $2}')
   case ${1} in
-  nano_hs)
-    # Flashing MMDVM_HS Nano Modem
-    rm -rf /tmp/nanohsfirmware 2> /dev/null
-    mkdir /tmp/nanohsfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_nanohs.sh -O /tmp/nanohsfirmware/flash.sh
-    chmod +x /tmp/nanohsfirmware/flash.sh
-    cd  /tmp/nanohsfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/nanohsfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
-  #hs_dual_hat)
-  #  # Flashing MMDVM_HS_DUAL Modem
-  #  rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
-  #  mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+  #nano_hs)
+  #  # Flashing MMDVM_HS Nano Modem
+  #  rm -rf /tmp/nanohsfirmware 2> /dev/null
+  #  mkdir /tmp/nanohsfirmware 2> /dev/null
   #  echo "Flashing your ${1} modem to the latest version"
-  #  wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_duplex.sh -O /tmp/mmdvmhshatfirmware/flash.sh
-  #  tr -d "\r" < /tmp/mmdvmhshatfirmware/flash.sh > /tmp/mmdvmhshatfirmware/flash2.sh
-  #  mv /tmp/mmdvmhshatfirmware/flash2.sh /tmp/mmdvmhshatfirmware/flash.sh
-  #  chmod +x /tmp/mmdvmhshatfirmware/flash.sh
-  #  cd  /tmp/mmdvmhshatfirmware
+  #  wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_nanohs.sh -O /tmp/nanohsfirmware/flash.sh
+  #  chmod +x /tmp/nanohsfirmware/flash.sh
+  #  cd  /tmp/nanohsfirmware
   #  ./flash.sh
   #  echo ""
-  #  rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+  #  rm -rf /tmp/nanohsfirmware 2> /dev/null
   #  read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
   #  shutdown -r now
   #  exit 0
   #;;
+  hs_dual_hat)
+    # Flashing MMDVM_HS_DUAL Modem
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    mkdir /tmp/mmdvmhshatfirmware 2> /dev/null
+    echo "Flashing your ${1} modem to the latest version"
+    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_duplex.sh -O /tmp/mmdvmhshatfirmware/flash.sh
+    tr -d "\r" < /tmp/mmdvmhshatfirmware/flash.sh > /tmp/mmdvmhshatfirmware/flash2.sh
+    mv /tmp/mmdvmhshatfirmware/flash2.sh /tmp/mmdvmhshatfirmware/flash.sh
+    chmod +x /tmp/mmdvmhshatfirmware/flash.sh
+    cd  /tmp/mmdvmhshatfirmware
+    ./flash.sh
+    echo ""
+    rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
+    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+    shutdown -r now
+    exit 0
+  ;;
   *)
     # Un-recognised modem choice
     echo "Your Choice of ${1} modem is not supported by this update tool"
