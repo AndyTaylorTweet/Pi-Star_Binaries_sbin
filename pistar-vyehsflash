@@ -23,7 +23,7 @@ then
   echo "to use the command, you will need to pass the name of your modem,"
   echo "please choose form the list below..."
   echo ""
-  echo "To flash an Nano HS board connected to GPIO, run:     pistar-vyehsflash nano_hs"
+  #echo "To flash an Nano HS board connected to GPIO, run:     pistar-vyehsflash nano_hs"
   echo "To flash HS_DUAL_HAT (VR2VYE) connected to GPIO, run: pistar-vyehsflash hs_dual_hat"
   echo ""
   echo "To flash ZumSPOT devices by please use pistar-zumspotflash"
@@ -64,21 +64,21 @@ if [ "$1" ]
 then
   VERSION=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/VR2VYE/MMDVM_HS_firmware/releases/latest | awk -F "/v" '{print $2}')
   case ${1} in
-  nano_hs)
-    # Flashing MMDVM_HS Nano Modem
-    rm -rf /tmp/nanohsfirmware 2> /dev/null
-    mkdir /tmp/nanohsfirmware 2> /dev/null
-    echo "Flashing your ${1} modem to the latest version"
-    wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_nanohs.sh -O /tmp/nanohsfirmware/flash.sh
-    chmod +x /tmp/nanohsfirmware/flash.sh
-    cd  /tmp/nanohsfirmware
-    ./flash.sh
-    echo ""
-    rm -rf /tmp/nanohsfirmware 2> /dev/null
-    read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
-    shutdown -r now
-    exit 0
-  ;;
+  #nano_hs)
+  #  # Flashing MMDVM_HS Nano Modem
+  #  rm -rf /tmp/nanohsfirmware 2> /dev/null
+  #  mkdir /tmp/nanohsfirmware 2> /dev/null
+  #  echo "Flashing your ${1} modem to the latest version"
+  #  wget https://github.com/VR2VYE/MMDVM_HS_firmware/releases/download/v${VERSION}/install_fw_nanohs.sh -O /tmp/nanohsfirmware/flash.sh
+  #  chmod +x /tmp/nanohsfirmware/flash.sh
+  #  cd  /tmp/nanohsfirmware
+  #  ./flash.sh
+  #  echo ""
+  #  rm -rf /tmp/nanohsfirmware 2> /dev/null
+  #  read -n 1 -s -r -p "Flashing your ${1} modem complete, press any key to reboot your Pi-Star System..."
+  #  shutdown -r now
+  #  exit 0
+  #;;
   hs_dual_hat)
     # Flashing MMDVM_HS_DUAL Modem
     rm -rf /tmp/mmdvmhshatfirmware 2> /dev/null
