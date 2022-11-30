@@ -1,5 +1,14 @@
 #!/bin/bash
-# backup Pi-Star configuration files from SSH command line
+#
+###############################################################################
+#                                                                             #
+#           Backup Pi-Star Configuration Files from SSH Command line          #
+#                                                                             #
+#    Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#              (Based on dashboard backup: config_backup.php)                 #
+#                                                                             #
+###############################################################################
 #
 backupDir='/tmp/config_backup'
 #
@@ -17,6 +26,7 @@ sudo cp /etc/p25gateway $backupDir 2>&1
 sudo cp /etc/ysfgateway $backupDir 2>&1
 sudo cp /etc/nxdngateway $backupDir 2>&1
 sudo cp /etc/ysf2dmr $backupDir 2>&1
+sudo cp /etc/dgidgateway $backupDir 2>&1
 sudo cp /etc/dmrgateway $backupDir 2>&1
 sudo cp /etc/mobilegps $backupDir 2>&1
 sudo cp /etc/starnetserver $backupDir 2>&1
@@ -46,4 +56,3 @@ sudo zip -j /tmp/$zipfile $backupDir/* 2>&1
 unzip -l /tmp/$zipfile 2>&1
 #
 #sudo rm -r $backupDir 2>&1
-
