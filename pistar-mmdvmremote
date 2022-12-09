@@ -24,7 +24,7 @@ if [ -z "$1" ]; then
       echo "RemoteCommand tool by figuring out the port from the MMDVMHost config"
       echo "and helping to fill in some of the commands for you."
       echo ""
-      echo "You can use this tool to sed the mode to:"
+      echo "You can use this tool to set the mode to:"
       echo "Idle, Lockout, D-Star, DMR, YSF, P25 or NXDN"
       echo ""
       echo "Simply run pistar-mmdvmremote followed by one of the above, so for"
