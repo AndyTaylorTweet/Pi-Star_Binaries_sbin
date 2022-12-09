@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                        Pi-Star Service Up/Down Tool                         #
+#                                                                             #
+#    Version 1.0, derived by Kurt, DJ3MU from pistar-update.                  #
+#    Code, Design and Development by Andy Taylor (MW0MWZ).                    #
+#                                                                             #
+# This script can be used, for example, by cron jobs to bring up/down your    #
+# hotspot at specific time.                                                   #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+do_stop() {
+	# a bit of printout include timestamp (useful when redirecting the output)
+	echo ""
+	date
+	echo "Stopping Services..."
+	systemctl stop pistar-watchdog.service
+	systemctl stop pistar-remote.service
+	systemctl stop dmrgateway.service
+	systemctl stop dapnetgateway.service
+	systemctl stop ircddbgateway.service
+	systemctl stop timeserver.service
+	systemctl stop ysfgateway.service
+	systemctl stop ysf2dmr.service
+	systemctl stop ysf2nxdn.service
+	systemctl stop ysf2p25.service
+	systemctl stop ysfparrot.service
+	systemctl stop dmr2ysf.service
+	systemctl stop dmr2nxdn.service
+	systemctl stop p25gateway.service
+	systemctl stop p25parrot.service
+	systemctl stop nxdngateway.service
+	systemctl stop nxdn2dmr.service
+	systemctl stop nxdnparrot.service
+	systemctl stop dstarrepeater.service
+	systemctl stop mmdvmhost.service && sleep 2
+
+	echo "Finished"
+}
+
+do_start() {
+	# a bit of printout include timestamp (useful when redirecting the output)
+	echo ""
+	date
+	echo "Starting Services..."
+	systemctl start dmrgateway.service
+	systemctl start ircddbgateway.service
+	systemctl start timeserver.service
+	systemctl start ysfgateway.service
+	systemctl start ysf2dmr.service
+	systemctl start ysf2nxdn.service
+	systemctl start ysf2p25.service
+	systemctl start ysfparrot.service
+	systemctl start dmr2ysf.service
+	systemctl start dmr2nxdn.service
+	systemctl start p25gateway.service
+	systemctl start p25parrot.service
+	systemctl start nxdngateway.service
+	systemctl start nxdn2dmr.service
+	systemctl start nxdnparrot.service
+	systemctl start dstarrepeater.service
+	systemctl start mmdvmhost.service
+	systemctl start dapnetgateway.service
+	systemctl start pistar-watchdog.service
+	systemctl start pistar-remote.service
+
+	# Tell the user we are done
+	echo "Finished"
+}
+
+case "$1" in
+  up|start)
+        do_start
+        ;;
+  down|stop)
+        do_stop
+        ;;
+  *)
+        echo "Usage: '$0 up|down' or '$0 start|stop'" >&2
+        exit 3
+        ;;
+esac
+
+exit 0
