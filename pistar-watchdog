@@ -17,7 +17,13 @@ import time
 import os
 import linecache
 import datetime
-import ConfigParser
+
+import sys					#
+if (sys.version_info.major > 2):		#
+	import configparser as ConfigParser	# python 3
+else:						#
+	import ConfigParser			# python 2
+
 
 time.sleep(90) #Assumiing the Pi has just started up, let the services settle...
 
@@ -97,14 +103,14 @@ while True: #Main loop
 				# Now we look for DVAP failure lines
 				if (str('Bad DVAP header') in line) or (str('Cannot open the D-Star modem') in line):
 					os.system('/bin/systemctl stop dstarrepeater.service')
-		                        time.sleep(30) # Give the DVAP time to recover
-                		        os.system('/bin/systemctl start dstarrepeater.service')
-                        		time.sleep(270) # Give the service time to start before we move on
+					time.sleep(30) # Give the DVAP time to recover
+					os.system('/bin/systemctl start dstarrepeater.service')
+					time.sleep(270) # Give the service time to start before we move on
 				# Look for "No space to write data|the header|end data" and restart the service
 				if (str('No space to write') in line):
 					os.system('echo "$(tail -n 50 ' + currentLog + ')" > ' + currentLog)
 					os.system('/bin/systemctl restart dstarrepeater.service')
-		                        time.sleep(60) # Give the service 60 secs before we re-test
+					time.sleep(60) # Give the service 60 secs before we re-test
 
 	# Check the MMDVMHost Specific Services
 	if os.path.isfile(mmdvmhost):
@@ -119,7 +125,7 @@ while True: #Main loop
 			os.system('/bin/systemctl start mmdvmhost.service')
 			time.sleep(10) #Give the service time to start before we move on
 		checkprocmmdvm.wait()
-		
+
 		config = ConfigParser.RawConfigParser()
 		config.read('/etc/mmdvmhost')
 		dmrAddress = config.get('DMR Network', 'Address')
@@ -290,7 +296,7 @@ while True: #Main loop
 	isEnabled = pistarRemoteConfig.get('enable', 'enabled')
 	if (isEnabled == 'true'):
 		checkprocremote = subprocess.check_output(['/usr/local/sbin/pistar-remote.service', 'status'])
-		if "not" in checkprocremote:
+		if "not" in checkprocremote.decode():
 			os.system('/bin/systemctl stop pistar-remote.service')
 			time.sleep(2) #Give the service time to stop before we move on
 			os.system('/bin/systemctl start pistar-remote.service')
