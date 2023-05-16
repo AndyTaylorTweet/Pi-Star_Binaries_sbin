@@ -150,4 +150,7 @@ if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
 	systemctl restart nginx.service
 fi
 
-exit 0
+# Make the disk RO
+mount -o remount,ro /
+
+exit  0 
