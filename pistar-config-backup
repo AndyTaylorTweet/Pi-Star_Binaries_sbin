@@ -26,8 +26,14 @@ sudo cp /etc/p25gateway $backupDir 2>&1
 sudo cp /etc/ysfgateway $backupDir 2>&1
 sudo cp /etc/nxdngateway $backupDir 2>&1
 sudo cp /etc/ysf2dmr $backupDir 2>&1
+sudo cp /etc/ysf2nxdn $backupDir 2>&1
+sudo cp /etc/ysf2p25 $backupDir 2>&1
 sudo cp /etc/dgidgateway $backupDir 2>&1
 sudo cp /etc/dmrgateway $backupDir 2>&1
+sudo cp /etc/m17gateway $backupDir 2>&1
+sudo cp /etc/aprsgateway $backupDir 2>&1
+sudo cp /etc/dmr2nxdn $backupDir 2>&1
+sudo cp /etc/dmr2ysf $backupDir 2>&1
 sudo cp /etc/mobilegps $backupDir 2>&1
 sudo cp /etc/starnetserver $backupDir 2>&1
 sudo cp /etc/timeserver $backupDir 2>&1
