@@ -37,6 +37,7 @@ TGLISTBM=/usr/local/etc/TGList_BM.txt
 TGLISTP25=/usr/local/etc/TGList_P25.txt
 TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
 TGLISTYSF=/usr/local/etc/TGList_YSF.txt
+STRIPPED=/usr/local/etc/stripped.csv
 
 # How many backups
 FILEBACKUP=1
@@ -66,6 +67,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${TGLISTP25} ${TGLISTP25}.$(date +%Y%m%d)
 	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d)
 	cp ${TGLISTYSF} ${TGLISTYSF}.$(date +%Y%m%d)
+	cp ${STRIPPED} ${STRIPPED}.$(date +%Y%m%d)
 fi
 
 # Prune backups
@@ -85,7 +87,8 @@ ${NXDNHOSTS}
 ${TGLISTBM}
 ${TGLISTP25}
 ${TGLISTNXDN}
-${TGLISTYSF}"
+${TGLISTYSF}
+${STRIPPED}"
 
 for file in ${FILES}
 do
@@ -125,6 +128,7 @@ curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt --use
 curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${STRIPPED} -s https://database.radioid.net/static/user.csv --user-agent "Pi-Star_${pistarCurVersion}"
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
