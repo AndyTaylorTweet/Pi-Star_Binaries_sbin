@@ -208,8 +208,8 @@ while True:
 
 		loglist = []
 		# Open the MMDVMHost Log
-		if os.path.isfile(currentLog):		
-			logfile = open(currentLog, 'r', errors='replace') #
+		if os.path.isfile(currentLog):
+			logfile = open(currentLog, 'r', errors='replace')
 			loglist = logfile.readlines()
 			logfile.close()
 
@@ -252,8 +252,7 @@ while True:
 				if str('received RF voice header from ' + keeperCall + ' to ' + dmrhostfiles) in line:
 					# Update Host files
 					os.system(r'/bin/mount -o remount,rw /')
-					os.system(r'/usr/local/sbin/HostFilesUpdate.sh') #
-					os.system(r'/bin/mount -o remount,ro /') #
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 					os.system(r'/bin/mount -o remount,ro /')
 
 				# DMR Reconnect WIFI
@@ -296,8 +295,7 @@ while True:
 				if str('P25, received RF transmission from ' + keeperCall + ' to TG ' + p25hostfiles) in line:
 					# Update Host Files
 					os.system(r'/bin/mount -o remount,rw /')
-					os.system(r'/usr/local/sbin/HostFilesUpdate.sh') #
-					os.system(r'/bin/mount -o remount,ro /') #
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 					os.system(r'/bin/mount -o remount,ro /')
 
 				# D-Star Stop MMDVMHost
@@ -344,8 +342,7 @@ while True:
 					os.system(txtTransmitBin + ' -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'/bin/mount -o remount,rw /')
-					os.system(r'/usr/local/sbin/HostFilesUpdate.sh') #
-					os.system(r'/bin/mount -o remount,ro /') #
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 					os.system(r'/bin/mount -o remount,ro /')
 
 				# D-Star Get the current IP
@@ -433,8 +430,8 @@ while True:
 								if (str('Trying to find non existent') and str(ysfhostfiles) in lineysf) or (str('Received Connect to') and str(ysfhostfiles) in lineysf):
 									# Update the host files
 									os.system(r'/bin/mount -o remount,rw /')
-									os.system(r'/usr/local/sbin/HostFilesUpdate.sh') #
-									os.system(r'/bin/mount -o remount,ro /') #
+									os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
+									os.system(r'/bin/mount -o remount,ro /')
 
 		# This is the 30 second sleep before the next pass.
 		time.sleep(30)
@@ -510,8 +507,7 @@ while True:
 					os.system(txtTransmitBin + ' -text "Updating Hostfiles at keeper request" "' + dstarmodule + '"')
 					time.sleep(5)
 					os.system(r'/bin/mount -o remount,rw /')
-					os.system(r'/usr/local/sbin/HostFilesUpdate.sh') #
-					os.system(r'/bin/mount -o remount,ro /') #
+					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 					os.system(r'/bin/mount -o remount,ro /')
 
 				# D-Star Get the current IP
