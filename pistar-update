@@ -137,11 +137,21 @@ main_function() {
 	service_handle stop
 	echo "Done"
 
-	echo "Updating DV Binaries..."
+
+	gitFolder=/usr/local/bin
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating DV Binaries ($gitUrl) ... "
 	git_update /usr/local/bin
 	echo "Done"
 
-	echo "Updating Pi-Star Binaries..."
+
+	gitFolder=/usr/local/sbin
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating Pi-Star Binaries ($gitUrl) ... "
 	git_update /usr/local/sbin
 	echo "Done"
 
@@ -149,7 +159,12 @@ main_function() {
 	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
 	echo "Done"
 
-	echo "Updating Dashboard..."
+
+	gitFolder=/var/www/dashboard
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating Dashboard ($gitUrl) ... "
 	git_update /var/www/dashboard
 	echo "Done"
 
