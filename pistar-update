@@ -74,7 +74,9 @@ git_update() {
 				rm -rf ${gitFolder}/pistar-upnp.service
 			fi
 			echo "Updates were not successfull, reverting to Pi-Star original files..."
+			git stash save "save user config files"
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+			git stash pop
 		fi
 	else
 		echo "No updates for ${gitFolder} available"
