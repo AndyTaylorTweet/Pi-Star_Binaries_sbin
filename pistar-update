@@ -271,6 +271,29 @@ main_function() {
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 	fi
 
+	# Download M17 Audio files if missing
+	if [[ ! -f /usr/local/etc/M17_Audio/se_SE.indx ]]; then
+		mkdir -p /usr/local/etc/M17_Audio/
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.m17
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.indx
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.m17
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.indx
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.m17
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.indx
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.m17
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.indx
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.m17
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.indx
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.indx
+	fi
+
 	# I previously had the wrong URL for the P25 Audio files; remove the broken downloads.
 	if [[ -f /usr/local/etc/P25_Audio/en_GB.imbe ]]; then
 		testFileIMBE=`file -i /usr/local/etc/P25_Audio/en_GB.imbe | cut -d " " -f2`
