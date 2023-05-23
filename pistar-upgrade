@@ -716,18 +716,18 @@ main_function() {
                         exit 1
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
-		fi		
+		fi
 	;;
 	3.4.17)
 		if [ ! -z "${pistarHardware}" ]; then
 			sed -i 's/3.4.17/3.4.18/g' /etc/pistar-release
        			sed -i 's/3.4.17/3.4.18/g' /etc/motd
-			
+
 			# Fix up the sources to stop some of the update nags
 			sed -i 's/mirrordirector/legacy/g' /etc/apt/sources.list
 			sed -i 's/httpredir/archive/g' /etc/apt/sources.list.d/jessie-backports.list
 			echo 'Acquire::Check-Valid-Until "0";' > /etc/apt/apt.conf.d/10no-check-valid-until
-			
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.18..."
 			echo $Message
 			exec "$0" "$@"
@@ -740,11 +740,11 @@ main_function() {
 		if [ ! -z "${pistarHardware}" ]; then
 			sed -i 's/3.4.18/3.4.19/g' /etc/pistar-release
        			sed -i 's/3.4.18/3.4.19/g' /etc/motd
-			
+
 			# Fix up the issues with Lets Encrypt certificate
 			sed -i '/^mozilla\/DST_Root_CA_X3.crt$/ s/^/!/' /etc/ca-certificates.conf
 			update-ca-certificates
-			
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.19..."
 			echo $Message
 			exec "$0" "$@"
@@ -801,7 +801,7 @@ main_function() {
 		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily.service
 		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily update' >> /etc/systemd/system/apt-daily.service
 
-		#apt-daily-upgrade.service 
+		#apt-daily-upgrade.service
 		echo '[Unit]' > /etc/systemd/system/apt-daily-upgrade.service
 		echo 'Description=Daily apt upgrade and clean activities' >> /etc/systemd/system/apt-daily-upgrade.service
 		echo 'Documentation=man:apt(8)' >> /etc/systemd/system/apt-daily-upgrade.service
@@ -839,7 +839,7 @@ main_function() {
  		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily.service
  		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily.service
 
-  		#apt-daily-upgrade.service 
+  		#apt-daily-upgrade.service
  		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily-upgrade.service
  		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily-upgrade.service
 
@@ -1063,11 +1063,11 @@ main_function() {
 		echo '' >> /lib/systemd/system/mobilegps.service
 		echo '[Install]' >> /lib/systemd/system/mobilegps.service
 		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
-		
+
 		# Enable the service
 		systemctl daemon-reload
 		systemctl enable mobilegps.service
-		
+
 		# Modify the /boot/config.txt to bring it up to date
 		sed -i '/USB Current/d' /boot/config.txt
 		sed -i '/max_usb_current/d' /boot/config.txt
@@ -1207,7 +1207,7 @@ main_function() {
 		echo '' >> /lib/systemd/system/aprsgateway.timer
 		echo '[Install]' >> /lib/systemd/system/aprsgateway.timer
 		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.timer
-		
+
 		# APRS Gateway Config
 		echo '[General]' > /etc/aprsgateway
 		echo 'Callsign=M1ABC' >> /etc/aprsgateway
@@ -1248,7 +1248,7 @@ main_function() {
 
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
-		
+
 		# Improved pistar-upnp.service unit file
 		echo '[Unit]' > /lib/systemd/system/pistar-upnp.service
 		echo 'Description=PiStar-UPnP network service' >> /lib/systemd/system/pistar-upnp.service
@@ -1263,14 +1263,14 @@ main_function() {
 		echo '' >> /lib/systemd/system/pistar-upnp.service
 		echo '[Install]' >> /lib/systemd/system/pistar-upnp.service
 		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-upnp.service
-		
+
 		# Update systemd and enable new services
 		systemctl daemon-reload
 		if [[ $(systemctl | grep pistar-upnp.timer | wc -l) -gt 0 ]]; then
 			systemctl stop pistar-upnp.service
 			systemctl start pistar-upnp.service
 		fi
-		
+
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.5..."
 		echo $Message
@@ -1385,6 +1385,10 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]; then
+		   sudo sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
+		fi
+
 		#sed -i 's/4.1.6/4.1.7/g' /etc/pistar-release
 
 		# Re-create the MOTD
