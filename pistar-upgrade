@@ -1385,6 +1385,16 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [ ! "$(grep PARTUUID /boot/cmdline.txt)" ]; then
+		   uuid=$(ls -la /dev/disk/by-partuuid | sed -n 's/^.* \([[:alnum:]]*-[0-9]* \).*/\1/p' | sed -n 's/\(.*\)-.*/\1/p' | head -n 1)
+		   sudo sed -i.bak "s|\/dev\/mmcblk0p2 |PARTUUID=$uuid-02 |g" /boot/cmdline.txt
+		   sudo sed -i 's/ elevator=deadline / /g'                    /boot/cmdline.txt
+		   sudo sed -i.bak "s|\/dev\/mmcblk0p1\t|PARTUUID=$uuid-01|g" /etc/fstab
+		   sudo sed -i "s|\/dev\/mmcblk0p2\t|PARTUUID=$uuid-02|g"     /etc/fstab
+		   sudo sed -i.bak "s/mmcblk0p2 /\x2e\x2a /g"                 /etc/bash.bashrc
+		   source /etc/bash.bashrc
+		fi
+
 		if [ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]; then
 		   sudo sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
 		fi
