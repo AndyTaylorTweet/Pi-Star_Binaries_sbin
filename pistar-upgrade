@@ -1385,9 +1385,11 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		sudo sed -i "s/^\(mount -o remount,ro \x2f\)$/\1 2>\/dev\/null || true     # skip remount errors/g" /etc/rc.local
+
 		if [ ! -d /home/pi-star/.mlogs ]; then
-		  sudo mkdir /home/pi-star/.mlogs
-		  sudo chown pi-star:pi-star /home/pi-star/.mlogs
+		   sudo mkdir /home/pi-star/.mlogs
+		   sudo chown pi-star:pi-star /home/pi-star/.mlogs
 		fi
 
 		if [ ! "$(grep PARTUUID /boot/cmdline.txt)" ]; then
