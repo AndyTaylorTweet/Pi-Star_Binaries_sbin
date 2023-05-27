@@ -1,0 +1,61 @@
+#!/bin/bash
+# Restore MMDVM logs during startups (reboots)
+#
+#rpi-rw
+xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+xmv=$(sudo systemctl is-active mmdvmhost.service)
+#
+rbt=0
+all=0
+while getopts ra opt; do
+  case $opt in
+    r) rbt=1;;
+    a) all=1;;
+  esac
+done
+shift $(($OPTIND - 1))
+#
+if [ -d /home/pi-star/.mlogs ]; then
+    if [ "$xro" == "ro" ]; then
+       sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
+    fi
+    if [ "$xmv" == "active" ]; then
+       sudo systemctl stop mmdvmhost.service
+    fi
+#
+    if [ ! -d /var/log/pi-star ]; then
+       sudo mkdir /var/log/pi-star
+       sudo chown root:mmdvm /var/log/pi-star
+       sudo chmod 775 /var/log/pi-star
+    fi
+#
+    n=3
+    if [ $all == 1 ]; then
+       n=10000
+    fi
+    file1="MMDVM"
+    file2="/var/log/pi-star/"
+    file3="/home/pi-star/.mlogs"
+    cd /home/pi-star/.mlogs
+#   for f in $(ls -tr ${file3}/${file1}* | tail -n $n)
+    for f in $(ls -tr ${file1}* | tail -n $n)
+    do
+       echo "$f"
+       sudo cp -p $f ${file2}$f
+    done
+#
+    reboot=""
+    if [ $rbt == 1 ]; then
+       sudo touch /home/pi-star/.mlogs/restore-$(date +%Y-%m-%d-%H:%M:%S)
+       reboot="(on reboot)"
+    fi
+#
+    logger -t "[$$]" "Pi-Star --> MMDVM logs restored $reboot <--"
+#
+    if [ "$xmv" == "active" ]; then
+       sudo systemctl start mmdvmhost.service
+    fi
+    if [ "$xro" == "ro" ]; then
+       sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+    fi
+fi

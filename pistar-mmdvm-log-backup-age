@@ -1,0 +1,36 @@
+#!/bin/bash
+# Age MMDVM log file backups
+#
+xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+#rpi-rw
+if [ "$xro" == "ro" ]; then
+  sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
+fi
+#
+file=/home/pi-star/.mlogs
+m0=14                             # number to be kept
+if [[ $1 =~ [0-9] ]]; then
+  m0=$1
+fi
+m1=$(ls ${file}/MMDVM* | wc -l)   # total number of files
+m2=$(expr ${m1} - ${m0})          # number to be deleted
+if [ ${m2} -gt 0 -a ${m0} -gt 0 ]; then
+  filed=$(ls -tr ${file}/MMDVM* | head -n ${m2})
+  for f in ${filed}; do
+#   echo $f
+    sudo rm $f
+  done
+  filed=$(find ${file}/re* -mtime +${m0})   # del related reboot/restore msgs
+  for f in ${filed}; do
+#   echo $f
+    sudo rm $f
+  done
+else
+  m2=0
+fi
+logger -t "[$$]" "Pi-Star --> MMDVM log backups aged: $m2 files <--"
+#
+#rpi-ro
+if [ "$xro" == "ro" ]; then
+  sudo mount -o remount,ro / # sudo mount -o remount,ro /boot
+fi
