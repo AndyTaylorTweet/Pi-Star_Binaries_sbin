@@ -217,4 +217,9 @@ if [ -d "/usr/local/etc/ircddbgateway" ]; then
 	fi
 fi
 
+# Extended DMR Id File update
+if [ -f /usr/local/sbin/HostFilesUpdate-Ext.sh ]; then
+	nohup /usr/local/sbin/HostFilesUpdate-Ext.sh -s -u -r & disown
+fi
+
 exit 0
