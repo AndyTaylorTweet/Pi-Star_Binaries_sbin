@@ -48,6 +48,7 @@ sudo cp /etc/dapnetapi.key $backupDir 2>&1
 sudo cp /usr/local/etc/RSSI.dat $backupDir 2>&1
 sudo cp /var/www/dashboard/config/ircddblocal.php $backupDir 2>&1
 sudo cp /var/www/dashboard/config/config.php $backupDir 2>&1
+sudo cp /var/www/dashboard/config/language.php $backupDir 2>&1
 #
 sudo mkdir $backupDir/Extra 2>&1
 sudo cp /etc/iptables.rules $backupDir/Extra 2>&1
