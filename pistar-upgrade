@@ -1385,25 +1385,35 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
-		sudo sed -i "s/^\(mount -o remount,ro \x2f\)$/\1 2>\/dev\/null || true     # skip remount errors/g" /etc/rc.local
+		phpv=$(php -v | sed -n 's/PHP \([0-9].[0-9]\).*/\1/p')
+		if [ "$(sed -n 's/^pm.max_children = //p' /etc/php/$phpv/fpm/pool.d/www.conf)" == 5 ]; then
+		   sed -i "s/^\(pm =\).*$/\1 dynamic/g"             /etc/php/$phpv/fpm/pool.d/www.conf
+		   sed -i "s/^\(pm.max_children =\).*$/\1 15/g"     /etc/php/$phpv/fpm/pool.d/www.conf
+		   sed -i "s/^\(pm.start_servers =\).*$/\1 8/g"     /etc/php/$phpv/fpm/pool.d/www.conf
+		   sed -i "s/^\(pm.min_spare_servers =\).*$/\1 4/g" /etc/php/$phpv/fpm/pool.d/www.conf
+		   sed -i "s/^\(pm.max_spare_servers =\).*$/\1 8/g" /etc/php/$phpv/fpm/pool.d/www.conf
+		#  systemctl restart php$phpv-fpm.service
+		fi
+
+		sed -i "s/^\(mount -o remount,ro \x2f\)$/\1 2>\/dev\/null || true     # skip remount errors/g" /etc/rc.local
 
 		if [ ! -d /home/pi-star/.mlogs ]; then
-		   sudo mkdir /home/pi-star/.mlogs
-		   sudo chown pi-star:pi-star /home/pi-star/.mlogs
+		   mkdir /home/pi-star/.mlogs
+		   chown pi-star:pi-star /home/pi-star/.mlogs
 		fi
 
 		if [ ! "$(grep PARTUUID /boot/cmdline.txt)" ]; then
 		   uuid=$(ls -la /dev/disk/by-partuuid | sed -n 's/^.* \([[:alnum:]]*-[0-9]* \).*/\1/p' | sed -n 's/\(.*\)-.*/\1/p' | head -n 1)
-		   sudo sed -i.bak "s|\/dev\/mmcblk0p2 |PARTUUID=$uuid-02 |g" /boot/cmdline.txt
-		   sudo sed -i 's/ elevator=deadline / /g'                    /boot/cmdline.txt
-		   sudo sed -i.bak "s|\/dev\/mmcblk0p1\t|PARTUUID=$uuid-01|g" /etc/fstab
-		   sudo sed -i "s|\/dev\/mmcblk0p2\t|PARTUUID=$uuid-02|g"     /etc/fstab
-		   sudo sed -i.bak "s/mmcblk0p2 /\x2e\x2a /g"                 /etc/bash.bashrc
+		   sed -i.bak "s|\/dev\/mmcblk0p2 |PARTUUID=$uuid-02 |g" /boot/cmdline.txt
+		   sed -i 's/ elevator=deadline / /g'                    /boot/cmdline.txt
+		   sed -i.bak "s|\/dev\/mmcblk0p1\t|PARTUUID=$uuid-01|g" /etc/fstab
+		   sed -i "s|\/dev\/mmcblk0p2\t|PARTUUID=$uuid-02|g"     /etc/fstab
+		   sed -i.bak "s/mmcblk0p2 /\x2e\x2a /g"                 /etc/bash.bashrc
 		   source /etc/bash.bashrc
 		fi
 
 		if [ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]; then
-		   sudo sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
+		   sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
 		fi
 
 		#sed -i 's/4.1.6/4.1.7/g' /etc/pistar-release
