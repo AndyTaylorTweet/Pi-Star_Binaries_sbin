@@ -1478,10 +1478,10 @@ main_function() {
 		   chown root:root /lib/systemd/system/mmdvm-log-restore.service
 		   chown root:root /lib/systemd/system/mmdvm-log-shutdown.service
 
-		   systemctl enable /lib/systemd/system/mmdvm-log-backup.service
-		   systemctl enable /lib/systemd/system/mmdvm-log-backup.timer
-		   systemctl enable /lib/systemd/system/mmdvm-log-restore.service
-		   systemctl enable /lib/systemd/system/mmdvm-log-shutdown.service
+		   systemctl enable mmdvm-log-backup.service
+		   systemctl enable mmdvm-log-backup.timer
+		   systemctl enable mmdvm-log-restore.service
+		   systemctl enable mmdvm-log-shutdown.service
 
 		   systemctl daemon-reload
 
