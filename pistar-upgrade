@@ -1385,35 +1385,107 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
-		phpv=$(php -v | sed -n 's/PHP \([0-9].[0-9]\).*/\1/p')
-		if [ "$(sed -n 's/^pm.max_children = //p' /etc/php/$phpv/fpm/pool.d/www.conf)" == 5 ]; then
-		   sed -i "s/^\(pm =\).*$/\1 dynamic/g"             /etc/php/$phpv/fpm/pool.d/www.conf
-		   sed -i "s/^\(pm.max_children =\).*$/\1 15/g"     /etc/php/$phpv/fpm/pool.d/www.conf
-		   sed -i "s/^\(pm.start_servers =\).*$/\1 8/g"     /etc/php/$phpv/fpm/pool.d/www.conf
-		   sed -i "s/^\(pm.min_spare_servers =\).*$/\1 4/g" /etc/php/$phpv/fpm/pool.d/www.conf
-		   sed -i "s/^\(pm.max_spare_servers =\).*$/\1 8/g" /etc/php/$phpv/fpm/pool.d/www.conf
-		#  systemctl restart php$phpv-fpm.service
+		if [[ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]]; then
+		   sudo sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
 		fi
 
-		sed -i "s/^\(mount -o remount,ro \x2f\)$/\1 2>\/dev\/null || true     # skip remount errors/g" /etc/rc.local
-
-		if [ ! -d /home/pi-star/.mlogs ]; then
-		   mkdir /home/pi-star/.mlogs
-		   chown pi-star:pi-star /home/pi-star/.mlogs
-		fi
-
-		if [ ! "$(grep PARTUUID /boot/cmdline.txt)" ]; then
+		if [[ ! "$(grep PARTUUID /boot/cmdline.txt)" ]]; then
 		   uuid=$(ls -la /dev/disk/by-partuuid | sed -n 's/^.* \([[:alnum:]]*-[0-9]* \).*/\1/p' | sed -n 's/\(.*\)-.*/\1/p' | head -n 1)
-		   sed -i.bak "s|\/dev\/mmcblk0p2 |PARTUUID=$uuid-02 |g" /boot/cmdline.txt
-		   sed -i 's/ elevator=deadline / /g'                    /boot/cmdline.txt
-		   sed -i.bak "s|\/dev\/mmcblk0p1\t|PARTUUID=$uuid-01|g" /etc/fstab
-		   sed -i "s|\/dev\/mmcblk0p2\t|PARTUUID=$uuid-02|g"     /etc/fstab
-		   sed -i.bak "s/mmcblk0p2 /\x2e\x2a /g"                 /etc/bash.bashrc
-		   source /etc/bash.bashrc
+		   sudo sed -i.bak "s|\/dev\/mmcblk0p2 |PARTUUID=$uuid-02 |g" /boot/cmdline.txt
+		   sudo sed -i 's/ elevator=deadline / /g'                    /boot/cmdline.txt
+		   sudo sed -i.bak "s|\/dev\/mmcblk0p1\t|PARTUUID=$uuid-01|g" /etc/fstab
+		   sudo sed -i "s|\/dev\/mmcblk0p2\t|PARTUUID=$uuid-02|g"     /etc/fstab
+		   sudo sed -i.bak "s/mmcblk0p2 /\x2e\x2a /g"                 /etc/bash.bashrc
+		   #source /etc/bash.bashrc
 		fi
 
-		if [ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]; then
-		   sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
+		if [[ ! -d /home/pi-star/.mlogs ]]; then
+		   sudo mkdir /home/pi-star/.mlogs
+		   sudo chown pi-star:pi-star /home/pi-star/.mlogs
+		fi
+
+		sudo sed -i "s/^\(mount -o remount,ro \x2f\)$/\1 2>\/dev\/null || true     # skip remount errors/g" /etc/rc.local
+
+		phpv=$(php -v | sed -n 's/PHP \([0-9].[0-9]\).*/\1/p')
+		if [[ "$(sed -n 's/^pm.max_children = //p' /etc/php/$phpv/fpm/pool.d/www.conf)" == 5 ]]; then
+		   sudo sed -i "s/^\(pm =\).*$/\1 dynamic/g"             /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.max_children =\).*$/\1 15/g"     /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.start_servers =\).*$/\1 8/g"     /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.min_spare_servers =\).*$/\1 4/g" /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.max_spare_servers =\).*$/\1 8/g" /etc/php/$phpv/fpm/pool.d/www.conf
+		   #sudo systemctl restart php$phpv-fpm.service
+		fi
+
+		if [[ ! -f /lib/systemd/system/mmdvm-log-backup.service ]]; then
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'Description=Backup MMDVM log files'                       >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'After=mmdvmhost.service'                                  >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'StartLimitBurst=3'                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo '[Service]'                                                >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'Type=simple'                                              >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-backups'       >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'Restart=on-failure'                                       >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'RestartSec=5s'                                            >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'WantedBy=multi-user.target'                               >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'Description=Backup MMDVM log files every 10 mins'         >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo '[Timer]'                                                  >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'OnCalendar=*-*-* *:00/10'                                 >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'Persistent=true'                                          >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'WantedBy=timers.target'                                   >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.timer
+
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'Description=Restore MMDVM log files at startup'           >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo '#after=default.target'                                    >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'Before=mmdvmhost.service'                                 >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo '[Service]'                                                >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'Type=simple'                                              >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-restores -r'   >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'TimeoutStartSec=0'                                        >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'WantedBy=default.target'                                  >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-restore.service
+
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'Description=Backup MMDVM log files at Shutdown/Reboot'    >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'DefaultDependencies=no'                                   >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'Before=shutdown.target'                                   >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo '[Service]'                                                >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'Type=simple'                                              >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-backups -r'    >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'TimeoutStartSec=3'                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'WantedBy=shutdown.target'                                 >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+
+		   chown root:root /lib/systemd/system/mmdvm-log-backup.service
+		   chown root:root /lib/systemd/system/mmdvm-log-backup.timer
+		   chown root:root /lib/systemd/system/mmdvm-log-restore.service
+		   chown root:root /lib/systemd/system/mmdvm-log-shutdown.service
+
+		   systemctl enable /lib/systemd/system/mmdvm-log-backup.service
+		   systemctl enable /lib/systemd/system/mmdvm-log-backup.timer
+		   systemctl enable /lib/systemd/system/mmdvm-log-restore.service
+		   systemctl enable /lib/systemd/system/mmdvm-log-shutdown.service
+
+		   systemctl daemon-reload
+
+		   systemctl start mmdvm-log-backup.timer
 		fi
 
 		#sed -i 's/4.1.6/4.1.7/g' /etc/pistar-release
