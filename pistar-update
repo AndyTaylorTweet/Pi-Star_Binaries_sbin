@@ -126,7 +126,7 @@ main_function() {
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
 		apt-get clean
-		echo "Done"
+		echo -e "Done \n"
 
 		echo "Checking nginx config"
 		if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
@@ -141,7 +141,7 @@ main_function() {
 
 	echo "Stopping Services..."
 	service_handle stop
-	echo "Done"
+	echo -e "Done \n"
 
 
 	gitFolder=/usr/local/bin
@@ -150,7 +150,7 @@ main_function() {
 	gitUrl=${gitUrl/.git/}
 	echo -n "Updating DV Binaries ($gitUrl) ... "
 	git_update /usr/local/bin
-	echo "Done"
+	echo -e "Done \n"
 
 
 	gitFolder=/usr/local/sbin
@@ -159,12 +159,11 @@ main_function() {
 	gitUrl=${gitUrl/.git/}
 	echo -n "Updating Pi-Star Binaries ($gitUrl) ... "
 	git_update /usr/local/sbin
-	echo "Done"
+	echo -e "Done \n"
 
-	echo "Updating Hostfiles..."
-	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
-	echo "Done"
-
+	#echo "Updating Hostfiles..."
+	#/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
+	#echo -e "Done \n"
 
 	gitFolder=/var/www/dashboard
 	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
@@ -172,11 +171,15 @@ main_function() {
 	gitUrl=${gitUrl/.git/}
 	echo -n "Updating Dashboard ($gitUrl) ... "
 	git_update /var/www/dashboard
-	echo "Done"
+	echo -e "Done \n"
+
+	echo "Updating Hostfiles..."
+	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
+	echo -e "Done \n"
 
 	echo "Updating PiStar-Firewall..."
 	pistar-firewall > /dev/null 2>&1
-	echo "Done"
+	echo -e "Done \n"
 
 	# Pre-Fix some config in MMDVMHost for update purposes.
 	mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
@@ -330,7 +333,7 @@ main_function() {
 		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/pl_PL.indx
 		curl --fail -o /usr/local/etc/P25_Audio/se_SE.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/se_SE.imbe
 		curl --fail -o /usr/local/etc/P25_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/se_SE.indx
-		echo "Done"
+		echo -e "Done \n"
 	fi
 
 	# Add Portuguese voice files for ircDDBGateway
@@ -342,7 +345,7 @@ main_function() {
 		curl --fail -o /usr/local/etc/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
 		chmod 664 /usr/local/etc/*.ambe
 		chmod 664 /usr/local/etc/*.indx
-		echo "Done"
+		echo -e "Done \n"
 	fi
 	if [[ ! -f /usr/local/etc/ircddbgateway/pt_PT.ambe ]]; then
 		echo "Downloading Portuguese Voice Files for ircDDBGateway..."
@@ -352,14 +355,14 @@ main_function() {
 		curl --fail -o /usr/local/etc/ircddbgateway/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
 		chmod 664 /usr/local/etc/ircddbgateway/*.ambe
 		chmod 664 /usr/local/etc/ircddbgateway/*.indx
-		echo "Done"
+		echo -e "Done \n"
 	fi
 
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
 		echo "Updating P25Gateway config..."
 		echo "" >> /etc/p25gateway
 		sed -i '$a[Voice]\nEnabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
-		echo "Done"
+		echo -e "Done \n"
 	fi
 
 	if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
@@ -394,7 +397,7 @@ main_function() {
 
 	echo "Starting Services..."
 	service_handle start
-	echo "Done"
+	echo -e "Done \n"
 
 	echo "Updates complete, syncing disk cache before making the disk Read-Only"
 	# Make the disk read-only
