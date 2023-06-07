@@ -1385,6 +1385,10 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [[ ! "$(sed -n '/\[Background\]/,/^$/ s/^Width=/&/p' /etc/pistar-css.ini)" ]]; then
+		   sudo sed -i '/\[Background\]/,/^$/ s/^Banners=.*/&\nWidth=820px/g'  /etc/pistar-css.ini
+		fi
+
 		if [[ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]]; then
 		   sudo sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
 		fi
