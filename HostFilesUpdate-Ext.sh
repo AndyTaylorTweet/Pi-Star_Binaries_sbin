@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 #hmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhm
 # Create extended DMR id file (DMRids.xtd.dat)
 # Ref: www.kf5iw.com/contactdb.php; https://database.radioid.net/static/user.csv
@@ -21,6 +21,7 @@ shift $(($OPTIND - 1))
 ok=1
 cd /tmp
 #
+logger -t "[$$]" "Pi-Star --> Start HostFiles Extension"
 if [ $src == 0 ]; then
   web="(KF5IW)"
   echo "...downloading latest contact file (KF5IW)"
@@ -37,6 +38,7 @@ if [ $src == 0 ]; then
      rm -f                                         xcontacts.csv
      mv contacts_*.csv                             xcontacts.csv
      rm extendedx.zip
+     echo "...initial edits"
      sudo sed -i 's/^[0-9]*,//g
                   /^"[0-9]\{1,6\}",/d'             xcontacts.csv
      ok=0
@@ -276,7 +278,7 @@ fi
 #
 echo "...completing update"
 xfile=/usr/local/etc/DMRIds.xtd.dat
-if [ -r ${xfile} ]; then
+if [ -f ${xfile} ]; then
 # How many backups
 nfiles=1
 # Create backup of old files
@@ -310,3 +312,4 @@ fi
 else
   echo "  ... download failed"
 fi
+logger -t "[$$]" "Pi-Star --> End HostFiles Extension..."
