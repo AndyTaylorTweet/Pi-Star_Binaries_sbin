@@ -219,7 +219,7 @@ fi
 
 # Extended DMR Id File update
 if [ -f /usr/local/sbin/HostFilesUpdate-Ext.sh ]; then
-	nohup /usr/local/sbin/HostFilesUpdate-Ext.sh -s -u -r & disown
+	nohup /usr/local/sbin/HostFilesUpdate-Ext.sh -s -u -r 1>/dev/null &
 fi
 
 exit 0
