@@ -141,13 +141,13 @@ if [ -f "/root/YSFHosts.txt" ]; then
 fi
 
 # Fix DMRGateway issues with brackets
-if [ -f "/etc/dmrgateway" ]; then
+if [[ -f "/etc/dmrgateway" && "$(grep "Name=.*(" /etc/dmrgateway)" ]]; then
 	sed -i '/Name=.*(/d' /etc/dmrgateway
 	sed -i '/Name=.*)/d' /etc/dmrgateway
 fi
 
 # Add some fixes for P25Gateway
-if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" ]]; then
+if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" && "$(grep "Hosts=" /etc/p25gateway)" ]];  then
 	sed -i 's/Hosts=\/usr\/local\/etc\/P25Hosts.txt/HostsFile1=\/usr\/local\/etc\/P25Hosts.txt\nHostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 	sed -i 's/HostsFile2=\/root\/P25Hosts.txt/HostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 fi
@@ -161,7 +161,7 @@ if [ -f "/root/M17Hosts.txt" ]; then
 fi
 
 # Fix up new NXDNGateway Config Hostfile setup
-if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
+if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" && "$(grep "HostsFile=" /etc/nxdngateway)" ]];  then
 	sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
 fi
 if [ ! -f "/root/NXDNHosts.txt" ]; then
