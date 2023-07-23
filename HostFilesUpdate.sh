@@ -155,6 +155,11 @@ if [ -f "/root/P25Hosts.txt" ]; then
 	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
 fi
 
+# Add local over-ride for TGList-BM
+if [ -f "/root/TGList_BM.txt" ]; then
+	cat /root/TGList_BM.txt >> ${TGLISTBM}
+fi
+
 # Add local over-ride for M17Hosts
 if [ -f "/root/M17Hosts.txt" ]; then
 	cat /root/M17Hosts.txt >> ${M17HOSTS}
