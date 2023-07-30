@@ -716,18 +716,18 @@ main_function() {
                         exit 1
 		else
 			Message="In-place upgrades from 3.4.4 are not supported..."
-		fi		
+		fi
 	;;
 	3.4.17)
 		if [ ! -z "${pistarHardware}" ]; then
 			sed -i 's/3.4.17/3.4.18/g' /etc/pistar-release
        			sed -i 's/3.4.17/3.4.18/g' /etc/motd
-			
+
 			# Fix up the sources to stop some of the update nags
 			sed -i 's/mirrordirector/legacy/g' /etc/apt/sources.list
 			sed -i 's/httpredir/archive/g' /etc/apt/sources.list.d/jessie-backports.list
 			echo 'Acquire::Check-Valid-Until "0";' > /etc/apt/apt.conf.d/10no-check-valid-until
-			
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.18..."
 			echo $Message
 			exec "$0" "$@"
@@ -740,11 +740,11 @@ main_function() {
 		if [ ! -z "${pistarHardware}" ]; then
 			sed -i 's/3.4.18/3.4.19/g' /etc/pistar-release
        			sed -i 's/3.4.18/3.4.19/g' /etc/motd
-			
+
 			# Fix up the issues with Lets Encrypt certificate
 			sed -i '/^mozilla\/DST_Root_CA_X3.crt$/ s/^/!/' /etc/ca-certificates.conf
 			update-ca-certificates
-			
+
 			Message="Upgraded from ${pistarCurVersion} to 3.4.19..."
 			echo $Message
 			exec "$0" "$@"
@@ -801,7 +801,7 @@ main_function() {
 		echo 'ExecStartPre=/bin/mount -o remount,rw /boot' >> /etc/systemd/system/apt-daily.service
 		echo 'ExecStart=/usr/lib/apt/apt.systemd.daily update' >> /etc/systemd/system/apt-daily.service
 
-		#apt-daily-upgrade.service 
+		#apt-daily-upgrade.service
 		echo '[Unit]' > /etc/systemd/system/apt-daily-upgrade.service
 		echo 'Description=Daily apt upgrade and clean activities' >> /etc/systemd/system/apt-daily-upgrade.service
 		echo 'Documentation=man:apt(8)' >> /etc/systemd/system/apt-daily-upgrade.service
@@ -839,7 +839,7 @@ main_function() {
  		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily.service
  		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily.service
 
-  		#apt-daily-upgrade.service 
+  		#apt-daily-upgrade.service
  		echo 'ExecStartPost=/bin/mount -o remount,ro /' >> /etc/systemd/system/apt-daily-upgrade.service
  		echo 'ExecStartPost=/bin/mount -o remount,ro /boot' >> /etc/systemd/system/apt-daily-upgrade.service
 
@@ -1063,11 +1063,11 @@ main_function() {
 		echo '' >> /lib/systemd/system/mobilegps.service
 		echo '[Install]' >> /lib/systemd/system/mobilegps.service
 		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/mobilegps.service
-		
+
 		# Enable the service
 		systemctl daemon-reload
 		systemctl enable mobilegps.service
-		
+
 		# Modify the /boot/config.txt to bring it up to date
 		sed -i '/USB Current/d' /boot/config.txt
 		sed -i '/max_usb_current/d' /boot/config.txt
@@ -1207,7 +1207,7 @@ main_function() {
 		echo '' >> /lib/systemd/system/aprsgateway.timer
 		echo '[Install]' >> /lib/systemd/system/aprsgateway.timer
 		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/aprsgateway.timer
-		
+
 		# APRS Gateway Config
 		echo '[General]' > /etc/aprsgateway
 		echo 'Callsign=M1ABC' >> /etc/aprsgateway
@@ -1248,7 +1248,7 @@ main_function() {
 
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
-		
+
 		# Improved pistar-upnp.service unit file
 		echo '[Unit]' > /lib/systemd/system/pistar-upnp.service
 		echo 'Description=PiStar-UPnP network service' >> /lib/systemd/system/pistar-upnp.service
@@ -1263,14 +1263,14 @@ main_function() {
 		echo '' >> /lib/systemd/system/pistar-upnp.service
 		echo '[Install]' >> /lib/systemd/system/pistar-upnp.service
 		echo 'WantedBy=multi-user.target' >> /lib/systemd/system/pistar-upnp.service
-		
+
 		# Update systemd and enable new services
 		systemctl daemon-reload
 		if [[ $(systemctl | grep pistar-upnp.timer | wc -l) -gt 0 ]]; then
 			systemctl stop pistar-upnp.service
 			systemctl start pistar-upnp.service
 		fi
-		
+
 		# OK we are done
 		Message="Upgraded from ${pistarCurVersion} to 4.1.5..."
 		echo $Message
@@ -1385,6 +1385,178 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [[ ! -f /etc/m17gateway ]]; then
+		  echo '[Remote Commands]'                           > /etc/m17gateway
+		  echo 'Port=6076'                                  >> /etc/m17gateway
+		  echo 'Enable=1'                                   >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[General]'                                  >> /etc/m17gateway
+		  echo 'RptAddress=127.0.0.1'                       >> /etc/m17gateway
+		  echo 'RptPort=17011'                              >> /etc/m17gateway
+		  echo 'LocalPort=17010'                            >> /etc/m17gateway
+		  echo 'Debug=0'                                    >> /etc/m17gateway
+		  echo 'Daemon=1'                                   >> /etc/m17gateway
+		  echo 'Suffix=H'                                   >> /etc/m17gateway
+		  echo 'Callsign=M1ABC'                             >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[Info]'                                     >> /etc/m17gateway
+		  echo 'Power=1'                                    >> /etc/m17gateway
+		  echo 'Height=0'                                   >> /etc/m17gateway
+		  echo 'Latitude=50.00'                             >> /etc/m17gateway
+		  echo 'Longitude=-3.00'                            >> /etc/m17gateway
+		  echo 'Description=M17 Audio'                      >> /etc/m17gateway
+		  echo 'URL=http://www.mw0mwz.co.uk/pi-star/'       >> /etc/m17gateway
+		  echo 'RXFrequency=448960000  *'                   >> /etc/m17gateway
+		  echo 'TXFrequency=448980000  *'                   >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[Network]'                                  >> /etc/m17gateway
+		  echo 'HostsFile1=/usr/local/etc/M17Hosts.txt'     >> /etc/m17gateway
+		  echo 'HostsFile2=/root/M17Hosts.txt'              >> /etc/m17gateway
+		  echo 'Port=17000'                                 >> /etc/m17gateway
+		  echo 'ReloadTime=0'                               >> /etc/m17gateway
+		  echo 'HangTime=240'                               >> /etc/m17gateway
+		  echo 'Revert=1'                                   >> /etc/m17gateway
+		  echo 'Debug=0'                                    >> /etc/m17gateway
+		  echo 'RFHangTime=0'                               >> /etc/m17gateway
+		  echo 'NetHangTime=0'                              >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[APRS]'                                     >> /etc/m17gateway
+		  echo 'Enable=0'                                   >> /etc/m17gateway
+		  echo 'Address=127.0.0.1'                          >> /etc/m17gateway
+		  echo 'Port=8673'                                  >> /etc/m17gateway
+		  echo 'Description=APRS for M17Gateway'            >> /etc/m17gateway
+		  echo 'Suffix=M'                                   >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[Log]'                                      >> /etc/m17gateway
+		  echo 'DisplayLevel=0'                             >> /etc/m17gateway
+		  echo 'FileLevel=2'                                >> /etc/m17gateway
+		  echo 'FilePath=/var/log/pi-star'                  >> /etc/m17gateway
+		  echo 'FileRoot=M17Gateway'                        >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[Voice]'                                    >> /etc/m17gateway
+		  echo 'Enabled=1'                                  >> /etc/m17gateway
+		  echo 'Language=en_US'                             >> /etc/m17gateway
+		  echo 'Directory=/usr/local/etc/M17_Audio'         >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		  echo '[GPSD]'                                     >> /etc/m17gateway
+		  echo 'Enable=0'                                   >> /etc/m17gateway
+		  echo 'Port=2947'                                  >> /etc/m17gateway
+		  echo 'Address=127.0.0.1'                          >> /etc/m17gateway
+		  echo ''                                           >> /etc/m17gateway
+		fi
+
+		if [[ ! "$(sed -n '/\[Background\]/,/^$/ s/^Width=/&/p' /etc/pistar-css.ini)" ]]; then
+		   sudo sed -i '/\[Background\]/,/^$/ s/^Banners=.*/&\nWidth=820px/g'  /etc/pistar-css.ini
+		   echo "Dashboard Width option added"
+		fi
+
+		if [[ ! "$(grep 'Last Heard' /etc/pistar-css.ini)" ]]; then
+		   sudo sed -i '$,$ s/$/\n\n[Last Heard]\nDepth=20\n/g' /etc/pistar-css.ini
+		   echo "Last Heard option added"
+		fi
+
+		if [[ ! "$(grep PARTUUID /boot/cmdline.txt)" ]]; then
+		   uuid=$(ls -la /dev/disk/by-partuuid | sed -n 's/^.* \([[:alnum:]]*-[0-9]* \).*/\1/p' | sed -n 's/\(.*\)-.*/\1/p' | head -n 1)
+		   sudo sed -i.bak "s|\/dev\/mmcblk0p2 |PARTUUID=$uuid-02 |g" /boot/cmdline.txt
+		   sudo sed -i 's/ elevator=deadline / /g'                    /boot/cmdline.txt
+		   sudo sed -i.bak "s|\/dev\/mmcblk0p1\t|PARTUUID=$uuid-01|g" /etc/fstab
+		   sudo sed -i "s|\/dev\/mmcblk0p2\t|PARTUUID=$uuid-02|g"     /etc/fstab
+		   sudo sed -i.bak "s/mmcblk0p2 /\x2e\x2a /g"                 /etc/bash.bashrc
+		   #source /etc/bash.bashrc
+		   echo "Boot from USBs now supported"
+		fi
+
+		if [[ ! -d /home/pi-star/.mlogs ]]; then
+		   sudo mkdir /home/pi-star/.mlogs
+		   sudo chown pi-star:pi-star /home/pi-star/.mlogs
+		fi
+
+		sudo sed -i "s/^\(mount -o remount,ro \x2f\)$/\1 2>\/dev\/null || true     # skip remount errors/g" /etc/rc.local
+
+		phpv=$(php -v | sed -n 's/PHP \([0-9].[0-9]\).*/\1/p')
+		if [[ "$(sed -n 's/^pm.max_children = //p' /etc/php/$phpv/fpm/pool.d/www.conf)" == 5 ]]; then
+		   sudo sed -i "s/^\(pm =\).*$/\1 dynamic/g"             /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.max_children =\).*$/\1 15/g"     /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.start_servers =\).*$/\1 8/g"     /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.min_spare_servers =\).*$/\1 4/g" /etc/php/$phpv/fpm/pool.d/www.conf
+		   sudo sed -i "s/^\(pm.max_spare_servers =\).*$/\1 8/g" /etc/php/$phpv/fpm/pool.d/www.conf
+		   #sudo systemctl restart php$phpv-fpm.service
+		fi
+
+		if [[ ! -f /lib/systemd/system/mmdvm-log-backup.service ]]; then
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'Description=Backup MMDVM log files'                       >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'After=mmdvmhost.service'                                  >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'StartLimitBurst=3'                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo '[Service]'                                                >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'Type=simple'                                              >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-backups'       >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'Restart=on-failure'                                       >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'RestartSec=5s'                                            >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo 'WantedBy=multi-user.target'                               >> /lib/systemd/system/mmdvm-log-backup.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.service
+
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'Description=Backup MMDVM log files every 10 mins'         >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo '[Timer]'                                                  >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'OnCalendar=*-*-* *:00/10'                                 >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'Persistent=true'                                          >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo 'WantedBy=timers.target'                                   >> /lib/systemd/system/mmdvm-log-backup.timer
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-backup.timer
+
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'Description=Restore MMDVM log files at startup'           >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo '#after=default.target'                                    >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'Before=mmdvmhost.service'                                 >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo '[Service]'                                                >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'Type=simple'                                              >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-restores -r'   >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'TimeoutStartSec=0'                                        >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo 'WantedBy=default.target'                                  >> /lib/systemd/system/mmdvm-log-restore.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-restore.service
+
+		   echo '[Unit]'                                                   >  /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'Description=Backup MMDVM log files at Shutdown/Reboot'    >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'DefaultDependencies=no'                                   >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'Before=shutdown.target'                                   >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo '[Service]'                                                >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'Type=simple'                                              >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-backups -r'    >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'TimeoutStartSec=3'                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo '[Install]'                                                >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo 'WantedBy=shutdown.target'                                 >> /lib/systemd/system/mmdvm-log-shutdown.service
+		   echo ' '                                                        >> /lib/systemd/system/mmdvm-log-shutdown.service
+
+		   chown root:root /lib/systemd/system/mmdvm-log-backup.service
+		   chown root:root /lib/systemd/system/mmdvm-log-backup.timer
+		   chown root:root /lib/systemd/system/mmdvm-log-restore.service
+		   chown root:root /lib/systemd/system/mmdvm-log-shutdown.service
+
+		   systemctl enable mmdvm-log-backup.service
+		   systemctl enable mmdvm-log-backup.timer
+		   systemctl enable mmdvm-log-restore.service
+		   systemctl enable mmdvm-log-shutdown.service
+
+		   systemctl daemon-reload
+
+		   systemctl start mmdvm-log-backup.timer
+
+		   echo "Backup/restore of Log files added"
+		fi
+
 		#sed -i 's/4.1.6/4.1.7/g' /etc/pistar-release
 
 		# Re-create the MOTD

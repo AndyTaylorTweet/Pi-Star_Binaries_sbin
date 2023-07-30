@@ -20,7 +20,13 @@ import datetime
 import time
 import linecache
 import os
-import ConfigParser
+
+import sys					#
+if (sys.version_info.major > 2):		#
+	import configparser as ConfigParser	# python 3
+else:						#
+	import ConfigParser			# python 2
+
 
 # Read the config;
 config = ConfigParser.RawConfigParser()

@@ -37,6 +37,7 @@ TGLISTBM=/usr/local/etc/TGList_BM.txt
 TGLISTP25=/usr/local/etc/TGList_P25.txt
 TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
 TGLISTYSF=/usr/local/etc/TGList_YSF.txt
+STRIPPED=/usr/local/etc/stripped.csv
 
 # How many backups
 FILEBACKUP=1
@@ -66,6 +67,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${TGLISTP25} ${TGLISTP25}.$(date +%Y%m%d)
 	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d)
 	cp ${TGLISTYSF} ${TGLISTYSF}.$(date +%Y%m%d)
+	cp ${STRIPPED} ${STRIPPED}.$(date +%Y%m%d)
 fi
 
 # Prune backups
@@ -85,7 +87,8 @@ ${NXDNHOSTS}
 ${TGLISTBM}
 ${TGLISTP25}
 ${TGLISTNXDN}
-${TGLISTYSF}"
+${TGLISTYSF}
+${STRIPPED}"
 
 for file in ${FILES}
 do
@@ -125,6 +128,7 @@ curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt --use
 curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -o ${STRIPPED} -s https://database.radioid.net/static/user.csv --user-agent "Pi-Star_${pistarCurVersion}"
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
@@ -137,18 +141,23 @@ if [ -f "/root/YSFHosts.txt" ]; then
 fi
 
 # Fix DMRGateway issues with brackets
-if [ -f "/etc/dmrgateway" ]; then
+if [[ -f "/etc/dmrgateway" && "$(grep "Name=.*(" /etc/dmrgateway)" ]]; then
 	sed -i '/Name=.*(/d' /etc/dmrgateway
 	sed -i '/Name=.*)/d' /etc/dmrgateway
 fi
 
 # Add some fixes for P25Gateway
-if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" ]]; then
+if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" && "$(grep "Hosts=" /etc/p25gateway)" ]];  then
 	sed -i 's/Hosts=\/usr\/local\/etc\/P25Hosts.txt/HostsFile1=\/usr\/local\/etc\/P25Hosts.txt\nHostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 	sed -i 's/HostsFile2=\/root\/P25Hosts.txt/HostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 fi
 if [ -f "/root/P25Hosts.txt" ]; then
 	cat /root/P25Hosts.txt > /usr/local/etc/P25HostsLocal.txt
+fi
+
+# Add local over-ride for TGList-BM
+if [ -f "/root/TGList_BM.txt" ]; then
+	cat /root/TGList_BM.txt >> ${TGLISTBM}
 fi
 
 # Add local over-ride for M17Hosts
@@ -157,7 +166,7 @@ if [ -f "/root/M17Hosts.txt" ]; then
 fi
 
 # Fix up new NXDNGateway Config Hostfile setup
-if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
+if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" && "$(grep "HostsFile=" /etc/nxdngateway)" ]];  then
 	sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
 fi
 if [ ! -f "/root/NXDNHosts.txt" ]; then
@@ -211,6 +220,11 @@ if [ -d "/usr/local/etc/ircddbgateway" ]; then
 		rm -rf /usr/local/etc/ircddbgateway/CCS_Hosts.txt
 		ln -s /usr/local/etc/CCS_Hosts.txt /usr/local/etc/ircddbgateway/CCS_Hosts.txt
 	fi
+fi
+
+# Extended DMR Id File update
+if [ -f /usr/local/sbin/HostFilesUpdate-Ext.sh ]; then
+	nohup /usr/local/sbin/HostFilesUpdate-Ext.sh -s -u -r 1>/dev/null &
 fi
 
 exit 0

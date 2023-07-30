@@ -1,0 +1,45 @@
+#!/bin/bash
+# Backup MMDVM logs during shutdown/reboots
+#
+if [ ! -d /var/log/pi-star ]; then
+  exit 0
+fi
+#rpi-rw
+xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+if [ "$xro" == "ro" ]; then
+  sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
+fi
+#
+rbt=0
+while getopts ur opt; do
+  case $opt in
+    r) rbt=1;;
+  esac
+done
+shift $(($OPTIND - 1))
+#
+if [ ! -d /home/pi-star/.mlogs ]; then
+  sudo mkdir /home/pi-star/.mlogs
+fi
+#
+#sudo cp -p /var/log/pi-star/MMDVM* /home/pi-star/.mlogs
+cd /var/log/pi-star/
+for f in $(ls -tr MMDVM*)
+do
+  if [ /var/log/pi-star/$f -nt /home/pi-star/.mlogs/$f ]; then
+    sudo cp -p /var/log/pi-star/$f /home/pi-star/.mlogs/$f
+#   echo $f "backed up"
+    echo $f "("$(stat -c %y /home/pi-star/.mlogs/$f | cut -c12-19)") backed up"
+  fi
+done
+#
+#logger -t "[$$]" "Pi-Star --> MMDVM logs backed up"
+#
+if [ $rbt == 1 ]; then
+  sudo touch /home/pi-star/.mlogs/reboot-$(date +%Y-%m-%d-%H:%M:%S)
+fi
+#
+#rpi-ro
+if [ "$xro" == "ro" ]; then
+  sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+fi

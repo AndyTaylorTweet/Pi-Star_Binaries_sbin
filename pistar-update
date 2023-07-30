@@ -57,7 +57,7 @@ git_update() {
                                 echo "Found a new version of pistar-update..."
                                 git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
-                                        echo "Update to new version of pistar-update was not successfull, forcing update..."
+                                        echo "Update to new version of pistar-update was not successful, forcing update..."
 					rm -rf ${gitFolder}/pistar-upnp.service
                                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
                                 fi
@@ -73,8 +73,14 @@ git_update() {
 			if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
 				rm -rf ${gitFolder}/pistar-upnp.service
 			fi
-			echo "Updates were not successfull, reverting to Pi-Star original files..."
+			echo "Updates were not successful, reverting to Pi-Star original files..."
+			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
+				git stash push -m "save Pi-Star user config files" -- config/config.php config/ircddblocal.php config/language.php
+			fi
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
+				git stash pop
+			fi
 		fi
 	else
 		echo "No updates for ${gitFolder} available"
@@ -103,7 +109,9 @@ service_handle() {
 	systemctl ${doWhat} nxdngateway.service > /dev/null 2>&1
 	systemctl ${doWhat} nxdn2dmr.service > /dev/null 2>&1
 	systemctl ${doWhat} nxdnparrot.service > /dev/null 2>&1
+	systemctl ${doWhat} aprsgateway.service > /dev/null 2>&1
 	systemctl ${doWhat} dstarrepeater.service > /dev/null 2>&1
+	systemctl ${doWhat} nextiondriver.service > /dev/null 2>&1
 	systemctl ${doWhat} mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
 }
 
@@ -118,7 +126,7 @@ main_function() {
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
 		apt-get clean
-		echo "Done"
+		echo -e "Done \n"
 
 		echo "Checking nginx config"
 		if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
@@ -133,27 +141,45 @@ main_function() {
 
 	echo "Stopping Services..."
 	service_handle stop
-	echo "Done"
+	echo -e "Done \n"
 
-	echo "Updating DV Binaries..."
+
+	gitFolder=/usr/local/bin
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating DV Binaries ($gitUrl) ... "
 	git_update /usr/local/bin
-	echo "Done"
+	echo -e "Done \n"
 
-	echo "Updating Pi-Star Binaries..."
+
+	gitFolder=/usr/local/sbin
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating Pi-Star Binaries ($gitUrl) ... "
 	git_update /usr/local/sbin
-	echo "Done"
+	echo -e "Done \n"
+
+	#echo "Updating Hostfiles..."
+	#/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
+	#echo -e "Done \n"
+
+	gitFolder=/var/www/dashboard
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating Dashboard ($gitUrl) ... "
+	git_update /var/www/dashboard
+	echo -e "Done \n"
 
 	echo "Updating Hostfiles..."
 	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
-	echo "Done"
-
-	echo "Updating Dashboard..."
-	git_update /var/www/dashboard
-	echo "Done"
+	echo -e "Done \n"
 
 	echo "Updating PiStar-Firewall..."
 	pistar-firewall > /dev/null 2>&1
-	echo "Done"
+	echo -e "Done \n"
 
 	# Pre-Fix some config in MMDVMHost for update purposes.
 	mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
@@ -180,7 +206,7 @@ main_function() {
 	fi
 
 	# Fix up new P25Gateway Config Hostfile setup
-	if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" ]]; then
+	if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt "20180108" && "$(grep "Hosts=" /etc/p25gateway)" ]];  then
 		sed -i 's/Hosts=\/usr\/local\/etc\/P25Hosts.txt/HostsFile1=\/usr\/local\/etc\/P25Hosts.txt\nHostsFile2=\/usr\/local\/etc\/P25HostsLocal.txt/g' /etc/p25gateway
 	fi
 	if [ ! -f /root/P25Hosts.txt ]; then
@@ -188,7 +214,7 @@ main_function() {
 	fi
 
 	# Fix up new NXDNGateway Config Hostfile setup
-	if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" ]]; then
+	if [[ $(/usr/local/bin/NXDNGateway --version | awk '{print $3}' | cut -c -8) -gt "20180801" && "$(grep "HostsFile=" /etc/nxdngateway)" ]];  then
 		sed -i 's/HostsFile=\/usr\/local\/etc\/NXDNHosts.txt/HostsFile1=\/usr\/local\/etc\/NXDNHosts.txt\nHostsFile2=\/usr\/local\/etc\/NXDNHostsLocal.txt/g' /etc/nxdngateway
 	fi
 	if [ ! -f /root/NXDNHosts.txt ]; then
@@ -252,6 +278,29 @@ main_function() {
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 	fi
 
+	# Download M17 Audio files if missing
+	if [[ ! -f /usr/local/etc/M17_Audio/se_SE.indx ]]; then
+		mkdir -p /usr/local/etc/M17_Audio/
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.m17
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.indx
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.m17
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.indx
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.m17
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.indx
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.m17
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.indx
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.m17
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.indx
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.indx
+	fi
+
 	# I previously had the wrong URL for the P25 Audio files; remove the broken downloads.
 	if [[ -f /usr/local/etc/P25_Audio/en_GB.imbe ]]; then
 		testFileIMBE=`file -i /usr/local/etc/P25_Audio/en_GB.imbe | cut -d " " -f2`
@@ -284,7 +333,7 @@ main_function() {
 		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/pl_PL.indx
 		curl --fail -o /usr/local/etc/P25_Audio/se_SE.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/se_SE.imbe
 		curl --fail -o /usr/local/etc/P25_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/se_SE.indx
-		echo "Done"
+		echo -e "Done \n"
 	fi
 
 	# Add Portuguese voice files for ircDDBGateway
@@ -296,7 +345,7 @@ main_function() {
 		curl --fail -o /usr/local/etc/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
 		chmod 664 /usr/local/etc/*.ambe
 		chmod 664 /usr/local/etc/*.indx
-		echo "Done"
+		echo -e "Done \n"
 	fi
 	if [[ ! -f /usr/local/etc/ircddbgateway/pt_PT.ambe ]]; then
 		echo "Downloading Portuguese Voice Files for ircDDBGateway..."
@@ -306,14 +355,14 @@ main_function() {
 		curl --fail -o /usr/local/etc/ircddbgateway/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
 		chmod 664 /usr/local/etc/ircddbgateway/*.ambe
 		chmod 664 /usr/local/etc/ircddbgateway/*.indx
-		echo "Done"
+		echo -e "Done \n"
 	fi
 
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
 		echo "Updating P25Gateway config..."
 		echo "" >> /etc/p25gateway
 		sed -i '$a[Voice]\nEnabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
-		echo "Done"
+		echo -e "Done \n"
 	fi
 
 	if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
@@ -348,7 +397,7 @@ main_function() {
 
 	echo "Starting Services..."
 	service_handle start
-	echo "Done"
+	echo -e "Done \n"
 
 	echo "Updates complete, syncing disk cache before making the disk Read-Only"
 	# Make the disk read-only

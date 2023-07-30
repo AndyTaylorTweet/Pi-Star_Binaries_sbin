@@ -19,7 +19,9 @@ fi
 # Get the Pi-Star Version Info
 pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
 
-echo -e "
+sudo mount -o remount,rw /
+
+echo  -e "
 [0;31m╔═══════════════════════════════════════════════════════════════════════╗
 ║                                                                       ║
 ║           ██████╗ ██╗      ███████╗████████╗ █████╗ ██████╗           ║
@@ -31,10 +33,10 @@ echo -e "
 ║                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════╝
 [0;0mThe Pi-Star Dashboard can be found at one of the following locations:
-[1;37mhttp://$(hostname)/  http://$(hostname).local/   http://$(hostname -I | awk '{print $1}')/
+[1;32m http://$(hostname)/  http://$(hostname).local/   http://$(hostname -I | awk '{print $1}')/
 
 [0;0mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
 
-                     Welcome to Pi-Star:[0;31m v${pistarCurVersion}
+                     [1;36mWelcome to Pi-Star:[1;35m v${pistarCurVersion}
 [0;0m" > /etc/motd
