@@ -1385,6 +1385,11 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [[ ! "$(grep 'Lookup' /etc/pistar-css.ini)" ]]; then
+		   sudo sed -i '$,$ s/$/\n\n[Lookup]\nService=RadioID\n/g' /etc/pistar-css.ini
+		   echo "QRZ/RadioID Lookup option added"
+		fi
+
 		if [[ ! -f /etc/m17gateway ]]; then
 		  echo '[Remote Commands]'                           > /etc/m17gateway
 		  echo 'Port=6076'                                  >> /etc/m17gateway
