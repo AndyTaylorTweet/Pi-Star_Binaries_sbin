@@ -1385,6 +1385,50 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [[ ! -f /lib/systemd/system/mmdvm-log-backup-age.service ]]; then
+		   echo '[Unit]'                                                   >   /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'Description=Backup MMDVM log files'                       >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'After=mmdvmhost.service'                                  >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'StartLimitBurst=3'                                        >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo '[Service]'                                                >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'Type=simple'                                              >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'ExecStart=/usr/local/sbin/pistar-mmdvm-log-backup-age'    >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'Restart=on-failure'                                       >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'RestartSec=5s'                                            >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo '[Install]'                                                >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo 'WantedBy=multi-user.target'                               >>  /lib/systemd/system/mmdvm-log-backup-age.service
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.service
+
+		   echo '[Unit]'                                                   >   /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo 'Description=Age MMDVM log file backups every 6 hours'     >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo '[Timer]'                                                  >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo 'OnStartupSec=10s'                                         >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo 'OnUnitActiveSec=6hr'                                      >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo '#OnCalendar=*-*-* *:00/30'                                >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo 'Persistent=true'                                          >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo ' '                                                        >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo '[Install]'                                                >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo 'WantedBy=timers.target'                                   >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+		   echo ''                                                         >>  /lib/systemd/system/mmdvm-log-backup-age.timer
+
+		   sudo chown root:root /lib/systemd/system/mmdvm-log-backup-age.service
+		   sudo chown root:root /lib/systemd/system/mmdvm-log-backup-age.timer
+
+		   sudo systemctl enable mmdvm-log-backup-age.service
+		   sudo systemctl enable mmdvm-log-backup-age.timer
+
+		   sudo systemctl daemon-reload
+
+		   sudo systemctl start mmdvm-log-backup-age.service
+
+		   echo "Backup aging of Log files added"
+		fi
+
 		if [[ ! "$(grep 'Lookup' /etc/pistar-css.ini)" ]]; then
 		   sudo sed -i '$,$ s/$/\n\n[Lookup]\nService=RadioID\n/g' /etc/pistar-css.ini
 		   echo "QRZ/RadioID Lookup option added"
@@ -1557,7 +1601,7 @@ main_function() {
 
 		   systemctl daemon-reload
 
-		   systemctl start mmdvm-log-backup.timer
+		   systemctl start mmdvm-log-backup.service
 
 		   echo "Backup/restore of Log files added"
 		fi
@@ -1575,7 +1619,7 @@ main_function() {
                 #exit 1
 	;;
 	*)
-		Message="Somthing went very wrong, I cant tell what version I am running"
+		Message="Something went very wrong, I cant tell what version I am running"
 	;;
 	esac
 
