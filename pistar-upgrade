@@ -1385,6 +1385,39 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [[ ! -f /lib/systemd/system/m17gateway.service ]]; then
+		   echo '[Unit]'                                                   >  /lib/systemd/system/m17gateway.service
+		   echo 'Description=M17 Service'                                  >> /lib/systemd/system/m17gateway.service
+		   echo 'After=syslog.target network.target mmdvmhost.timer'       >> /lib/systemd/system/m17gateway.service
+		   echo ' '                                                        >> /lib/systemd/system/m17gateway.service
+		   echo '[Service]'                                                >> /lib/systemd/system/m17gateway.service
+		   echo 'Type=forking'                                             >> /lib/systemd/system/m17gateway.service
+		   echo 'ExecStart=/usr/local/sbin/m17gateway.service start'       >> /lib/systemd/system/m17gateway.service
+		   echo 'ExecStop=/usr/local/sbin/m17gateway.service stop'         >> /lib/systemd/system/m17gateway.service
+		   echo 'ExecReload=/usr/local/sbin/m17gateway.service restart'    >> /lib/systemd/system/m17gateway.service
+		   echo ' '                                                        >> /lib/systemd/system/m17gateway.service
+		   echo '[Install]'                                                >> /lib/systemd/system/m17gateway.service
+		   echo 'WantedBy=multi-user.target'                               >> /lib/systemd/system/m17gateway.service
+
+		   echo '[Timer]'                                                  >  /lib/systemd/system/m17gateway.timer
+		   echo 'OnStartupSec=20'                                          >> /lib/systemd/system/m17gateway.timer
+		   echo ' '                                                        >> /lib/systemd/system/m17gateway.timer
+		   echo '[Install]'                                                >> /lib/systemd/system/m17gateway.timer
+		   echo 'WantedBy=multi-user.target'                               >> /lib/systemd/system/m17gateway.timer
+
+		   sudo chown root:root /lib/systemd/system/m17gateway.service
+		   sudo chown root:root /lib/systemd/system/m17gateway.timer
+
+		   sudo systemctl enable m17gateway.service
+		   sudo systemctl enable m17gateway.timer
+
+		   sudo systemctl daemon-reload
+
+		   sudo systemctl start 17gateway.service
+
+		   echo "M17 Gateway service tasks created"
+		fi
+
 		if [[ ! -f /lib/systemd/system/mmdvm-log-backup-age.service ]]; then
 		   echo '[Unit]'                                                   >   /lib/systemd/system/mmdvm-log-backup-age.service
 		   echo 'Description=Backup MMDVM log files'                       >>  /lib/systemd/system/mmdvm-log-backup-age.service
