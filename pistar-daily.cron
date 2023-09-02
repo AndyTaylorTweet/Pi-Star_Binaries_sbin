@@ -26,6 +26,7 @@ systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
 systemctl stop nxdngateway.service > /dev/null 2>&1
 systemctl stop nxdnparrot.service > /dev/null 2>&1
+systemctl stop m17gateway.service > /dev/null 2>&1
 systemctl stop ysfgateway.service > /dev/null 2>&1
 systemctl stop ysfparrot.service > /dev/null 2>&1
 systemctl stop ysf2dmr.service > /dev/null 2>&1
@@ -128,6 +129,7 @@ systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
 systemctl start nxdngateway.service > /dev/null 2>&1
 systemctl start nxdnparrot.service > /dev/null 2>&1
+systemctl start m17gateway.service > /dev/null 2>&1
 systemctl start ysfgateway.service > /dev/null 2>&1
 systemctl start ysfparrot.service > /dev/null 2>&1
 systemctl start ysf2dmr.service > /dev/null 2>&1
