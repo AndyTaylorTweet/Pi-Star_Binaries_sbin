@@ -27,8 +27,8 @@ git_checkUpdateRequired() {
 	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
 
 	# Git check / update function
-	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | cut -c 1-7)
-	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%h" -1)
+	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | awk {'print $1'})
+	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%H" -1)
 
 	# Return the output
 	if [[ ${gitStatusRemote} != ${gitStatusLocal} ]]; then
