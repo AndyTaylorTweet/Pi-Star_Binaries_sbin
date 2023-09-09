@@ -12,23 +12,34 @@ m0=14                             # number to be kept
 if [[ $1 =~ [0-9] ]]; then
   m0=$1
 fi
+#
+m3=0
 m1=$(ls ${file}/MMDVM* | wc -l)   # total number of files
 m2=$(expr ${m1} - ${m0})          # number to be deleted
-if [ ${m2} -gt 0 -a ${m0} -gt 0 ]; then
-  filed=$(ls -tr ${file}/MMDVM* | head -n ${m2})
-  for f in ${filed}; do
-#   echo $f
-    sudo rm $f
-  done
-  filed=$(find ${file}/re* -mtime +${m0})   # del related reboot/restore msgs
-  for f in ${filed}; do
-#   echo $f
-    sudo rm $f
-  done
-else
-  m2=0
-fi
-logger -t "[$$]" "Pi-Star --> MMDVM log backups aged: $m2 files <--"
+mods=(MMDVM DMR APRS M17)         # list of logs to age
+#
+# age by count:
+for modx in ${mods[*]}; do
+  m1=$(ls ${file}/${modx}* 2>/dev/null | wc -l)   # total number of files
+  m2=$(expr ${m1} - ${m0})        # number to be deleted
+# echo $modx $m1 $m2
+  if [ ${m2} -gt 0 -a ${m0} -gt 0 ]; then
+    m3=$(expr $m3 + $m2)
+    filed=$(ls -tr ${file}/${modx}* | head -n ${m2})
+    for f in ${filed}; do
+#     echo $f
+      sudo rm $f
+    done
+  fi
+done
+#
+# age by date:
+filed=$(find ${file}/re* -mtime +${m0} 2>/dev/null)   # del related reboot/restore msgs
+for f in ${filed}; do
+# echo $f
+  sudo rm $f
+done
+logger -t "[$$]" "Pi-Star --> MMDVM log backups aged: $m3 files <--"
 #
 #rpi-ro
 if [ "$xro" == "ro" ]; then
