@@ -75,7 +75,7 @@ git_update() {
 			fi
 			echo "Updates were not successful, reverting to Pi-Star original files..."
 			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
-				git stash push -m "save Pi-Star user config files" -- config/config.php config/ircddblocal.php config/language.php
+				git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git stash push -m "save Pi-Star user config files" -- config/config.php config/ircddblocal.php config/language.php
 			fi
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
 			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
