@@ -1,0 +1,184 @@
+#!/bin/bash
+#
+###############################################################################
+#                                                                             #
+#                        Pi-Star Auto Update Tool                             #
+#                                                                             #
+#    Version 3.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#                                                                             #
+#                     Make it simple to update the OS.                        #
+#                                                                             #
+#                (stripped down to run only the GIT updates)                  #
+#                                                                             #
+###############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+exec 200>/var/lock/pistar-update.lock || exit 1
+if ! flock -n 200 ; then
+  echo -e "Another instance is already running...\n"
+  exit 1
+fi
+
+git_checkUpdateRequired() {
+	# Set the function variables
+	gitFolder=${1}
+	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+
+	# Git check / update function
+	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | awk {'print $1'})
+	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%H" -1)
+
+	# Return the output
+	if [[ ${gitStatusRemote} != ${gitStatusLocal} ]]; then
+		echo "1"
+	else
+		echo "0"
+	fi
+}
+
+git_update() {
+	# Set the function variables
+	gitFolder=${1}
+
+	# Handle the special case for /usr/loca/sbin
+	if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
+		# Assume unchanged for pistar-upnp.service
+		git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git update-index --assume-unchanged pistar-upnp.service
+	fi
+
+	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+		echo "Updating ${gitFolder}..."
+		# If this script is updated, re-run the update with the new version.
+		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
+                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch
+			if [ "$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master 2>/dev/null | grep pistar-update 2>/dev/null)" = "pistar-update" ]; then
+                                echo "Found a new version of pistar-update..."
+                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                                if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+                                        echo "Update to new version of pistar-update was not successful, forcing update..."
+					rm -rf ${gitFolder}/pistar-upnp.service
+                                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+                                fi
+                                echo "Restarting update process with the new version..."
+                                exec "$0" "$@"
+                                exit 1
+			fi
+                fi
+                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+
+		# Re-check that the updates are now good
+		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
+			if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
+				rm -rf ${gitFolder}/pistar-upnp.service
+			fi
+			echo "Updates were not successful, reverting to Pi-Star original files..."
+			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
+				git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git stash push -m "save Pi-Star user config files" -- config/config.php config/ircddblocal.php config/language.php
+			fi
+			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
+				git stash pop
+			fi
+		fi
+	else
+		echo "No updates for ${gitFolder} available"
+	fi
+}
+
+service_handle() {
+	# What do we want do to?
+	doWhat=${1}
+
+	systemctl ${doWhat} pistar-watchdog.service > /dev/null 2>&1
+	systemctl ${doWhat} pistar-remote.service > /dev/null 2>&1
+	systemctl ${doWhat} dmrgateway.service > /dev/null 2>&1
+	systemctl ${doWhat} dapnetgateway.service > /dev/null 2>&1
+	systemctl ${doWhat} ircddbgateway.service > /dev/null 2>&1
+	systemctl ${doWhat} timeserver.service > /dev/null 2>&1
+	systemctl ${doWhat} ysfgateway.service > /dev/null 2>&1
+	systemctl ${doWhat} ysf2dmr.service > /dev/null 2>&1
+	systemctl ${doWhat} ysf2nxdn.service > /dev/null 2>&1
+	systemctl ${doWhat} ysf2p25.service > /dev/null 2>&1
+	systemctl ${doWhat} ysfparrot.service > /dev/null 2>&1
+	systemctl ${doWhat} dmr2ysf.service > /dev/null 2>&1
+	systemctl ${doWhat} dmr2nxdn.service > /dev/null 2>&1
+	systemctl ${doWhat} p25gateway.service > /dev/null 2>&1
+	systemctl ${doWhat} p25parrot.service > /dev/null 2>&1
+	systemctl ${doWhat} nxdngateway.service > /dev/null 2>&1
+	systemctl ${doWhat} nxdn2dmr.service > /dev/null 2>&1
+	systemctl ${doWhat} nxdnparrot.service > /dev/null 2>&1
+	systemctl ${doWhat} aprsgateway.service > /dev/null 2>&1
+	systemctl ${doWhat} dstarrepeater.service > /dev/null 2>&1
+	systemctl ${doWhat} nextiondriver.service > /dev/null 2>&1
+	systemctl ${doWhat} m17gateway.service > /dev/null 2>&1
+	systemctl ${doWhat} mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
+}
+
+main_function() {
+	# Make the disk writable
+	mount -o remount,rw /
+	mount -o remount,rw /boot
+
+	echo "Stopping Services..."
+	service_handle stop
+	echo -e "Done \n"
+
+
+	gitFolder=/usr/local/bin
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating DV Binaries ($gitUrl) ... "
+	git_update /usr/local/bin
+	echo -e "Done \n"
+
+
+	gitFolder=/usr/local/sbin
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating Pi-Star Binaries ($gitUrl) ... "
+	git_update /usr/local/sbin
+	echo -e "Done \n"
+
+	gitFolder=/var/www/dashboard
+	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitUrl=${gitUrl/https:\/\/github.com/}
+	gitUrl=${gitUrl/.git/}
+	echo -n "Updating Dashboard ($gitUrl) ... "
+	git_update /var/www/dashboard
+	echo -e "Done \n"
+
+	echo "Updating PiStar-Firewall..."
+	pistar-firewall > /dev/null 2>&1
+	echo -e "Done \n"
+
+	echo "Starting Services..."
+	service_handle start
+	echo -e "Done \n"
+
+	echo "Updates complete, syncing disk cache before making the disk Read-Only"
+	# Make the disk read-only
+	/bin/sync
+	/bin/sync
+	/bin/sync
+	mount -o remount,ro /
+	mount -o remount,ro /boot
+
+	# Tell the user we are done
+	echo "Finished"
+	}
+
+if [ -t 1 ]; then
+  # run via terminal, only output to screen
+  main_function
+else
+  # if not run via terminal, log everything into a log file
+  main_function >> /var/log/pi-star/pi-star_update.log 2>&1
+fi
+
+exit 0
