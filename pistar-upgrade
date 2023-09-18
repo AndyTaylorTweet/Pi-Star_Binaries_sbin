@@ -1413,7 +1413,7 @@ main_function() {
 
 		   sudo systemctl daemon-reload
 
-		   sudo systemctl start 17gateway.service
+		   sudo systemctl start m17gateway.service
 
 		   echo "M17 Gateway service tasks created"
 		fi
