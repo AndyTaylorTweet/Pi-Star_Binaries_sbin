@@ -287,7 +287,7 @@ nfiles=1
   fi
 # Prune backups
   fcnt=$(ls ${xfile}.* | wc -l)
-  fdel=$(expr ${fcnt} - ${nfiles})
+  fdel=$((${fcnt} - ${nfiles}))
   if [ ${fcnt} -gt ${nfiles} ]; then
      for f in $(ls -tr ${xfile}.* | head -${fdel})
      do
