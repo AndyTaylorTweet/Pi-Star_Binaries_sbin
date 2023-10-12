@@ -1385,6 +1385,15 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [[ ! "$(grep net.ifnames /boot/cmdline.txt)" ]]; then
+		   sudo sed -i "s/=force rootwait/=force net.ifnames=0 rootwait/g" /boot/cmdline.txt
+		fi
+
+		# add font-size option for SSH screen:
+		if [ ! "$(grep font-size: /etc/shellinabox/options-available/'00_White On Black.css')" ]; then
+		  sudo sed -i 's/{$/&\n  font-size:        small;/g'  /etc/shellinabox/options-available/'00_White On Black.css'
+		fi
+
 		if [[ ! -f /lib/systemd/system/m17gateway.service ]]; then
 		   echo '[Unit]'                                                   >  /lib/systemd/system/m17gateway.service
 		   echo 'Description=M17 Service'                                  >> /lib/systemd/system/m17gateway.service
