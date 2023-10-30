@@ -1477,63 +1477,63 @@ main_function() {
 		fi
 
 		if [[ ! -f /etc/m17gateway ]]; then
-		  echo '[Remote Commands]'                           > /etc/m17gateway
-		  echo 'Port=6076'                                  >> /etc/m17gateway
-		  echo 'Enable=1'                                   >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[General]'                                  >> /etc/m17gateway
-		  echo 'RptAddress=127.0.0.1'                       >> /etc/m17gateway
-		  echo 'RptPort=17011'                              >> /etc/m17gateway
-		  echo 'LocalPort=17010'                            >> /etc/m17gateway
-		  echo 'Debug=0'                                    >> /etc/m17gateway
-		  echo 'Daemon=1'                                   >> /etc/m17gateway
-		  echo 'Suffix=H'                                   >> /etc/m17gateway
-		  echo 'Callsign=M1ABC'                             >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[Info]'                                     >> /etc/m17gateway
-		  echo 'Power=1'                                    >> /etc/m17gateway
-		  echo 'Height=0'                                   >> /etc/m17gateway
-		  echo 'Latitude=50.00'                             >> /etc/m17gateway
-		  echo 'Longitude=-3.00'                            >> /etc/m17gateway
-		  echo 'Description=M17 Audio'                      >> /etc/m17gateway
-		  echo 'URL=http://www.mw0mwz.co.uk/pi-star/'       >> /etc/m17gateway
-		  echo 'RXFrequency=448960000  *'                   >> /etc/m17gateway
-		  echo 'TXFrequency=448980000  *'                   >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[Network]'                                  >> /etc/m17gateway
-		  echo 'HostsFile1=/usr/local/etc/M17Hosts.txt'     >> /etc/m17gateway
-		  echo 'HostsFile2=/root/M17Hosts.txt'              >> /etc/m17gateway
-		  echo 'Port=17000'                                 >> /etc/m17gateway
-		  echo 'ReloadTime=0'                               >> /etc/m17gateway
-		  echo 'HangTime=240'                               >> /etc/m17gateway
-		  echo 'Revert=1'                                   >> /etc/m17gateway
-		  echo 'Debug=0'                                    >> /etc/m17gateway
-		  echo 'RFHangTime=0'                               >> /etc/m17gateway
-		  echo 'NetHangTime=0'                              >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[APRS]'                                     >> /etc/m17gateway
-		  echo 'Enable=0'                                   >> /etc/m17gateway
-		  echo 'Address=127.0.0.1'                          >> /etc/m17gateway
-		  echo 'Port=8673'                                  >> /etc/m17gateway
-		  echo 'Description=APRS for M17Gateway'            >> /etc/m17gateway
-		  echo 'Suffix=M'                                   >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[Log]'                                      >> /etc/m17gateway
-		  echo 'DisplayLevel=0'                             >> /etc/m17gateway
-		  echo 'FileLevel=2'                                >> /etc/m17gateway
-		  echo 'FilePath=/var/log/pi-star'                  >> /etc/m17gateway
-		  echo 'FileRoot=M17Gateway'                        >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[Voice]'                                    >> /etc/m17gateway
-		  echo 'Enabled=1'                                  >> /etc/m17gateway
-		  echo 'Language=en_US'                             >> /etc/m17gateway
-		  echo 'Directory=/usr/local/etc/M17_Audio'         >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
-		  echo '[GPSD]'                                     >> /etc/m17gateway
-		  echo 'Enable=0'                                   >> /etc/m17gateway
-		  echo 'Port=2947'                                  >> /etc/m17gateway
-		  echo 'Address=127.0.0.1'                          >> /etc/m17gateway
-		  echo ''                                           >> /etc/m17gateway
+		   echo '[Remote Commands]'                           > /etc/m17gateway
+		   echo 'Port=6076'                                  >> /etc/m17gateway
+		   echo 'Enable=1'                                   >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[General]'                                  >> /etc/m17gateway
+		   echo 'RptAddress=127.0.0.1'                       >> /etc/m17gateway
+		   echo 'RptPort=17011'                              >> /etc/m17gateway
+		   echo 'LocalPort=17010'                            >> /etc/m17gateway
+		   echo 'Debug=0'                                    >> /etc/m17gateway
+		   echo 'Daemon=1'                                   >> /etc/m17gateway
+		   echo 'Suffix=H'                                   >> /etc/m17gateway
+		   echo 'Callsign=M1ABC'                             >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[Info]'                                     >> /etc/m17gateway
+		   echo 'Power=1'                                    >> /etc/m17gateway
+		   echo 'Height=0'                                   >> /etc/m17gateway
+		   echo 'Latitude=50.00'                             >> /etc/m17gateway
+		   echo 'Longitude=-3.00'                            >> /etc/m17gateway
+		   echo 'Description=M17 Audio'                      >> /etc/m17gateway
+		   echo 'URL=http://www.mw0mwz.co.uk/pi-star/'       >> /etc/m17gateway
+		   echo 'RXFrequency=448960000  *'                   >> /etc/m17gateway
+		   echo 'TXFrequency=448980000  *'                   >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[Network]'                                  >> /etc/m17gateway
+		   echo 'HostsFile1=/usr/local/etc/M17Hosts.txt'     >> /etc/m17gateway
+		   echo 'HostsFile2=/root/M17Hosts.txt'              >> /etc/m17gateway
+		   echo 'Port=17000'                                 >> /etc/m17gateway
+		   echo 'ReloadTime=0'                               >> /etc/m17gateway
+		   echo 'HangTime=240'                               >> /etc/m17gateway
+		   echo 'Revert=1'                                   >> /etc/m17gateway
+		   echo 'Debug=0'                                    >> /etc/m17gateway
+		   echo 'RFHangTime=0'                               >> /etc/m17gateway
+		   echo 'NetHangTime=0'                              >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[APRS]'                                     >> /etc/m17gateway
+		   echo 'Enable=0'                                   >> /etc/m17gateway
+		   echo 'Address=127.0.0.1'                          >> /etc/m17gateway
+		   echo 'Port=8673'                                  >> /etc/m17gateway
+		   echo 'Description=APRS for M17Gateway'            >> /etc/m17gateway
+		   echo 'Suffix=M'                                   >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[Log]'                                      >> /etc/m17gateway
+		   echo 'DisplayLevel=0'                             >> /etc/m17gateway
+		   echo 'FileLevel=2'                                >> /etc/m17gateway
+		   echo 'FilePath=/var/log/pi-star'                  >> /etc/m17gateway
+		   echo 'FileRoot=M17Gateway'                        >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[Voice]'                                    >> /etc/m17gateway
+		   echo 'Enabled=1'                                  >> /etc/m17gateway
+		   echo 'Language=en_US'                             >> /etc/m17gateway
+		   echo 'Directory=/usr/local/etc/M17_Audio'         >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
+		   echo '[GPSD]'                                     >> /etc/m17gateway
+		   echo 'Enable=0'                                   >> /etc/m17gateway
+		   echo 'Port=2947'                                  >> /etc/m17gateway
+		   echo 'Address=127.0.0.1'                          >> /etc/m17gateway
+		   echo ''                                           >> /etc/m17gateway
 		fi
 
 		if [[ ! "$(sed -n '/\[Background\]/,/^$/ s/^Width=/&/p' /etc/pistar-css.ini)" ]]; then
