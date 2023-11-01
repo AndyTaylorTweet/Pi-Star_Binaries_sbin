@@ -1534,6 +1534,7 @@ main_function() {
 		   echo 'Port=2947'                                  >> /etc/m17gateway
 		   echo 'Address=127.0.0.1'                          >> /etc/m17gateway
 		   echo ''                                           >> /etc/m17gateway
+		   echo "M17Gateway config created"
 		fi
 
 		if [[ ! "$(sed -n '/\[Background\]/,/^$/ s/^Width=/&/p' /etc/pistar-css.ini)" ]]; then
