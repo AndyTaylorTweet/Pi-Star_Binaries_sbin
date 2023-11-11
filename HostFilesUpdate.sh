@@ -50,24 +50,24 @@ fi
 
 # Create backup of old files
 if [ ${FILEBACKUP} -ne 0 ]; then
-	cp ${APRSHOSTS} ${APRSHOSTS}.$(date +%Y%m%d)
-	cp ${DCSHOSTS} ${DCSHOSTS}.$(date +%Y%m%d)
-	cp ${DExtraHOSTS} ${DExtraHOSTS}.$(date +%Y%m%d)
-	cp ${DMRIDFILE} ${DMRIDFILE}.$(date +%Y%m%d)
-	cp ${DMRHOSTS} ${DMRHOSTS}.$(date +%Y%m%d)
-	cp ${DPlusHOSTS} ${DPlusHOSTS}.$(date +%Y%m%d)
-	cp ${P25HOSTS} ${P25HOSTS}.$(date +%Y%m%d)
-	cp ${M17HOSTS} ${M17HOSTS}.$(date +%Y%m%d)
-	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d)
-	cp ${FCSHOSTS} ${FCSHOSTS}.$(date +%Y%m%d)
-	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d)
-	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d)
-	cp ${NXDNHOSTS} ${NXDNHOSTS}.$(date +%Y%m%d)
-	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d)
-	cp ${TGLISTP25} ${TGLISTP25}.$(date +%Y%m%d)
-	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d)
-	cp ${TGLISTYSF} ${TGLISTYSF}.$(date +%Y%m%d)
-	cp ${STRIPPED} ${STRIPPED}.$(date +%Y%m%d)
+	cp ${APRSHOSTS} ${APRSHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DCSHOSTS} ${DCSHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DExtraHOSTS} ${DExtraHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DMRIDFILE} ${DMRIDFILE}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DMRHOSTS} ${DMRHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DPlusHOSTS} ${DPlusHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${P25HOSTS} ${P25HOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${M17HOSTS} ${M17HOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${YSFHOSTS} ${YSFHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${FCSHOSTS} ${FCSHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${XLXHOSTS} ${XLXHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${NXDNIDFILE} ${NXDNIDFILE}.$(date +%Y%m%d) 2>/dev/null
+	cp ${NXDNHOSTS} ${NXDNHOSTS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTBM} ${TGLISTBM}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTP25} ${TGLISTP25}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGLISTYSF} ${TGLISTYSF}.$(date +%Y%m%d) 2>/dev/null
+	cp ${STRIPPED} ${STRIPPED}.$(date +%Y%m%d) 2>/dev/null
 fi
 
 # Prune backups
@@ -92,7 +92,7 @@ ${STRIPPED}"
 
 for file in ${FILES}
 do
-  BACKUPCOUNT=$(ls ${file}.* | wc -l)
+  BACKUPCOUNT=$(ls ${file}.* 2>/dev/null | wc -l)
   BACKUPSTODELETE=$(expr ${BACKUPCOUNT} - ${FILEBACKUP})
   if [ ${BACKUPCOUNT} -gt ${FILEBACKUP} ]; then
 	for f in $(ls -tr ${file}.* | head -${BACKUPSTODELETE})
