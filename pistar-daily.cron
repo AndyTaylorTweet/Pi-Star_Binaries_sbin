@@ -55,6 +55,7 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
 # Pre-Fix some config in MMDVMHost for update purposes.
 mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
+mmdvmHostVer=${mmdvmHostVer:-20230101}
 needsUpdate=`grep -c Gwy /etc/mmdvmhost`
 if [ ${mmdvmHostVer} \> 20171031 ] && [ ${needsUpdate} \> 0 ]; then
         # Config needs to be updated, add in the changes here
@@ -91,7 +92,7 @@ if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt 
 	curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.ambe
 	curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.indx
 	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
+	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx
 fi
 
 if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
@@ -155,4 +156,4 @@ fi
 # Make the disk RO
 mount -o remount,ro /
 
-exit  0 
+exit  0
