@@ -44,6 +44,10 @@ if [ -d /home/pi-star/.mlogs ]; then
        sudo cp -p $f ${file2}$f
     done
 #
+    d1=$(date -u "+%Y-%m-%d %H:%M:%S.%N")
+    ll=$(ls -ltr /var/log/pi-star/MMDV* | tail -n 1 | sed -n 's/.*MMDVM/MMDVM/p')
+    echo "M: ${d1:0:23} DMR Slot 1, received network end of voice transmission from ******** to TG 00000, 0.0 seconds, 0% packet loss, BER: 0.0%"  >> /var/log/pi-star/$ll
+#
     reboot=""
     if [ $rbt == 1 ]; then
        sudo touch /home/pi-star/.mlogs/restore-$(date +%Y-%m-%d-%H:%M:%S)
