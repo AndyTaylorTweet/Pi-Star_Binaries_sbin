@@ -55,9 +55,9 @@ case "$1" in
 			exit 0;
 		else
 			# Wait for an IP address
-			until [ "$ipVar" != " " ]; do
+			until [ "$ipVar" != "" ]; do
 				sleep 10
-				ipVar=`hostname -I`
+				ipVar=`hostname -I | cut -d' ' -f1`
 			done
 			nice -n -5 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS} &
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`

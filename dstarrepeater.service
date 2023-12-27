@@ -59,9 +59,9 @@ case "$1" in
 			exit 0;
 		else
 			# Wait for an IP Address
-			until [ "$ipVar" != " " ]; do
+			until [ "$ipVar" != "" ]; do
 				sleep 10
-				ipVar=`hostname -I`
+				ipVar=`hostname -I | cut -d' ' -f1`
 			done
 			if [[ $(grep "Version" /etc/pistar-release | cut -c 11) -ge 4 ]]; then
 				nice -n -10 ${DAEMON_PATH}${DAEMON} & disown
