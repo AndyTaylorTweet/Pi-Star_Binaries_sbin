@@ -117,6 +117,9 @@ iptables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 # Allow Outbound DAPNet ports
 iptables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connections
 
+# Allow Outbound M17Gateway Ports
+iptables -A OUTPUT -p udp --dport 17000 -j ACCEPT #			M17Gateway Outbound Connections
+
 # Allow Inbound Services
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT #                     SSH
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT #                     HTTP Allow the D-Star Portal Access
@@ -183,6 +186,10 @@ iptables -A INPUT -p udp --sport 52000 --dport 1024:65535 -j ACCEPT #       YSF 
 
 # Allow Inbound P25 Gateway Ports
 iptables -A INPUT -p udp --sport 41000:41010 --dport 32768:60999 -j ACCEPT #  P25 Gateway Routing
+
+# Allow M17 Inbound Ports
+iptables -A INPUT -p udp --dport 17000 -j ACCEPT #			M17 mrefd
+iptables -A INPUT -p udp --dport 17010 -j ACCEPT #			M17 M17Gateway
 
 # Set up debug logging for incoming traffic.
 iptables -N LOGNDROP

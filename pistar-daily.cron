@@ -13,7 +13,7 @@ mount -o remount,rw /
 /usr/local/sbin/HostFilesUpdate.sh
 
 # Update the Dashboard from GIT
-git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin master
+git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull nolith M17
 
 # Stop all the services...
 systemctl stop pistar-watchdog.service > /dev/null 2>&1
@@ -25,6 +25,7 @@ systemctl stop dapnetgateway.service > /dev/null 2>&1
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
 systemctl stop nxdngateway.service > /dev/null 2>&1
+systemctl stop m17gateway.service > /dev/null 2>&1
 systemctl stop nxdnparrot.service > /dev/null 2>&1
 systemctl stop ysfgateway.service > /dev/null 2>&1
 systemctl stop ysfparrot.service > /dev/null 2>&1
@@ -40,10 +41,10 @@ if [ -f /lib/systemd/system/aprsgateway.service ]; then
 fi
 
 # Update the Binaries
-git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
+git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull nolith M17
 
 # Update the Binaries (sbin)
-git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
+git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull nolith M17
 
 # Purge the logs older than 2 days
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
@@ -93,6 +94,30 @@ if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt 
 	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 fi
 
+
+# Download M17 Audio files if missing
+if [[ ! -f /usr/local/etc/M17_Audio/se_SE.indx ]]; then
+	mkdir -p /usr/local/etc/M17_Audio/
+	curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.m17
+	curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.indx
+	curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.m17
+	curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.indx
+	curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.m17
+	curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.indx
+	curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.m17
+	curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.indx
+	curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.m17
+	curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.indx
+	curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.m17
+	curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.indx
+	curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.m17
+	curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.indx
+	curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.m17
+	curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.indx
+	curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.m17
+	curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.indx	
+fi
+
 if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
         if [[ $(cat /etc/ircddbgateway | grep -o "xlx" | wc -l) -eq 0 ]]; then
                 echo "xlxEnabled=0" >> /etc/ircddbgateway
@@ -126,6 +151,7 @@ systemctl start dmrgateway.service > /dev/null 2>&1
 systemctl start dapnetgateway.service > /dev/null 2>&1
 systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
+systemctl start m17gateway.service > /dev/null 2>&1
 systemctl start nxdngateway.service > /dev/null 2>&1
 systemctl start nxdnparrot.service > /dev/null 2>&1
 systemctl start ysfgateway.service > /dev/null 2>&1

@@ -21,13 +21,16 @@ if ! flock -n 200 ; then
   exit 1
 fi
 
+gitRemote="nolith"
+gitBranch="M17"
+
 git_checkUpdateRequired() {
 	# Set the function variables
 	gitFolder=${1}
-	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.${gitRemote}.url)
 
 	# Git check / update function
-	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | cut -c 1-7)
+	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep ${gitBranch} | cut -c 1-7)
 	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%h" -1)
 
 	# Return the output
@@ -53,20 +56,20 @@ git_update() {
 		# If this script is updated, re-run the update with the new version.
 		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch
-			if [ "$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master 2>/dev/null | grep pistar-update 2>/dev/null)" = "pistar-update" ]; then
+			if [ "$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only ${gitRemote}/${gitBranch} 2>/dev/null | grep pistar-update 2>/dev/null)" = "pistar-update" ]; then
                                 echo "Found a new version of pistar-update..."
-                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull ${gitRemote} ${gitBranch}
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
                                         echo "Update to new version of pistar-update was not successfull, forcing update..."
 					rm -rf ${gitFolder}/pistar-upnp.service
-                                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+                                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard ${gitRemote}/${gitBranch}
                                 fi
                                 echo "Restarting update process with the new version..."
                                 exec "$0" "$@"
                                 exit 1
 			fi
                 fi
-                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull ${gitRemote} ${gitBranch}
 
 		# Re-check that the updates are now good
 		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
@@ -74,7 +77,7 @@ git_update() {
 				rm -rf ${gitFolder}/pistar-upnp.service
 			fi
 			echo "Updates were not successfull, reverting to Pi-Star original files..."
-			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard ${gitRemote}/${gitBranch}
 		fi
 	else
 		echo "No updates for ${gitFolder} available"
@@ -101,6 +104,7 @@ service_handle() {
 	systemctl ${doWhat} p25gateway.service > /dev/null 2>&1
 	systemctl ${doWhat} p25parrot.service > /dev/null 2>&1
 	systemctl ${doWhat} nxdngateway.service > /dev/null 2>&1
+	systemctl ${doWhat} m17gateway.service > /dev/null 2>&1
 	systemctl ${doWhat} nxdn2dmr.service > /dev/null 2>&1
 	systemctl ${doWhat} nxdnparrot.service > /dev/null 2>&1
 	systemctl ${doWhat} dstarrepeater.service > /dev/null 2>&1
@@ -250,6 +254,31 @@ main_function() {
 		curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.indx
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.ambe
 		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
+	fi
+
+	# Download M17 Audio files if missing
+	if [[ ! -f /usr/local/etc/M17_Audio/se_SE.indx ]]; then
+		echo "Downloading M17 Voice Files..."
+		mkdir -p /usr/local/etc/M17_Audio/
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.m17
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/dk_DK.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_GB.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/en_US.indx
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.m17
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/es_ES.indx
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.m17
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/fr_FR.indx
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.m17
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/it_IT.indx
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.m17
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/pl_PL.indx
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/master/Audio/se_SE.indx
+		echo "Done"
 	fi
 
 	# I previously had the wrong URL for the P25 Audio files; remove the broken downloads.
