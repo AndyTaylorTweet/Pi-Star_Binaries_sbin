@@ -46,6 +46,7 @@ iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT #    HTTP (Updates)
 iptables -A OUTPUT -p udp --dport 123 -j ACCEPT #   NTP (Network Time)
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT #   HTTPS (Updates)
 iptables -A OUTPUT -p tcp --dport 9418 -j ACCEPT #  GIT Port (Used by GIT)
+iptables -A OUTPUT -p tcp --dport 11371 -j ACCEPT # Used for APT to obtain Keys
 iptables -A OUTPUT -p tcp --dport 8080 -j ACCEPT #  for Speedtest
 
 # Allow Outbound D-Star Control Ports
@@ -257,6 +258,7 @@ ip6tables -A OUTPUT -p tcp --dport 80 -j ACCEPT #   HTTP (Updates)
 ip6tables -A OUTPUT -p udp --dport 123 -j ACCEPT #  NTP (Network Time)
 ip6tables -A OUTPUT -p tcp --dport 443 -j ACCEPT #  HTTPS (Updates)
 ip6tables -A OUTPUT -p tcp --dport 9418 -j ACCEPT # GIT Port (Used by GIT)
+ip6tables -A OUTPUT -p tcp --dport 11371 -j ACCEPT # Used for APT to obtain Keys
 ip6tables -A OUTPUT -p tcp --dport 53 -j ACCEPT #   DNS (DNS Zone Transfer - Used by xreflector.net)
 
 # Allow Inbound Services
