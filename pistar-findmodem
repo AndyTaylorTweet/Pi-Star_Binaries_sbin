@@ -17,22 +17,27 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 function resetGPIOModem {
+
+        pinbase=$(ls -la /sys/class/gpio/gpiochip* | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | head -n 1)
+        let pin20=${pinbase}+20
+        let pin21=${pinbase}+21
+
         # Reset GPIO connected Modems
-        echo 20 > /sys/class/gpio/export
-        echo 21 > /sys/class/gpio/export
-        echo out > /sys/class/gpio/gpio20/direction
-        echo out > /sys/class/gpio/gpio21/direction
+        echo ${pin20} > /sys/class/gpio/export
+        echo ${pin21} > /sys/class/gpio/export
+        echo out > /sys/class/gpio/gpio${pin20}/direction
+        echo out > /sys/class/gpio/gpio${pin21}/direction
         sleep 0.5
-        echo 0 > /sys/class/gpio/gpio20/value
-        echo 0 > /sys/class/gpio/gpio21/value
-        echo 1 > /sys/class/gpio/gpio21/value
+        echo 0 > /sys/class/gpio/gpio${pin20}/value
+        echo 0 > /sys/class/gpio/gpio${pin21}/value
+        echo 1 > /sys/class/gpio/gpio${pin21}/value
         sleep 1
-        echo 0 > /sys/class/gpio/gpio20/value
-        echo 1 > /sys/class/gpio/gpio20/value
-        echo 0 > /sys/class/gpio/gpio20/value
+        echo 0 > /sys/class/gpio/gpio${pin20}/value
+        echo 1 > /sys/class/gpio/gpio${pin20}/value
+        echo 0 > /sys/class/gpio/gpio${pin20}/value
         sleep 0.5
-        echo 20 > /sys/class/gpio/unexport
-        echo 21 > /sys/class/gpio/unexport
+        echo ${pin20} > /sys/class/gpio/unexport
+        echo ${pin21} > /sys/class/gpio/unexport
         # Let the modem boot, or this script cant find it
         sleep 2
 }
