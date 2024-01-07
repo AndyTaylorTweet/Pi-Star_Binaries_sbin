@@ -1385,6 +1385,15 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [ ! "$(grep 'Pi5.Bookworm' /etc/rc.local)" ]; then
+		   sudo sed -i 's/# Pull in the Config settings .*/# Check if Pi5\/Bookworm boot structure\nif [ -f \/boot\/firmware\/Pi-Star_Config_*.zip ]; then\n        mv \/boot\/firmware\/Pi-Star_Config_*.zip \/boot\nfi\n\n&/g'  /etc/rc.local
+		   sudo sed -i 's/# Pull in the WiFi settings .*/# Check if Pi5\/Bookworm boot structure\nif [ -f \/boot\/firmware\/wpa_supplicant.conf ]; then\n        mv \/boot\/firmware\/wpa_supplicant.conf \/boot\nfi\n\n&/g'   /etc/rc.local
+		fi
+
+		if [[ ! "$(grep 'My IP address' /etc/rc.local)" ]]; then
+		   sudo sed -i 's/if [ "$_IP" ]; then/&\n   printf "My IP address is %s\\n" "$_IP"/g' /etc/rc.local
+		fi
+
 		if [[ ! "$(grep net.ifnames /boot/cmdline.txt)" ]]; then
 		   sudo sed -i "s/=force rootwait/=force net.ifnames=0 rootwait/g" /boot/cmdline.txt
 		fi
