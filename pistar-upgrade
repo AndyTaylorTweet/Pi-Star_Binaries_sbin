@@ -1401,100 +1401,99 @@ main_function() {
                 exit 1
 	;;
 	4.1.7)
-		#sed -i 's/4.1.7/4.1.8/g' /etc/pistar-release
+		sed -i 's/4.1.7/4.1.8/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Create M17Gateway Unit files
-		#if [ ! -f /lib/systemd/system/m17gateway.service ]; then
-			#echo '[Unit]' > /lib/systemd/system/m17gateway.service
-			#echo 'Description=M17Gateway Servce' >> /lib/systemd/system/m17gateway.service
-			#echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/m17gateway.service
-			#echo '' >> /lib/systemd/system/m17gateway.service
-			#echo '[Service]' >> /lib/systemd/system/m17gateway.service
-			#echo 'Type=forking' >> /lib/systemd/system/m17gateway.service
-			#echo 'ExecStart=/usr/local/sbin/m17gateway.service start' >> /lib/systemd/system/m17gateway.service
-			#echo 'ExecStop=/usr/local/sbin/m17gateway.service stop' >> /lib/systemd/system/m17gateway.service
-			#echo 'ExecReload=/usr/local/sbin/m17gateway.service restart' >> /lib/systemd/system/m17gateway.service
-			#echo '' >> /lib/systemd/system/m17gateway.service
-			#echo '[Install]' >> /lib/systemd/system/m17gateway.service
-			#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/m17gateway.service
-		#fi
+		if [ ! -f /lib/systemd/system/m17gateway.service ]; then
+			echo '[Unit]' > /lib/systemd/system/m17gateway.service
+			echo 'Description=M17Gateway Servce' >> /lib/systemd/system/m17gateway.service
+			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/m17gateway.service
+			echo '' >> /lib/systemd/system/m17gateway.service
+			echo '[Service]' >> /lib/systemd/system/m17gateway.service
+			echo 'Type=forking' >> /lib/systemd/system/m17gateway.service
+			echo 'ExecStart=/usr/local/sbin/m17gateway.service start' >> /lib/systemd/system/m17gateway.service
+			echo 'ExecStop=/usr/local/sbin/m17gateway.service stop' >> /lib/systemd/system/m17gateway.service
+			echo 'ExecReload=/usr/local/sbin/m17gateway.service restart' >> /lib/systemd/system/m17gateway.service
+			echo '' >> /lib/systemd/system/m17gateway.service
+			echo '[Install]' >> /lib/systemd/system/m17gateway.service
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/m17gateway.service
+		fi
 
-		#if [ ! -f /lib/systemd/system/m17gateway.timer ]; then
-			#echo '[Timer]' > /lib/systemd/system/m17gateway.timer
-			#echo '' >> /lib/systemd/system/m17gateway.timer
-			#echo 'OnStartupSec=20' >> /lib/systemd/system/m17gateway.timer
-			#echo '[Install]' >> /lib/systemd/system/m17gateway.timer
-			#echo 'WantedBy=multi-user.target' >> /lib/systemd/system/m17gateway.timer
-		#fi
+		if [ ! -f /lib/systemd/system/m17gateway.timer ]; then
+			echo '[Timer]' > /lib/systemd/system/m17gateway.timer
+			echo '' >> /lib/systemd/system/m17gateway.timer
+			echo 'OnStartupSec=20' >> /lib/systemd/system/m17gateway.timer
+			echo '[Install]' >> /lib/systemd/system/m17gateway.timer
+			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/m17gateway.timer
+		fi
 
 		# Install a basic config
-		#if [ ! -f /etc/m17gateway ]; then
-			#echo '[General]' > /etc/m17gateway
-			#echo 'Callsign=M1ABC' >> /etc/m17gateway
-			#echo 'Suffix=H' >> /etc/m17gateway
-			#echo 'RptAddress=127.0.0.1' >> /etc/m17gateway
-			#echo 'RptPort=17011' >> /etc/m17gateway
-			#echo 'LocalPort=17010' >> /etc/m17gateway
-			#echo 'Debug=0' >> /etc/m17gateway
-			#echo 'Daemon=0' >> /etc/m17gateway
-			#echo '[Info]' >> /etc/m17gateway
-			#echo '' >> /etc/m17gateway
-			#echo 'RXFrequency=430475000' >> /etc/m17gateway
-			#echo 'TXFrequency=439475000' >> /etc/m17gateway
-			#echo 'Power=1' >> /etc/m17gateway
-			#echo 'Latitude=0.0' >> /etc/m17gateway
-			#echo 'Longitude=0.0' >> /etc/m17gateway
-			#echo 'Height=0' >> /etc/m17gateway
-			#echo 'Name=Nowhere' >> /etc/m17gateway
-			#echo 'Description=Multi-Mode Repeater' >> /etc/m17gateway
-			#echo '' >> /etc/m17gateway
-			#echo '[Log]' >> /etc/m17gateway
-			#echo 'DisplayLevel=1' >> /etc/m17gateway
-			#echo 'FileLevel=1' >> /etc/m17gateway
-			#echo 'FilePath=/var/log/pi-star' >> /etc/m17gateway
-			#echo 'FileRoot=M17Gateway' >> /etc/m17gateway
-			#echo 'FileRotate=1' >> /etc/m17gateway
-			#echo '' >> /etc/m17gateway
-			#echo 'Enabled=1' >> /etc/m17gateway
-			#echo '[Voice]' >> /etc/m17gateway
-			#echo 'Language=en_GB' >> /etc/m17gateway
-			#echo 'Directory=/usr/local/etc/M17_Audio' >> /etc/m17gateway
-			#echo '' >> /etc/m17gateway
-			#echo '[APRS]' >> /etc/m17gateway
-			#echo 'Enable=0' >> /etc/m17gateway
-			#echo 'Address=127.0.0.1' >> /etc/m17gateway
-			#echo 'Port=8673' >> /etc/m17gateway
-			#echo 'Suffix=N' >> /etc/m17gateway
-			#echo 'Description=APRS Description' >> /etc/m17gateway
-			#echo '' >> /etc/m17gateway
-			#echo '[Network]' >> /etc/m17gateway
-			#echo 'Port=17000' >> /etc/m17gateway
-			#echo 'HostsFile1=/usr/local/etc/M17Hosts.txt' >> /etc/m17gateway
-			#echo 'HostsFile2=/root/M17Hosts.txt' >> /etc/m17gateway
-			#echo 'ReloadTime=60' >> /etc/m17gateway
-			#echo 'Startup=M17-672_E' >> /etc/m17gateway
-			#echo 'Revert=0' >> /etc/m17gateway
-			#echo 'HangTime=240' >> /etc/m17gateway
-			#echo 'Debug=0' >> /etc/m17gateway
-			#echo '' >> /etc/m17gateway
-			#echo '[Remote Commands]' >> /etc/m17gateway
-			#echo 'Enable=1' >> /etc/m17gateway
-			#echo 'Port=6076' >> /etc/m17gateway
-		#fi
+		if [ ! -f /etc/m17gateway ]; then
+			echo '[General]' > /etc/m17gateway
+			echo 'Callsign=M1ABC' >> /etc/m17gateway
+			echo 'Suffix=H' >> /etc/m17gateway
+			echo 'RptAddress=127.0.0.1' >> /etc/m17gateway
+			echo 'RptPort=17011' >> /etc/m17gateway
+			echo 'LocalPort=17010' >> /etc/m17gateway
+			echo 'Debug=0' >> /etc/m17gateway
+			echo 'Daemon=0' >> /etc/m17gateway
+			echo '[Info]' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
+			echo 'RXFrequency=430475000' >> /etc/m17gateway
+			echo 'TXFrequency=439475000' >> /etc/m17gateway
+			echo 'Power=1' >> /etc/m17gateway
+			echo 'Latitude=0.0' >> /etc/m17gateway
+			echo 'Longitude=0.0' >> /etc/m17gateway
+			echo 'Height=0' >> /etc/m17gateway
+			echo 'Name=Nowhere' >> /etc/m17gateway
+			echo 'Description=Multi-Mode Repeater' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
+			echo '[Log]' >> /etc/m17gateway
+			echo 'DisplayLevel=1' >> /etc/m17gateway
+			echo 'FileLevel=1' >> /etc/m17gateway
+			echo 'FilePath=/var/log/pi-star' >> /etc/m17gateway
+			echo 'FileRoot=M17Gateway' >> /etc/m17gateway
+			echo 'FileRotate=1' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
+			echo 'Enabled=1' >> /etc/m17gateway
+			echo '[Voice]' >> /etc/m17gateway
+			echo 'Language=en_GB' >> /etc/m17gateway
+			echo 'Directory=/usr/local/etc/M17_Audio' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
+			echo '[APRS]' >> /etc/m17gateway
+			echo 'Enable=0' >> /etc/m17gateway
+			echo 'Address=127.0.0.1' >> /etc/m17gateway
+			echo 'Port=8673' >> /etc/m17gateway
+			echo 'Suffix=N' >> /etc/m17gateway
+			echo 'Description=APRS Description' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
+			echo '[Network]' >> /etc/m17gateway
+			echo 'Port=17000' >> /etc/m17gateway
+			echo 'HostsFile1=/usr/local/etc/M17Hosts.txt' >> /etc/m17gateway
+			echo 'HostsFile2=/root/M17Hosts.txt' >> /etc/m17gateway
+			echo 'ReloadTime=60' >> /etc/m17gateway
+			echo 'Startup=M17-672_E' >> /etc/m17gateway
+			echo 'Revert=0' >> /etc/m17gateway
+			echo 'HangTime=240' >> /etc/m17gateway
+			echo 'Debug=0' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
+			echo '[Remote Commands]' >> /etc/m17gateway
+			echo 'Enable=1' >> /etc/m17gateway
+			echo 'Port=6076' >> /etc/m17gateway
+		fi
 
 		# We are not auto-starting this daemon on purpose, we're not ready for that.
-		#systemctl daemon-reload
-		#systemctl enable m17gateway.timer
+		systemctl daemon-reload
+		systemctl enable m17gateway.timer
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.8..."
-		Message="You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="Upgraded from ${pistarCurVersion} to 4.1.8..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.1.8)
 		#sed -i 's/4.1.8/4.1.9/g' /etc/pistar-release
