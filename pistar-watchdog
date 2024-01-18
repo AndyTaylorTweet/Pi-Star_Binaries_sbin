@@ -130,6 +130,14 @@ while True: #Main loop
 			time.sleep(10) #Give the service time to start before we move on
 		checkprocysfgateway.wait()
 
+		checkprocdgidgateway = subprocess.Popen('pgrep' + ' DGIdGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocdgidgateway.stdout.readlines():
+			os.system('/bin/systemctl stop dgidgateway.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start dgidgateway.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocdgidgateway.wait()
+
 		checkprocp25gateway = subprocess.Popen('pgrep' + ' P25Gateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocp25gateway.stdout.readlines():
 			os.system('/bin/systemctl stop p25gateway.service')
@@ -137,6 +145,22 @@ while True: #Main loop
 			os.system('/bin/systemctl start p25gateway.service')
 			time.sleep(10) #Give the service time to start before we move on
 		checkprocp25gateway.wait()
+
+		checkprocm17gateway = subprocess.Popen('pgrep' + ' M17Gateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocm17gateway.stdout.readlines():
+			os.system('/bin/systemctl stop m17gateway.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start m17gateway.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocm17gateway.wait()
+
+		checkprocnxdngateway = subprocess.Popen('pgrep' + ' NXDNGateway', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocnxdngateway.stdout.readlines():
+			os.system('/bin/systemctl stop nxdngateway.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start nxdngateway.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocnxdngateway.wait()
 
 		checkprocysfparrot = subprocess.Popen('pgrep' + ' YSFParrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocysfparrot.stdout.readlines():
@@ -153,6 +177,14 @@ while True: #Main loop
 			os.system('/bin/systemctl start p25parrot.service')
 			time.sleep(10) #Give the service time to start before we move on
 		checkprocp25parrot.wait()
+
+		checkprocnxdnparrot = subprocess.Popen('pgrep' + ' NXDNParrot', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		if not checkprocnxdnparrot.stdout.readlines():
+			os.system('/bin/systemctl stop nxdnparrot.service')
+			time.sleep(2) #Give the service time to stop before we move on
+			os.system('/bin/systemctl start nxdnparrot.service')
+			time.sleep(10) #Give the service time to start before we move on
+		checkprocnxdnparrot.wait()
 
 		checkprocysf2dmr = subprocess.Popen('pgrep' + ' YSF2DMR', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		if not checkprocysf2dmr.stdout.readlines():
