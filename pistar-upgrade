@@ -1407,7 +1407,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# Create M17Gateway Unit files
-		if [ ! -f /lib/systemd/system/m17gateway.service ]; then
+		if [[ ! -f /lib/systemd/system/m17gateway.service ]]; then
 			echo '[Unit]' > /lib/systemd/system/m17gateway.service
 			echo 'Description=M17Gateway Servce' >> /lib/systemd/system/m17gateway.service
 			echo 'After=syslog.target network.target mmdvmhost.timer' >> /lib/systemd/system/m17gateway.service
@@ -1422,7 +1422,7 @@ main_function() {
 			echo 'WantedBy=multi-user.target' >> /lib/systemd/system/m17gateway.service
 		fi
 
-		if [ ! -f /lib/systemd/system/m17gateway.timer ]; then
+		if [[ ! -f /lib/systemd/system/m17gateway.timer ]]; then
 			echo '[Timer]' > /lib/systemd/system/m17gateway.timer
 			echo '' >> /lib/systemd/system/m17gateway.timer
 			echo 'OnStartupSec=20' >> /lib/systemd/system/m17gateway.timer
@@ -1431,7 +1431,7 @@ main_function() {
 		fi
 
 		# Install a basic config
-		if [ ! -f /etc/m17gateway ]; then
+		if [[ ! -f /etc/m17gateway ]]; then
 			echo '[General]' > /etc/m17gateway
 			echo 'Callsign=M1ABC' >> /etc/m17gateway
 			echo 'Suffix=H' >> /etc/m17gateway
