@@ -287,6 +287,31 @@ main_function() {
 		echo "Done"
 	fi
 
+	# Download the correct M17 Audio Files
+	if [[ ! -d /usr/local/etc/M17_Audio ]]; then
+		echo "Downloading M17 Voice Files..."
+		mkdir /usr/local/etc/M17_Audio
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_DE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_DK.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_DK.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_DK.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_DK.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_GB.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_GB.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_GB.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_GB.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_US.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_US.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_US.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_US.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_ES.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_ES.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_ES.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_ES.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_FR.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_FR.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_FR.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_FR.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_IT.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_IT.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_IT.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_IT.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_PL.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_PL.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_PL.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_PL.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_SE.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_SE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_SE.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_SE.m17
+		echo "Done"
+	fi
+
 	# Add Portuguese voice files for ircDDBGateway
 	if [[ ! -f /usr/local/etc/pt_PT.ambe ]]; then
 		echo "Downloading Portuguese Voice Files for ircDDBGateway..."
