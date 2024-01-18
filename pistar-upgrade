@@ -1440,8 +1440,8 @@ main_function() {
 			echo 'LocalPort=17010' >> /etc/m17gateway
 			echo 'Debug=0' >> /etc/m17gateway
 			echo 'Daemon=0' >> /etc/m17gateway
-			echo '[Info]' >> /etc/m17gateway
 			echo '' >> /etc/m17gateway
+			echo '[Info]' >> /etc/m17gateway
 			echo 'RXFrequency=430475000' >> /etc/m17gateway
 			echo 'TXFrequency=439475000' >> /etc/m17gateway
 			echo 'Power=1' >> /etc/m17gateway
@@ -1457,8 +1457,8 @@ main_function() {
 			echo 'FilePath=/var/log/pi-star' >> /etc/m17gateway
 			echo 'FileRoot=M17Gateway' >> /etc/m17gateway
 			echo 'FileRotate=1' >> /etc/m17gateway
-			echo '' >> /etc/m17gateway
 			echo 'Enabled=1' >> /etc/m17gateway
+			echo '' >> /etc/m17gateway
 			echo '[Voice]' >> /etc/m17gateway
 			echo 'Language=en_GB' >> /etc/m17gateway
 			echo 'Directory=/usr/local/etc/M17_Audio' >> /etc/m17gateway
