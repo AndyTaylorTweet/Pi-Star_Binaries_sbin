@@ -291,24 +291,24 @@ main_function() {
 	if [[ ! -d /usr/local/etc/M17_Audio ]]; then
 		echo "Downloading M17 Voice Files..."
 		mkdir /usr/local/etc/M17_Audio
-		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_DE.indx
-		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/de_DE.m17
-		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/dk_DK.indx
-		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/dk_DK.m17
-		curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/en_GB.indx
-		curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/en_GB.m17
-		curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/en_US.indx
-		curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/en_US.m17
-		curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/es_ES.indx
-		curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/es_ES.m17
-		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/fr_FR.indx
-		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/fr_FR.m17
-		curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/it_IT.indx
-		curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/it_IT.m17
-		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/pl_PL.indx
-		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/pl_PL.m17
-		curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://github.com/g4klx/M17Gateway/raw/main/Audio/se_SE.indx
-		curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://github.com/g4klx/M17Gateway/raw/main/Audio/se_SE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/de_DE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/de_DE.m17
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/dk_DK.indx
+		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/dk_DK.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_GB.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_GB.m17
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_US.indx
+		curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s hhttps://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_US.m17
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/es_ES.indx
+		curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/es_ES.m17
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/fr_FR.indx
+		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/fr_FR.m17
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/it_IT.indx
+		curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/it_IT.m17
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/pl_PL.indx
+		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/pl_PL.m17
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/se_SE.indx
+		curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/se_SE.m17
 		echo "Done"
 	fi
 
