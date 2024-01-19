@@ -1390,8 +1390,8 @@ main_function() {
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
-		apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
-		apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0E98404D386FA1D9
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6ED0E7B82643E131
 		apt-get install -y debian-archive-keyring
 
 		# OK we are done
