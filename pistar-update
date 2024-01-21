@@ -55,7 +55,8 @@ git_update() {
                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch
 			if [ "$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master 2>/dev/null | grep pistar-update 2>/dev/null)" = "pistar-update" ]; then
                                 echo "Found a new version of pistar-update..."
-                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master --depth 1
+                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git gc --prune=all
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
                                         echo "Update to new version of pistar-update was not successfull, forcing update..."
 					rm -rf ${gitFolder}/pistar-upnp.service
@@ -66,7 +67,8 @@ git_update() {
                                 exit 1
 			fi
                 fi
-                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master --depth 1
+                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git gc --prune=all
 
 		# Re-check that the updates are now good
 		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
