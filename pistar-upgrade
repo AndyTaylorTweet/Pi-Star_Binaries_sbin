@@ -1508,6 +1508,19 @@ main_function() {
 		#exec "$0" "$@"
                 #exit 1
 	;;
+	4.2.0)
+		#sed -i 's/4.2.0/4.2.1/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.2.1..."
+		Message="You are already running the latest version..."
+		#echo $Message
+		#exec "$0" "$@"
+                #exit 1
+	;;
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"
 	;;
