@@ -123,13 +123,15 @@ main_function() {
 		echo "Done"
 
 		echo "Checking nginx config"
-		if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
-			sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
-			systemctl daemon-reload
-			systemctl restart nginx.service
-			echo "nginx config has been repaired - re-running pistar-update"
-                        exec "$0" "$@"
-			exit 1
+		if ! [ -f /etc/systemd/system/nginx.service.d/override.conf ]; then
+			if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
+				sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
+				systemctl daemon-reload
+				systemctl restart nginx.service
+				echo "nginx config has been repaired - re-running pistar-update"
+	                        exec "$0" "$@"
+				exit 1
+			fi
 		fi
 	fi
 
