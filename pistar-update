@@ -130,7 +130,7 @@ main_function() {
 		echo -e "Done \n"
 
 		echo "Checking nginx config"
-		if ! [ $(cat /lib/systemd/system/nginx.service | grep -o "mkdir") ]; then
+		if [ ! $(grep -o -m 1 "mkdir" /lib/systemd/system/nginx.service) ]; then
 			sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
 			systemctl daemon-reload
 			systemctl restart nginx.service
