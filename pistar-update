@@ -385,6 +385,11 @@ main_function() {
         	fi
 	fi
 
+	# Check if /usr/bin/python exists
+	if [[ ! -f /usr/bin/python ]] && [[ -f /usr/bin/python2.7 ]]; then
+		ln -sf /usr/bin/python2.7 /usr/bin/python
+	fi
+
 	echo "Starting Services..."
 	service_handle start
 	echo "Done"
