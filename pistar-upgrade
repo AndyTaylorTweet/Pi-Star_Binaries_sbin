@@ -1385,6 +1385,10 @@ main_function() {
                 exit 1
 	;;
 	4.1.6)
+		if [ ! -f /usr/local/etc/wireless-db.txt ]; then
+		   sudo curl -o /usr/local/etc/wireless-db.txt -s https://raw.githubusercontent.com/kn2tod/Pi-Star_Sysgen/main/hostfiles/wireless-db.txt
+		fi
+
 		if [ ! "$(grep 'Pi5.Bookworm' /etc/rc.local)" ]; then
 		   sudo sed -i 's/# Pull in the Config settings .*/# Check if Pi5\/Bookworm boot structure\nif [ -f \/boot\/firmware\/Pi-Star_Config_*.zip ]; then\n        mv \/boot\/firmware\/Pi-Star_Config_*.zip \/boot\nfi\n\n&/g'  /etc/rc.local
 		   sudo sed -i 's/# Pull in the WiFi settings .*/# Check if Pi5\/Bookworm boot structure\nif [ -f \/boot\/firmware\/wpa_supplicant.conf ]; then\n        mv \/boot\/firmware\/wpa_supplicant.conf \/boot\nfi\n\n&/g'   /etc/rc.local
