@@ -292,8 +292,8 @@ if [ "$1" ] ; then
     sleep 1
 
     # MD5 checksum validation setup
-    calculated_md5=$(md5sum "/usr/local/bin/firmware/$firmware_file" | awk '{print $1}')
-    expected_md5=$(grep "$firmware_file" "/usr/local/bin/firmware/md5sum.txt" | awk '{print $4}')
+    calculated_md5=$(md5sum "/usr/local/bin/firmware/${firmware_file}" | awk '{print $1}')
+    expected_md5=$(grep "${firmware_file}" "/usr/local/bin/firmware/md5sum.txt" | awk '{print $4}')
     echo -e "\n${BULL} Validating firmware file integrity..."
     sleep 1
     if [ -z "$expected_md5" ]; then # not in file!
@@ -348,37 +348,37 @@ if [ "$1" ] ; then
     if [ "$USB_MODEM" = true ]; then
 	if [ "$VERBOSE" = 1 ] ; then
 	    $DFU_RST $DEV_USB_SER 750
-	    $DFU_UTIL -D ${firmware_file} -d 1eaf:0003 -a 2 -R -R
+	    $DFU_UTIL -D /usr/local/bin/firmware/${firmware_file} -d 1eaf:0003 -a 2 -R -R
 	else
 	    $DFU_RST $DEV_USB_SER 750 2>&1
-	    output=$(eval $DFU_UTIL -D ${firmware_file} -d 1eaf:0003 -a 2 -R -R 2>&1)
+	    output=$(eval $DFU_UTIL -D /usr/local/bin/firmware/${firmware_file} -d 1eaf:0003 -a 2 -R -R 2>&1)
 	fi
     elif [ "$MMDVM_PI" = true ]; then
 	if [ "$VERBOSE" = 1 ] ; then
 	    if [ "$is_aarch64" = true ] ; then
 		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -b 115200 -v -w ${firmware_file} -g 0x0 -R /dev/ttyAMA0
+		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
  	    else
 		/usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		/usr/local/bin/firmware/utils/stm32flash-0.7 -b 115200 -v -w ${firmware_file} -g 0x0 -R /dev/ttyAMA0
+		/usr/local/bin/firmware/utils/stm32flash-0.7 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
 	    fi
 	else
 	    if [ "$is_aarch64" = true ] ; then
 		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -b 115200 -v -w ${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
+		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	    else
 		/usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -b 115200 -v -w ${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
+		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	    fi
 	fi
     else  # The rest; flash handling for MMDVM_HS GPIO modems...
 	# Upload the firmware to the modem and place output into buffer for fail/success checking logic
 	if [ "$VERBOSE" = 1 ] ; then
 	    $STM32FLASH -k /dev/ttyAMA0 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
-	    $STM32FLASH -v -w ${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0
+	    $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0
 	else
 	    $STM32FLASH -k /dev/ttyAMA0 >/dev/null 2>&1 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
-	    output=$(eval $STM32FLASH -v -w ${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0 2>&1)
+	    output=$(eval $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0 2>&1)
 	fi
     fi
 
@@ -440,10 +440,10 @@ if [ "$1" ] ; then
 
   if [ -t 1 ]; then
       # run via terminal, only output to screen
-      flash_modem "${1}" "${firmware_file}"
+      flash_modem "${1}" "/usr/local/bin/firmware/${firmware_file}"
     else
       # if not run via terminal, log everything into a log file
-      flash_modem "${1}" "${firmware_file}" >> /var/log/pistar-modemflash.log 2>&1
+      flash_modem "${1}" "/usr/local/bin/firmware/${firmware_file}" >> /var/log/pistar-modemflash.log 2>&1
     fi
 
 fi
