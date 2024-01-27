@@ -67,6 +67,9 @@ if [ "$1" ]; then
     hs_hat_nano_hotspot)
       firmware_file="hs_hat_nano_hotspot.bin"
       ;;
+    hs_hat_nano_hotspot-duplex)
+      firmware_file="hs_hat_nano_hotspot-duplex.bin"
+      ;;
     nanodv_npi)
       firmware_file="nanodv_npi.bin"
       ;;
@@ -225,21 +228,17 @@ if [ -z "$1" ] ; then
   echo "  ZUMspot Libre Kit or generic MMDVM_HS board:          pistar-modemupgrade zum_libre"
   echo ""
   echo "  SkyBridge board/hotspots (14.7456MHz TCXO) GPIO:	pistar-modemupgrade skybridge"
-  echo ""
   echo "  DVMega-EuroNode hotspots (14.7456MHz TCXO) GPIO:	pistar-modemupgrade euronode"
-  echo ""
   echo "  NANO_DV NPi GPIO by BG4TGO:                           pistar-modemupgrade nanodv_npi"
   echo "  NANO_DV USB by BG4TG:                                 pistar-modemupgrade nanodb_usb"
+  echo "  Nano_hotSPOT by BI7JTA (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_nano_hotspot"
+  echo "  Nano_hotSPOT Duplex by VR2VYE (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_nano_hotspot-duplex"
+  echo "  LoneStar LS MMDVM USB (14.7456MHz TCXO) USB:		pistar-modemupgrade hs_hat_lonestar-usb"
   echo ""
   echo "  HS_HAT_AMBE (14.7456MHz TCXO) GPIO:			pistar-modemupgrade hs_hat_ambe"
-  echo "  LoneStar LS MMDVM USB (14.7456MHz TCXO) USB:		pistar-modemupgrade hs_hat_lonestar-usb"
   echo "  MMDVM_HS_GENERIC (14.7456MHz TCXO) GPIO:		pistar-modemupgrade hs_hat_generic"
   echo "  MMDVM_HS_GENERIC_DUPLEX (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_generic_duplex"
   echo "  MMDVM_HS_GENERIC_DUPLEX (14.7456MHz TCXO) USB:	pistar-modemupgrade hs_hat_generic_duplex-usb"
-  echo "  Nano_hotSPOT by BI7JTA (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_nano_hotspot"
-  echo ""
-  echo "  MMDVM Pi F7 Board 460800 baud (12.000Hz TCXO) GPIO:   pistar-modemupgrade mmdvm_pi-f7"
-  echo "  MMDVM Pi F4 Board 460800 baud (12.000Hz TCXO) GPIO:   pistar-modemupgrade mmdvm_pi-f4"
   echo ""
   echo "--------------------------------------------------------------------------------------------------"
   echo "IMPORTANT: Please note, that we are not firmware developers, and we offer no support for firmware."
