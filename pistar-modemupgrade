@@ -440,10 +440,10 @@ if [ "$1" ] ; then
 
   if [ -t 1 ]; then
       # run via terminal, only output to screen
-      flash_modem "${1}" "/usr/local/bin/firmware/${firmware_file}"
+      flash_modem "${1}" "${firmware_file}"
     else
       # if not run via terminal, log everything into a log file
-      flash_modem "${1}" "/usr/local/bin/firmware/${firmware_file}" >> /var/log/pistar-modemflash.log 2>&1
+      flash_modem "${1}" "${firmware_file}" >> /var/log/pistar-modemflash.log 2>&1
     fi
 
 fi
