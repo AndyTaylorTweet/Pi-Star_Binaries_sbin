@@ -315,6 +315,8 @@ if [ "$1" ] ; then
     # checksum valid; flash!
     echo -e "\n${BULL} Preparing to flash '$1' modem with firmware version ($VERSION)..."
     # Stop MMDVMHost process to free up the serial port
+    systemctl stop pistar-watchdog.timer >/dev/null 2>&1
+    systemctl stop pistar-watchdog.service >/dev/null 2>&1
     systemctl stop mmdvmhost.timer >/dev/null 2>&1
     systemctl stop mmdvmhost.service >/dev/null 2>&1
 
@@ -426,8 +428,11 @@ if [ "$1" ] ; then
 	    sed -i '/MMDVM protocol version: 1, description:/d; /MMDVM protocol version: 2, description:/d' /var/log/pi-star/MMDVM-*.log  >/dev/null 2>&1
 	fi
 	# re-nit!
+	
 	systemctl start mmdvmhost.service >/dev/null 2>&1
 	systemctl start mmdvmhost.timer >/dev/null 2>&1
+	systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	systemctl start pistar-watchdog.service >/dev/null 2>&1
  	rm -rf $FW_TMP >/dev/null 2>&1
     fi
     exit 0
