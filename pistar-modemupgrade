@@ -293,7 +293,7 @@ if [ "$1" ] ; then
 
     # MD5 checksum validation setup
     calculated_md5=$(md5sum "/usr/local/bin/firmware/$firmware_file" | awk '{print $1}')
-    expected_md5=$(grep "$firmware_file" "/usr/local/bin/firmware/md5sum.txt" | awk '{print $1}')
+    expected_md5=$(grep "$firmware_file" "/usr/local/bin/firmware/md5sum.txt" | awk '{print $4}')
     echo -e "\n${BULL} Validating firmware file integrity..."
     sleep 1
     if [ -z "$expected_md5" ]; then # not in file!
