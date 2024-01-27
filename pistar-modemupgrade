@@ -39,68 +39,61 @@ if [ "$1" ]; then
   case $1 in
     # common HS_HATs
     hs_hat)
-      firmware_file="mmdvm_hs_hat_fw.bin"
+      firmware_file="hs_hat.bin"
       ;;
     hs_hat-12mhz)
-      firmware_file="mmdvm_hs_hat_fw-12mhz.bin"
+      firmware_file="hs_hat-12mhz.bin"
       ;;
     hs_dual_hat)
-      firmware_file="mmdvm_hs_dual_hat_fw.bin"
+      firmware_file="hs_dual_hat.bin"
       ;;
     hs_dual_hat-12mhz)
-      firmware_file="mmdvm_hs_dual_hat_fw-12mhz.bin"
+      firmware_file="hs_dual_hat-12mhz.bin"
       ;;
     # less common HS_HATs
     hs_hat_ambe)
-      firmware_file="d2rg_mmdvm_hs.bin"
+      firmware_file="hs_hat_ambe.bin"
       ;;
     hs_hat_generic)
-      firmware_file="generic_gpio_fw.bin"
+      firmware_file="ha_hat_generic.bin"
       ;;
     hs_hat_generic_duplex)
-      firmware_file="generic_duplex_gpio_fw.bin"
+      firmware_file="hs_hat_generic_duplex.bin"
       ;;
     hs_hat_generic_duplex-usb)
-      firmware_file="generic_duplex_usb_fw.bin"
+      firmware_file="hs_hat_generic_duplex-usb.bin"
       ;;
     # more obscure stuff - not as common anymore
     hs_hat_nano_hotspot)
-      firmware_file="nano_hotspot_fw.bin"
+      firmware_file="hs_hat_nano_hotspot.bin"
       ;;
     nanodv_npi)
-      firmware_file="nanodv_npi_fw.bin"
+      firmware_file="nanodv_npi.bin"
       ;;
     nanodv_usb)
-      firmware_file="nanodv_usb_fw.bin"
+      firmware_file="nanodv_usb.bin"
       ;;
     # vendor HS's
     euronode)
-      firmware_file="euronode_pi_fw.bin"
+      firmware_file="euronode.bin"
       ;;
     hs_hat_lonestar-usb)
-      firmware_file="lonestar_usb_fw.bin"
+      firmware_file="hs_hat_lonestar-usb.bin"
       ;;
     skybridge)
-      firmware_file="skybridge_rpi_fw.bin"
+      firmware_file="skybridge.bin"
       ;;
     zum_rpi)
-      firmware_file="zumspot_rpi_fw.bin"
+      firmware_file="zum_rpi.bin"
       ;;
     zum_rpi-duplex)
-      firmware_file="zumspot_duplex_fw.bin"
+      firmware_file="zum_rpi-duplex.bin"
       ;;
     zum_usb)
-      firmware_file="zumspot_usb_fw.bin"
+      firmware_file="zum_usb.bin"
       ;;
     zum_libre)
-      firmware_file="zumspot_libre_fw.bin"
-      ;;
-    # MMDVM Pi (G4KLX) rpt. boards, etc.
-    mmdvm_pi-f7)
-      firmware_file="mmdvm_f7.bin"
-      ;;
-    mmdvm_pi-f4)
-      firmware_file="mmdvm_f4.bin"
+      firmware_file="zum_libre.bin"
       ;;
     list|-l|--list)
       echo "hs_hat"
@@ -121,8 +114,6 @@ if [ "$1" ]; then
       echo "zum_rpi-duplex"
       echo "zum_usb"
       echo "zum_libre"
-      echo "mmdvm_pi-f7"
-      echo "mmdvm_pi-f4"
       exit 0
       ;;
     *)
