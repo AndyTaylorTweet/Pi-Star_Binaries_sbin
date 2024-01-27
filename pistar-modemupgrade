@@ -21,7 +21,7 @@ fi
 pistarHardware=$(awk -F "= " '/Hardware/ {print $2}' /etc/pistar-release)
 
 # Get the available firmwre version
-if [[ -f /usr/local/bin/firmware/version.txt ]];
+if [[ -f /usr/local/bin/firmware/version.txt ]]; then
   VERSION=$(awk -F "= " '/Version/ {print $2}' /usr/local/bin/firmware/version.txt)
 else
   echo -e "\nNew Firmware has not arrived yet...\n"
