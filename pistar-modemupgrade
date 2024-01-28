@@ -442,7 +442,7 @@ if [ "$1" ] ; then
       flash_modem "${1}" "${firmware_file}"
     else
       # if not run via terminal, log everything into a log file
-      flash_modem "${1}" "${firmware_file}" >> /var/log/pistar-modemflash.log 2>&1
+      flash_modem "${1}" "${firmware_file}" >> /var/log/pi-star/pi-star_modemflash.log 2>&1
     fi
 
 fi
