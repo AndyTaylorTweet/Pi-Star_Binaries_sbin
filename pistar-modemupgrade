@@ -107,12 +107,15 @@ if [ "$1" ]; then
       ;;
     rpt_builder_v3)
       firmware_file="Repeater-Builder_V3.bin"
+      stmVerDefined="0.5"
       ;;
     rpt_builder_v4)
       firmware_file="Repeater-Builder_V4.bin"
+      stmVerDefined="0.5"
       ;;
     rpt_builder_v5)
       firmware_file="Repeater-Builder_V5.bin"
+      stmVerDefined="0.5"
       ;;
     list|-l|--list)
       echo "hs_hat"
@@ -207,12 +210,6 @@ if [[ $1 == *usb* ]]; then
 fi
 if [[ $1 == rpt_* ]]; then
   MMDVM_PI=true
-fi
-
-if [ "$(uname -m)" == "aarch64" ]; then
-    is_aarch64=true
-else
-    is_aarch64=false
 fi
 
 #
@@ -373,21 +370,11 @@ if [ "$1" ] ; then
 	fi
     elif [ "$MMDVM_PI" = true ]; then
 	if [ "$VERBOSE" = 1 ] ; then
-	    if [ "$is_aarch64" = true ] ; then
-		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
- 	    else
-		/usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		/usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
-	    fi
+	    /usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    /usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
 	else
-	    if [ "$is_aarch64" = true ] ; then
-		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
-	    else
-		/usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
-	    fi
+	    /usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	fi
     else  # The rest; flash handling for MMDVM_HS GPIO modems...
 	# Upload the firmware to the modem and place output into buffer for fail/success checking logic
