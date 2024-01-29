@@ -55,7 +55,7 @@ if [ "$1" ]; then
       firmware_file="hs_hat_ambe.bin"
       ;;
     hs_hat_generic)
-      firmware_file="ha_hat_generic.bin"
+      firmware_file="hs_hat_generic.bin"
       ;;
     hs_hat_generic_duplex)
       firmware_file="hs_hat_generic_duplex.bin"
