@@ -478,9 +478,6 @@ DATE=`date '+%F %H:%M'`
 
 echo "$DATE  $HOSTNAME $PGM : clone to $DST_DISK ($DST_ROOT_VOL_NAME)" \
 		>> $CLONE_LOG
-echo "$DATE  $HOSTNAME $PGM : clone to $DST_DISK ($DST_ROOT_VOL_NAME)" \
-		>> $CLONE/$CLONE_LOG
-
 
 STOP_TIME=`date '+%H:%M:%S'`
 
