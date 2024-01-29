@@ -333,14 +333,8 @@ then
 			| sed "/^Model/d ; /^Sector/d ; /^Disk Flags/d"
 
 		SRC_ROOT_VOL_NAME=$(e2label /dev/${ROOT_DEVICE_FULL})
-		echo ""
-		echo "Your booted /dev/${ROOT_DEVICE_FULL} rootfs existing label: $SRC_ROOT_VOL_NAME"
-		echo -n "You may enter a label for the destination rootfs $DST_ROOT_PARTITION: "
-		read resp
-		if [ "$resp" != "" ]
-		then
-			e2label $DST_ROOT_PARTITION $resp
-		fi
+		e2label $DST_ROOT_PARTITION root
+
 	else
 		echo -e "Aborting\n"
 		exit 0
