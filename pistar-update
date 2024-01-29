@@ -4,7 +4,7 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 3.5, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 3.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
@@ -28,7 +28,7 @@ git_checkUpdateRequired() {
 
 	# Git check / update function
 	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | cut -c 1-7)
-	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%h" -1)
+	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%h" -1 | cut -c 1-7)
 
 	# Return the output
 	if [[ ${gitStatusRemote} != ${gitStatusLocal} ]]; then
@@ -211,36 +211,6 @@ main_function() {
 	if [ ! -f /usr/local/etc/NXDNHostsLocal.txt ]; then
 		touch /usr/local/etc/NXDNHostsLocal.txt
 	fi
-
-	# myDV Cast Updates
-	#if [[ "$(grep "Special" /etc/pistar-release | awk '{print $3}')" = "myDV_Cast" ]]; then
-	#	if [[ !$(grep -i path /etc/bash.bashrc) ]]; then
-	#		# Add the new path info because its missing
-	#		echo -e "export PATH=/usr/local/bin/castbin:$PATH" >> /etc/bash.bashrc
-	#	fi
-	#
-	#	# Pull the binaries
-	#	if [ ! -d /usr/local/bin/castbin ]; then
-	#		# No folder, create it
-	#		git clone https://github.com/pe1msz/castbin /usr/local/bin/castbin
-	#	else
-	#		# Update it
-	#		git --work-tree=/usr/local/bin/castbin --git-dir=/usr/local/bin/castbin/.git pull origin master
-	#	fi
-	#
-	#	# Pull the Dashboard module
-	#	if [ ! -d /var/www/dashboard/admin/modules/castfw ]; then
-	#		# No folder, create it
-	#		git clone https://github.com/pe1msz/myDV-nano /var/www/dashboard/admin/modules/castfw
-	#		ln -s /var/www/dashboard/admin/modules/castfw/fw /var/www/dashboard/admin/castfw
-	#		cd /var/www/dashboard/admin/modules/castfw/pyserial-3.2.1
-	#		python setup.py install
-	#		cd
-	#	else
-	#		# Update it
-	#		git --work-tree=/var/www/dashboard/admin/modules/castfw --git-dir=/var/www/dashboard/admin/modules/castfw/.git pull origin master
-	#	fi
-	#fi
 
 	# If we are ready to use the new DMRGateway
 	if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt "20170924" ]] && [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "1" ]] && [[ ! -f /usr/local/etc/DMR_Audio/no_NO.indx ]]; then
