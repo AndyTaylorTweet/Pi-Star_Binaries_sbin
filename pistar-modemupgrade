@@ -37,7 +37,7 @@ fi
 #
 if [ "$1" ]; then
   case $1 in
-    # common HS_HATs
+    # Common HS_HATs
     hs_hat)
       firmware_file="hs_hat.bin"
       ;;
@@ -50,7 +50,7 @@ if [ "$1" ]; then
     hs_dual_hat-12mhz)
       firmware_file="hs_dual_hat-12mhz.bin"
       ;;
-    # less common HS_HATs
+    # Less common HS_HATs
     hs_hat_ambe)
       firmware_file="hs_hat_ambe.bin"
       ;;
@@ -76,7 +76,7 @@ if [ "$1" ]; then
     nanodv_usb)
       firmware_file="nanodv_usb.bin"
       ;;
-    # vendor HS's
+    # Vendor MMDVM_HS / ZUMSpot
     euronode)
       firmware_file="euronode.bin"
       ;;
@@ -98,6 +98,22 @@ if [ "$1" ]; then
     zum_libre)
       firmware_file="zum_libre.bin"
       ;;
+    # MMDVM Repeater Boards
+    rpt_zum-0.9)
+      firmware_file="ZUM_Radio-MMDVM_0.9.bin"
+      ;;
+    rpt_zum-1.0)
+      firmware_file="ZUM_Radio-MMDVM_1.0.bin"
+      ;;
+    rpt_builder_v3)
+      firmware_file="Repeater-Builder_V3.bin"
+      ;;
+    rpt_builder_v4)
+      firmware_file="Repeater-Builder_V4.bin"
+      ;;
+    rpt_builder_v5)
+      firmware_file="Repeater-Builder_V5.bin"
+      ;;
     list|-l|--list)
       echo "hs_hat"
       echo "hs_hat-12mhz"
@@ -117,6 +133,11 @@ if [ "$1" ]; then
       echo "zum_rpi-duplex"
       echo "zum_usb"
       echo "zum_libre"
+      echo "rpt_zum-0.9"
+      echo "rpt_zum-1.0"
+      echo "rpt_builder_v3"
+      echo "rpt_builder_v4"
+      echo "rpt_builder_v5"
       exit 0
       ;;
     *)
@@ -184,7 +205,7 @@ spinner() {
 if [[ $1 == *usb* ]]; then
   USB_MODEM=true
 fi
-if [[ $1 == *mmdvm_pi-f* ]]; then
+if [[ $1 == rpt_* ]]; then
   MMDVM_PI=true
 fi
 
@@ -233,6 +254,11 @@ if [ -z "$1" ] ; then
   echo "  MMDVM_HS_GENERIC_DUPLEX (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_generic_duplex"
   echo "  MMDVM_HS_GENERIC_DUPLEX (14.7456MHz TCXO) USB:	pistar-modemupgrade hs_hat_generic_duplex-usb"
   echo ""
+  echo "  ZUM Radio MMDVM for Pi v0.9 GPIO			pistar-modemupgrade rpt_zum-0.9"
+  echo "  ZUM Radio MMDVM for Pi v1.0 GPIO			pistar-modemupgrade rpt_zum-1.0"
+  echo "  Repeater Builder STM32_DVM_PiHat V3			pistar-modemupgrade rpt_builder_v3"
+  echo "  Repeater Builder STM32_DVM_PiHat V4			pistar-modemupgrade rpt_builder_v4"
+  echo "  Repeater Builder STM32_DVM_PiHat V5			pistar-modemupgrade rpt_builder_v5"
   echo "--------------------------------------------------------------------------------------------------"
   echo "IMPORTANT: Please note, that we are not firmware developers, and we offer no support for firmware."
   echo "We simply provide utilities to update the firmware. For actual firmware support, you will need to"
