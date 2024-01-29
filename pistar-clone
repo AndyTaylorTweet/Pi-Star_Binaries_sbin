@@ -500,6 +500,10 @@ fi
 #
 # Finish up
 #
+if [[ -f $CLONE/boot/.expanded ]];then
+    # Make sure the new card expands on boot
+    rm -rf $CLONE/boot/.expanded
+fi
 mkdir -p $CLONE/var/log
 echo "unmounting $CLONE/boot"
 umount $CLONE/boot
