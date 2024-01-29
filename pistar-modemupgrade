@@ -375,18 +375,18 @@ if [ "$1" ] ; then
 	if [ "$VERBOSE" = 1 ] ; then
 	    if [ "$is_aarch64" = true ] ; then
 		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
+		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
  	    else
 		/usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		/usr/local/bin/firmware/utils/stm32flash-0.7 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
+		/usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
 	    fi
 	else
 	    if [ "$is_aarch64" = true ] ; then
 		/usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
+		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7-aarch64 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	    else
 		/usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -b 115200 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
+		output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	    fi
 	fi
     else  # The rest; flash handling for MMDVM_HS GPIO modems...
