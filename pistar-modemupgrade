@@ -101,21 +101,23 @@ if [ "$1" ]; then
     # MMDVM Repeater Boards
     rpt_zum-0.9)
       firmware_file="ZUM_Radio-MMDVM_0.9.bin"
+      stmVer="0.7"
       ;;
     rpt_zum-1.0)
       firmware_file="ZUM_Radio-MMDVM_1.0.bin"
+      stmVer="0.7"
       ;;
     rpt_builder_v3)
       firmware_file="Repeater-Builder_V3.bin"
-      stmVerDefined="0.5"
+      stmVer="0.5"
       ;;
     rpt_builder_v4)
       firmware_file="Repeater-Builder_V4.bin"
-      stmVerDefined="0.5"
+      stmVer="0.5"
       ;;
     rpt_builder_v5)
       firmware_file="Repeater-Builder_V5.bin"
-      stmVerDefined="0.5"
+      stmVer="0.5"
       ;;
     list|-l|--list)
       echo "hs_hat"
@@ -370,11 +372,11 @@ if [ "$1" ] ; then
 	fi
     elif [ "$MMDVM_PI" = true ]; then
 	if [ "$VERBOSE" = 1 ] ; then
-	    /usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-	    /usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
+	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
 	else
-	    /usr/local/bin/firmware/utils/stm32flash-0.7 -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
-	    output=$(eval /usr/local/bin/firmware/utils/stm32flash-0.7 -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
+	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    output=$(eval /usr/local/bin/firmware/utils/stm32flash-${stmVer} -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	fi
     else  # The rest; flash handling for MMDVM_HS GPIO modems...
 	# Upload the firmware to the modem and place output into buffer for fail/success checking logic
