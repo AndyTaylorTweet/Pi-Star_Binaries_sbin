@@ -3,11 +3,13 @@
 #                                                                             #
 #                           Pi-Star SD-Card Clone                             #
 #                                                                             #
-#         Version 1.4.1, Code modifications by Andy Taylor (MW0MWZ).          #
+#          Version 1.9, Code modifications by Andy Taylor (MW0MWZ).           #
 #    https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone      #
 #                                                                             #
 ###############################################################################
-VERSION=1.4
+VERSION=1.9
+# Version 1.9   2024/01/29
+#       • Fix up a few long-standing issues
 # Version 1.4	2016/03/23
 #	* Use -F on mkfs.ext4 and just avoid the question.
 # Version 1.3	2016/03/16
@@ -285,15 +287,6 @@ then
 	parted /dev/$DST_DISK -s unit MB p 2>/dev/null \
 		| sed "/^Model/d ; /^Sector/d ; /^Disk Flags/d"
 
-#	if [ "$DST_BOOT_PARTITION_TYPE" != "$SRC_BOOT_PARTITION_TYPE" ]
-#	then
-#		echo -e "  ... Cannot find a destination boot file system of type: $SRC_BOOT_PARTITION_TYPE\n"
-#	fi
-#	if [ "$DST_ROOT_PARTITION_TYPE" != "$SRC_ROOT_PARTITION_TYPE" ]
-#	then
-#		echo -e "  ... Cannot find a destination root file system of type: $SRC_ROOT_PARTITION_TYPE\n"
-#	fi
-
 	echo "*** All data on destination disk $DST_DISK will be overwritten! ***"
 	echo ""
 	echo -n "Do you want to initialize the destination disk /dev/$DST_DISK? (yes/no): "
@@ -502,45 +495,22 @@ echo "    Started: $START_TIME    Finished: $STOP_TIME"
 echo ""
 
 #
-# Copy over the base configs
+# Clone to Odroid eMMC
 #
-#cp /usr/local/src/pi-star/ircddbgateway $CLONE/etc/ircddbgateway
-#cp /usr/local/src/pi-star/dstarrepeater $CLONE/etc/dstarrepeater
-#cp /usr/local/src/pi-star/mmdvmhost $CLONE/etc/mmdvmhost
-#cp /usr/local/src/pi-star/starnetserver $CLONE/etc/starnetserver
-#cp /usr/local/src/pi-star/pistar-keeper $CLONE/etc/pistar-keeper
-#cp /usr/local/src/pi-star/wpa_supplicant.conf $CLONE/etc/wpa_supplicant/wpa_supplicant.conf
-#cp /usr/local/src/pi-star/ircddblocal.php $CLONE/var/www/dashboard/config/ircddblocal.php
-#cp /usr/local/src/pi-star/.htpasswd $CLONE/var/www/.htpasswd
-#cp /usr/local/src/pi-star/shadow $CLONE/etc/shadow
-#cp /usr/local/src/pi-star/.Remote\ Control $CLONE/root/.Remote\ Control
+if [[ "${ROOT_DEVICE}" == "mmcblk1" && "${DST_DISK}" == "mmcblk0" ]]; then
+  # Fix /etc/fstab on Odroid Hosts
+  sed -i "s/${ROOT_DEVICE}/${DST_DISK}/g" /etc/fstab
+  sed -i "s/${ROOT_DEVICE}/${DST_DISK}/g" /boot/armbianEnv.txt
+fi
+
+#
+# Finish up
+#
 mkdir -p $CLONE/var/log
-
-#
-# Clean the disk (full the partition with zeros to help with later compression)
-#
-echo ""
-echo "*** Writing zero's to the remaining disk space, this will take a few mins..."
-echo ""
-
-#dd if=/dev/zero of=$CLONE/large.file bs=1M count=2048
-#sleep 5
-#rm -rf $CLONE/large.file
-
-# Pause before unmounting in case I want to inspect the clone results
-# or need to custom modify any files on the destination SD clone.
-# Eg. modify $CLONE/etc/hostname, $CLONE/etc/network/interfaces, etc
-# if I'm cloning into a card to be installed on another Pi.
-#
-#echo -n "Hit Enter when ready to unmount the /dev/$DST_DISK partitions..."
-#read resp
-
 echo "unmounting $CLONE/boot"
 umount $CLONE/boot
-
 echo "unmounting $CLONE"
 umount $CLONE
-
 echo "==============================="
 
 exit 0
