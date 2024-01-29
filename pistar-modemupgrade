@@ -195,13 +195,6 @@ else
 fi
 
 #
-# setup firmware tmp space
-#
-FW_TMP=/tmp/.pistar-modem-mgmt
-rm -rf $FW_TMP >/dev/null 2>&1
-mkdir $FW_TMP 2> /dev/null
-
-#
 # Output some useful information when no variables are passed
 #
 if [ -z "$1" ] ; then
@@ -409,7 +402,8 @@ if [ "$1" ] ; then
   	    # re-nit!
   	    systemctl start mmdvmhost.service >/dev/null 2>&1
   	    systemctl start mmdvmhost.timer >/dev/null 2>&1
-  	    rm -rf $FW_TMP >/dev/null 2>&1
+  	    systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	    systemctl start pistar-watchdog.service >/dev/null 2>&1
   	    echo -e -n "    ${TICK} ${COMPL} Modem firmware flash successful!\n        Modem reinitialized.\n"
   	    echo ""
 	else
@@ -418,7 +412,8 @@ if [ "$1" ] ; then
 	    echo -e "               or you can contact the supplier of your modem/hotspot for support.\n"
 	    systemctl start mmdvmhost.service >/dev/null 2>&1
 	    systemctl start mmdvmhost.timer >/dev/null 2>&1
-	    rm -rf $FW_TMP >/dev/null 2>&1
+	    systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	    systemctl start pistar-watchdog.service >/dev/null 2>&1
 	    echo ""
 	fi
     else
@@ -432,7 +427,6 @@ if [ "$1" ] ; then
 	systemctl start mmdvmhost.timer >/dev/null 2>&1
 	systemctl start pistar-watchdog.timer >/dev/null 2>&1
 	systemctl start pistar-watchdog.service >/dev/null 2>&1
- 	rm -rf $FW_TMP >/dev/null 2>&1
     fi
     exit 0
   }
