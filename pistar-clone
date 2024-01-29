@@ -493,8 +493,8 @@ echo ""
 #
 if [[ "${ROOT_DEVICE}" == "mmcblk1" && "${DST_DISK}" == "mmcblk0" ]]; then
   # Fix /etc/fstab on Odroid Hosts
-  sed -i "s/${ROOT_DEVICE}/${DST_DISK}/g" /etc/fstab
-  sed -i "s/${ROOT_DEVICE}/${DST_DISK}/g" /boot/armbianEnv.txt
+  sed -i "s/${ROOT_DEVICE}/${DST_DISK}/g" $CLONE/etc/fstab
+  sed -i "s/${ROOT_DEVICE}/${DST_DISK}/g" $CLONE/boot/armbianEnv.txt
 fi
 
 #
