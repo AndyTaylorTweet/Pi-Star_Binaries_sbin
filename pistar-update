@@ -41,6 +41,7 @@ git_checkUpdateRequired() {
 git_update() {
 	# Set the function variables
 	gitFolder=${1}
+	gitBranch=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git rev-parse --abbrev-ref HEAD)
 
 	# Handle the special case for /usr/loca/sbin
 	if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
@@ -49,9 +50,6 @@ git_update() {
 	fi
 
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
-		# Get the current branch
-		gitBranch=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git rev-parse --abbrev-ref HEAD)
-
 		# Show what we are doing
 		echo "Updating ${gitFolder} (${gitBranch})..."
 
@@ -93,7 +91,7 @@ git_update() {
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
 		fi
 	else
-		echo "No updates for ${gitFolder} available"
+		echo "No updates for ${gitFolder} (${gitBranch}) available"
 	fi
 }
 
