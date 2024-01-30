@@ -25,9 +25,10 @@ git_checkUpdateRequired() {
 	# Set the function variables
 	gitFolder=${1}
 	gitRemoteURL=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
+	gitBranch=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git rev-parse --abbrev-ref HEAD)
 
 	# Git check / update function
-	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep master | cut -c 1-7)
+	gitStatusRemote=$(git ls-remote --heads ${gitRemoteURL} | grep ${gitBranch} | cut -c 1-7)
 	gitStatusLocal=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git log --pretty=format:"%h" -1 | cut -c 1-7)
 
 	# Return the output
@@ -51,11 +52,11 @@ git_update() {
 
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
 		# Show what we are doing
-		echo "Updating ${gitFolder} (${gitBranch})..."
+		echo "Updating ${gitFolder} (Branch: ${gitBranch})..."
 
 		# If this script is updated, re-run the update with the new version.
 		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
-                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch origin master
+                        git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch origin ${gitBranch}
 			if [ "$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master 2>/dev/null | grep pistar-update 2>/dev/null)" = "pistar-update" ]; then
                                 echo "Found a new version of pistar-update..."
 				# Un-shallow Git Repo
@@ -63,7 +64,7 @@ git_update() {
 					git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch --unshallow
 				fi
 				# Pull updates
-                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin ${gitBranch}
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
                                         echo "Update to new version of pistar-update was not successfull, forcing update..."
 					rm -rf ${gitFolder}/pistar-upnp.service
@@ -80,7 +81,7 @@ git_update() {
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch --unshallow
 		fi
 		# Pull updates
-                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin master
+                git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin ${gitBranch}
 
 		# Re-check that the updates are now good
 		if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
@@ -88,10 +89,10 @@ git_update() {
 				rm -rf ${gitFolder}/pistar-upnp.service
 			fi
 			echo "Updates were not successfull, reverting to Pi-Star original files..."
-			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
+			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/${gitBranch}
 		fi
 	else
-		echo "No updates for ${gitFolder} (${gitBranch}) available"
+		echo "No updates for ${gitFolder} (Branch: ${gitBranch}) available"
 	fi
 }
 
