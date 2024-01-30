@@ -99,6 +99,22 @@ if [ "$1" ]; then
       firmware_file="zum_libre.bin"
       ;;
     # MMDVM Repeater Boards
+    rpt_nucleo-64)
+      firmware_file="F446RE.elf"
+      stmVer="0.5"
+      ;;
+    rpt_nucleo-144)
+      firmware_file="F767ZI.elf"
+      stmVer="0.7"
+      ;;
+    rpt_mmdvm_hat-0.2)
+      firmware_file="MMDVM_RPT_Hat_0.2.bin"
+      stmVer="0.7"
+      ;;
+    rpt_mmdvm_hat-0.3)
+      firmware_file="MMDVM_RPT_Hat_0.3.bin"
+      stmVer="0.7"
+      ;;
     rpt_zum-0.9)
       firmware_file="ZUM_Radio-MMDVM_0.9.bin"
       stmVer="0.7"
@@ -117,7 +133,7 @@ if [ "$1" ]; then
       ;;
     rpt_builder_v5)
       firmware_file="Repeater-Builder_V5.bin"
-      stmVer="0.5"
+      stmVer="0.7"
       ;;
     list|-l|--list)
       echo "hs_hat"
@@ -138,6 +154,10 @@ if [ "$1" ]; then
       echo "zum_rpi-duplex"
       echo "zum_usb"
       echo "zum_libre"
+      echo "rpt_nucleo-64"
+      echo "rpt_nucleo-144"
+      echo "rpt_mmdvm_hat-0.2"
+      echo "rpt_mmdvm_hat-0.3"
       echo "rpt_zum-0.9"
       echo "rpt_zum-1.0"
       echo "rpt_builder_v3"
