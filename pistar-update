@@ -49,7 +49,11 @@ git_update() {
 	fi
 
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
-		echo "Updating ${gitFolder}..."
+		# Get the current branch
+		gitBranch=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git rev-parse --abbrev-ref HEAD)
+
+		# Show what we are doing
+		echo "Updating ${gitFolder} (${gitBranch})..."
 
 		# If this script is updated, re-run the update with the new version.
 		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
