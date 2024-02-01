@@ -460,6 +460,10 @@ if [ "$1" ] ; then
         fi
     else  # Catch missing information
         # Bail out with an error
+        if [ -t 1 ] && [ "$VERBOSE" != 1 ]; then # term. only
+	    # Kill the spinner process (make the cursor visible again)
+	    kill $SPINNER_PID &>/dev/null
+        fi
         echo -e "    ${CROSS} ${COL_BRIGHT_RED}ERROR:${COL_NC} Modem flashing failed. Modem Connection type not specified.\n"
 	systemctl start mmdvmhost.service >/dev/null 2>&1
 	systemctl start mmdvmhost.timer >/dev/null 2>&1
