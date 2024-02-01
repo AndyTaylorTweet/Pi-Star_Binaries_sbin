@@ -22,7 +22,9 @@ pistarHardware=$(awk -F "= " '/Hardware/ {print $2}' /etc/pistar-release)
 
 # Get the available firmwre version
 if [[ -f /usr/local/bin/firmware/version.txt ]]; then
-  VERSION=$(awk -F "=" '/Version/ {print $2}' /usr/local/bin/firmware/version.txt)
+  MMDVM_HS_VERSION=$(awk -F "=" '/mmdvm_hs_version/ {print $2}' /usr/local/bin/firmware/version.txt)
+  RPT_VERSION=$(awk -F "=" '/rpt_version/ {print $2}' /usr/local/bin/firmware/version.txt)
+  DVMEGA_VERSION=$(awk -F "=" '/dvmega_version/ {print $2}' /usr/local/bin/firmware/version.txt)
 else
   echo -e "\nNew Firmware has not arrived yet...\n"
 fi
@@ -41,132 +43,161 @@ if [ "$1" ]; then
     hs_hat)
       firmware_file="hs_hat.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_hat-12mhz)
       firmware_file="hs_hat-12mhz.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_dual_hat)
       firmware_file="hs_dual_hat.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_dual_hat-12mhz)
       firmware_file="hs_dual_hat-12mhz.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     # Less common HS_HATs
     hs_hat_ambe)
       firmware_file="hs_hat_ambe.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_hat_generic)
       firmware_file="hs_hat_generic.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_hat_generic_duplex)
       firmware_file="hs_hat_generic_duplex.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_hat_generic_duplex-usb)
       firmware_file="hs_hat_generic_duplex-usb.bin"
       USB_MODEM=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     # more obscure stuff - not as common anymore
     hs_hat_nano_hotspot)
       firmware_file="hs_hat_nano_hotspot.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_hat_nano_hotspot-duplex)
       firmware_file="hs_hat_nano_hotspot-duplex.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     nanodv_npi)
       firmware_file="nanodv_npi.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     nanodv_usb)
       firmware_file="nanodv_usb.bin"
       USB_MODEM=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     # Vendor MMDVM_HS / ZUMSpot
     euronode)
       firmware_file="euronode.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     hs_hat_lonestar-usb)
       firmware_file="hs_hat_lonestar-usb.bin"
       USB_MODEM=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     skybridge)
       firmware_file="skybridge.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     zum_rpi)
       firmware_file="zum_rpi.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     zum_rpi-duplex)
       firmware_file="zum_rpi-duplex.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     zum_usb)
       firmware_file="zum_usb.bin"
       USB_MODEM=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     zum_libre)
       firmware_file="zum_libre.bin"
       MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
       ;;
     # DV Mega Firmwares
     dvmega_gpio)
       firmware_file="dvmega_gpio.hex"
       DVMega_GPIO=true
+      VERSION=${DVMEGA_VERSION}
       ;;
     # MMDVM Repeater Boards
     rpt_nucleo-64)
       firmware_file="F446RE.elf"
       MMDVM_PI=true
       stmVer="0.5"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_nucleo-144)
       firmware_file="F767ZI.elf"
       MMDVM_PI=true
       stmVer="0.7"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_mmdvm_hat-0.2)
       firmware_file="MMDVM_RPT_Hat_0.2.bin"
       MMDVM_PI=true
       stmVer="0.7"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_mmdvm_hat-0.3)
       firmware_file="MMDVM_RPT_Hat_0.3.bin"
       MMDVM_PI=true
       stmVer="0.7"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_zum-0.9)
       firmware_file="ZUM_Radio-MMDVM_0.9.bin"
       MMDVM_PI=true
       stmVer="0.7"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_zum-1.0)
       firmware_file="ZUM_Radio-MMDVM_1.0.bin"
       MMDVM_PI=true
       stmVer="0.7"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_builder_v3)
       firmware_file="Repeater-Builder_V3.bin"
       MMDVM_PI=true
       stmVer="0.5"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_builder_v4)
       firmware_file="Repeater-Builder_V4.bin"
       MMDVM_PI=true
       stmVer="0.5"
+      VERSION=${RPT_VERSION}
       ;;
     rpt_builder_v5)
       firmware_file="Repeater-Builder_V5.bin"
       MMDVM_PI=true
       stmVer="0.7"
+      VERSION=${RPT_VERSION}
       ;;
     list|-l|--list)
       echo "hs_hat"
