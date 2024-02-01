@@ -434,7 +434,7 @@ if [ "$1" ] ; then
 	    $STM32FLASH -k /dev/ttyAMA0 >/dev/null 2>&1 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
 	    output=$(eval $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0 2>&1)
 	fi
-    elif [ "DVMega_GPIO" = true ]; then
+    elif [ "$DVMega_GPIO" = true ]; then
         # DV Mega mounted on GPIO
         if [ "$VERBOSE" = 1 ] ; then
             gpio -g mode 7 out
@@ -451,7 +451,7 @@ if [ "$1" ] ; then
             sleep 0.5 >/dev/null 2>&1
             output=$(eval /usr/bin/avrdude-original -p m328p -c arduino -P /dev/ttyAMA0 -b 115200 -F -U flash:w:/usr/local/bin/firmware/${firmware_file} -v 2>&1)
         fi
-    elif [ "DVMega_USB" = true ]; then
+    elif [ "$DVMega_USB" = true ]; then
         # DV Mega mounted on Uno
         if [ "$VERBOSE" = 1 ] ; then
             /usr/bin/avrdude-original -p m328p -c arduino -P /dev/ttyUSB0 -b 115200 -F -U flash:w:/usr/local/bin/firmware/${firmware_file} -v
