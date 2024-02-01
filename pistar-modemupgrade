@@ -437,17 +437,17 @@ if [ "$1" ] ; then
     elif [ "$DVMega_GPIO" = true ]; then
         # DV Mega mounted on GPIO
         if [ "$VERBOSE" = 1 ] ; then
-            gpio -g mode 7 out
-            gpio -g write 7 1
+            gpio -g mode 4 out
+            gpio -g write 4 1
             sleep 0.30
-            gpio -g write 7 0
+            gpio -g write 4 0
             sleep 0.5
             /usr/bin/avrdude -p m328p -c arduino -P /dev/ttyAMA0 -b 115200 -F -U flash:w:/usr/local/bin/firmware/${firmware_file} -v
         else
-            gpio -g mode 7 out >/dev/null 2>&1
-            gpio -g write 7 1 >/dev/null 2>&1
+            gpio -g mode 4 out >/dev/null 2>&1
+            gpio -g write 4 1 >/dev/null 2>&1
             sleep 0.30 >/dev/null 2>&1
-            gpio -g write 7 0 >/dev/null 2>&1
+            gpio -g write 4 0 >/dev/null 2>&1
             sleep 0.5 >/dev/null 2>&1
             output=$(eval /usr/bin/avrdude -p m328p -c arduino -P /dev/ttyAMA0 -b 115200 -F -U flash:w:/usr/local/bin/firmware/${firmware_file} -v 2>&1)
         fi
