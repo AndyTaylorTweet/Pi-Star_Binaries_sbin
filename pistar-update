@@ -363,6 +363,14 @@ main_function() {
 		ln -sf /usr/bin/python2.7 /usr/bin/python
 	fi
 
+	# Remove legacy avrdude/autoreset hooks
+	if [[ -f /usr/local/bin/avrdude ]]; then
+		rm -rf /usr/local/bin/avrdude
+	fi
+	if [[ -f /usr/bin/autoreset ]]; then
+		rm -rf /usr/bin/autoreset
+	fi
+
 	echo "Starting Services..."
 	service_handle start
 	echo "Done"
