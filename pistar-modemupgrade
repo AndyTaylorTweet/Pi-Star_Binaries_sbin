@@ -491,11 +491,11 @@ if [ "$1" ] ; then
 	    if [[ $output == *"(100.00%) Done"* && $output == *"0x08000000... done"* ]]; then
 		flash_successful=true
 	    fi
-	fi
         elif [ "$DVMega_GPIO" = true ] || [ "$DVMega_USB" = true ]; then # avrdude output
             if [[ $output == *"bytes of flash verified"* && $output == *"Fuses OK"* ]]; then
                 flash_successful=true
             fi
+	fi
     fi
 
     if [ "$VERBOSE" != 1 ] ; then
