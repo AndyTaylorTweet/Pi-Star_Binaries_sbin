@@ -13,7 +13,8 @@ mount -o remount,rw /
 /usr/local/sbin/HostFilesUpdate.sh
 
 # Update the Dashboard from GIT
-git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin master
+gitBranchDash=$(git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git rev-parse --abbrev-ref HEAD)
+git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin ${gitBranchDash}
 
 # Stop all the services...
 systemctl stop pistar-watchdog.service > /dev/null 2>&1
@@ -22,6 +23,9 @@ systemctl stop dstarrepeater.service > /dev/null 2>&1
 sleep 2
 systemctl stop ircddbgateway.service > /dev/null 2>&1
 systemctl stop dapnetgateway.service > /dev/null 2>&1
+if [ -f /lib/systemd/system/m17gateway.service ]; then
+  systemctl stop m17gateway.service > /dev/null 2>&1
+fi
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
 systemctl stop nxdngateway.service > /dev/null 2>&1
@@ -40,10 +44,12 @@ if [ -f /lib/systemd/system/aprsgateway.service ]; then
 fi
 
 # Update the Binaries
-git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
+gitBranchBin=$(git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git rev-parse --abbrev-ref HEAD)
+git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin ${gitBranchBin}
 
 # Update the Binaries (sbin)
-git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
+gitBranchSbin=$(git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git rev-parse --abbrev-ref HEAD)
+git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin ${gitBranchSbin}
 
 # Purge the logs older than 2 days
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
@@ -124,6 +130,9 @@ fi
 systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
 systemctl start dapnetgateway.service > /dev/null 2>&1
+if [ -f /lib/systemd/system/m17gateway.service ]; then
+  systemctl start m17gateway.service > /dev/null 2>&1
+fi
 systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
 systemctl start nxdngateway.service > /dev/null 2>&1
