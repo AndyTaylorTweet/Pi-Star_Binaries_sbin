@@ -38,7 +38,11 @@ main_function() {
 
 	# Make the disk writable
 	mount -o remount,rw /
-	mount -o remount,rw /boot
+	if [ -d /boot/firmware ]; then
+	  mount -o remount,rw /boot/firmware
+	else
+	  mount -o remount,rw /boot
+	fi
 
 	echo "Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
 
@@ -1521,6 +1525,19 @@ main_function() {
 		#exec "$0" "$@"
                 #exit 1
 	;;
+	4.3.0)
+		#sed -i 's/4.3.0/4.3.1/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
+		Message="You are already running the latest version..."
+		#echo $Message
+		#exec "$0" "$@"
+                #exit 1
+	;;
 	*)
 		Message="Somthing went very wrong, I cant tell what version I am running"
 	;;
@@ -1533,7 +1550,11 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	mount -o remount,ro /
-        mount -o remount,ro /boot
+	if [ -d /boot/firmware ]; then
+	  mount -o remount,ro /boot/firmware
+	else
+	  mount -o remount,ro /boot
+	fi
 	echo "Finished"
 
 	}
