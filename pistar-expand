@@ -15,7 +15,11 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Remount read-write
-mount -o remount,rw /boot
+if [ -d /boot/firmware ]; then
+  mount -o remount,rw /boot/firmware
+else
+  mount -o remount,rw /boot
+fi
 mount -o remount,rw /
 
 # Figure out if this is a systemd system
@@ -85,7 +89,11 @@ cat <<EOF > /etc/init.d/resize2fs_once &&
 case "\$1" in
   start)
     log_daemon_msg "Starting resize2fs_once" &&
-    mount -o remount,rw /boot &&
+    if [ -d /boot/firmware ]; then
+      mount -o remount,rw /boot/firmware &&
+    else
+      mount -o remount,rw /boot &&
+    fi
     mount -o remount,rw / &&
     resize2fs /dev/$ROOT_PART &&
     update-rc.d resize2fs_once remove &&
@@ -102,7 +110,11 @@ chmod +x /etc/init.d/resize2fs_once &&
 update-rc.d resize2fs_once defaults &&
 
 # Remount read-only
-mount -o remount,ro /boot
+if [ -d /boot/firmware ]; then
+  mount -o remount,ro /boot/firmware
+else
+  mount -o remount,ro /boot
+fi
 mount -o remount,ro /
 
 # Finished, so tell the user
