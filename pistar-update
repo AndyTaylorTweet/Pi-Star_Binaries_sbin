@@ -378,6 +378,11 @@ main_function() {
 		rm -rf /usr/bin/autoreset
 	fi
 
+	# Patch CRDA
+	if [[ ! -f /lib/crda/regulatory.bin && ! -f /lib/crda/db.txt ]]; then
+		curl --fail -o /lib/crda/db.txt -s https://www.pistar.uk/downloads/wireless_crda_db.txt
+	fi
+
 	echo "Starting Services..."
 	service_handle start
 	echo "Done"
