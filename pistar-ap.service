@@ -90,7 +90,11 @@ fi
 
 case "$1" in
 	start)
-		mount -o remount,rw /
+		if [ -d /boot/firmware ]; then
+		  (sudo mount -o remount,rw / 2>/dev/null)
+		else
+		  mount -o remount,rw /
+		fi
 		if [ $(grep /var/lib/misc /proc/mounts | wc -l) -eq 0 ]; then
 			mount -t tmpfs -o nodev,noatime,nosuid,mode=1777,size=16k tmpfs /var/lib/misc
 		fi
@@ -109,11 +113,19 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
-		mount -o remount,ro /
+		if [ -d /boot/firmware ]; then
+		  (sudo mount -o remount,ro / 2>/dev/null)
+		else
+		  mount -o remount,ro /
+		fi
 		exit 0
 		;;
 	stop)
-		mount -o remount,rw /
+		if [ -d /boot/firmware ]; then
+		  (sudo mount -o remount,rw / 2>/dev/null)
+		else
+		  mount -o remount,rw /
+		fi
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
@@ -130,11 +142,19 @@ case "$1" in
 		fi
 		ifdown wlan0_ap
 		iw dev wlan0_ap del
-		mount -o remount,ro /
+		if [ -d /boot/firmware ]; then
+		  (sudo mount -o remount,ro / 2>/dev/null)
+		else
+		  mount -o remount,ro /
+		fi
 		exit 0
 		;;
 	restart)
-		mount -o remount,rw /
+		if [ -d /boot/firmware ]; then
+		  (sudo mount -o remount,rw / 2>/dev/null)
+		else
+		  mount -o remount,rw /
+		fi
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
@@ -169,7 +189,11 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
-		mount -o remount,ro /
+		if [ -d /boot/firmware ]; then
+		  (sudo mount -o remount,ro / 2>/dev/null)
+		else
+		  mount -o remount,ro /
+		fi
 		exit 0
 		;;
 	status)
