@@ -37,11 +37,11 @@ main_function() {
 	pistarHardware=$(awk -F "= " '/Hardware/ {print $2}' /etc/pistar-release)
 
 	# Make the disk writable
-	mount -o remount,rw /
 	if [ -d /boot/firmware ]; then
-	  mount -o remount,rw /boot/firmware
+	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
 	else
 	  mount -o remount,rw /boot
+	  mount -o remount,rw /
 	fi
 
 	echo "Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
@@ -1549,11 +1549,11 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	/bin/sync
-	mount -o remount,ro /
 	if [ -d /boot/firmware ]; then
-	  mount -o remount,ro /boot/firmware
+	  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot/firmware 2>/dev/null)
 	else
 	  mount -o remount,ro /boot
+	  mount -o remount,ro /
 	fi
 	echo "Finished"
 
