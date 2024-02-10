@@ -46,11 +46,11 @@ systemctl stop ysfgateway.service 2>&1
 systemctl stop p25gateway.service 2>&1
 
 # Make the disk writable
-mount -o remount,rw / 2>&1
 if [ -d /boot/firmware ]; then
-  mount -o remount,rw /boot/firmware 2>&1
+  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
 else
-  mount -o remount,rw /boot 2>&1
+  mount -o remount,rw /boot
+  mount -o remount,rw /
 fi
 
 # Overwrite the configs
