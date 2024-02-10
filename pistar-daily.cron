@@ -7,7 +7,12 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Make the disk RW
-mount -o remount,rw /
+if [ -d /boot/firmware ]; then
+  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
+else
+  mount -o remount,rw /boot
+  mount -o remount,rw /
+fi
 
 # Host Files Update
 /usr/local/sbin/HostFilesUpdate.sh
