@@ -593,10 +593,13 @@ if [ "$1" ] ; then
   if [ -t 1 ]; then
       # run via terminal, only output to screen
       flash_modem "${1}" "${firmware_file}"
-    else
+  else
       # if not run via terminal, log everything into a log file
+      if [ ! -d /var/log/pi-star ]; then
+          mkdir -p /var/log/pi-star
+      fi
       flash_modem "${1}" "${firmware_file}" >> /var/log/pi-star/pi-star_modemflash.log 2>&1
-    fi
+  fi
 
 fi
 exit 0
