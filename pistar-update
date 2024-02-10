@@ -128,11 +128,11 @@ service_handle() {
 main_function() {
 	# Make the disk writable
 	if [ -d /boot/firmware ]; then
-	  mount -o remount,rw /boot/firmware
+	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
 	else
 	  mount -o remount,rw /boot
+	  mount -o remount,rw /
 	fi
-	mount -o remount,rw /
 
 	if [ -t 1 ]; then
 		# This is running from a terminal, so it should be safe to update the OS
@@ -392,11 +392,11 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	/bin/sync
-	mount -o remount,ro /
 	if [ -d /boot/firmware ]; then
-	  mount -o remount,ro /boot/firmware
+	  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot/firmware 2>/dev/null)
 	else
 	  mount -o remount,ro /boot
+	  mount -o remount,ro /
 	fi
 
 	# Tell the user we are done
