@@ -79,6 +79,7 @@ if [ "$1" ]; then
     hs_hat_generic_duplex-usb)
       firmware_file="hs_hat_generic_duplex-usb.bin"
       USB_MODEM=true
+      DEV_USB_SER="/dev/ttyACM0"
       VERSION=${MMDVM_HS_VERSION}
       ;;
     # more obscure stuff - not as common anymore
@@ -100,6 +101,7 @@ if [ "$1" ]; then
     nanodv_usb)
       firmware_file="nanodv_usb.bin"
       USB_MODEM=true
+      DEV_USB_SER="/dev/ttyACM0"
       VERSION=${MMDVM_HS_VERSION}
       ;;
     # Vendor MMDVM_HS / ZUMSpot
@@ -147,11 +149,13 @@ if [ "$1" ]; then
     dvmega_usb_uno)
       firmware_file="dvmega_usb_uno.hex"
       DVMega_USB=true
+      DEV_USB_SER="/dev/ttyACM0"
       VERSION=${DVMEGA_VERSION}
       ;;
     dvmega_usb_mega)
       firmware_file="dvmega_usb_mega.hex"
       DVMega_USB=true
+      DEV_USB_SER="/dev/ttyACM0"
       VERSION=${DVMEGA_VERSION}
       ;;
     # MMDVM Repeater Boards
