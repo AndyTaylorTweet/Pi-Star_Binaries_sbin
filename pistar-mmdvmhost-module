@@ -106,9 +106,17 @@ if [ "${CUR_STATUS}" == "${NEW_STATUS}" ]; then
 else
   # Change required, so lets change it...
   echo "Setting ${MODULE} to ${NEW_STATUS} and restarting MMDVMHost..."
-  mount -o remount,rw /
+  if [ -d /boot/firmware ]; then
+    (sudo mount -o remount,rw / 2>/dev/null)
+  else
+    mount -o remount,rw /
+  fi
   sed -i "/\[${MODULE}\]/{n;s/${CUR_STATUS}/${NEW_STATUS}/}" ${MMDVMCONFIG}
   systemctl restart ${SYSCTL_MMDVMHOST}
   sleep 2
-  mount -o remount,ro /
+  if [ -d /boot/firmware ]; then
+    (sudo mount -o remount,ro / 2>/dev/null)
+  else
+    mount -o remount,ro /
+  fi
 fi
