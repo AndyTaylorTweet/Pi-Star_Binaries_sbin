@@ -133,11 +133,13 @@ if [ "$1" ]; then
     zum_usb)
       firmware_file="zum_usb.bin"
       USB_MODEM=true
+      DEV_USB_SER="/dev/ttyACM0"
       VERSION=${MMDVM_HS_VERSION}
       ;;
     zum_libre)
       firmware_file="zum_libre.bin"
       MMDVM_HS_GPIO=true
+      DEV_USB_SER="/dev/ttyACM0"
       VERSION=${MMDVM_HS_VERSION}
       ;;
     # DV Mega Firmwares
