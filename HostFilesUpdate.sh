@@ -6,7 +6,7 @@
 #      Written for Pi-Star (http://www.pistar.uk/)      #
 #               By Andy Taylor (MW0MWZ)                 #
 #                                                       #
-#                     Version 2.6                       #
+#                     Version 2.7                       #
 #                                                       #
 #   Based on the update script by Tony Corbett G0WFV    #
 #                                                       #
@@ -119,7 +119,6 @@ curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt --use
 curl --fail -o ${M17HOSTS} -s http://www.pistar.uk/downloads/M17_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${FCSHOSTS} -s http://www.pistar.uk/downloads/FCS_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
-#curl --fail -s http://www.pistar.uk/downloads/USTrust_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}" >> ${DExtraHOSTS}
 curl --fail -o ${XLXHOSTS} -s http://www.pistar.uk/downloads/XLXHosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${NXDNIDFILE} -s http://www.pistar.uk/downloads/NXDN.csv --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${NXDNHOSTS} -s http://www.pistar.uk/downloads/NXDN_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
@@ -127,9 +126,24 @@ curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt --use
 curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
-# Download Nextion Data
-curl --fail -o ${NEXTIONGROUPS} -s http://www.pistar.uk/downloads/groups.txt --user-agent "Pi-Star_${pistarCurVersion}"
-curl -sSL http://www.pistar.uk/downloads/nextionUsers.csv.gz --user-agent "Pi-Star_${pistarCurVersion}" | gunzip -c > ${NEXTIONUSERS}
+# Download Nextion Groups
+if [ -f ${NEXTIONGROUPS} ]; then
+	# Update ${NEXTIONGROUPS}
+ 	if [[ $(find "${NEXTIONGROUPS}" -mtime +7) ]]; then
+  		curl --fail -o ${NEXTIONGROUPS} -s http://www.pistar.uk/downloads/groups.txt --user-agent "Pi-Star_${pistarCurVersion}"
+  	fi
+else
+	# Get ${NEXTIONGROUPS}
+ 	curl --fail -o ${NEXTIONGROUPS} -s http://www.pistar.uk/downloads/groups.txt --user-agent "Pi-Star_${pistarCurVersion}"
+fi
+# Download Nextion Users
+if [ -f ${NEXTIONUSERS} ]; then
+	if [[ $(find "${NEXTIONUSERS}" -mtime +7) ]]; then
+		curl -sSL http://www.pistar.uk/downloads/nextionUsers.csv.gz --user-agent "Pi-Star_${pistarCurVersion}" | gunzip -c > ${NEXTIONUSERS}
+	fi
+else
+	curl -sSL http://www.pistar.uk/downloads/nextionUsers.csv.gz --user-agent "Pi-Star_${pistarCurVersion}" | gunzip -c > ${NEXTIONUSERS}
+fi
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
