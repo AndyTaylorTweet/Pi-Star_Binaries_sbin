@@ -37,6 +37,8 @@ TGLISTBM=/usr/local/etc/TGList_BM.txt
 TGLISTP25=/usr/local/etc/TGList_P25.txt
 TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
 TGLISTYSF=/usr/local/etc/TGList_YSF.txt
+NEXTIONGROUPS=/usr/local/etc/nextionGroups.txt
+NEXTIONUSERS=/usr/local/etc/nextionUsers.csv
 
 # How many backups
 FILEBACKUP=1
@@ -112,7 +114,7 @@ else
   curl --fail -o ${DPlusHOSTS} -s http://www.pistar.uk/downloads/DPlus_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
   curl --fail -o ${DExtraHOSTS} -s http://www.pistar.uk/downloads/DExtra_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 fi
-curl --fail -o ${DMRIDFILE} -s http://www.pistar.uk/downloads/DMRIds.dat --user-agent "Pi-Star_${pistarCurVersion}"
+curl -sSL http://www.pistar.uk/downloads/DMRIds.dat.gz --user-agent "Pi-Star_${pistarCurVersion}" | gzip -d -c | tar xf - -C ${DMRIDFILE} >/dev/null 2>&1
 curl --fail -o ${P25HOSTS} -s http://www.pistar.uk/downloads/P25_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${M17HOSTS} -s http://www.pistar.uk/downloads/M17_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${YSFHOSTS} -s http://www.pistar.uk/downloads/YSF_Hosts.txt --user-agent "Pi-Star_${pistarCurVersion}"
@@ -125,6 +127,9 @@ curl --fail -o ${TGLISTBM} -s http://www.pistar.uk/downloads/TGList_BM.txt --use
 curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
+# Download Nextion Data
+curl --fail -o ${NEXTIONGROUPS} -s http://www.pistar.uk/downloads/groups.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl -sSL http://www.pistar.uk/downloads/nextionUsers.csv.gz --user-agent "Pi-Star_${pistarCurVersion}" | gzip -d -c | tar xf - -C ${NEXTIONUSERS} >/dev/null 2>&1
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
