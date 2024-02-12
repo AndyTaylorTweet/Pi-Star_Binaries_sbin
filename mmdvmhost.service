@@ -51,7 +51,7 @@ case "$1" in
 			exit 0;
 		else
 			# Wait for an IP address
-			until [ $ipVar != " " ]; do
+			until [ "${ipVar}" != " " ]; do
 				sleep 10
 				ipVar=`hostname -I`
 			done
