@@ -40,6 +40,10 @@ fi
 
 case "$1" in
 	start)
+		if [ "$(sed -n '/^\[General\]/,/^\[/p' /etc/mmdvmhost | grep "^Display" | awk -F '=' '{print $2}' | tr -d '[:space:]')" != "Nextion" ]; then
+			echo -e "$DAEMON should not run"
+			exit 0;
+		fi
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 			exit 0;
@@ -67,6 +71,10 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
+			if [ "$(sed -n '/^\[General\]/,/^\[/p' /etc/mmdvmhost | grep "^Display" | awk -F '=' '{print $2}' | tr -d '[:space:]')" != "Nextion" ]; then
+				echo -e "$DAEMON should not run"
+				exit 0;
+			fi
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
