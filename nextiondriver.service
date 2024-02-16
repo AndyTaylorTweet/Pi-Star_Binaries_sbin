@@ -44,6 +44,10 @@ case "$1" in
 			echo -e "$DAEMON should not run"
 			exit 0;
 		fi
+		if [ "$(sed -n '/^\[Nextion\]/,/^\[/p' /etc/mmdvmhost | grep "^Port" | awk -F '=' '{print $2}' | tr -d '[:space:]')" != "/dev/ttyNextionDriver" ]; then
+			echo -e "$DAEMON should not run"
+			exit 0;
+		fi
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
 			exit 0;
@@ -72,6 +76,10 @@ case "$1" in
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
 			if [ "$(sed -n '/^\[General\]/,/^\[/p' /etc/mmdvmhost | grep "^Display" | awk -F '=' '{print $2}' | tr -d '[:space:]')" != "Nextion" ]; then
+				echo -e "$DAEMON should not run"
+				exit 0;
+			fi
+			if [ "$(sed -n '/^\[Nextion\]/,/^\[/p' /etc/mmdvmhost | grep "^Port" | awk -F '=' '{print $2}' | tr -d '[:space:]')" != "/dev/ttyNextionDriver" ]; then
 				echo -e "$DAEMON should not run"
 				exit 0;
 			fi
