@@ -1513,13 +1513,66 @@ main_function() {
                 #exit 1
 	;;
 	4.2.0)
-		#sed -i 's/4.2.0/4.2.1/g' /etc/pistar-release
+		sed -i 's/4.2.0/4.2.1/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Fix Time-Sync issues
+		apt-get remove -y --purge ntp ntpdate
+		apt-get install -y systemd-timesyncd
+		apt-get autoremove -y --purge
+
+		# Remove any pre-existing unit files
+		if [ -f /lib/systemd/system/NextionDriver.service ]; then
+			rm -rf /lib/systemd/system/NextionDriver.*
+		fi
+		if [ -f /etc/systemd/system/NextionDriver.service ]; then
+			rm -rf /etc/systemd/system/NextionDriver.*
+		fi
+		if [ -f /etc/systemd/system/nextiondriver.service ]; then
+			rm -rf /etc/systemd/system/nextiondriver.*
+		fi
+
+		# Fix Nextion Driver
+		echo '[Unit]' > /lib/systemd/system/nextiondriver.service
+		echo 'Description=NextionDriver service' >> /lib/systemd/system/nextiondriver.service
+		echo 'DefaultDependencies=no' >> /lib/systemd/system/nextiondriver.service
+		echo 'Before=timers.target mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
+		echo 'After=local-fs.target wifi-country.service' >> /lib/systemd/system/nextiondriver.service
+		echo '' >> /lib/systemd/system/nextiondriver.service
+		echo '[Service]' >> /lib/systemd/system/nextiondriver.service
+		echo 'User=root' >> /lib/systemd/system/nextiondriver.service
+		echo 'WorkingDirectory=/usr/local/etc/' >> /lib/systemd/system/nextiondriver.service
+		echo 'Type=forking' >> /lib/systemd/system/nextiondriver.service
+		echo 'ExecStart=/usr/local/sbin/nextiondriver.service start' >> /lib/systemd/system/nextiondriver.service
+		echo 'ExecStop=/usr/local/sbin/nextiondriver.service stop' >> /lib/systemd/system/nextiondriver.service
+		echo 'ExecReload=/usr/local/sbin/nextiondriver.service reload' >> /lib/systemd/system/nextiondriver.service
+		echo 'Restart=always' >> /lib/systemd/system/nextiondriver.service
+		echo 'RestartSec=3' >> /lib/systemd/system/nextiondriver.service
+		echo '' >> /lib/systemd/system/nextiondriver.service
+		echo '[Install]' >> /lib/systemd/system/nextiondriver.service
+		echo 'WantedBy=multi-user.target network-online.target' >> /lib/systemd/system/nextiondriver.service
+		echo 'RequiredBy=mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
+
+		# Start the service
+		systemctl daemon-reload
+		systemctl enable --now nextiondriver.service
+
+		# OK we are done
+		Message="Upgraded from ${pistarCurVersion} to 4.2.1..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.2.1)
+		#sed -i 's/4.2.1/4.2.2/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.2.1..."
+		#Message="Upgraded from ${pistarCurVersion} to 4.2.2..."
 		Message="You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
