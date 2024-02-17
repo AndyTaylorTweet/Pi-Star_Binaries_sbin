@@ -1523,6 +1523,9 @@ main_function() {
 		#apt-get install -y systemd-timesyncd
 		#apt-get autoremove -y --purge
 
+		# Clean-up /etc/rc.local
+		#sed -i '/flock -n \/run\/lock\/ntpdate \/usr\/sbin\/ntpdate-debian -s -b 2>\/dev\/null &/d' /etc/rc.local
+
 		# Remove any pre-existing unit files
 		#if [ -f /lib/systemd/system/NextionDriver.service ]; then
 		#	rm -rf /lib/systemd/system/NextionDriver.*
