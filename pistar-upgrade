@@ -1539,7 +1539,7 @@ main_function() {
 		if [ -d /etc/systemd/system/mmdvmhost.service.requires ]; then
 			rm -rf /etc/systemd/system/mmdvmhost.service.requires
 		fi
-		$(sed -i '/Requires=nextiondriver\.service/d' mmdvmhost.service)
+		$(sed -i '/Requires=nextiondriver\.service/d' /lib/systemd/system/mmdvmhost.service)
 
 		# Fix Nextion Driver
 		echo '[Unit]' > /lib/systemd/system/nextiondriver.service
