@@ -1555,8 +1555,6 @@ main_function() {
 		#echo 'ExecStart=/usr/local/sbin/nextiondriver.service start' >> /lib/systemd/system/nextiondriver.service
 		#echo 'ExecStop=/usr/local/sbin/nextiondriver.service stop' >> /lib/systemd/system/nextiondriver.service
 		#echo 'ExecReload=/usr/local/sbin/nextiondriver.service reload' >> /lib/systemd/system/nextiondriver.service
-		#echo 'Restart=always' >> /lib/systemd/system/nextiondriver.service
-		#echo 'RestartSec=3' >> /lib/systemd/system/nextiondriver.service
 		#echo '' >> /lib/systemd/system/nextiondriver.service
 		#echo '[Install]' >> /lib/systemd/system/nextiondriver.service
 		#echo 'WantedBy=multi-user.target network-online.target' >> /lib/systemd/system/nextiondriver.service
