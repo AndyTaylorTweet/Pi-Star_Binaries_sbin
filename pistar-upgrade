@@ -1558,9 +1558,8 @@ main_function() {
 		#echo 'Restart=always' >> /lib/systemd/system/nextiondriver.service
 		#echo 'RestartSec=3' >> /lib/systemd/system/nextiondriver.service
 		#echo '' >> /lib/systemd/system/nextiondriver.service
-		#echo 'WantedBy=multi-user.target network-online.target' >> /lib/systemd/system/nextiondriver.service
 		#echo '[Install]' >> /lib/systemd/system/nextiondriver.service
-		#echo 'RequiredBy=mmdvmhost.service' >> /lib/systemd/system/nextiondriver.service
+		#echo 'WantedBy=multi-user.target network-online.target' >> /lib/systemd/system/nextiondriver.service
 
 		# Start the service
 		#systemctl daemon-reload
