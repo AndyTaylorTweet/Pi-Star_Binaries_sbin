@@ -1524,7 +1524,7 @@ main_function() {
 		#apt-get autoremove -y --purge
 
 		# Clean-up /etc/rc.local
-		#sed '/^# Print the IP address$/,/^fi$/d' /etc/rc.local
+		#sed -i '/^# Print the IP address$/,/^fi$/d' /etc/rc.local
 
 		# Remove any pre-existing unit files
 		#if [ -f /lib/systemd/system/NextionDriver.service ]; then
