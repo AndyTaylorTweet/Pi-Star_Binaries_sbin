@@ -17,7 +17,7 @@ shift $(($OPTIND - 1))
 #
 if [ -d /home/pi-star/.mlogs ]; then
     if [ "$xro" == "ro" ]; then
-       sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
+       sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
     fi
     if [ "$xmv" == "active" ]; then
        sudo systemctl stop mmdvmhost.service
@@ -60,6 +60,6 @@ if [ -d /home/pi-star/.mlogs ]; then
        sudo systemctl start mmdvmhost.service
     fi
     if [ "$xro" == "ro" ]; then
-       sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+       sudo mount -o remount,ro / # sudo mount -o remount,ro /boot
     fi
 fi

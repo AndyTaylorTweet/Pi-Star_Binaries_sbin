@@ -7,7 +7,7 @@ fi
 #rpi-rw
 xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
 if [ "$xro" == "ro" ]; then
-  sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
+  sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
 fi
 #
 rbt=0
@@ -42,5 +42,5 @@ fi
 #
 #rpi-ro
 if [ "$xro" == "ro" ]; then
-  sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+  sudo mount -o remount,ro / # sudo mount -o remount,ro /boot
 fi

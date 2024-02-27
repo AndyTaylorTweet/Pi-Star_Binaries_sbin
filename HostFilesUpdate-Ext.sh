@@ -273,7 +273,7 @@ if [ $updt == 1 ]; then
 fs=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
 #rpi-rw
 if [ "$fs" == "ro" ]; then
-  sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot
+  sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
 fi
 #
 echo "...completing update"
@@ -306,7 +306,7 @@ if [ $rst == 1 ]; then
 fi
 #rpi-ro
 if [ "$fs" == "ro" ]; then
-  sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot
+  sudo mount -o remount,ro / # sudo mount -o remount,ro /boot
 fi
 fi
 else
