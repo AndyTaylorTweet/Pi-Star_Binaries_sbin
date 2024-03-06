@@ -38,6 +38,13 @@ if [ -d "/sys/class/net/wlan0" ]; then
 	fi
 fi
 
+# Check if ethernet network is UP, and die if it IS
+if [ -d "/sys/class/net/eth0" ]; then
+        if [ `cat /sys/class/net/eth0/operstate` == "up" ]; then
+                exit 0
+        fi
+fi
+
 # Make sure we have a card that supports AP mode
 if [ `grep -c -E '(ath5k |ath9k |ath9k_htc |b43 |b43legacy |brcmfmac |carl9170 |cw1200 |iwlwifi |libertas_tf |mac80211_hwsim |mwifiex |mwl8k |p54spi |p54usb |rt73usb |rt2500usb |rt2800usb |vt6656 |wil6210 |wl12xx |zd1211rw |dhd |xradio_wlan |8188eu )' /proc/modules` -eq "0" ]; then
 	exit 0
@@ -151,9 +158,9 @@ case "$1" in
 		fi
 		ifdown wlan0_ap
 		iw dev wlan0_ap del
-		
+
 		${SLEEP} 2
-		
+
 		sysctl net.ipv4.ip_forward=1
 		iw dev wlan0 interface add wlan0_ap type __ap
 		${SLEEP} 3 && ifup wlan0_ap && ${SLEEP} 2
