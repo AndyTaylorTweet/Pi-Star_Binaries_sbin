@@ -120,9 +120,10 @@ service_handle() {
 
 main_function() {
 	# Make the disk writable
-	mount -o remount,rw /
-#	mount -o remount,rw /boot
-
+	xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+	if [ "$xro" == "ro" ]; then
+	  sudo mount -o remount,rw /
+	fi
 	echo "Stopping Services..."
 	service_handle stop
 	echo -e "Done \n"
@@ -166,9 +167,9 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	/bin/sync
-	mount -o remount,ro /
-#	mount -o remount,ro /boot
-
+	if [ "$xro" == "ro" ]; then
+	  sudo mount -o remount,ro /
+	fi
 	# Tell the user we are done
 	echo "Finished"
 	}
