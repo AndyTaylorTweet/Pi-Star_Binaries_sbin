@@ -119,7 +119,7 @@ service_handle() {
 main_function() {
 	# Make the disk writable
 	mount -o remount,rw /
-	mount -o remount,rw /boot
+#	mount -o remount,rw /boot
 
 	if [ -t 1 ]; then
 		# This is running from a terminal, so it should be safe to update the OS
@@ -406,7 +406,7 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	mount -o remount,ro /
-	mount -o remount,ro /boot
+#	mount -o remount,ro /boot
 
 	# Tell the user we are done
 	echo "Finished"

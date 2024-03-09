@@ -37,8 +37,9 @@ main_function() {
 	pistarHardware=$(awk -F "= " '/Hardware/ {print $2}' /etc/pistar-release)
 
 	# Make the disk writable
+	fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p" /proc/mounts)
 	mount -o remount,rw /
-	mount -o remount,rw /boot
+	mount -o remount,rw /boot${fw}
 
 	echo "Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
 
@@ -1686,7 +1687,7 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	mount -o remount,ro /
-        mount -o remount,ro /boot
+        mount -o remount,ro /boot${fw}
 	echo "Finished"
 
 	}
