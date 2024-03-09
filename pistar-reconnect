@@ -2,7 +2,10 @@
 # Reconfigure/Reconnect WIFI
 #
 #rpi-rw:
-sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
+xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+if [ "$xro" == "ro" ]; then
+  sudo mount -o remount,rw /
+fi
 #
 logger -t "[$$]" "Pi-Star --> Wifi Reconnect initiated <--"
 sudo wpa_cli reconfigure wlan0
@@ -12,4 +15,6 @@ sudo ifup wlan0
 sudo wpa_cli scan
 #
 #rpi-ro:
-sudo mount -o remount,ro / # sudo mount -o remount,ro /boot
+if [ "$xro" == "ro" ]; then
+  sudo mount -o remount,rw /
+fi

@@ -15,5 +15,11 @@ journalctl --vacuum-size=5M
 /bin/sync
 /bin/sync
 /bin/sync
-mount -o remount,ro /
-mount -o remount,ro /boot
+
+fs=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p" /proc/mounts)
+if [ "$fs" == "ro" ]; then
+  sudo mount -o remount,ro /
+  sudo mount -o remount,ro /boot${fw}
+fi
+
