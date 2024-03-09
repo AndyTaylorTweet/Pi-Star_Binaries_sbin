@@ -1,7 +1,8 @@
 #!/bin/bash
 # Age MMDVM log file backups
 #
-xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+#xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
 #rpi-rw
 if [ "$xro" == "ro" ]; then
   sudo mount -o remount,rw / # sudo mount -o remount,rw /boot

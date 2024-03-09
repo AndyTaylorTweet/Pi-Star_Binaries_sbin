@@ -2,7 +2,8 @@
 # Restore MMDVM logs during startups (reboots)
 #
 #rpi-rw
-xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+#xro=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
 xmv=$(sudo systemctl is-active mmdvmhost.service)
 #
 rbt=0
