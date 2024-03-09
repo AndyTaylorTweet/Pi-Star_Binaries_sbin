@@ -270,7 +270,7 @@ wc -l /tmp/xcontacts.csv | awk '{print "...", $1, "entries downloaded"}'
 sudo sed  -i "1 s/^/#       Updated $(date '+%d-%b-%Y %T %Z') $web\n/" /tmp/xcontacts.csv
 #
 if [ $updt == 1 ]; then
-fs=$(grep "/dev/root" /proc/mounts | sed -n "s/.*\(r[ow]\).*/\1/p")
+fs=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
 #rpi-rw
 if [ "$fs" == "ro" ]; then
   sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
