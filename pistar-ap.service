@@ -31,18 +31,19 @@ if [ ! -d "/sys/class/net/wlan0" ] && [ ! -d "/sys/class/net/wlan0_ap" ]; then
 	exit 0
 fi
 
+# Check if ethernet network is UP, and die if it IS; kill wifi
+if [ -d "/sys/class/net/eth0" ]; then
+	if [ `cat /sys/class/net/eth0/operstate` == "up" ]; then
+		sudo ifconfig wlan0 down
+		exit 0
+	fi
+fi
+
 # Check if the Wireless network is UP, and die if it IS
 if [ -d "/sys/class/net/wlan0" ]; then
 	if [ `cat /sys/class/net/wlan0/operstate` == "up" ]; then
 		exit 0
 	fi
-fi
-
-# Check if ethernet network is UP, and die if it IS
-if [ -d "/sys/class/net/eth0" ]; then
-        if [ `cat /sys/class/net/eth0/operstate` == "up" ]; then
-                exit 0
-        fi
 fi
 
 # Make sure we have a card that supports AP mode
