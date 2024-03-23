@@ -81,7 +81,7 @@ git_update() {
 			fi
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
 			if [[ ${gitFolder} == "/var/www/dashboard" ]]; then
-				git stash pop
+				git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git stash pop
 			fi
 		fi
 	else
