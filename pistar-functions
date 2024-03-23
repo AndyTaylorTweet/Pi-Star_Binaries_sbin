@@ -1,0 +1,42 @@
+# Common script functions for Pi-Star routines:
+#   meant to be paired in a given routine: first write mode check, then read mode check;
+#   one pair for root rw/ro, one pair for root+boot rw/ro;
+#   valid for routines in Buster, Bullseye, Bookworm;
+#   designed so that a routine retains the read/write state entering and exiting.
+
+function mount-rw() {
+   fs=$(sed -n "s|/dev/.* / ext4 \(r[ow]\).*|\1|p" /proc/mounts)
+   if [ "$fs" == "ro" ]; then
+     sudo mount -o remount,rw /
+   fi
+}
+
+function mount-ro() {
+#  fs=$(sed -n "s|/dev/.* / ext4 \(r[ow]\).*|\1|p" /proc/mounts)
+   if [ "$fs" == "ro" ]; then
+     sudo mount -o remount,ro /
+   fi
+}
+
+function mount-rw-boot() {
+   fs=$(sed -n "s|/dev/.* / ext4 \(r[ow]\).*|\1|p" /proc/mounts)
+   fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p"  /proc/mounts)
+   if [ "$fs" == "ro" ]; then
+     sudo mount -o remount,rw /
+     sudo mount -o remount,rw /boot${fw}
+   fi
+}
+
+function mount-ro-boot() {
+#  fs=$(sed -n "s|/dev/.* / ext4 \(r[ow]\).*|\1|p" /proc/mounts)
+#  fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p"  /proc/mounts)
+   if [ "$fs" == "ro" ]; then
+     sudo mount -o remount,ro /
+     sudo mount -o remount,ro /boot${fw}
+   fi
+}
+
+function set-fs-fw() {
+   fs=$(sed -n "s|/dev/.* / ext4 \(r[ow]\).*|\1|p" /proc/mounts)
+   fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p"  /proc/mounts)
+}
