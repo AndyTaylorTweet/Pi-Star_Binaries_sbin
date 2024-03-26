@@ -1,0 +1,13 @@
+#!/bin/bash
+# puts system in write mode or in read mode IF read mode specified in cmdline
+fc=$(grep -wohis -m 1 "ro" {/boot,/boot/firmware}/cmdline.txt | tail -n 1)   # desired system state from cmdline.txt
+fs=$(sed -n "s|/dev/.* / ext4 \(r[ow]\).*|\1|p" /proc/mounts)                # current system state
+fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p"  /proc/mounts)                # current firmware directory
+
+fc=${fc:-rw}
+ss=${1:-ro}
+ss=${ss/%ro/${fc}}
+
+sudo mount -o remount,${ss} /
+sudo mount -o remount,${ss} /boot${fw}
+
