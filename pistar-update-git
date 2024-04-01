@@ -118,17 +118,7 @@ service_handle() {
 	systemctl ${doWhat} mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
 }
 
-main_function() {
-	# Make the disk writable
-	xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
-	if [ "$xro" == "ro" ]; then
-	  sudo mount -o remount,rw /
-	fi
-	echo "Stopping Services..."
-	service_handle stop
-	echo -e "Done \n"
-
-
+update_bin() {
 	gitFolder=/usr/local/bin
 	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
 	gitUrl=${gitUrl/https:\/\/github.com/}
@@ -136,8 +126,9 @@ main_function() {
 	echo -n "Updating DV Binaries ($gitUrl) ... "
 	git_update /usr/local/bin
 	echo -e "Done \n"
+}
 
-
+update_sbin() {
 	gitFolder=/usr/local/sbin
 	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
 	gitUrl=${gitUrl/https:\/\/github.com/}
@@ -145,7 +136,9 @@ main_function() {
 	echo -n "Updating Pi-Star Binaries ($gitUrl) ... "
 	git_update /usr/local/sbin
 	echo -e "Done \n"
+}
 
+update_dash() {
 	gitFolder=/var/www/dashboard
 	gitUrl=$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git config --get remote.origin.url)
 	gitUrl=${gitUrl/https:\/\/github.com/}
@@ -153,6 +146,24 @@ main_function() {
 	echo -n "Updating Dashboard ($gitUrl) ... "
 	git_update /var/www/dashboard
 	echo -e "Done \n"
+}
+
+main_function() {
+        # Make the disk writable
+        xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+        if [ "$xro" == "ro" ]; then
+          sudo mount -o remount,rw /
+        fi
+        echo "Stopping Services..."
+        service_handle stop
+        echo -e "Done \n"
+
+        case ${1:-all} in
+            bin|all)  update_bin;;&
+            sbin|all) update_sbin;;&
+            dash|all) update_dash;;
+            *)      ;;
+        esac
 
 	echo "Updating PiStar-Firewall..."
 	pistar-firewall > /dev/null 2>&1
@@ -176,7 +187,7 @@ main_function() {
 
 if [ -t 1 ]; then
   # run via terminal, only output to screen
-  main_function
+  main_function ${1}
 else
   # if not run via terminal, log everything into a log file
   main_function >> /var/log/pi-star/pi-star_update.log 2>&1
