@@ -149,21 +149,21 @@ update_dash() {
 }
 
 main_function() {
-        # Make the disk writable
-        xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
-        if [ "$xro" == "ro" ]; then
-          sudo mount -o remount,rw /
-        fi
-        echo "Stopping Services..."
-        service_handle stop
-        echo -e "Done \n"
+	# Make the disk writable
+	xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+	if [ "$xro" == "ro" ]; then
+	  sudo mount -o remount,rw /
+	fi
+	echo "Stopping Services..."
+	service_handle stop
+	echo -e "Done \n"
 
-        case ${1:-all} in
-            bin|all)  update_bin;;&
-            sbin|all) update_sbin;;&
-            dash|all) update_dash;;
-            *)      ;;
-        esac
+	case ${1:-all} in
+	  bin|all)  update_bin;;&
+	  sbin|all) update_sbin;;&
+	  dash|all) update_dash;;
+	  *)                   ;;
+	esac
 
 	echo "Updating PiStar-Firewall..."
 	pistar-firewall > /dev/null 2>&1
@@ -183,7 +183,7 @@ main_function() {
 	fi
 	# Tell the user we are done
 	echo "Finished"
-	}
+}
 
 if [ -t 1 ]; then
   # run via terminal, only output to screen
