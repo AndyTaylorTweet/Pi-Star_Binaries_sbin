@@ -40,6 +40,9 @@ TGLISTP25=/usr/local/etc/TGList_P25.txt
 TGLISTNXDN=/usr/local/etc/TGList_NXDN.txt
 TGLISTYSF=/usr/local/etc/TGList_YSF.txt
 STRIPPED=/usr/local/etc/stripped.csv
+DMRPLUS=/usr/local/etc/TGList_DMRplus.txt
+FREEDMR=/usr/local/etc/TGList_FreeDMR.txt
+TGIF=/usr/local/etc/TGList_TGIF.txt
 
 # How many backups
 FILEBACKUP=1
@@ -70,6 +73,9 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${TGLISTNXDN} ${TGLISTNXDN}.$(date +%Y%m%d) 2>/dev/null
 	cp ${TGLISTYSF} ${TGLISTYSF}.$(date +%Y%m%d) 2>/dev/null
 	cp ${STRIPPED} ${STRIPPED}.$(date +%Y%m%d) 2>/dev/null
+	cp ${DMRPLUS} ${DMRPLUS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${FREEDMR} ${FREEDMR}.$(date +%Y%m%d) 2>/dev/null
+	cp ${TGIF} ${TGIF}.$(date +%Y%m%d) 2>/dev/null
 fi
 
 # Prune backups
@@ -90,7 +96,10 @@ ${TGLISTBM}
 ${TGLISTP25}
 ${TGLISTNXDN}
 ${TGLISTYSF}
-${STRIPPED}"
+${STRIPPED}
+${DMRPLUS}
+${FREEDMR}
+${TGIF}"
 
 for file in ${FILES}
 do
@@ -131,6 +140,13 @@ curl --fail -o ${TGLISTP25} -s http://www.pistar.uk/downloads/TGList_P25.txt --u
 curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${STRIPPED} -s https://database.radioid.net/static/user.csv --user-agent "Pi-Star_${pistarCurVersion}"
+
+#curl --fail -o ${DMRPLUS}  -s https://www.pistar.uk/downloads/anytone/download_dmrplustalkgroups.php --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -s https://www.pistar.uk/downloads/anytone/download_dmrplustalkgroups.php --user-agent "Pi-Star_${pistarCurVersion}" | awk -F"," '{print $2, $3}' | sed -n 's/"\([0-9]*\)" "\(TG[0-9A-Z]*\)[ ;]\(.*\)"/\1;0;\3;\2/p' > ${DMRPLUS}
+#curl --fail -o ${FREEDMR}  -s https://www.pistar.uk/downloads/anytone/download_freedmrtalkgrops.php  --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -s https://www.pistar.uk/downloads/anytone/download_freedmrtalkgrops.php  --user-agent "Pi-Star_${pistarCurVersion}" | awk -F"," '{print $2, $3}' | sed -n 's/"\([0-9]*\)" "[ ]\(.*\)[ ]"/\1;0;\2;TG\1/p' > ${FREEDMR}
+#curl --fail -o ${TGIF}     -s https://www.pistar.uk/downloads/anytone/download_tgiftalkgroups.php    --user-agent "Pi-Star_${pistarCurVersion}"
+curl --fail -s https://www.pistar.uk/downloads/anytone/download_tgiftalkgroups.php    --user-agent "Pi-Star_${pistarCurVersion}" | awk -F"," '{print $2, $3}' | sed -n 's/"\([0-9]*\)" "\(TG[0-9A-Z]*\)[ ;]\(.*\)"/\1;0;\3;\2/p' > ${TGIF}
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
