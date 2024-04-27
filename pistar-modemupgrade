@@ -1,0 +1,605 @@
+#!/usr/bin/env bash
+#
+#########################################################
+#                                                       #
+#     WPMFU: WPSD Modem Firmware Update Utility         #
+#                  Chip Cuccio (W0CHP)                  #
+#                                                       #
+#  Modified by Andy Taylor (MW0MWZ) - all credits for   #
+#  this excellent tool should go to Chip Cuccio, this   #
+#     is significantly better than our old tools.       #
+#                                                       #
+#########################################################
+#
+
+if [ "$(id -u)" != "0" ]; then
+  echo -e "\nYou need to be root to run this command...\n"
+  exit 1
+fi
+
+# Get the hardware type, this may be important later (RPi | NanoPi | OdroidXU4)
+pistarHardware=$(awk -F "= " '/Hardware/ {print $2}' /etc/pistar-release)
+
+# Get the available firmwre version
+if [[ -f /usr/local/bin/Firmware/version.txt ]]; then
+  MMDVM_HS_VERSION=$(awk -F "=" '/mmdvm_hs_version/ {print $2}' /usr/local/bin/Firmware/version.txt)
+  RPT_VERSION=$(awk -F "=" '/rpt_version/ {print $2}' /usr/local/bin/Firmware/version.txt)
+  DVMEGA_VERSION=$(awk -F "=" '/dvmega_version/ {print $2}' /usr/local/bin/Firmware/version.txt)
+else
+  echo -e "\nNew Firmware has not arrived yet...\n"
+fi
+
+#
+# Non-interactive mode, pass "NP=1" env. var. E.g. `sudo NP=1 ./pistar-modemupgrade <foo>`
+# Verbose mode, pass "VERBOSE=1" env. var. E.g. `sudo VERBOSE=1 ./pistar-modemupgrade <bar>`
+#
+
+#
+# Check CLI arguments and determine the modem type and its respective FW file...
+#
+if [ "$1" ]; then
+  case $1 in
+    # Common HS_HATs
+    hs_hat)
+      firmware_file="hs_hat.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_hat-12mhz)
+      firmware_file="hs_hat-12mhz.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_dual_hat)
+      firmware_file="hs_dual_hat.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_dual_hat-12mhz)
+      firmware_file="hs_dual_hat-12mhz.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    # Less common HS_HATs
+    hs_hat_ambe)
+      firmware_file="hs_hat_ambe.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_hat_generic)
+      firmware_file="hs_hat_generic.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_hat_generic_duplex)
+      firmware_file="hs_hat_generic_duplex.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_hat_generic_duplex-usb)
+      firmware_file="hs_hat_generic_duplex-usb.bin"
+      USB_MODEM=true
+      DEV_USB_SER="/dev/ttyACM0"
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    # more obscure stuff - not as common anymore
+    hs_hat_nano_hotspot)
+      firmware_file="hs_hat_nano_hotspot.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_hat_nano_hotspot-duplex)
+      firmware_file="hs_hat_nano_hotspot-duplex.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    nanodv_npi)
+      firmware_file="nanodv_npi.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    nanodv_usb)
+      firmware_file="nanodv_usb.bin"
+      USB_MODEM=true
+      DEV_USB_SER="/dev/ttyACM0"
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    # Vendor MMDVM_HS / ZUMSpot
+    euronode)
+      firmware_file="euronode.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    hs_hat_lonestar-usb)
+      firmware_file="hs_hat_lonestar-usb.bin"
+      USB_MODEM=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    skybridge)
+      firmware_file="skybridge.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    zum_rpi)
+      firmware_file="zum_rpi.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    zum_rpi-duplex)
+      firmware_file="zum_rpi-duplex.bin"
+      MMDVM_HS_GPIO=true
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    zum_usb)
+      firmware_file="zum_usb.bin"
+      USB_MODEM=true
+      DEV_USB_SER="/dev/ttyACM0"
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    zum_libre)
+      firmware_file="zum_libre.bin"
+      MMDVM_HS_GPIO=true
+      DEV_USB_SER="/dev/ttyACM0"
+      VERSION=${MMDVM_HS_VERSION}
+      ;;
+    # DV Mega Firmwares
+    dvmega_gpio)
+      firmware_file="dvmega_gpio.hex"
+      DVMega_GPIO=true
+      VERSION=${DVMEGA_VERSION}
+      ;;
+    dvmega_usb_uno)
+      firmware_file="dvmega_usb_uno.hex"
+      DVMega_USB=true
+      DEV_USB_SER="/dev/ttyACM0"
+      VERSION=${DVMEGA_VERSION}
+      ;;
+    dvmega_usb_mega)
+      firmware_file="dvmega_usb_mega.hex"
+      DVMega_USB=true
+      DEV_USB_SER="/dev/ttyACM0"
+      VERSION=${DVMEGA_VERSION}
+      ;;
+    # MMDVM Repeater Boards
+    rpt_nucleo-64)
+      firmware_file="F446RE.elf"
+      MMDVM_PI=true
+      stmVer="0.5"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_nucleo-144)
+      firmware_file="F767ZI.elf"
+      MMDVM_PI=true
+      stmVer="0.7"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_mmdvm_hat-0.2)
+      firmware_file="MMDVM_RPT_Hat_0.2.bin"
+      MMDVM_PI=true
+      stmVer="0.7"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_mmdvm_hat-0.3)
+      firmware_file="MMDVM_RPT_Hat_0.3.bin"
+      MMDVM_PI=true
+      stmVer="0.7"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_zum-0.9)
+      firmware_file="ZUM_Radio-MMDVM_0.9.bin"
+      MMDVM_PI=true
+      stmVer="0.7"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_zum-1.0)
+      firmware_file="ZUM_Radio-MMDVM_1.0.bin"
+      MMDVM_PI=true
+      stmVer="0.7"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_builder_v3)
+      firmware_file="Repeater-Builder_V3.bin"
+      MMDVM_PI=true
+      stmVer="0.5"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_builder_v4)
+      firmware_file="Repeater-Builder_V4.bin"
+      MMDVM_PI=true
+      stmVer="0.5"
+      VERSION=${RPT_VERSION}
+      ;;
+    rpt_builder_v5)
+      firmware_file="Repeater-Builder_V5.bin"
+      MMDVM_PI=true
+      stmVer="0.7"
+      VERSION=${RPT_VERSION}
+      ;;
+    list|-l|--list)
+      echo "hs_hat"
+      echo "hs_hat-12mhz"
+      echo "hs_dual_hat"
+      echo "hs_dual_hat-12mhz"
+      echo "hs_hat_ambe"
+      echo "hs_hat_generic"
+      echo "hs_hat_generic_duplex"
+      echo "hs_hat_generic_duplex-usb"
+      echo "hs_hat_nano_hotspot"
+      echo "nanodv_npi"
+      echo "nanodv_usb"
+      echo "hs_hat_lonestar-usb"
+      echo "euronode"
+      echo "skybridge"
+      echo "zum_rpi"
+      echo "zum_rpi-duplex"
+      echo "zum_usb"
+      echo "zum_libre"
+      echo "dvmega_gpio"
+      echo "dvmega_usb_uno"
+      echo "dvmega_usb_mega"
+      echo "rpt_nucleo-64"
+      echo "rpt_nucleo-144"
+      echo "rpt_mmdvm_hat-0.2"
+      echo "rpt_mmdvm_hat-0.3"
+      echo "rpt_zum-0.9"
+      echo "rpt_zum-1.0"
+      echo "rpt_builder_v3"
+      echo "rpt_builder_v4"
+      echo "rpt_builder_v5"
+      exit 0
+      ;;
+    *)
+      echo "Your choice of the modem, '${1}', is not supported in this program."
+      exit 1
+      ;;
+  esac
+fi
+
+#
+# Pretty term stuffs ;-)
+#
+if [ -t 1 ] || [ -n "$PS1" ] || [ -n "$FORCE_COLOR" ] ; then # terminal and bash call only...
+    COL_NC='\e[0m' # No Color
+    BOLD='\e[1m'
+    REVERSE='\e[7m'
+    COL_LIGHT_GREEN='\e[1;32m'
+    COL_BRIGHT_GREEN='\e[1;92m'
+    COL_LIGHT_RED='\e[31m'
+    COL_BRIGHT_RED='\e[1;31m'
+    COL_LIGHT_CYAN='\e[1;36m'
+    COL_BRIGHT_CYAN='\e[0;96m'
+    COL_REG_CYAN='\e[38;5;30m'
+    COL_REG_ORANGE='\e[38;5;173m'
+    COL_LIGHT_ORANGE='\e[38;5;208m'
+    COL_LIGHT_BLUE='\e[1;34m'
+    COL_LIGHT_MAGENTA='\e[1;35m'
+    COL_REG_MAGENTA='\e[0;95m'
+    COL_LIGHT_YELLOW='\e[1;93m'
+    COL_REG_YELLOW='\e[93m'
+    BULL="${BOLD}\u2022${COL_NC}"
+    INFO="${BOLD}[i]${COL_NC}"
+    QUES="${BOLD}[?]${COL_NC}"
+    NOTE="${BOLD}${COL_LIGHT_YELLOW}[!]${COL_NC}"
+    TICK="${BOLD}${COL_LIGHT_GREEN}[✓]${COL_NC}"
+    CROSS="${BOLD}${COL_BRIGHT_RED}[✗]${COL_NC}"
+    DONE="${BOLD}${COL_LIGHT_GREEN}Done!${COL_NC}"
+    COMPL="${BOLD}${COL_LIGHT_GREEN}Complete!${COL_NC}"
+else # for web interfaces
+    BULL="*"
+    INFO="[i]"
+    QUES="[?]"
+    NOTE="[!]"
+    TICK="[✓]"
+    CROSS="[✗]"
+    DONE="Done!"
+    COMPL="Complete!"
+fi
+
+# progress spinner
+SPINNER_PID=
+SPINNER_CHARS="⣾⣽⣻⢿⡿⣟⣯⣷"
+spinner() {
+    local i=0
+    while :; do
+        printf "    [${SPINNER_CHARS:$i:1}] Flashing modem - please wait... \r"
+        i=$(( (i + 1) % 8 ))
+        sleep 0.1
+    done
+}
+
+#
+# Output some useful information when no variables are passed
+#
+if [ -z "$1" ] ; then
+  #clear
+  if [[ "${EXT_CALL}" != "1" ]]; then
+      echo -e "${NOTE} ${COL_LIGHT_YELLOW}Note:${COL_NC} No modem specified!"
+  fi
+  echo ""
+  echo "This utility is used to flash/upgrade your hotspot modem/radio."
+  echo "This is a modified version of the excelent tool written by Chip Cuccio (W0CHP)"
+  echo "To use the command, you need to specify your modem type..."
+  echo "Please choose from the list below, and run this command again:"
+  echo "--------------------------------------------------------------------------------------------------"
+  echo "  Modem Type						Command"
+  echo "--------------------------------------------------------------------------------------------------"
+  echo "  MMDVM_HS_Hat  (14.7456MHz TCXO) GPIO:			pistar-modemupgrade hs_hat"
+  echo "  MMDVM_HS_Hat  (12.2880MHz TCXO) GPIO:			pistar-modemupgrade hs_hat-12mhz"
+  echo "  MMDVM_HS_Dual_Hat (14.7456MHz TCXO) GPIO:		pistar-modemupgrade hs_dual_hat"
+  echo "  MMDVM_HS_Dual_Hat (12.2880MHz TCXO) GPIO:		pistar-modemupgrade hs_dual_hat-12mhz"
+  echo ""
+  echo "  ZUMSpot RPi boards/hotspots GPIO:                     pistar-modemupgrade zum_rpi"
+  echo "  ZUMSpot RPi duplex GPIO board/hotspots:               pistar-modemupgrade zum_rpi-duplex"
+  echo "  ZUMspot USB stick:                                    pistar-modemupgrade zum_usb"
+  echo "  ZUMspot Libre Kit or generic MMDVM_HS board:          pistar-modemupgrade zum_libre"
+  echo ""
+  echo "  SkyBridge board/hotspots (14.7456MHz TCXO) GPIO:	pistar-modemupgrade skybridge"
+  echo "  DVMega-EuroNode hotspots (14.7456MHz TCXO) GPIO:	pistar-modemupgrade euronode"
+  echo "  NANO_DV NPi GPIO by BG4TGO:                           pistar-modemupgrade nanodv_npi"
+  echo "  NANO_DV USB by BG4TG:                                 pistar-modemupgrade nanodb_usb"
+  echo "  Nano_hotSPOT by BI7JTA (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_nano_hotspot"
+  echo "  Nano_hotSPOT Duplex by VR2VYE (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_nano_hotspot-duplex"
+  echo "  LoneStar LS MMDVM USB (14.7456MHz TCXO) USB:		pistar-modemupgrade hs_hat_lonestar-usb"
+  echo ""
+  echo "  HS_HAT_AMBE (14.7456MHz TCXO) GPIO:			pistar-modemupgrade hs_hat_ambe"
+  echo "  MMDVM_HS_GENERIC (14.7456MHz TCXO) GPIO:		pistar-modemupgrade hs_hat_generic"
+  echo "  MMDVM_HS_GENERIC_DUPLEX (14.7456MHz TCXO) GPIO:	pistar-modemupgrade hs_hat_generic_duplex"
+  echo "  MMDVM_HS_GENERIC_DUPLEX (14.7456MHz TCXO) USB:	pistar-modemupgrade hs_hat_generic_duplex-usb"
+  echo ""
+  echo "  DV-Mega - Pi Hat (Single or Dual Band) GPIO:		pistar-modemupgrade dvmega_gpio"
+  echo "  DV-Mega - Shield for Arduino Uno USB (ttyUSB0):	pistar-modemupgrade dvmega_usb_uno"
+  echo "  DV-Mega - Shield for Arduino Mega USB (ttyUSB0):	pistar-modemupgrade dvmega_usb_mega"
+  echo ""
+  echo "  Repeater - Nucleo64 F446RE GPIO:			pistar-modemupgrade rpt_nucleo-64"
+  echo "  Repeater - Nucleo144 F767ZI GPIO:			pistar-modemupgrade rpt_nucleo-144"
+  echo "  Repeater - MMDVM_RPT_Hat 0.2 GPIO:			pistar-modemupgrade rpt_mmdvm_hat-0.2"
+  echo "  Repeater - MMDVM_RPT_Hat 0.3 GPIO:			pistar-modemupgrade rpt_mmdvm_hat-0.3"
+  echo "  Repeater - ZUM Radio MMDVM for Pi v0.9 GPIO:		pistar-modemupgrade rpt_zum-0.9"
+  echo "  Repeater - ZUM Radio MMDVM for Pi v1.0 GPIO:		pistar-modemupgrade rpt_zum-1.0"
+  echo "  Repeater - Repeater Builder STM32_DVM_PiHat V3 GPIO:	pistar-modemupgrade rpt_builder_v3"
+  echo "  Repeater - Repeater Builder STM32_DVM_PiHat V4 GPIO:	pistar-modemupgrade rpt_builder_v4"
+  echo "  Repeater - Repeater Builder STM32_DVM_PiHat V5 GPIO:	pistar-modemupgrade rpt_builder_v5"
+  echo "--------------------------------------------------------------------------------------------------"
+  echo "IMPORTANT: Please note, that we are not firmware developers, and we offer no support for firmware."
+  echo "We simply provide utilities to update the firmware. For actual firmware support, you will need to"
+  echo "utilize other support resources from the firmware developers/maintainers or the web".
+  echo "--------------------------------------------------------------------------------------------------"
+  echo ""
+  exit 0
+fi
+
+#
+# OK we know what the modem is, let get the firmware string from the log...
+#
+if [ -t 1 ]; then # term. only
+    clear
+    echo -e -n "${COL_NC}${COL_LIGHT_ORANGE}${BOLD}Modem Firmware Update Utility by Chip Cuccio (W0CHP)${COL_NC}\n\n"
+fi
+
+#
+# Flash the latest firmware for the type specified in the arg.
+#
+if [ "$1" ] ; then
+  # Get the latest FW version
+  echo -e "    ${INFO} Found version: ${COL_LIGHT_BLUE}${BOLD}${VERSION}${COL_NC}\n"
+
+  if [[ "$NP" != "1" ]]; then
+    read -n 1 -s -r -p "Press any key to flash '${1}' firmware version (${VERSION}) to this modem, or 'q' to abort... "
+    echo ""
+    echo ""
+
+    if [[ "$REPLY" =~ [qQ] ]]; then
+      echo ""
+      echo "Aborted by user."
+      echo ""
+      exit 1
+    fi
+  fi
+
+  flash_modem() { # Main Loop
+    local firmware_file="$2"  # Pass the firmware_file as an argument
+
+    # Verify that the file exists
+    echo -e "${BULL} Checking '$1' firmware version ($VERSION)..."
+    if [[ -f "/usr/local/bin/Firmware/${firmware_file}" ]]; then
+      echo -e "    ${COL_BRIGHT_GREEN}${TICK} Complete."
+    else
+      echo -e "    ${CROSS} ${COL_BRIGHT_RED}ERROR:${COL_NC} Firmware file does not exist for selected modem and version. Aborting."
+      exit 1
+    fi
+    sleep 1
+
+    # MD5 checksum validation setup
+    calculated_md5=$(md5sum "/usr/local/bin/Firmware/${firmware_file}" | awk '{print $1}')
+    expected_md5=$(grep "${firmware_file}" "/usr/local/bin/Firmware/md5sum.txt" | awk '{print $4}')
+    echo -e "\n${BULL} Validating firmware file integrity..."
+    sleep 1
+    if [ -z "$expected_md5" ]; then # not in file!
+        echo -e "    ${CROSS} ${COL_BRIGHT_RED}ERROR:${COL_NC} MD5 checksum value not found for the selected firmware. Aborting."
+        exit 1
+    fi
+
+    # Perform MD5 validation
+    if [ "$calculated_md5" == "$expected_md5" ]; then
+        sleep 1
+        echo -e -n "    ${TICK} Passed! File integrity validation succeeded."
+        echo ""
+        sleep 1
+    else
+        echo -e "    ${CROSS} ${COL_BRIGHT_RED}ERROR:${COL_NC} File integrity validation failed for the firmware. Aborting."
+        exit 1
+    fi
+
+    # checksum valid; flash!
+    echo -e "\n${BULL} Preparing to flash '$1' modem with firmware version ($VERSION)..."
+    # Stop MMDVMHost process to free up the serial port
+    systemctl stop pistar-watchdog.timer >/dev/null 2>&1
+    systemctl stop pistar-watchdog.service >/dev/null 2>&1
+    systemctl stop mmdvmhost.timer >/dev/null 2>&1
+    systemctl stop mmdvmhost.service >/dev/null 2>&1
+
+    # NanoPI GPIO handling
+    if [[ ${pistarHardware} == "NanoPi" ]]; then
+        gpio mode 3 out
+        gpio mode 4 out
+        gpio write 4 1
+        gpio write 3 0
+        sleep 1
+        gpio write 3 1
+    fi
+
+    if [ -t 1 ] && [ "$VERBOSE" != 1 ]; then # term. only
+        spinner &
+        # Capture the spinner's PID
+        SPINNER_PID=$!
+    else
+	echo -e "\n    ${NOTE}  Flashing modem - please wait..."
+    fi
+
+    # Configure Tools
+    DFU_RST="/usr/local/bin/Firmware/utils/upload-reset"
+    DFU_UTIL="/usr/local/bin/Firmware/utils/dfu-util"
+    ST_FLASH="/usr/local/bin/Firmware/utils/st-flash"
+    STM32FLASH="/usr/local/bin/Firmware/utils/stm32flash"
+
+    # flash handling for USB modems...
+    if [ "$USB_MODEM" = true ]; then
+	if [ "$VERBOSE" = 1 ] ; then
+	    $DFU_RST $DEV_USB_SER 750
+	    $DFU_UTIL -D /usr/local/bin/Firmware/${firmware_file} -d 1eaf:0003 -a 2 -R -R
+	else
+	    $DFU_RST $DEV_USB_SER 750 2>&1
+	    output=$(eval $DFU_UTIL -D /usr/local/bin/Firmware/${firmware_file} -d 1eaf:0003 -a 2 -R -R 2>&1)
+	fi
+    elif [ "$MMDVM_PI" = true ]; then
+	if [ "$VERBOSE" = 1 ] ; then
+	    /usr/local/bin/Firmware/utils/stm32flash-${stmVer} -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    /usr/local/bin/Firmware/utils/stm32flash-${stmVer} -v -w /usr/local/bin/Firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
+	else
+	    /usr/local/bin/Firmware/utils/stm32flash-${stmVer} -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    output=$(eval /usr/local/bin/Firmware/utils/stm32flash-${stmVer} -v -w /usr/local/bin/Firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
+	fi
+    elif [ "$MMDVM_HS_GPIO" = true ]; then
+	# Upload the firmware to the modem and place output into buffer for fail/success checking logic
+	if [ "$VERBOSE" = 1 ] ; then
+	    $STM32FLASH -k /dev/ttyAMA0 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
+	    $STM32FLASH -v -w /usr/local/bin/Firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0
+	else
+	    $STM32FLASH -k /dev/ttyAMA0 >/dev/null 2>&1 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
+	    output=$(eval $STM32FLASH -v -w /usr/local/bin/Firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0 2>&1)
+	fi
+    elif [ "$DVMega_GPIO" = true ]; then
+        # DV Mega mounted on GPIO
+        if [ "$VERBOSE" = 1 ] ; then
+            gpio mode 7 out
+            gpio write 7 1
+            sleep 0.30
+            gpio write 7 0
+            gpio write 7 1
+            sleep 0.5
+            /usr/bin/avrdude -p m328p -c arduino -P /dev/ttyAMA0 -b 115200 -F -U flash:w:/usr/local/bin/Firmware/${firmware_file} -v
+        else
+            gpio mode 7 out >/dev/null 2>&1
+            gpio write 7 1 >/dev/null 2>&1
+            sleep 0.30 >/dev/null 2>&1
+            gpio write 7 0 >/dev/null 2>&1
+            gpio write 7 1 >/dev/null 2>&1
+            sleep 0.5 >/dev/null 2>&1
+            output=$(eval /usr/bin/avrdude -p m328p -c arduino -P /dev/ttyAMA0 -b 115200 -F -U flash:w:/usr/local/bin/Firmware/${firmware_file} 2>&1)
+        fi
+    elif [ "$DVMega_USB" = true ]; then
+        # DV Mega mounted on Uno
+        if [ "$VERBOSE" = 1 ] ; then
+            /usr/bin/avrdude -p m328p -c arduino -P /dev/ttyUSB0 -b 115200 -F -U flash:w:/usr/local/bin/firmware/${firmware_file} -v
+        else
+            output=$(eval /usr/bin/avrdude -p m328p -c arduino -P /dev/ttyUSB0 -b 115200 -F -U flash:w:/usr/local/bin/Firmware/${firmware_file} 2>&1)
+        fi
+    else  # Catch missing information
+        # Bail out with an error
+        if [ -t 1 ] && [ "$VERBOSE" != 1 ]; then # term. only
+	    # Kill the spinner process (make the cursor visible again)
+	    kill $SPINNER_PID &>/dev/null
+        fi
+        echo -e "    ${CROSS} ${COL_BRIGHT_RED}ERROR:${COL_NC} Modem flashing failed. Modem Connection type not specified.\n"
+	systemctl start mmdvmhost.service >/dev/null 2>&1
+	systemctl start mmdvmhost.timer >/dev/null 2>&1
+	systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	systemctl start pistar-watchdog.service >/dev/null 2>&1
+	echo ""
+        exit 0
+    fi
+
+    if [ -t 1 ] && [ "$VERBOSE" != 1 ]; then # term. only
+	# Kill the spinner process (make the cursor visible again)
+	kill $SPINNER_PID &>/dev/null
+    fi
+
+    # did we flash successfully?
+    if [ "$VERBOSE" != 1 ] ; then
+	flash_successful=false  # Initialize to false
+	if [ "$USB_MODEM" = true ]; then # usb dfu successful output
+	    if [[ $output == *"state(8) = dfuMANIFEST-WAIT-RESET, status(0) = No error condition is present"* && $output == *"Done!"* ]]; then
+		flash_successful=true
+	    fi
+        elif [ "$MMDVM_PI" = true ] || [ "$MMDVM_HS_GPIO" = true ]; then # stm32flash output
+	    if [[ $output == *"(100.00%) Done"* && $output == *"0x08000000... done"* ]]; then
+		flash_successful=true
+	    fi
+        elif [ "$DVMega_GPIO" = true ] || [ "$DVMega_USB" = true ]; then # avrdude output
+            if [[ $output == *"bytes of flash verified"* ]]; then
+                flash_successful=true
+            fi
+	fi
+    fi
+
+    if [ "$VERBOSE" != 1 ] ; then
+	if $flash_successful; then
+  	    # reset the fw version # in the mmdvmhost logs
+	    if [ -d '/var/log/pi-star' ] ; then
+		sed -i '/MMDVM protocol version: 1, description:/d; /MMDVM protocol version: 2, description:/d' /var/log/pi-star/MMDVM-*.log  >/dev/null 2>&1
+	    fi
+  	    # re-nit!
+  	    systemctl start mmdvmhost.service >/dev/null 2>&1
+  	    systemctl start mmdvmhost.timer >/dev/null 2>&1
+  	    systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	    systemctl start pistar-watchdog.service >/dev/null 2>&1
+  	    echo -e -n "    ${TICK} ${COMPL} Modem firmware flash successful!\n        Modem reinitialized.\n"
+  	    echo ""
+	else
+	    echo -e "    ${CROSS} ${COL_BRIGHT_RED}ERROR:${COL_NC} Modem flashing failed. The serial port was either busy, or the modem is"
+	    echo -e "               possibly locked from the vendor. You can try running this command again,"
+	    echo -e "               or you can contact the supplier of your modem/hotspot for support.\n"
+	    systemctl start mmdvmhost.service >/dev/null 2>&1
+	    systemctl start mmdvmhost.timer >/dev/null 2>&1
+	    systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	    systemctl start pistar-watchdog.service >/dev/null 2>&1
+	    echo ""
+	fi
+    else
+	# reset the fw version # in the mmdvmhost logs
+	if [ -d '/var/log/pi-star' ] ; then
+	    sed -i '/MMDVM protocol version: 1, description:/d; /MMDVM protocol version: 2, description:/d' /var/log/pi-star/MMDVM-*.log  >/dev/null 2>&1
+	fi
+	# re-nit!
+	
+	systemctl start mmdvmhost.service >/dev/null 2>&1
+	systemctl start mmdvmhost.timer >/dev/null 2>&1
+	systemctl start pistar-watchdog.timer >/dev/null 2>&1
+	systemctl start pistar-watchdog.service >/dev/null 2>&1
+    fi
+    exit 0
+  }
+
+  if [ -t 1 ]; then
+      # run via terminal, only output to screen
+      flash_modem "${1}" "${firmware_file}"
+  else
+      # if not run via terminal, log everything into a log file
+      if [ ! -d /var/log/pi-star ]; then
+          mkdir -p /var/log/pi-star
+      fi
+      flash_modem "${1}" "${firmware_file}" >> /var/log/pi-star/pi-star_modemflash.log 2>&1
+  fi
+
+fi
+exit 0

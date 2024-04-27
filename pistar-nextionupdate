@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+opt=${1:-list}
+
+if [ "$opt" == "list" ]; then
+  dirs=$(ls /usr/local/bin/Nextion)
+  for x in ${dirs[*]}; do
+    if [ -d /usr/local/bin/Nextion/${x} ]; then
+       tfts=$(basename -a $(ls /usr/local/bin/Nextion/${x}/*.tft))
+       for y in ${tfts[*]}; do
+          echo ${x}: ${y}
+       done
+    fi
+  done
+  exit 0
+fi
+
+x=$1
+p1=${x/: [a-zA-Z0-9.]*/}
+p2=${x/[a-zA-Z0-9.]*: /}
+px="/usr/local/bin/Nextion/$p1/$p2"
+logger -t "[$$]" "Pi-Star --> $px"
+/usr/local/bin/Nextion/nextion.py $px /dev/ttyUSB0 {NX3224T024}
+
+#sudo systemctl restart NextionDriver.service
+
