@@ -1,0 +1,63 @@
+#!/bin/bash
+
+#-----
+
+function software1_() { echo "Debian: $(cat /etc/debian_version) ($(lsb_release -a 2>/dev/null | sed -n "s/Codename:\t\([a-zA-Z0-9]*\)/\u\1/p"))  Kernel: $(uname -r)"; }
+function software2_() { echo "$(sed -n 's|$version = \x27\([0-9]\{4\}\)\([0-9][0-9]\)\([0-9]*\)\x27;|\1/\2/\3|p' /var/www/dashboard/config/version.php 2>/dev/null)  Ver: $(sed -n 's/Version = \(.*\)/\1/p' /etc/pistar-release 2>/dev/null)" ; }
+
+function modemq_() { tac $(ls -1t /var/log/pi-star/MMDVM-*.log 2>/dev/null) /dev/null | grep "protocol" -m 1 | sed -n "s|.*\(v[0-9]*\x2e[0-9]*\x2e[0-9]*\).*|\1|p"; }
+function modem_() { sed -n "/\[Modem\]/{n;p;}" /etc/dstar-radio.mmdvmhost 2>/dev/null | awk -F "=" '/Hardware/ {print $2}'; }
+function _freq() { echo $(cat /etc/mmdvmhost 2>/dev/null | grep "[RT]XFrequency" | sed -n "s/\([0-9]\{3\}\)\([0-9]\{3\}\)\([0-9]\{3\}\)/\1.\2.\3/p") | sed -n "s/.*=\(.*\) .*=\(.*\)/\1  \2/p" ; }
+
+function cpu_() { echo "$(cat /proc/device-tree/model | tr -d "\0" | sed 's/Raspberry //g' | sed 's/Libre Computer //g' | sed 's/ Model //g' | sed 's/ Plus/+/g')" ; }
+function arch_() { local bits arch; bits=$(od -An -t x1 -j 4 -N 1 "$(readlink -f /sbin/init)"); arch=(? 32 64); echo ${arch[$bits]}-bit; }
+
+mtu=$(ifconfig $(route -n | grep -m 1 -e "^0.0.0.0" | awk '{ print $8 }') | sed -n 's/\(.*\): .*/\1/p' )
+gw="$(route -n | grep -m 1 -e "^0.0.0.0" | awk '{ print $2 }')"
+py=$(python -V 3>&1 1>&2 2>&3 3>&1 1>&2)
+nginx=$(nginx -v 3>&1 1>&2 2>&3 | sed "s/nginx version: \(.*\)/\u\1/g")
+php=$(php -v 2>/dev/null | sed -n "s/^\(PHP .* \)(c.*/\1/p")
+git=$(git --version 2>/dev/null | sed "s/git version/GIT/g")
+
+fs=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+
+dmrid=$(sed -n "/^Id=[0-9]\{7,\}/p" /etc/mmdvmhost 2>/dev/null | cut -c 4-10 | head -n 1)
+cs=$(sed -n "/\[General\]/,/^$/ s/Callsign=\([A-Z0-9]*\)/\1/p" /etc/mmdvmhost 2>/dev/null)
+csx=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost 2>/dev/null | cut -c 11-)
+cc=$(sed -n "/\[DMR\]/,/^$/ s/ColorCode=\([0-9]*\)/\1/p" /etc/mmdvmhost 2>/dev/null)
+wifi=$(sed -n 's/.*=\x27.*_\(.*\)\x27;/\U\1/p' /var/www/dashboard/config/language.php)
+wdev=$(wpa_cli -i wlan0 list_networks 2>&1 | \tail -n +2 | grep "CURRENT" | awk -F"\t" '{print("(" $2 ")")}')
+
+y=$(grep "\.pool.*iburst" /etc/ntp.conf 2>/dev/null | grep -m 1 -v "#" | sed -n "s/pool [0-9]\.\(.*\)\.pool.*/\1/p")
+clk=$(sudo ntpdate -q ${y:-debian}.pool.ntp.org 2>/dev/null | grep -e "adjust time\|step time\|no-leap" | sed -n "s/.*\([ +-][0-9]*\.[0-9]\{6\} \).*/offset: \1sec $s/p")
+
+from=$(lastlog -u $(logname) 2> /dev/null | head -n 20 -n 2 | \tail -n 1 | awk '{print $3}')
+
+#-----
+
+echo $(hostname):
+uname -snrvm
+echo $(date "+%a %D - %l:%M:%S %p %Z") = $(date -u "+%l:%M:%S %p %Z - %a %D") "("$(date "+%z")")"
+echo ""
+
+echo "Last login:  $(date --date="$(lastlog -u $(logname) 2> /dev/null | head -n 20 -n 2 | \tail -n 1 | awk '{print $5, $6, $9, $7}')" "+%m/%d/%y %I:%M:%S %p %Z") from $from"
+echo "Last booted: $(date --date="$(uptime -s)" '+%m/%d/%y %I:%M:%S %p %Z') - $(uptime -p)"
+echo "Last Conn:   [$mtu] $(hostname -I)  -->  $(dig +short ANY o-o.myaddr.l.google.com @ns1.google.com 2>/dev/null | sed 's/\x22//g') ($gw)  $wdev"
+echo "Shutdown:"
+echo ""
+
+echo "CPU:    ($(cpu_)) $(arch_) [$(expr $(cat /sys/class/thermal/thermal_zone0/temp) / 1000)C/$(expr $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 \* 9 / 5 + 32)F] - Serial: $(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)"
+echo "Modem: $(modemq_) ($(modem_))" 
+echo "Disk:   ("$(blkid | sed -n 's/\/dev\/\(.*2\):.*/\1/p')")  -  $fs"
+echo ""
+
+echo "$(software1_)"
+echo $py - $nginx - $php - $git
+echo "NTP: $(sed -n '/^pool 0/ s/.* 0\.\(.*\)\.pool.*/\1.ntp/p' /etc/ntp.conf 2>/dev/null) - $clk"
+echo ""
+
+echo "Pi-Star:  $(software2_)"
+echo "GIT base: $(sed -n 's/.*\/\/.*\/\(.*\)\/.*/\1/p' /var/www/dashboard/.git/config 2>/dev/null)"
+echo ""
+
+echo "Callsign/DMRid:  $cs: $dmrid ($csx)  RX/TX:  $(_freq)  CC: $cc $wifi"
