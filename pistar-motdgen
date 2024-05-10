@@ -40,3 +40,6 @@ Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
 
                      [1;36mWelcome to Pi-Star:[1;35m v${pistarCurVersion}
 [0;0m" > /etc/motd
+
+sudo touch /home/pi-star/$(hostname)
+
