@@ -12,8 +12,8 @@ function _freq() { echo $(cat /etc/mmdvmhost 2>/dev/null | grep "[RT]XFrequency"
 function cpu_() { echo "$(cat /proc/device-tree/model | tr -d "\0" | sed 's/Raspberry //g' | sed 's/Libre Computer //g' | sed 's/ Model //g' | sed 's/ Plus/+/g')" ; }
 function arch_() { local bits arch; bits=$(od -An -t x1 -j 4 -N 1 "$(readlink -f /sbin/init)"); arch=(? 32 64); echo ${arch[$bits]}-bit; }
 
-mtu=$(ifconfig $(route -n | grep -m 1 -e "^0.0.0.0" | awk '{ print $8 }') | sed -n 's/\(.*\): .*/\1/p' )
-gw="$(route -n | grep -m 1 -e "^0.0.0.0" | awk '{ print $2 }')"
+mtu=$(ifconfig $(route -n | grep -m 1 -e "^0.0.0.0" | awk '{ print $8 }') | sed -n 's/\(.*\): .*/\1/p' | head -n 1)
+ gw="$(route -n | grep -m 1 -e "^0.0.0.0" | awk '{ print $2 }')"
 py=$(python -V 3>&1 1>&2 2>&3 3>&1 1>&2)
 nginx=$(nginx -v 3>&1 1>&2 2>&3 | sed "s/nginx version: \(.*\)/\u\1/g")
 php=$(php -v 2>/dev/null | sed -n "s/^\(PHP .* \)(c.*/\1/p")
@@ -33,6 +33,8 @@ clk=$(sudo ntpdate -q ${y:-debian}.pool.ntp.org 2>/dev/null | grep -e "adjust ti
 
 from=$(lastlog -u $(logname) 2> /dev/null | head -n 20 -n 2 | \tail -n 1 | awk '{print $3}')
 
+devsiz=$(sudo fdisk -l /dev/$(blkid | sed -n "s/\/dev\/\(.*\)[p]*[12]:.*/\1/p" | uniq | sed "s/p$//g") | sed -n "s/.*:\( [0-9.]* [a-zA-Z0-9]*\), [0-9]*.*/\1/p")
+
 #-----
 
 echo $(hostname):
@@ -48,7 +50,8 @@ echo ""
 
 echo "CPU:    ($(cpu_)) $(arch_) [$(expr $(cat /sys/class/thermal/thermal_zone0/temp) / 1000)C/$(expr $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 \* 9 / 5 + 32)F] - Serial: $(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)"
 echo "Modem: $(modemq_) ($(modem_))" 
-echo "Disk:   ("$(blkid | sed -n 's/\/dev\/\(.*2\):.*/\1/p')")  -  $fs"
+echo "Disk:   ("$(blkid | sed -n 's/\/dev\/\(.*2\):.*/\1/p')") $devsiz   -  $fs"
+
 echo ""
 
 echo "$(software1_)"
