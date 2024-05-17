@@ -18,6 +18,7 @@ fi
 
 # Get the modem port from /etc/mmdvmhost
 mmdvmModem=$(grep -m 1 'Port=' /etc/mmdvmhost | awk -F "=" '/Port/ {print $2}')
+modemSpeed=$(grep -m 1 'UARTSpeed=' /etc/mmdvmhost | awk -F "=" '/UARTSpeed/ {print $2}')
 
 # Output some feedback to the terminal
 echo "Stopping Pi-Star Services..."
@@ -40,12 +41,13 @@ killall MMDVMHost_Adafruit
 
 # Output some feedback to the terminal
 echo "Starting Calibration..."
+echo "Speed: ${modemSpeed}  Port: ${mmdvmModem}"
 
 # Run MMDVMCal twice, killing the first one after 3 secs
-/usr/local/bin/MMDVMCal ${mmdvmModem} >/dev/null 2>&1 &
+/usr/local/bin/MMDVMCal ${modemSpeed} ${mmdvmModem} >/dev/null 2>&1 &
 sleep 3
 killall MMDVMCal >/dev/null 2>&1
-/usr/local/bin/MMDVMCal ${mmdvmModem}
+/usr/local/bin/MMDVMCal ${modemSpeed} ${mmdvmModem}
 
 # Output some feedback to the terminal
 echo "Starting Pi-Star Services..."
