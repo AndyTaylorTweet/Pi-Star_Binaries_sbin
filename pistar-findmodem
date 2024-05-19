@@ -18,7 +18,8 @@ fi
 
 function resetGPIOModem {
 
-        pinbase=$(ls -la /sys/class/gpio/gpiochip* | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | head -n 1)
+        pinbase=$(ls -la /sys/class/gpio/gpiochip* | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | tail -n 1)
+	pinbase=${pinbase/504/0}
         let pin20=${pinbase}+20
         let pin21=${pinbase}+21
 
