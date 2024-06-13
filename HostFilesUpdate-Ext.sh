@@ -252,6 +252,9 @@ sudo sed -i -e 's|, Mr."|"|g
 #               s|Amateur Radio Emergency Communications|AREC|g
 #
 echo "...final cleanup"
+# cleanup last names of "none"
+sudo sed -i -e 's| None,|,|g
+                s| none,|,|g'                      /tmp/xcontacts.csv
 # converts from quoted CSV to regular CSV; remove extraneous commas, spaces, quotes
 sudo sed -i -e 's|","|<|g
                 s|, | |g
