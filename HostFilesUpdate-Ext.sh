@@ -261,8 +261,10 @@ sudo sed -i -e 's|","|<|g
                 s|,| |g
                 s|"||g
                 s|<|,|g'                           /tmp/xcontacts.csv
-sudo sed -i -e 's|   | |g
+sudo sed -i -e 's|    | |g
+                s|   | |g
                 s|  | |g
+                s|, |,|g
                 s| ,|,|g'                          /tmp/xcontacts.csv
 #
 # temp: cleanup up errant "city":
