@@ -17,6 +17,7 @@ git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin
 
 # Stop all the services...
 systemctl stop pistar-watchdog.service > /dev/null 2>&1
+systemctl stop nextiondriver.service  > /dev/null 2>&1
 systemctl stop mmdvmhost.service > /dev/null 2>&1
 systemctl stop dstarrepeater.service > /dev/null 2>&1
 sleep 2
@@ -142,6 +143,7 @@ systemctl start timeserver.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/aprsgateway.service ]; then
   systemctl start aprsgateway.service > /dev/null 2>&1
 fi
+systemctl start nextiondriver.service > /dev/null 2>&1
 systemctl start mmdvmhost.service > /dev/null 2>&1
 systemctl start dstarrepeater.service > /dev/null 2>&1
 systemctl start pistar-watchdog.service > /dev/null 2>&1
