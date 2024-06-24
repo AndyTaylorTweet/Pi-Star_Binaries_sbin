@@ -160,6 +160,7 @@ sudo sed -i -e 's|"United States"|"US"|g
                 s|"Argentina Republic"|"Argentina"|g
                 s|"Czech Republic"|"Czech"|g
                 s|"British Virgin Islands"|"BVI"|g
+                s|"St. Vincent and Grenada"|"Grenada"|g
                 s|"U.S. Virgin Islands"|"USVI"|g
                 s|"Netherlands"|"NLD"|g
                 s|"Switzerland"|"CHE"|g
