@@ -43,6 +43,7 @@ STRIPPED=/usr/local/etc/stripped.csv
 DMRPLUS=/usr/local/etc/TGList_DMRplus.txt
 FREEDMR=/usr/local/etc/TGList_FreeDMR.txt
 TGIF=/usr/local/etc/TGList_TGIF.txt
+AMCOMM=/usr/local/etc/TGList_AmComm.txt
 #NEXTIONGROUPS=/usr/local/etc/nextionGroups.txt
 NEXTIONGROUPS=/usr/local/etc/groups.txt
 NEXTIONUSERS=/usr/local/etc/nextionUsers.csv
@@ -77,6 +78,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${STRIPPED} ${STRIPPED}.$(date +%Y%m%d) 2>/dev/null
 	cp ${DMRPLUS} ${DMRPLUS}.$(date +%Y%m%d) 2>/dev/null
 	cp ${FREEDMR} ${FREEDMR}.$(date +%Y%m%d) 2>/dev/null
+	cp ${AMCOMM} ${AMCOMM}.$(date +%Y%m%d) 2>/dev/null
 	cp ${TGIF} ${TGIF}.$(date +%Y%m%d) 2>/dev/null
 	cp ${NEXTIONGROUPS} ${NEXTIONGROUPS}.$(date +%Y%m%d) 2>/dev/null
 fi
@@ -152,6 +154,7 @@ curl --fail -s https://www.pistar.uk/downloads/anytone/download_dmrplustalkgroup
 curl --fail -s https://www.pistar.uk/downloads/anytone/download_freedmrtalkgrops.php  --user-agent "Pi-Star_${pistarCurVersion}" | awk -F"," '{print $2, $3}' | sed -n 's/"\([0-9]*\)" "[ ]\(.*\)[ ]"/\1;0;\2;TG\1/p' > ${FREEDMR}
 #curl --fail -o ${TGIF}     -s https://www.pistar.uk/downloads/anytone/download_tgiftalkgroups.php    --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -s https://www.pistar.uk/downloads/anytone/download_tgiftalkgroups.php    --user-agent "Pi-Star_${pistarCurVersion}" | awk -F"," '{print $2, $3}' | sed -n 's/"\([0-9]*\)" "\(TG[0-9A-Z]*\)[ ;]\(.*\)"/\1;0;\3;\2/p' > ${TGIF}
+curl --fail -s http://status.amcomm.network/talkgroups/amcommdmrtalkgoups.CSV | awk -F"," {'print ($2";0;"$3";TG"$2)'} | sort -g | sed -e '1 d' -e 's/"//g' -e 's/;[[:space:]]*/;/g' > ${AMCOMM}
 
 # If there is a DMR Over-ride file, add it's contents to DMR_Hosts.txt
 if [ -f "/root/DMR_Hosts.txt" ]; then
