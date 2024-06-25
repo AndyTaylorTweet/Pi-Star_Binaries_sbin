@@ -81,6 +81,7 @@ if [ ${FILEBACKUP} -ne 0 ]; then
 	cp ${AMCOMM} ${AMCOMM}.$(date +%Y%m%d) 2>/dev/null
 	cp ${TGIF} ${TGIF}.$(date +%Y%m%d) 2>/dev/null
 	cp ${NEXTIONGROUPS} ${NEXTIONGROUPS}.$(date +%Y%m%d) 2>/dev/null
+	cp ${NEXTIONUSERS} ${NEXTIONUSERS}.$(date +%Y%m%d) 2>/dev/null
 fi
 
 # Prune backups
@@ -104,8 +105,10 @@ ${TGLISTYSF}
 ${STRIPPED}
 ${DMRPLUS}
 ${FREEDMR}
+${AMCOMM}
 ${TGIF}
-${NEXTIONGROUPS}"
+${NEXTIONGROUPS}
+${NEXTIONUSERS}"
 
 for file in ${FILES}
 do
@@ -147,6 +150,7 @@ curl --fail -o ${TGLISTNXDN} -s http://www.pistar.uk/downloads/TGList_NXDN.txt -
 curl --fail -o ${TGLISTYSF} -s http://www.pistar.uk/downloads/TGList_YSF.txt --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${STRIPPED} -s https://database.radioid.net/static/user.csv --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -o ${NEXTIONGROUPS} -s http://www.pistar.uk/downloads/groups.txt --user-agent "Pi-Star_${pistarCurVersion}"
+curl -sSL http://www.pistar.uk/downloads/nextionUsers.csv.gz --user-agent "Pi-Star_${pistarCurVersion}" | gunzip -c > ${NEXTIONUSERS}
 
 #curl --fail -o ${DMRPLUS}  -s https://www.pistar.uk/downloads/anytone/download_dmrplustalkgroups.php --user-agent "Pi-Star_${pistarCurVersion}"
 curl --fail -s https://www.pistar.uk/downloads/anytone/download_dmrplustalkgroups.php --user-agent "Pi-Star_${pistarCurVersion}" | awk -F"," '{print $2, $3}' | sed -n 's/"\([0-9]*\)" "\(TG[0-9A-Z]*\)[ ;]\(.*\)"/\1;0;\3;\2/p' > ${DMRPLUS}
