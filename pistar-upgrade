@@ -1693,8 +1693,8 @@ main_function() {
 	}
 
 if [ -t 1 ]; then
-  # run via terminal, only output to screen
-  main_function
+  # run via terminal, output to screen and log file
+  main_function | sudo tee -a /var/log/pi-star/pi-star_upgrade.log
 else
   # if not run via terminal, log everything into a log file
   main_function >> /var/log/pi-star/pi-star_upgrade.log 2>&1
