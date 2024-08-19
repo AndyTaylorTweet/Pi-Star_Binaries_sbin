@@ -1,0 +1,169 @@
+#!/bin/bash
+# Add/Delete/Drop BM functions (a la YSF)
+
+#
+##############################################################################
+#                                                                            #
+#                           Pi-Star DMR link Tool                            #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Mark Prichard (KN2TOD)    #
+#                                                                            #
+#       Make it simple to add/delete/drop TG/QSO's from CLI on Pi-Star.      #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+if [ -z "$1" ]; then
+  echo "To add or delete a Talkgroup-Timeslot combo from the BM administration tab or"
+  echo "drop a static or dynamic QSO on a Timeslot, use: pistar-dmrlink:"
+  echo ""
+  echo "  pistar-dmrlink list"
+  echo "  pistar-dmrlink add [ts] [tg]"
+  echo "  pistar-dmrlink delete [ts] [tg]"
+  echo "  pistar-dmrlink dropqso [ts]"
+  echo "  pistar-dmrlink dropdyn [ts]"
+  echo ""
+  echo "If [ts] is omitted, it is assumed to be TS2"
+  exit 0
+fi
+
+# check for required files:
+if [ ! -f "/etc/mmdvmhost" ]; then
+  echo "missing ..."
+fi
+
+if [ ! -f "/etc/bmapi.key" ]; then
+  echo "missing BM api key file"
+  exit 1
+fi
+
+dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+
+if [ "$dmrid" == "1234567" ]; then
+  echo "DMR ID not defined"
+  exit 1
+fi
+
+bmkey=$(sed -n 's/.*apikey=\(.*\)/\1/p' /etc/bmapi.key)
+
+#alias addtg='curl "https://api.brandmeister.network/v2/device/311684718/talkgroup/ POST {"slot":"1","group":"98002"}"'  ts? tg?
+addtg () {
+# local dmrid bmkey req ts tg post
+# ts=${1:-2}
+# tg=${2:-0}
+  post="{\"slot\":${ts},\"group\":${tg}}"
+  dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+  bmkey=$(sed -n 's/.*apikey=\(.*\)/\1/p' /etc/bmapi.key)
+  req="https://api.brandmeister.network/v2/device/${dmrid}/talkgroup"
+  sudo curl -X 'POST' -s "${req}" -d "${post}" -H 'accept: application/json' -H 'Content-Type: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: smal04YhQGHAyHPu5xXfTZPAYXDJm7iDGME8f6XF'
+  echo -e "\n$?"
+  logger "BM Admin --> ${req} POST ${post}" 
+}
+
+#alias deltg='curl "https://api.brandmeister.network/v2/device/311684718/talkgroup/2/98002" DELETE ts?
+deltg () {
+# local dmrid bmkey req ts tg
+# ts=${1:-2}
+# tg=${2:-0}
+  dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+  bmkey=$(sed -n 's/.*apikey=\(.*\)/\1/p' /etc/bmapi.key)
+  req="https://api.brandmeister.network/v2/device/${dmrid}/talkgroup/${ts}/${tg}"
+  sudo curl -X 'DELETE' -s "${req}" -d "${post}" -H 'accept: application/json' -H 'Content-Type: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: smal04YhQGHAyHPu5xXfTZPAYXDJm7iDGME8f6XF'
+  echo -e "\n$?"
+  logger "BM Admin --> ${req} DELETE ${post}" 
+}
+
+#alias dropqso='curl "https://api.brandmeister.network/v2/device/311684718/action/dropCallRoute/1"'      GET ts?
+dropqso () {
+# local dmrid bmkey req ts
+# ts=${1:-2}
+  dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+  bmkey=$(sed -n 's/.*apikey=\(.*\)/\1/p' /etc/bmapi.key)
+  req="https://api.brandmeister.network/v2/device/${dmrid}/action/dropCallRoute/${ts}"
+  sudo curl -X 'GET' -s "${req}" -H 'accept: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: LcZMFZ4YUnQQYtPCdZHqhP7edhoE6PNHZZtKYaTf'
+  echo -e "\n$?"
+  logger "BM Admin --> ${req} GET" 
+}
+
+#alias dropdyn='curl "https://api.brandmeister.network/v2/device/311684718/action/dropDynamicGroups/2"'  GET ts?
+dropdyn () {
+# local dmrid bmkey req ts
+# ts=${1:-2}
+  dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+  bmkey=$(sed -n 's/.*apikey=\(.*\)/\1/p' /etc/bmapi.key)
+  req="https://api.brandmeister.network/v2/device/${dmrid}/action/dropDynamicGroups/${ts}"
+  sudo curl -X 'GET' -s "${req}" -H 'accept: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: LcZMFZ4YUnQQYtPCdZHqhP7edhoE6PNHZZtKYaTf'
+  echo -e "\n$?"
+  logger "BM Admin --> ${req} GET" 
+}
+
+profile() {
+# local dmrid dmrnode tg arg
+  dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+  dmrnode=$(sed -n "/\[DMR Network\]/,/Address=/p" /etc/mmdvmhost | grep "Address" | sed 's/.*=\([0-9]*\)\x2e.*/\1/g')
+  sudo curl --fail -o /tmp/BM_API_Profile -s https://api.brandmeister.network/v2/device/$dmrid/profile
+  if [ $? -eq 0 ]; then
+    sudo sed -i 's/"timedSubscriptions":\[.*\]//g'     /tmp/BM_API_Profile
+    sudo sed -i 's/^.*:\[{/{/g'                        /tmp/BM_API_Profile
+    sudo sed -i 's/\],"timed.*//g'                     /tmp/BM_API_Profile
+    sudo sed -i 's/\x7d,\x7b/\x7d\n\x7b/g'             /tmp/BM_API_Profile
+    sudo sed -i 's/"slot":"\([0-2]\)"/TS \1/g'         /tmp/BM_API_Profile
+    sudo sed -i 's/"repeaterid"://g'                   /tmp/BM_API_Profile
+    sudo sed -i 's/"talkgroup":"\([0-9]*\)",/TG \1,/g' /tmp/BM_API_Profile
+    sudo sed -i "s/\"\([0-9]*\)\"}/$dmrnode,\1}/g"     /tmp/BM_API_Profile
+    sudo sed -i '$ s/$/\n\n/g'                         /tmp/BM_API_Profile
+#   cat                                                /tmp/BM_API_Profile
+#   awk -F"," '{printf "%-11s %-5s %-5s %-11s\n", $1, $2, $3, $4}' /tmp/BM_API_Profile
+    sudo awk -F"," '{printf "%-11s %-5s %-5s %-11s\n", $1, $2, $3, $4}' /tmp/BM_API_Profile > /tmp/tmp1
+    sudo sed   's/{TG \([0-9]*\) .*/\1/g'              /tmp/tmp1                            > /tmp/tmp2
+    sudo echo ""                                                                            > /tmp/tmp3
+    for arg in $(< /tmp/tmp2)
+    do 
+      tg=$(grep "TG${arg}$" /usr/local/etc/TGList_BM.txt | sed -n 's/.*;0;\([A-Z0-9-]*\);.*/\1/p')
+      echo ${tg:- }
+    done                                                                                   >> /tmp/tmp3
+    paste /tmp/tmp1 /tmp/tmp3
+    sudo rm /tmp/tmp*
+  else
+    echo "-- no profile"
+  fi
+}
+
+case ${1} in
+list|profile)
+  profile
+  exit 0
+;;
+add)
+  ts=${2:-2}
+  tg=${3:-0}
+  addtg
+  exit 0
+;;
+delete|del)
+  ts=${2:-2}
+  tg=${3:-0}
+  deltg
+  exit 0
+;;
+dropqso)
+  ts=${2:-2}
+  dropqso
+  exit 0
+;;
+dropdyn)
+  ts=${2:-2}
+  dropdyn
+  exit 0
+;;
+*) # ?????
+  echo "unknown link request"
+  exit 1
+;;
+esac
+exit 1
+
