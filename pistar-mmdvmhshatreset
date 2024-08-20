@@ -57,7 +57,8 @@ if [ -z "${1}" ]; then
 fi
 
 # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
-pinbase=$(ls -la /sys/class/gpio/gpiochip* | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | head -n 1)
+pinbase=$(ls -la /sys/class/gpio/gpiochip* | grep "0000.gpio" | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | tail -n 1)
+pinbase=${pinbase/504/0}
 let pin20=${pinbase}+20
 let pin21=${pinbase}+21
 
