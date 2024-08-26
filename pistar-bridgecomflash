@@ -39,6 +39,7 @@ then
     modemSelectedHuman=$(grep value=\"${modemSelected}\" /var/www/dashboard/admin/configure.php | head -n 1)
     modemSelectedHuman=${modemSelectedHuman#*\">}
     modemSelectedHuman=${modemSelectedHuman::-9}
+    modemSelectedHuman=${modemSelectedHuman//amp;/}
     echo "Selected Modem:     ${modemSelectedHuman}"
   fi
 
