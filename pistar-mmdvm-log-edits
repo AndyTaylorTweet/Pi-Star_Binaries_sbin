@@ -1,0 +1,108 @@
+#!/bin/bash
+# delete spurious messages from MMDVM log backups
+#
+#fs=$(grep "/dev/root" /proc/mounts | sed -n 's/.*\(r[ow]\).*/\1/p')
+fs=$(mount | sed -n -e "s/^\/dev\/.* on \/ .*(\(r[w|o]\).*/\1/p")
+#rpi-rw
+if [ "$fs" == "ro" ]; then
+  fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p" /proc/mounts)
+  sudo mount -o remount,rw /
+# sudo mount -o remount,rw /boot${fw}
+fi
+#
+sr=""
+dr=""
+while getopts rd opt; do
+  case $opt in
+    r) sr=1;;
+    d) dr=1;;
+  esac
+done
+shift $(($OPTIND - 1))
+#
+cd /home/pi-star/.mlogs
+if [ -d /home/pi-star/.mlogs ]; then
+  for f in $(ls -tr MMDVM* 2>/dev/null)
+  do
+    x=$(date '+%m/%d/%y %T' -r $f)
+#   echo $f $x "scan.."
+    grep -q  "overflow in the DMR slot RF queue" $f
+    if [ $? -eq  0 ]; then
+      echo $f $x "..fixed"
+      if [ "$dr" == "1" ]; then
+        uniq -s 28 $f > /tmp/$f
+        sudo cp /tmp/$f .
+      else
+        sudo sed -i "/overflow in the DMR slot RF queue/d" $f
+      fi
+      sudo touch -d "$x" $f
+    fi
+    grep -q  "Received a NAK from the MMDVM," $f
+    if [ $? -eq  0 ]; then
+      echo $f $x "..fixed #2"
+      sudo sed -i "/Received a NAK from the MMDVM,/d" $f
+      sudo touch -d "$x" $f
+    fi
+  done
+fi 
+#
+cd /var/log/pi-star
+fx=$(ls -tr1 MMDVM* | tail -1)
+for f in $(ls -tr MMDVM*)
+do
+  x=$(date '+%m/%d/%y %T' -r $f)
+  if [ ! "$f" == "$fx" ]; then
+#   echo $f $x "scan.."
+    grep -q  "overflow in the DMR slot RF queue" $f
+    if [ $? -eq  0 ]; then
+      echo $f $x "..fixed*"
+      if [ "$dr" == "1" ]; then
+        uniq -s 28 $f > /tmp/$f
+        sudo cp /tmp/$f .
+      else
+        sudo sed -i "/overflow in the DMR slot RF queue/d" $f
+      fi
+      sudo touch -d "$x" $f
+    fi
+    grep -q  "Received a NAK from the MMDVM," $f
+    if [ $? -eq  0 ]; then
+      echo $f $x "..fixed* #2"
+      sudo sed -i "/Received a NAK from the MMDVM,/d" $f
+      sudo touch -d "$x" $f
+    fi
+  fi
+done
+#
+if [ "$sr" == "1" ]; then
+  cd /var/log/pi-star
+  sudo systemctl stop mmdvmhost.service
+  for f in $(ls -tr MMDVM* | tail -1)
+  do
+    x=$(date '+%m/%d/%y %T' -r $f)
+#   echo $f $x "scan.."
+    grep -q  "overflow in the DMR slot RF queue" $f
+    if [ $? -eq  0 ]; then
+      echo $f $x "..fixed*"
+      if [ "$dr" == "1" ]; then
+        uniq -s 28 $f > /tmp/$f
+        sudo cp /tmp/$f .
+      else
+        sudo sed -i "/overflow in the DMR slot RF queue/d" $f
+      fi
+      sudo touch -d "$x" $f
+    fi
+    grep -q  "Received a NAK from the MMDVM," $f
+    if [ $? -eq  0 ]; then
+      echo $f $x "..fixed* #2"
+      sudo sed -i "/Received a NAK from the MMDVM,/d" $f
+      sudo touch -d "$x" $f
+    fi
+  done
+  sudo systemctl start mmdvmhost.service
+fi
+#
+#rpi-ro
+if [ "$fs" == "ro" ]; then
+  sudo mount -o remount,ro /
+# sudo mount -o remount,ro /boot${fw}
+fi
