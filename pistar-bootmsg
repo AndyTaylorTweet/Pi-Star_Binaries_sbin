@@ -5,7 +5,7 @@
 function software1_() { echo "Debian: $(cat /etc/debian_version) ($(lsb_release -a 2>/dev/null | sed -n "s/Codename:\t\([a-zA-Z0-9]*\)/\u\1/p"))  Kernel: $(uname -r)"; }
 function software2_() { echo "$(sed -n 's|$version = \x27\([0-9]\{4\}\)\([0-9][0-9]\)\([0-9]*\)\x27;|\1/\2/\3|p' /var/www/dashboard/config/version.php 2>/dev/null)  Ver: $(sed -n 's/Version = \(.*\)/\1/p' /etc/pistar-release 2>/dev/null)" ; }
 
-function modemq_() { tac $(ls -1t /var/log/pi-star/MMDVM-*.log 2>/dev/null) /dev/null | grep "protocol" -m 1 | sed -n "s|.*\(v[0-9]*\x2e[0-9]*\x2e[0-9]*\).*|\1|p"; }
+function modemq_() { tac $(ls -1t /var/log/pi-star/MMDVM-*.log 2>/dev/null) /dev/null | grep "MMDVM protocol" -m 1 | sed -n "s|.*\(v[0-9]*\x2e[0-9]*\x2e[0-9]*\).*|\1|p"; }
 function modem_() { sed -n "/\[Modem\]/{n;p;}" /etc/dstar-radio.mmdvmhost 2>/dev/null | awk -F "=" '/Hardware/ {print $2}'; }
 function _freq() { echo $(cat /etc/mmdvmhost 2>/dev/null | grep "[RT]XFrequency" | sed -n "s/\([0-9]\{3\}\)\([0-9]\{3\}\)\([0-9]\{3\}\)/\1.\2.\3/p") | sed -n "s/.*=\(.*\) .*=\(.*\)/\1  \2/p" ; }
 
