@@ -48,7 +48,7 @@ then
   # Get the physically connected modem from the logs
   numLogs=$(ls -1rt /var/log/pi-star/MMDVM-*.log | wc -l)
   if [[ ${numLogs} -gt 0 ]]; then
-    modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
+    modemLog=$(tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "MMDVM protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p')
     echo "Connected Hardware: ${modemLog}"
   fi
   exit 0
@@ -56,7 +56,7 @@ fi
 #
 # OK we know what the modem is, let get the firmware string from the log...
 #
-tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
+tac $(ls -1rt /var/log/pi-star/MMDVM-*.log | tail -n1 ) | grep "MMDVM protocol" -m 1 | sed -n 's/description: /&\n/;s/.*\n//p'
 read -n 1 -s -r -p "Press any key to write the ${1} firmware to this modem or Ctrl-C to quit..."
 echo ""
 #
