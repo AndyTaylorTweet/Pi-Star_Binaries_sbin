@@ -26,6 +26,7 @@ if [ -z "$1" ]; then
   echo "  pistar-dmrlink delete [ts] [tg]"
   echo "  pistar-dmrlink dropqso [ts]"
   echo "  pistar-dmrlink dropdyn [ts]"
+  echo "  pistar-dmrlink setpos [lat] [lng] [hgt]"
   echo ""
   echo "If [ts] is omitted, it is assumed to be TS2"
   exit 0
@@ -101,6 +102,17 @@ dropdyn () {
   logger "BM Admin --> ${req} GET" 
 }
 
+function setpos () {
+# local dmrid bmkey req lat lng agl put
+  put="{ \"lat\":${lat}, \"lng\":${lng}, \"agl\":${agl} }"
+  dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
+  bmkey=$(sed -n 's/.*apikey=\(.*\)/\1/p' /etc/bmapi.key)
+  req="https://api.brandmeister.network/v2/device/${dmrid}/"
+  sudo curl -X 'PUT' -s "${req}" -d "${put}" -H 'accept: application/json' -H 'Content-Type: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: smal04YhQGHAyHPu5xXfTZPAYXDJm7iDGME8f6XF'
+  echo -e "\n$?"
+  logger "BM Admin --> ${req} POST ${post}"
+}
+
 profile() {
 # local dmrid dmrnode tg arg
   dmrid=$(sed -n "/^Id=[0-9]\{9\}/p" /etc/mmdvmhost | cut -c 4-)
@@ -160,6 +172,14 @@ dropdyn)
   dropdyn
   exit 0
 ;;
+setpos)
+  lat=${2:-}
+  lng=${3:-}
+  agl=${4:-}
+  setpos
+  exit 0
+;;
+
 *) # ?????
   echo "unknown link request"
   exit 1

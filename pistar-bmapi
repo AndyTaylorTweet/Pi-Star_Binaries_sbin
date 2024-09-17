@@ -86,7 +86,7 @@ apikey)
 dmrid)
 	echo "Your DMR ID is: ${DMRID}"
 	exit 0
-;;
+APIDATA="{ \"slot\": ${TS}, \"group\": ${targetTG} }";;
 addtg)
 	# Check that the variable for TalkGroup has been passed
 	if [ -z "$2" ]
@@ -204,8 +204,9 @@ setpos)
 
 	# BM APIv2
 	if [[ ${APIVer} -ge 2 ]]; then
-		echo "ERROR: Set Position not supported in API v2"
-		exit 0
+		APIURL="${APIURL}${DMRID}/"
+		APIDATA="{ \"lat\": ${LAT}, \"lng\": ${LON}, \"agl\": ${AGL} }"
+		TYPE="PUT"
 	else
 		APIURL="${APIURL}?action=EDIT&id=${DMRID}"
 		APIDATA="lat=${LAT}&lng=${LON}&agl=${AGL}"
