@@ -23,6 +23,13 @@ GROUP=mmdvm
 LOGDIR=/var/log/pi-star
 ipVar=`hostname -I | cut -d' ' -f1`
 
+# Verify the logging directory exists, if not create it and setup the ownership / permissions
+if [ ! -d $LOGDIR ]; then
+  mkdir -p $LOGDIR
+  chown ${USER}:${GROUP} $LOGDIR
+  chmod 775 $LOGDIR
+fi
+
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 0
 test -r $CONFIG || exit 0
@@ -39,13 +46,6 @@ test -r /etc/dstar-radio.mmdvmhost || exit 0
 if [ `$PGREP "dstarrepeaterd"` ]; then
   echo "Service 'dstarrepeaterd' is already running, cannot start $DAEMON"
   exit 0;
-fi
-
-# Verify the logging directory exists, if not create it and setup the ownership / permissions
-if [ ! -d $LOGDIR ]; then
-  mkdir -p $LOGDIR
-  chown ${USER}:${GROUP} $LOGDIR
-  chmod 775 $LOGDIR
 fi
 
 case "$1" in
