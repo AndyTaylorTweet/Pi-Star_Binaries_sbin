@@ -48,6 +48,7 @@ while True: #Main loop
 		os.system('echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log')
 		os.system('rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)')
 		os.system('rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)')
+		time.sleep(60) # Give the service secs before we re-test
 	if disk_stat('/var/log') > 90:
 		# Shorten the Pi-Star logs
 		utcnow = datetime.datetime.utcnow()
