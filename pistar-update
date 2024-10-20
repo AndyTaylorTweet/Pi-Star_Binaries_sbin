@@ -123,6 +123,8 @@ main_function() {
 	mount -o remount,rw /
 #	mount -o remount,rw /boot
 
+	echo $(date "+%a %D - %l:%M:%S %p %Z") = $(date -u "+%l:%M:%S %p %Z - %a %D") "("$(date "+%z")")"
+
 	if [ -t 1 ]; then
 		# This is running from a terminal, so it should be safe to update the OS
 		echo -e "Updating OS...\n"
