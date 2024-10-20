@@ -156,6 +156,9 @@ main_function() {
 	if [ "$xro" == "ro" ]; then
 	  sudo mount -o remount,rw /
 	fi
+
+	echo $(date "+%a %D - %l:%M:%S %p %Z") = $(date -u "+%l:%M:%S %p %Z - %a %D") "("$(date "+%z")")"
+
 	echo "Stopping Services..."
 	service_handle stop
 	echo -e "Done \n"
