@@ -1685,34 +1685,33 @@ main_function() {
 
 		# revise the SSH MOTD (issues) file
 		cd /etc
-		echo '^[[1;31m'                                                               >/tmp/issuex
-		echo '      ██████  ██      ██████ ████████  █████  ██████        '          >>/tmp/issuex
-		echo '      ██   ██ ██      ██        ██    ██   ██ ██   ██   ██  '          >>/tmp/issuex
-		echo '      ██████  ██ ████ ██████    ██    ███████ ██████  ██████'          >>/tmp/issuex
-		echo '      ██      ██          ██    ██    ██   ██ ██   ██   ██  '          >>/tmp/issuex
-		echo '      ██      ██      ██████    ██    ██   ██ ██   ██       '          >>/tmp/issuex
-		echo ''                                                                      >>/tmp/issuex
-		echo '^[[0;31mWelcome to Pi-Star, helping making DV simple since 2014!'      >>/tmp/issuex
-		echo 'Build by Andy Taylor (MW0MWZ); modified by Mark Prichard (KN2TOD)'     >>/tmp/issuex
-		echo ''                                                                      >>/tmp/issuex
-		echo '^[[0;0mTo setup Pi-Star for the first time, make sure it is connected' >>/tmp/issuex
-		echo 'to your network by cable, or connect to the "Pi-Star-Setup" Access'    >>/tmp/issuex
-		echo 'Point from your computer/phone/tablet.'                                >>/tmp/issuex
-		echo ''                                                                      >>/tmp/issuex
-		echo 'The Pi-Star Dashboard can be found at one of the following locations:' >>/tmp/issuex
-		echo '^[[1;37m http://\n     //\n.local     //\4'                            >>/tmp/issuex
-		echo ''                                                                      >>/tmp/issuex
-		echo '^[[0;0mIf you have a Raspberry Pi with on-board WiFi, you can connect' >>/tmp/issuex
-		echo 'to either the \n or Pi-Star-Setup access point,'                       >>/tmp/issuex
-		echo '^[[1;37mhttp://192.168.50.1/^[[0;0m will always find your Pi-Star.'    >>/tmp/issuex
-		echo '^[[0;0m'                                                               >>/tmp/issuex
+		echo -e '\x1b[1;31m'                                                               >/tmp/issuex
+		echo -e '      ██████  ██      ██████ ████████  █████  ██████        '            >>/tmp/issuex
+		echo -e '      ██   ██ ██      ██        ██    ██   ██ ██   ██   ██  '            >>/tmp/issuex
+		echo -e '      ██████  ██ ████ ██████    ██    ███████ ██████  ██████'            >>/tmp/issuex
+		echo -e '      ██      ██          ██    ██    ██   ██ ██   ██   ██  '            >>/tmp/issuex
+		echo -e '      ██      ██      ██████    ██    ██   ██ ██   ██       '            >>/tmp/issuex
+		echo -e ''                                                                        >>/tmp/issuex
+		echo -e '\x1b[0;31mWelcome to Pi-Star, helping making DV simple since 2014!'      >>/tmp/issuex
+		echo -e 'Build by Andy Taylor (MW0MWZ); modified by Mark Prichard (KN2TOD)'       >>/tmp/issuex
+		echo -e ''                                                                        >>/tmp/issuex
+		echo -e '\x1b[0;0mTo setup Pi-Star for the first time, make sure it is connected' >>/tmp/issuex
+		echo -e 'to your network by cable, or connect to the "Pi-Star-Setup" Access'      >>/tmp/issuex
+		echo -e 'Point from your computer/phone/tablet.'                                  >>/tmp/issuex
+		echo -e ''                                                                        >>/tmp/issuex
+		echo -e 'The Pi-Star Dashboard can be found at one of the following locations:'   >>/tmp/issuex
+		echo -e '\x1b[1;37m http://\\n     //\\n.local     //\\4'                         >>/tmp/issuex
+		echo -e ''                                                                        >>/tmp/issuex
+		echo -e '\x1b[0;0mIf you have a Raspberry Pi with on-board WiFi, you can connect' >>/tmp/issuex
+		echo -e 'to either the \\n or Pi-Star-Setup access point,'                        >>/tmp/issuex
+		echo -e '\x1b[1;37mhttp://192.168.50.1/\x1b[0;0m will always find your Pi-Star.'  >>/tmp/issuex
+		echo -e '\x1b[0;0m'                                                               >>/tmp/issuex
 
 		echo "$(cat /tmp/issuex)" | sudo tee issue >/dev/null
 
 		sudo rm /tmp/issuex
 
 		Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
-		echo $Message
 	;;
 	*)
 		Message="Something went very wrong, I cant tell what version I am running"
