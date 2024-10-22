@@ -30,7 +30,6 @@ for f in $(ls -t {MMDVM*,DMR*,APRS*,M17*} 2>/dev/null)
 do
   if [ /var/log/pi-star/$f -nt /home/pi-star/.mlogs/$f ]; then
     sudo cp -p /var/log/pi-star/$f /home/pi-star/.mlogs/$f
-#   echo $f "backed up"
     echo $f "("$(stat -c %y /home/pi-star/.mlogs/$f | cut -c12-19)") backed up"
   fi
 done
@@ -40,6 +39,14 @@ done
 if [ $rbt == 1 ]; then
   sudo touch /home/pi-star/.mlogs/reboot-$(date +%Y-%m-%d-%H:%M:%S)
 fi
+#
+for f in {pi-star_update,pi-star_upgrade}; do
+  if [ -r /var/log/pi-star/${f}.log ]; then
+    x2=$(date '+%Y-%m-%d-%T' -r /var/log/pi-star/${f}.log)
+    sudo mv    /var/log/pi-star/${f}.log       /var/log/pi-star/${f}-${x2}.log
+    sudo cp -p /var/log/pi-star/${f}-${x2}.log /home/pi-star/.mlogs
+  fi
+done
 #
 #rpi-ro
 if [ "$xro" == "ro" ]; then
