@@ -1713,6 +1713,9 @@ main_function() {
 
 		Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
 	;;
+	4.3.1)
+		Message="You are already running the latest version..."
+	;;
 	*)
 		Message="Something went very wrong, I cant tell what version I am running"
 	;;
