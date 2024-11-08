@@ -20,18 +20,9 @@ if ! flock -n 200 ; then
 fi
 
 pingTest() {
+	hostp=${1}
 	# Clean up the Hostname
 	vanityName=$(tr -dc '[[:print:]]' <<< "${2}")
-	if [ ${#vanityName} -le 23 ] && [ ${#vanityName} -gt 15 ]; then
-		vanityName="${vanityName}\t"
-	elif [ ${#vanityName} -le 15 ] && [ ${#vanityName} -gt 7 ]; then
-		vanityName="${vanityName}\t\t"
-	elif [ ${#vanityName} -le 7 ]; then
-		vanityName="${vanityName}\t\t\t"
-	else
-		vanityName="${vanityName::31}"
-	fi
-
 	# Ping Test
 	if ping -W 2 -c 1 ${1} &> /dev/null; then
 		pingResult=$(ping -W 2 -n -c 5 ${1} | grep "from" | tail -n 3 | awk -F 'time=' '{print $2}' | awk '{print $1}' | sort -g)
@@ -41,9 +32,9 @@ pingTest() {
 		pingTestTotal=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} + ${pingTestMid} + ${pingTestLow} }")
 		pingTestAvg=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestTotal} / 3 }     ")
 		pingTestPeakDev=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} - ${pingTestLow} }")
-		printf "${vanityName}\tAvg RTT: ${pingTestAvg}ms\tPeak Deviation: ${pingTestPeakDev}ms\n"
+		echo ${vanityName},${hostp},Avg RTT: ${pingTestAvg}ms,Peak Deviation: ${pingTestPeakDev}ms | awk -F"," '{printf "%-36s %-39s %-20s %-45s\n", $1, $2, $3, $4}'
 	else
-		printf "${vanityName}\tunreachable...\n"
+		echo ${vanityName},${hostp},unreachable...| awk -F"," '{printf "%-36s %-39s %-20s\n", $1, $2, $3}'
 	fi
 }
 
@@ -73,10 +64,12 @@ if [ -t 1 ]; then
   # run via terminal, only output to screen
   main_function ${1}
   wait
+  echo -e "\n-- End of tests"
 else
   # if not run via terminal, log everything into a log file
-  main_function ${1} >> /var/log/pi-star/pi-star_icmptest.log 2>&1
+  main_function ${1} >>                        /tmp/jittertest.log 2>&1
   wait
+  echo -e "\n-- End of tests\n" | sudo tee -a  /tmp/jittertest.log
 fi
 
 exit 0
