@@ -24,17 +24,21 @@ pingTest() {
 	# Clean up the Hostname
 	vanityName=$(tr -dc '[[:print:]]' <<< "${2}")
 	# Ping Test
-	if ping -W 2 -c 1 ${1} &> /dev/null; then
-		pingResult=$(ping -W 2 -n -c 5 ${1} | grep "from" | tail -n 3 | awk -F 'time=' '{print $2}' | awk '{print $1}' | sort -g)
+	pingTest=$(ping -W 2 -c 1 ${hostp} 2>/dev/null)
+	if [ $? -eq 0 ]; then
+#	if ping -W 2 -c 1 ${1} &> /dev/null; then
+		pingIP=$(echo ${pingTest} | awk '{print $3}')
+		if [ "(${hostp})" == "${pingIP}" ]; then  pingIP=""; fi
+		pingResult=$(ping -W 2 -n -c 5 ${hostp} 2>/dev/null | grep "from" | tail -n 3 | awk -F 'time=' '{print $2}' | awk '{print $1}' | sort -g)
 		pingTestLow=$(echo ${pingResult} | awk '{print $1}')
 		pingTestMid=$(echo ${pingResult} | awk '{print $2}')
 		pingTestHigh=$(echo ${pingResult} | awk '{print $3}')
 		pingTestTotal=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} + ${pingTestMid} + ${pingTestLow} }")
 		pingTestAvg=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestTotal} / 3 }     ")
 		pingTestPeakDev=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} - ${pingTestLow} }")
-		echo ${vanityName},${hostp},Avg RTT: ${pingTestAvg}ms,Peak Deviation: ${pingTestPeakDev}ms | awk -F"," '{printf "%-36s %-39s %-20s %-45s\n", $1, $2, $3, $4}'
+		echo ${vanityName},${hostp} ${pingIP},Avg RTT: ${pingTestAvg}ms,Peak Deviation: ${pingTestPeakDev}ms | awk -F"," '{printf "%-35s %-53s %-20s %-20.30s\n", $1, $2, $3, $4}'
 	else
-		echo ${vanityName},${hostp},unreachable...| awk -F"," '{printf "%-36s %-39s %-20s\n", $1, $2, $3}'
+		echo ${vanityName},${hostp},unreachable...| awk -F"," '{printf "%-35s %-53s %-20s\n", $1, $2, $3}'
 	fi
 }
 
