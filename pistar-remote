@@ -1,15 +1,17 @@
 #!/usr/bin/python
 
-###############################################################################
-#                                                                             #
-#                        Pi-Star Auto Remote Control                          #
-#                                                                             #
-#    Version 1.9, Code, Design and Development by Andy Taylor (MW0MWZ).       #
-#                                                                             #
-#  This Python script is desiged to look for specific things in the logs for  #
-#       MMDVMHost and act on those to give RF control over the repeater.      #
-#                                                                             #
-###############################################################################
+###########################################################################################
+#                                                                                         #
+#                               Pi-Star Auto Remote Control                               #
+#                                                                                         #
+#     05 JAN 2024 Version 1.9, Code, Design and Development by Andy Taylor (MW0MWZ).      #
+#     20 NOV 2024 Version 2.0, modifications written by Stuart Blake Tener (N3GWG).       #
+#                 |-> added RF commands "getgw" and "getup", modified "getip" code.       #
+#                                                                                         #
+#        This Python script is desiged to look for specific things in the logs for        #
+#        MMDVMHost and act on those to give RF control over the repeater.                 #
+#                                                                                         #
+###########################################################################################
 
 import datetime
 import time
@@ -90,6 +92,14 @@ if config.has_option('d-star', 'getip'):
 	dstargetip = config.get('d-star', 'getip')
 else:
 	dstargetip = str(999999999999)
+if config.has_option('d-star', 'getgw'):
+	dstargetgw = config.get('d-star', 'getgw')
+else:
+	dstargetgw = str(999999999999)
+if config.has_option('d-star', 'getup'):
+	dstargetup = config.get('d-star', 'getup')
+else:
+	dstargetup = str(999999999999)
 if config.has_option('d-star', 'wifissid'):
 	dstargetwifissid = config.get('d-star', 'wifissid')
 else:
@@ -323,12 +333,26 @@ while True:
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
-				# D-Star Get the current IP
+				# D-Star Get the current LAN IP
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
 				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetip) in line:
-					# Get the IP
-					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
-					os.system(txtTransmitBin + ' -text "IP: ' + myIP + '" "' + dstarmodule + '"')
+					# Get the LAN IP
+					myIP_lan = os.popen('/bin/hostname -I | /usr/bin/awk \'{print $1}\'').read()
+					os.system(txtTransmitBin + ' -text "LAN: ' + myIP_lan + '" "' + dstarmodule + '"')
+
+				# D-Star Get the current WAN IP
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetgw) in line:
+					# Get the WAN IP
+ 					myIP_wan = os.popen('/usr/bin/dig +short myip.opendns.com @resolver1.opendns.com').read()
+					os.system(txtTransmitBin + ' -text "WAN: ' + myIP_wan + '" "' + dstarmodule + '"')
+
+				# D-Star Get the current uptime info
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('D-Star, received RF header from ' + keeperCall + ' ') and str(dstargetup) in line:
+					# Get the output from uptime and trim it down
+					myUptime = os.popen('/usr/bin/uptime | /usr/bin/awk -F ". user" \'{ print $1; }\' | /usr/bin/awk -F" " \'{ $1=""; print $0;}\' | /bin/sed -e "s/^[[:space:]]*//g" | /bin/sed -e "s/,//g"').read()
+					os.system(txtTransmitBin + ' -text "' + myUptime + '" "' + dstarmodule + '"')
 
 				# D-Star Get the wifi SSID
 				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
@@ -486,12 +510,26 @@ while True:
 					os.system(r'/bin/mount -o remount,rw /')
 					os.system(r'/usr/local/sbin/HostFilesUpdate.sh')
 
-				# D-Star Get the current IP
+				# D-Star Get the current LAN IP
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
 				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetip) in line:
-					# Get the IP
-					myIP = os.popen('/bin/hostname -I | awk \'{print $1}\'').read()
-					os.system(txtTransmitBin + ' -text "My IP: ' + myIP + '" "' + dstarmodule + '"')
+					# Get the LAN IP
+					myIP_lan = os.popen('/bin/hostname -I | /usr/bin/awk \'{print $1}\'').read()
+					os.system(txtTransmitBin + ' -text "LAN: ' + myIP_lan + '" "' + dstarmodule + '"')
+
+				# D-Star Get the current WAN IP
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetgw) in line:
+					# Get the WAN IP
+ 					myIP_wan = os.popen('/usr/bin/dig +short myip.opendns.com @resolver1.opendns.com').read()
+					os.system(txtTransmitBin + ' -text "WAN: ' + myIP_wan + '" "' + dstarmodule + '"')
+
+				# D-Star Get the current uptime info
+				# M: 2017-07-03 11:38:57.349 D-Star, received RF header from M1ABC  /1234 to COMMAND1
+				if str('Radio header decoded - My: ' + keeperCall + ' ') and str('Your: ' + dstargetup) in line:
+					# Get the output from uptime and trim it down
+					myUptime = os.popen('/usr/bin/uptime | /usr/bin/awk -F ". user" \'{ print $1; }\' | /usr/bin/awk -F" " \'{ $1=""; print $0;}\' | /bin/sed -e "s/^[[:space:]]*//g" | /bin/sed -e "s/,//g"').read()
+					os.system(txtTransmitBin + ' -text "' + myUptime + '" "' + dstarmodule + '"')
 
 				# D-Star Get the wifi SSID
 				# M: 2017-12-24 20:40:15: Radio header decoded - My: M1ABC   /M     Your: COMMAND1  Rpt1: M1ABC  B  Rpt2: M1ABC G  Flags: 40 00 00
