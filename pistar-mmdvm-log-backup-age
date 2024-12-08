@@ -17,7 +17,7 @@ fi
 m3=0
 m1=$(ls ${file}/MMDVM* | wc -l)   # total number of files
 m2=$(expr ${m1} - ${m0})          # number to be deleted
-mods=(MMDVM DMR APRS M17)         # list of logs to age
+mods=(MMDVM DMR APRS M17 YSF ircDDB)         # list of logs to age
 #
 # age by count:
 for modx in ${mods[*]}; do
