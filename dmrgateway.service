@@ -49,6 +49,9 @@ if [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "0" ]]; then
 	DAEMON=DMRGateway_old
 fi
 
+# recheck flight...
+test -x ${DAEMON_PATH}${DAEMON} || exit 1
+
 # Verify the logging directory exists, if not create it and setup the ownership / permissions
 if [ ! -d $LOGDIR ]; then
   mkdir -p $LOGDIR
