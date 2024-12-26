@@ -121,6 +121,9 @@ iptables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connection
 # Allow Outbound M17Gateway Ports
 iptables -A OUTPUT -p udp --dport 17000 -j ACCEPT #			M17Gateway Outbound Connections
 
+# Cloudflared Tunnel
+iptables -A OUTPUT -p tcp --dport 7844  -j ACCEPT #                     Cloudfare's Tunnel Connections
+
 # Allow Inbound Services
 iptables -A INPUT -p tcp --dport 22 -j ACCEPT #                     SSH
 iptables -A INPUT -p tcp --dport 80 -j ACCEPT #                     HTTP Allow the D-Star Portal Access
@@ -341,6 +344,9 @@ ip6tables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 
 # Allow Outbound DAPNet ports
 ip6tables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connections
+
+# Cloudflared Tunnel
+ip6tables -A OUTPUT -p tcp --dport 7844  -j ACCEPT #                    Cloudfare's Tunnel Connections
 
 # Allow Outbound M17Gateway Ports
 ip6tables -A OUTPUT -p udp --dport 17000 -j ACCEPT #			M17Gateway Outbound Connections
