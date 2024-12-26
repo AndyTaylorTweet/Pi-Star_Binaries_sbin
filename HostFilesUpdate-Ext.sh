@@ -177,6 +177,7 @@ sudo sed -i -e 's|"United States"|"US"|g
                 s|"Mexico"|"MEX"|g
                 s|"South Africa"|"ZAF"|g
                 s|"Turkey"|"TUR"|g
+                s|"Turkiye"|"TUR"|g
                 s|"Croatia"|"HRV"|g
                 s|"Argentina"|"ARG"|g
                 s|"Slovakia"|"SVK"|g
@@ -192,6 +193,8 @@ sudo sed -i -e 's|"United States"|"US"|g
                 s|"Indonesia"|"IDN"|g
                 s|"Philippines"$|"PHL"|g
                 s|"Dominican Republic"|"DOM"|g
+                s|"Bangladesh"|"BGD"|g
+                s|"Guatemala"|"GTM"|g
                 s|"Belgium"|"BEL"|g
                 s|"Finland"|"FIN"|g
                 s|"Malaysia"$|"MYS"|g
@@ -266,6 +269,7 @@ sudo sed -i -e 's|    | |g
                 s|   | |g
                 s|  | |g
                 s|, |,|g
+                s|  ,|,|g
                 s| ,|,|g'                          /tmp/xcontacts.csv
 #
 # temp: cleanup up errant "city":
@@ -286,7 +290,7 @@ echo "...completing update"
 xfile=/usr/local/etc/DMRIds.xtd.dat
 if [ -f ${xfile} ]; then
 # How many backups
-nfiles=1
+  nfiles=1
 # Create backup of old files
   if [ ${nfiles} -ne 0 ]; then
      sudo cp ${xfile} ${xfile}.$(date +%Y%m%d)
