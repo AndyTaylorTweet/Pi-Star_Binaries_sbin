@@ -26,7 +26,7 @@ fi
 #sudo cp -p /var/log/pi-star/MMDVM* /home/pi-star/.mlogs
 cd /var/log/pi-star/
 #for f in $(ls -tr MMDVM*)
-for f in $(ls -t {MMDVM*,DMR*,APRS*,M17*,YSF*,ircDDB*} 2>/dev/null)
+for f in $(ls -t {MMDVM*,DMR*,APRS*,M17*,YSF*,ircDDB*,NXDN*,P25*,timeserverd} 2>/dev/null)
 do
   if [ /var/log/pi-star/$f -nt /home/pi-star/.mlogs/$f ]; then
     sudo cp -p /var/log/pi-star/$f /home/pi-star/.mlogs/$f
