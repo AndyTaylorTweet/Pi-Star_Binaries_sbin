@@ -43,14 +43,54 @@ pingTest() {
 }
 
 main_function() {
-	while IFS="" read -r hostLine || [ -n "$p" ]
-	do
-		if [[ ${hostLine} == ${1}_* ]]; then
-			vanityName=$(echo ${hostLine} | awk '{print $1}')
-			host=$(echo ${hostLine} | awk '{print $3}')
-			pingTest ${host} ${vanityName} &
-		fi
-	done < /usr/local/etc/DMR_Hosts.txt
+ case "${1}" in
+    NXDN)
+        while IFS="" read -r hostLine || [ -n "$p" ]
+        do
+                        vanityName=$(echo ${hostLine} | awk '{print $2}')
+                        host=$(echo ${hostLine} | awk '{print $2}')
+                        pingTest ${host} ${vanityName} &
+        done < /usr/local/etc/NXDNHosts.txt
+        ;;
+    P25)
+        while IFS="" read -r hostLine || [ -n "$p" ]
+        do
+                        vanityName=$(echo ${hostLine} | awk '{print $2}')
+                        host=$(echo ${hostLine} | awk '{print $2}')
+                        pingTest ${host} ${vanityName} &
+        done < /usr/local/etc/P25Hosts.txt
+        ;;
+    M17)
+        while IFS="" read -r hostLine || [ -n "$p" ]
+        do
+                 if [[ ! "${hostLine:0:1}" == "#" ]]; then
+                        vanityName=$(echo ${hostLine} | awk '{print $1}')
+                        host=$(echo ${hostLine} | awk '{print $2}')
+                        pingTest ${host} ${vanityName} &
+                 fi
+        done < /usr/local/etc/M17Hosts.txt
+        ;;
+    YSF)
+        while IFS="" read -r hostLine || [ -n "$p" ]
+        do
+                 if [[ ! "${hostLine:0:1}" == "#" ]]; then
+                        vanityName=$(echo ${hostLine} | awk -F";" '{print $2}')
+                        host=$(echo ${hostLine} | awk -F";" '{print $4}')
+                        pingTest ${host} ${vanityName} &
+                 fi
+        done < /usr/local/etc/YSFHosts.txt
+        ;;
+    *)
+        while IFS="" read -r hostLine || [ -n "$p" ]
+        do
+                if [[ ${hostLine} == ${1}_* ]]; then
+                        vanityName=$(echo ${hostLine} | awk '{print $1}')
+                        host=$(echo ${hostLine} | awk '{print $3}')
+                        pingTest ${host} ${vanityName} &
+                fi
+        done  < /usr/local/etc/DMR_Hosts.txt
+        ;;
+  esac
 }
 
 if [ -z "$1" ]; then
