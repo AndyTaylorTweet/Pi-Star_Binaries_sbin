@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 #hmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhm
 # Create extended DMR id file (DMRids.xtd.dat)
 # Ref: www.kf5iw.com/contactdb.php; https://database.radioid.net/static/user.csv
@@ -22,6 +22,7 @@ ok=1
 cd /tmp
 #
 logger -t "[$$]" "Pi-Star --> Start HostFiles Extension"
+echo "Starting extended hostfile dowwnload..."
 if [ $src == 0 ]; then
   web="(KF5IW)"
   echo "...downloading latest contact file (KF5IW)"
@@ -64,6 +65,7 @@ fi
 #
 if [ "$ok" == 0 ]; then
 #
+echo "...download completed. Beginning edits..."
 sudo sed -i -e '1 d
                 s|^"",||g
                 s|,"","",""$||g'                   /tmp/xcontacts.csv
@@ -275,18 +277,19 @@ sudo sed -i -e 's|    | |g
 # temp: cleanup up errant "city":
 #sudo sed -i '/,Bilecik,TUR$/!s/,Bilecik,\([[:alpha:]]*\)$/,,\1/g' /tmp/xcontacts.csv
 #
-wc -l /tmp/xcontacts.csv | awk '{print "...", $1, "entries downloaded"}'
+wc -l /tmp/xcontacts.csv | awk '{print "...", $1, "entries processed"}'
 #
 sudo sed  -i "1 s/^/#       Updated $(date '+%d-%b-%Y %T %Z') $web\n/" /tmp/xcontacts.csv
 #
 if [ $updt == 1 ]; then
 fs=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
+fw=$(sed -n "s|/dev/.*/boot\(.*\) [ve].*|\1|p" /proc/mounts)
 #rpi-rw
 if [ "$fs" == "ro" ]; then
-  sudo mount -o remount,rw / # sudo mount -o remount,rw /boot
+  sudo mount -o remount,rw / # sudo mount -o remount,rw /boot${fw}
 fi
 #
-echo "...completing update"
+echo "...starting update"
 xfile=/usr/local/etc/DMRIds.xtd.dat
 if [ -f ${xfile} ]; then
 # How many backups
@@ -294,6 +297,7 @@ if [ -f ${xfile} ]; then
 # Create backup of old files
   if [ ${nfiles} -ne 0 ]; then
      sudo cp ${xfile} ${xfile}.$(date +%Y%m%d)
+     echo "...backup completed"
   fi
 # Prune backups
   fcnt=$(ls ${xfile}.* | wc -l)
@@ -303,10 +307,12 @@ if [ -f ${xfile} ]; then
      do
        sudo rm $f
      done
+     echo "...previous backups deleted"
   fi
 fi
 #
 sudo cp /tmp/xcontacts.csv ${xfile}
+echo "...update completed"
 sudo rm -f                 /tmp/xcontacts.csv
 sudo rm -f                 /tmp/extendedx.zip
 #
@@ -316,9 +322,10 @@ if [ $rst == 1 ]; then
 fi
 #rpi-ro
 if [ "$fs" == "ro" ]; then
-  sudo mount -o remount,ro / # sudo mount -o remount,ro /boot
+  sudo mount -o remount,ro / # sudo mount -o remount,ro /boot${fw}
 fi
 fi
+echo "Ending extended hostfile dowwnload/update..."
 else
   echo "  ... download failed"
 fi
