@@ -274,6 +274,8 @@ sudo sed -i -e 's|    | |g
                 s|  ,|,|g
                 s| ,|,|g'                          /tmp/xcontacts.csv
 #
+sudo sync
+#
 # temp: cleanup up errant "city":
 #sudo sed -i '/,Bilecik,TUR$/!s/,Bilecik,\([[:alpha:]]*\)$/,,\1/g' /tmp/xcontacts.csv
 #
