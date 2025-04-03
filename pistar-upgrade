@@ -1589,19 +1589,6 @@ main_function() {
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
-		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
-		Message="You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
-	;;
-	4.3.1)
-		#sed -i 's/4.3.1/4.3.2/g' /etc/pistar-release
-
-		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
-
 		# Fix excessive syslogging
 		#if [[ -f "/etc/rsyslog.d/10-exclude-systemd.conf" ]]; then
 		#	echo "/etc/rsyslog.d/10-exclude-systemd.conf exists, skipping..."
@@ -1619,6 +1606,19 @@ main_function() {
 		# Fix rfkill behaviour
 		#sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/{N;s/$/\n# Remove RFKill\nif [ -f \/etc\/modprobe.d\/rfkill_default.conf ]; then\n    rm -rf \/etc\/modprobe.d\/rfkill_default.conf\n    rfkill unblock wifi\nfi\n/}' /etc/rc.local
 		#rm -rf /etc/modprobe.d/rfkill_default.conf
+
+		# OK we are done
+		#Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
+		Message="You are already running the latest version..."
+		#echo $Message
+		#exec "$0" "$@"
+                #exit 1
+	;;
+	4.3.1)
+		#sed -i 's/4.3.1/4.3.2/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
