@@ -1617,7 +1617,8 @@ main_function() {
 		#fi
 
 		# Fix rfkill behaviour
-		#echo 'options rfkill default_state=1' > /etc/modprobe.d/rfkill_default.conf
+		#sed -i '/^\/usr\/local\/sbin\/pistar-motdgen/{N;s/$/\n# Remove RFKill\nif [ -f \/etc\/modprobe.d\/rfkill_default.conf ]; then\n    rm -rf \/etc\/modprobe.d\/rfkill_default.conf\n    rfkill unblock wifi\nfi\n/}' /etc/rc.local
+		#rm -rf /etc/modprobe.d/rfkill_default.conf
 
 		# OK we are done
 		#Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
