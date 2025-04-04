@@ -222,112 +222,6 @@ main_function() {
 		touch /usr/local/etc/NXDNHostsLocal.txt
 	fi
 
-	# If we are ready to use the new DMRGateway
-	if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt "20170924" ]] && [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "1" ]] && [[ ! -f /usr/local/etc/DMR_Audio/no_NO.indx ]]; then
-		curl --fail -o /usr/local/etc/DMR_Audio/de_DE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/en_GB.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/en_US.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/es_ES.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/it_IT.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/no_NO.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/no_NO.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.indx
-		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.ambe
-		curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
-	fi
-
-	# I previously had the wrong URL for the P25 Audio files; remove the broken downloads.
-	if [[ -f /usr/local/etc/P25_Audio/en_GB.imbe ]]; then
-		testFileIMBE=`file -i /usr/local/etc/P25_Audio/en_GB.imbe | cut -d " " -f2`
-		if [[ $testFileIMBE == text* ]]; then
-			rm -rf /usr/local/etc/P25_Audio
-		fi
-	fi
-
-	# Download the correct P25 Audio Files
-	if [[ ! -d /usr/local/etc/P25_Audio ]]; then
-		echo "Downloading P25 Voice Files..."
-		mkdir /usr/local/etc/P25_Audio
-		curl --fail -o /usr/local/etc/P25_Audio/de_DE.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/de_DE.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/de_DE.indx
-		curl --fail -o /usr/local/etc/P25_Audio/dk_DK.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/dk_DK.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/dk_DK.indx
-		curl --fail -o /usr/local/etc/P25_Audio/en_GB.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/en_GB.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/en_GB.indx
-		curl --fail -o /usr/local/etc/P25_Audio/en_US.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/en_US.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/en_US.indx
-		curl --fail -o /usr/local/etc/P25_Audio/es_ES.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/es_ES.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/es_ES.indx
-		curl --fail -o /usr/local/etc/P25_Audio/fr_FR.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/fr_FR.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/fr_FR.indx
-		curl --fail -o /usr/local/etc/P25_Audio/it_IT.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/it_IT.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/it_IT.indx
-		curl --fail -o /usr/local/etc/P25_Audio/no_NO.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/no_NO.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/no_NO.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/no_NO.indx
-		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/pl_PL.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/pl_PL.indx
-		curl --fail -o /usr/local/etc/P25_Audio/se_SE.imbe -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/se_SE.imbe
-		curl --fail -o /usr/local/etc/P25_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/P25Clients/master/P25Gateway/Audio/se_SE.indx
-		echo "Done"
-	fi
-
-	# Download the correct M17 Audio Files
-	if [[ ! -d /usr/local/etc/M17_Audio ]]; then
-		echo "Downloading M17 Voice Files..."
-		mkdir /usr/local/etc/M17_Audio
-		curl --fail -o /usr/local/etc/M17_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/de_DE.indx
-		curl --fail -o /usr/local/etc/M17_Audio/de_DE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/de_DE.m17
-		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/dk_DK.indx
-		curl --fail -o /usr/local/etc/M17_Audio/dk_DK.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/dk_DK.m17
-		curl --fail -o /usr/local/etc/M17_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_GB.indx
-		curl --fail -o /usr/local/etc/M17_Audio/en_GB.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_GB.m17
-		curl --fail -o /usr/local/etc/M17_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_US.indx
-		curl --fail -o /usr/local/etc/M17_Audio/en_US.m17 -s hhttps://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/en_US.m17
-		curl --fail -o /usr/local/etc/M17_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/es_ES.indx
-		curl --fail -o /usr/local/etc/M17_Audio/es_ES.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/es_ES.m17
-		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/fr_FR.indx
-		curl --fail -o /usr/local/etc/M17_Audio/fr_FR.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/fr_FR.m17
-		curl --fail -o /usr/local/etc/M17_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/it_IT.indx
-		curl --fail -o /usr/local/etc/M17_Audio/it_IT.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/it_IT.m17
-		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/pl_PL.indx
-		curl --fail -o /usr/local/etc/M17_Audio/pl_PL.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/pl_PL.m17
-		curl --fail -o /usr/local/etc/M17_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/se_SE.indx
-		curl --fail -o /usr/local/etc/M17_Audio/se_SE.m17 -s https://raw.githubusercontent.com/g4klx/M17Gateway/main/Audio/se_SE.m17
-		echo "Done"
-	fi
-
-	# Add Portuguese voice files for ircDDBGateway
-	if [[ ! -f /usr/local/etc/pt_PT.ambe ]]; then
-		echo "Downloading Portuguese Voice Files for ircDDBGateway..."
-		curl --fail -o /usr/local/etc/pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.ambe
-		curl --fail -o /usr/local/etc/pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.indx
-		curl --fail -o /usr/local/etc/TIME_pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.ambe
-		curl --fail -o /usr/local/etc/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
-		chmod 664 /usr/local/etc/*.ambe
-		chmod 664 /usr/local/etc/*.indx
-		echo "Done"
-	fi
-	if [[ ! -f /usr/local/etc/ircddbgateway/pt_PT.ambe ]]; then
-		echo "Downloading Portuguese Voice Files for ircDDBGateway..."
-		curl --fail -o /usr/local/etc/ircddbgateway/pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.ambe
-		curl --fail -o /usr/local/etc/ircddbgateway/pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/pt_PT.indx
-		curl --fail -o /usr/local/etc/ircddbgateway/TIME_pt_PT.ambe -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.ambe
-		curl --fail -o /usr/local/etc/ircddbgateway/TIME_pt_PT.indx -s https://raw.githubusercontent.com/g4klx/ircDDBGateway/master/Data/TIME_pt_PT.indx
-		chmod 664 /usr/local/etc/ircddbgateway/*.ambe
-		chmod 664 /usr/local/etc/ircddbgateway/*.indx
-		echo "Done"
-	fi
-
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
 		echo "Updating P25Gateway config..."
 		echo "" >> /etc/p25gateway
@@ -370,17 +264,50 @@ main_function() {
 		ln -sf /usr/bin/python2.7 /usr/bin/python
 	fi
 
-	# Remove legacy avrdude/autoreset hooks
-	if [[ -f /usr/local/bin/avrdude ]]; then
-		rm -rf /usr/local/bin/avrdude
-	fi
-	if [[ -f /usr/bin/autoreset ]]; then
-		rm -rf /usr/bin/autoreset
-	fi
-
 	# Patch CRDA
 	if [[ ! -f /lib/crda/regulatory.bin && ! -f /lib/crda/db.txt ]]; then
 		curl --fail -o /lib/crda/db.txt -s https://www.pistar.uk/downloads/wireless_crda_db.txt
+	fi
+
+	#
+	# Patch WiringPi and add python3-serial
+	#
+	pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
+	wiringpiCurVersion=$(dpkg -s wiringpi 2>/dev/null | grep '^Version' | awk '{print $2}')
+
+	# Check if WiringPi is installed or needs update
+	shouldUpdateWiringPi=false
+	if [ -z "$wiringpiCurVersion" ]; then
+		shouldUpdateWiringPi=true
+	elif dpkg --compare-versions "$wiringpiCurVersion" lt "3.14"; then
+		shouldUpdateWiringPi=true
+	fi
+	
+	# Logic based on Pi-Star version
+	if dpkg --compare-versions "$pistarCurVersion" ge "4.3"; then
+		if [ "$shouldUpdateWiringPi" = true ]; then
+			echo "Downloading WiringPi 3.14 (armhf)..."
+			curl --fail -L -s -o /tmp/wiringpi_3.14_armhf.deb https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_armhf.deb --user-agent "Pi-Star_${pistarCurVersion}"
+			dpkg -i /tmp/wiringpi_3.14_armhf.deb
+			rm -rf /tmp/wiringpi_3.14_armhf.deb
+		fi
+		if ! dpkg -l | grep -q "python3-serial"; then
+			echo "python3-serial is not installed. Installing..."
+			sudo apt update
+			sudo apt install -y python3-serial
+		fi
+	elif dpkg --compare-versions "$pistarCurVersion" ge "4.2" && dpkg --compare-versions "$pistarCurVersion" lt "4.3"; then
+		if [ "$shouldUpdateWiringPi" = true ]; then
+			echo "Downloading WiringPi 3.14 (bullseye)..."
+			curl --fail -L -s -o /tmp/wiringpi_3.14_bullseye_armhf.deb https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_bullseye_armhf.deb --user-agent "Pi-Star_${pistarCurVersion}"
+			dpkg -i /tmp/wiringpi_3.14_bullseye_armhf.deb
+			rm -rf /tmp/wiringpi_3.14_bullseye_armhf.deb
+		fi
+		if ! dpkg -l | grep -q "python3-serial"; then
+			echo "python3-serial is not installed. Installing..."
+			sudo apt update
+			sudo apt install -y python3-serial
+		fi
 	fi
 
 	echo "Starting Services..."
