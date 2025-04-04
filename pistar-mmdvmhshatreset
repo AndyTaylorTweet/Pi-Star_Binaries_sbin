@@ -57,22 +57,29 @@ if [ -z "${1}" ]; then
 fi
 
 # Reset process for MMDVM HS_HAT Board (20,-21,21:-20,21)
-echo 20 > /sys/class/gpio/export
-echo 21 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio20/direction
-echo out > /sys/class/gpio/gpio21/direction
+# gpio front/back compat. for pi5 and older Pi SBCs; since Pi5 has its own GPIO chip (gpiochip4 [pinctrl-rp1])
+# also fixes new kernels on the RPi family (Thank you WPSD team)
+getGPIOpinMaps=$(ls -la /sys/class/gpio/gpiochip* | grep "0000.gpio" | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | tail -n 1)
+getGPIOpinMaps=${getGPIOpinMaps/504/0}
+pin20=$((getGPIOpinMaps + 20))
+pin21=$((getGPIOpinMaps + 21))
+echo ${pin20} > /sys/class/gpio/export
+echo ${pin21} > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio${pin20}/direction
+echo out > /sys/class/gpio/gpio${pin21}/direction
 sleep 0.5
-echo 0 > /sys/class/gpio/gpio20/value
-echo 0 > /sys/class/gpio/gpio21/value
-echo 1 > /sys/class/gpio/gpio21/value
+echo 0 > /sys/class/gpio/gpio${pin20}/value
+echo 0 > /sys/class/gpio/gpio${pin21}/value
+echo 1 > /sys/class/gpio/gpio${pin21}/value
 sleep 1
-echo 0 > /sys/class/gpio/gpio20/value
-echo 1 > /sys/class/gpio/gpio20/value
-echo 0 > /sys/class/gpio/gpio20/value
+echo 0 > /sys/class/gpio/gpio${pin20}/value
+echo 1 > /sys/class/gpio/gpio${pin20}/value
+echo 0 > /sys/class/gpio/gpio${pin20}/value
 sleep 0.5
-echo 20 > /sys/class/gpio/unexport
-echo 21 > /sys/class/gpio/unexport
+echo ${pin20} > /sys/class/gpio/unexport
+echo ${pin21} > /sys/class/gpio/unexport
 sleep 2
+
 message="Modem reset complete"
 
 # If there are no arguments (like "boot") then start the service...
