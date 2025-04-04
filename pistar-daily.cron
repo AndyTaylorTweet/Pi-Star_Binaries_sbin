@@ -23,6 +23,9 @@ git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin
 
 # Stop all the services...
 systemctl stop pistar-watchdog.service > /dev/null 2>&1
+if [ -f /lib/systemd/system/nextiondriver.service ]; then
+  systemctl stop nextiondriver.service > /dev/null 2>&1
+fi
 systemctl stop mmdvmhost.service > /dev/null 2>&1
 systemctl stop dstarrepeater.service > /dev/null 2>&1
 sleep 2
