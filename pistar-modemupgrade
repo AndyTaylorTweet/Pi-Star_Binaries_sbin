@@ -297,7 +297,7 @@ fi
 
 # progress spinner
 SPINNER_PID=
-SPINNER_CHARS="⣾⣽⣻⢿⡿⣟⣯⣷"
+SPINNER_CHARS="⣷⣯⣟⡿⢿⣻⣽⣾"
 spinner() {
     local i=0
     while :; do
