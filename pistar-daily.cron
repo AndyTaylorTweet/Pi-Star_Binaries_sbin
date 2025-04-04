@@ -156,6 +156,9 @@ systemctl start timeserver.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/aprsgateway.service ]; then
   systemctl start aprsgateway.service > /dev/null 2>&1
 fi
+if [ -f /lib/systemd/system/nextiondriver.service ]; then
+  systemctl start nextiondriver.service > /dev/null 2>&1
+fi
 systemctl start mmdvmhost.service > /dev/null 2>&1
 systemctl start dstarrepeater.service > /dev/null 2>&1
 systemctl start pistar-watchdog.service > /dev/null 2>&1
