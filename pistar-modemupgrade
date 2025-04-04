@@ -308,6 +308,15 @@ spinner() {
 }
 
 #
+# gpio front/back compat. for pi5 and older Pi SBCs; since Pi5 has its own GPIO chip (gpiochip4 [pinctrl-rp1])
+# also fixes new kernels on the RPi family (Thank you WPSD team)
+#
+getGPIOpinMaps=$(ls -la /sys/class/gpio/gpiochip* | grep "0000.gpio" | sed -n "s/.*gpiochip\([0-9]*\).*/\1/p" | tail -n 1)
+getGPIOpinMaps=${getGPIOpinMaps/504/0}
+pin20=$((getGPIOpinMaps + 20))
+pin21=$((getGPIOpinMaps + 21))
+
+#
 # Output some useful information when no variables are passed
 #
 if [ -z "$1" ] ; then
@@ -473,20 +482,20 @@ if [ "$1" ] ; then
 	fi
     elif [ "$MMDVM_PI" = true ]; then
 	if [ "$VERBOSE" = 1 ] ; then
-	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -i ${pin20},-${pin21},${pin21}:-${pin20},${pin21} /dev/ttyAMA0 >/dev/null 2>&1
 	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0
 	else
-	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -i 20,-21,21:-20,21 /dev/ttyAMA0 >/dev/null 2>&1
+	    /usr/local/bin/firmware/utils/stm32flash-${stmVer} -i ${pin20},-${pin21},${pin21}:-${pin20},${pin21} /dev/ttyAMA0 >/dev/null 2>&1
 	    output=$(eval /usr/local/bin/firmware/utils/stm32flash-${stmVer} -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R /dev/ttyAMA0 2>&1)
 	fi
     elif [ "$MMDVM_HS_GPIO" = true ]; then
 	# Upload the firmware to the modem and place output into buffer for fail/success checking logic
 	if [ "$VERBOSE" = 1 ] ; then
 	    $STM32FLASH -k /dev/ttyAMA0 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
-	    $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0
+	    $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i ${pin20},-${pin21},${pin21}:-${pin20},${pin21} /dev/ttyAMA0
 	else
 	    $STM32FLASH -k /dev/ttyAMA0 >/dev/null 2>&1 # try to disable write protection (doesn't always work on some annoying Chinesium locked modems)
-	    output=$(eval $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i 20,-21,21:-20,21 /dev/ttyAMA0 2>&1)
+	    output=$(eval $STM32FLASH -v -w /usr/local/bin/firmware/${firmware_file} -g 0x0 -R -i ${pin20},-${pin21},${pin21}:-${pin20},${pin21} /dev/ttyAMA0 2>&1)
 	fi
     elif [ "$DVMega_GPIO" = true ]; then
         # DV Mega mounted on GPIO
