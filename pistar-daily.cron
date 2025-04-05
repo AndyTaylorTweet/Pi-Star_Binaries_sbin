@@ -63,7 +63,7 @@ git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin ${git
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
 rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)
 
-# Shrink NxinX error log to stop it getting out of hand
+# Shrink NginX error log to stop it getting out of hand
 echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
 # Pre-Fix some config in MMDVMHost for update purposes.
@@ -81,30 +81,6 @@ if [[ $(/usr/local/bin/P25Gateway --version | awk '{print $3}' | cut -c -8) -gt 
 fi
 if [ ! -f /root/P25Hosts.txt ]; then
 	touch /root/P25Hosts.txt
-fi
-
-# If we are ready to use the new DMRGateway
-if [[ $(/usr/local/bin/DMRGateway --version | awk '{print $3}' | cut -c -8) -gt "20170924" ]] && [[ $(grep -c "\[DMR Network 3\]" /etc/dmrgateway) -eq "1" ]] && [[ ! -f /usr/local/etc/DMR_Audio/no_NO.indx ]]; then
-	curl --fail -o /usr/local/etc/DMR_Audio/de_DE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/de_DE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/de_DE.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/dk_DK.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/dk_DK.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/en_GB.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/en_GB.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_GB.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/en_US.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/en_US.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/en_US.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/es_ES.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/es_ES.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/es_ES.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/fr_FR.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/fr_FR.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/it_IT.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/it_IT.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/it_IT.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/no_NO.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/no_NO.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/no_NO.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/pl_PL.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/pl_PL.indx
-	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.ambe -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.ambe
-	curl --fail -o /usr/local/etc/DMR_Audio/se_SE.indx -s https://raw.githubusercontent.com/g4klx/DMRGateway/master/Audio/se_SE.indx	
 fi
 
 if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
@@ -132,6 +108,47 @@ if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]
                 echo "mmdvmRXLevel=100" >> /etc/dstarrepeater
                 echo "mmdvmTXLevel=100" >> /etc/dstarrepeater
         fi
+fi
+
+#
+# Patch WiringPi and add python3-serial
+#
+pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
+wiringpiCurVersion=$(dpkg -s wiringpi 2>/dev/null | grep '^Version' | awk '{print $2}')
+
+# Check if WiringPi is installed or needs update
+shouldUpdateWiringPi=false
+if [ -z "$wiringpiCurVersion" ]; then
+	shouldUpdateWiringPi=true
+elif dpkg --compare-versions "$wiringpiCurVersion" lt "3.14"; then
+	shouldUpdateWiringPi=true
+fi
+	
+# Logic based on Pi-Star version
+if dpkg --compare-versions "$pistarCurVersion" ge "4.3"; then
+	if [ "$shouldUpdateWiringPi" = true ]; then
+		echo "Downloading WiringPi 3.14 (armhf)..."
+		curl --fail -L -s -o /tmp/wiringpi_3.14_armhf.deb https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_armhf.deb --user-agent "Pi-Star_${pistarCurVersion}"
+		dpkg -i /tmp/wiringpi_3.14_armhf.deb
+		rm -rf /tmp/wiringpi_3.14_armhf.deb
+	fi
+	if ! dpkg -l | grep -q "python3-serial"; then
+		echo "python3-serial is not installed. Installing..."
+		apt-get update
+		apt-get install -y python3-serial
+	fi
+elif dpkg --compare-versions "$pistarCurVersion" ge "4.2" && dpkg --compare-versions "$pistarCurVersion" lt "4.3"; then
+	if [ "$shouldUpdateWiringPi" = true ]; then
+		echo "Downloading WiringPi 3.14 (bullseye)..."
+		curl --fail -L -s -o /tmp/wiringpi_3.14_bullseye_armhf.deb https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_bullseye_armhf.deb --user-agent "Pi-Star_${pistarCurVersion}"
+		dpkg -i /tmp/wiringpi_3.14_bullseye_armhf.deb
+		rm -rf /tmp/wiringpi_3.14_bullseye_armhf.deb
+	fi
+	if ! dpkg -l | grep -q "python3-serial"; then
+		echo "python3-serial is not installed. Installing..."
+		apt-get update
+		apt-get install -y python3-serial
+	fi
 fi
 
 # Start all the services...
