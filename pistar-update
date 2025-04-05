@@ -139,7 +139,7 @@ main_function() {
 		echo -e "Updating OS...\n"
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
-		apt-get clean
+		#apt-get clean
 		echo "Done"
 
 		echo "Checking nginx config"
@@ -293,8 +293,8 @@ main_function() {
 		fi
 		if ! dpkg -l | grep -q "python3-serial"; then
 			echo "python3-serial is not installed. Installing..."
-			sudo apt update
-			sudo apt install -y python3-serial
+			apt-get update
+			apt-get install -y python3-serial
 		fi
 	elif dpkg --compare-versions "$pistarCurVersion" ge "4.2" && dpkg --compare-versions "$pistarCurVersion" lt "4.3"; then
 		if [ "$shouldUpdateWiringPi" = true ]; then
@@ -305,8 +305,8 @@ main_function() {
 		fi
 		if ! dpkg -l | grep -q "python3-serial"; then
 			echo "python3-serial is not installed. Installing..."
-			sudo apt update
-			sudo apt install -y python3-serial
+			apt-get update
+			apt-get install -y python3-serial
 		fi
 	fi
 
