@@ -49,7 +49,7 @@ main_function() {
 	case ${pistarCurVersion} in
 	3.4.1)
 		if [ ! -z "${pistarHardware}" ]; then
-			Message="Upgraded from ${pistarCurVersion} to 3.4.2..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.2..."
 			echo "Installing extra software..."
 			apt-get update
 			apt-get install -y stm32flash
@@ -62,19 +62,19 @@ main_function() {
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.1 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.1 are not supported..."
 		fi
 	;;
 	3.4.2)
 		if [ ! -z "${pistarHardware}" ]; then
-			Message="Upgraded from ${pistarCurVersion} to 3.4.3..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.3..."
 			sed -i 's/3.4.2/3.4.3/g' /etc/pistar-release
 			sed -i 's/3.4.2/3.4.3/g' /etc/motd
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.2 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.2 are not supported..."
 		fi
 	;;
 	3.4.3)
@@ -97,20 +97,20 @@ main_function() {
 			echo "Updating boot config to add high current USB support"
 			echo -e "\n# Increase USB Current\nmax_usb_current=1" >> /boot/config.txt
 			if [ ! -z "${pistarHardware}" ]; then
-				Message="Upgraded from ${pistarCurVersion} to 3.4.4..."
+				Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.4..."
 				sed -i 's/3.4.3/3.4.4/g' /etc/pistar-release
 				sed -i 's/3.4.3/3.4.4/g' /etc/motd
 				echo $Message
 				exec "$0" "$@"
                         	exit 1
 			else
-				Message="In-place upgrades from 3.4.3 are not supported..."
+				Message="[!] ERROR: In-place upgrades from 3.4.3 are not supported..."
 			fi
 		fi
 	;;
 	3.4.4)
 		if [ ! -z "${pistarHardware}" ]; then
-			Message="Upgraded from ${pistarCurVersion} to 3.4.5..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.5..."
 			sed -i 's/3.4.4/3.4.5/g' /etc/pistar-release
 			sed -i 's/3.4.4/3.4.5/g' /etc/motd
 			echo "Installing Shell in a Box..."
@@ -130,7 +130,7 @@ main_function() {
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.5)
@@ -147,12 +147,12 @@ main_function() {
 			sed -i '7i║           ██║     ██║      ███████║   ██║   ██║  ██║██║  ██║          ║' /etc/motd
 			sed -i '8i║           ╚═╝     ╚═╝      ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝          ║' /etc/motd
 			sed -i '9i║                                                                       ║' /etc/motd
-			Message="Upgraded from ${pistarCurVersion} to 3.4.6..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.6..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.6)
@@ -161,12 +161,12 @@ main_function() {
                 	sed -i 's/3.4.6/3.4.7/g' /etc/motd
 			apt-get update
 			apt-get install -y libimobiledevice-utils usb-modeswitch usb-modeswitch-data
-			Message="Upgraded from ${pistarCurVersion} to 3.4.7..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.7..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.7)
@@ -179,12 +179,12 @@ main_function() {
 			dpkg -i /tmp/libssl1.0.2_1.0.2l-2+deb9u3_armhf.deb
 			rm /tmp/libssl1.0.2_1.0.2l-2+deb9u3_armhf.deb
 			if [ -z "$STY" ]; then exec screen -dm -S update dpkg -i /tmp/shellinabox_2.20_armhf.deb "$0"; fi
-			Message="Upgraded from ${pistarCurVersion} to 3.4.8..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.8..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.8)
@@ -196,12 +196,12 @@ main_function() {
 			echo 'deb http://httpredir.debian.org/debian jessie-backports main contrib non-free' > /etc/apt/sources.list.d/jessie-backports.list
 			apt-get update
 			apt-get -t jessie-backports install usb-modeswitch usb-modeswitch-data
-			Message="Upgraded from ${pistarCurVersion} to 3.4.9..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.9..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.9)
@@ -238,12 +238,12 @@ main_function() {
 			systemctl daemon-reload
 			systemctl enable ysf2dmr.timer
 
-			Message="Upgraded from ${pistarCurVersion} to 3.4.10..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.10..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.10)
@@ -319,12 +319,12 @@ main_function() {
 			systemctl enable pistar-ap.timer
 
 			# Report the update status
-			Message="Upgraded from ${pistarCurVersion} to 3.4.11..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.11..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.11)
@@ -427,12 +427,12 @@ main_function() {
 			systemctl daemon-reload
 			systemctl enable nxdngateway.timer
 			systemctl enable nxdnparrot.timer
-			Message="Upgraded from ${pistarCurVersion} to 3.4.12..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.12..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.12)
@@ -512,12 +512,12 @@ main_function() {
 			systemctl enable ysf2nxdn.timer
 			systemctl enable ysf2p25.timer
 
-			Message="Upgraded from ${pistarCurVersion} to 3.4.13..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.13..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.13)
@@ -581,12 +581,12 @@ main_function() {
 			systemctl daemon-reload
 			systemctl enable dmr2ysf.timer
 
-			Message="Upgraded from ${pistarCurVersion} to 3.4.14..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.14..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.14)
@@ -652,12 +652,12 @@ main_function() {
 			systemctl daemon-reload
 			systemctl enable dmr2nxdn.timer
 
-			Message="Upgraded from ${pistarCurVersion} to 3.4.15..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.15..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.15)
@@ -690,12 +690,12 @@ main_function() {
 			systemctl daemon-reload
 			systemctl enable dapnetgateway.timer
 
-			Message="Upgraded from ${pistarCurVersion} to 3.4.16..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.16..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.16)
@@ -714,12 +714,12 @@ main_function() {
 			# Update systemd and enable new services
 			systemctl daemon-reload
 
-			Message="Upgraded from ${pistarCurVersion} to 3.4.17..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.17..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi		
 	;;
 	3.4.17)
@@ -732,12 +732,12 @@ main_function() {
 			sed -i 's/httpredir/archive/g' /etc/apt/sources.list.d/jessie-backports.list
 			echo 'Acquire::Check-Valid-Until "0";' > /etc/apt/apt.conf.d/10no-check-valid-until
 			
-			Message="Upgraded from ${pistarCurVersion} to 3.4.18..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.18..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.18)
@@ -749,19 +749,19 @@ main_function() {
 			sed -i '/^mozilla\/DST_Root_CA_X3.crt$/ s/^/!/' /etc/ca-certificates.conf
 			update-ca-certificates
 			
-			Message="Upgraded from ${pistarCurVersion} to 3.4.19..."
+			Message="[✓] Upgraded from ${pistarCurVersion} to 3.4.19..."
 			echo $Message
 			exec "$0" "$@"
                         exit 1
 		else
-			Message="In-place upgrades from 3.4.4 are not supported..."
+			Message="[!] ERROR: In-place upgrades from 3.4.4 are not supported..."
 		fi
 	;;
 	3.4.19)
-		Message="You are already running the latest version..."
+		Message="[✓] You are already running the latest version..."
 	;;
 	4.0.0-Beta)
-		Message="Please re-image this system with the release version Pi-Star v4.1.x as soon as possible."
+		Message="[!] ERROR: Please re-image this system with the release version Pi-Star v4.1.x as soon as possible."
 	;;
 	4.0.0-RC1)
 		sed -i 's/4.0.0-RC1/4.0.0-RC2/g' /etc/pistar-release
@@ -783,7 +783,7 @@ main_function() {
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
-		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC2..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.0.0-RC2..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -827,7 +827,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC3..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.0.0-RC3..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -851,19 +851,19 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.0.0-RC4..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.0.0-RC4..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
 	;;
 	4.0.0-RC4)
-		Message="Please re-image this system with Pi-Star v4.1.x as soon as possible."
+		Message="[!] ERROR: Please re-image this system with Pi-Star v4.1.x as soon as possible."
 	;;
 	4.0.0)
-		Message="Please re-image this system with Pi-Star v4.1.x as soon as possible."
+		Message="[!] ERROR: Please re-image this system with Pi-Star v4.1.x as soon as possible."
 	;;
 	4.1.0-Beta)
-		Message="Please re-image this system with the release version Pi-Star v4.1.x as soon as possible."
+		Message="[!] ERROR: Please re-image this system with the release version Pi-Star v4.1.x as soon as possible."
 	;;
 	4.1.0-RC1)
 		sed -i 's/4.1.0-RC1/4.1.0-RC2/g' /etc/pistar-release
@@ -877,7 +877,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC2..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -913,7 +913,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC3..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -928,7 +928,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC4..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -955,7 +955,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC5..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC5..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -970,7 +970,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC6..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC6..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -992,7 +992,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC7..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC7..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1007,7 +1007,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0-RC8..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0-RC8..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1019,7 +1019,7 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.0..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.0..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1034,7 +1034,7 @@ main_function() {
 		apt-get update && apt-get install --reinstall -y firmware-ralink
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.1..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.1..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1162,7 +1162,7 @@ main_function() {
 		systemctl restart nginx
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.2..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.2..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1180,7 +1180,7 @@ main_function() {
 		sed -i '/^cronHours=*/a mount -o remount,rw \/\nsed -i "/cron.daily/c ${cronMins} ${cronHours}\t* * *\troot\tmount -o remount,rw / && cd / && run-parts --report /etc/cron.daily" /etc/crontab' /etc/rc.local
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.3..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.3..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1242,7 +1242,7 @@ main_function() {
 		systemctl enable aprsgateway.timer
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.4..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.4..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1276,7 +1276,7 @@ main_function() {
 		fi
 		
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.5..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.5..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1383,7 +1383,7 @@ main_function() {
 		echo 'Enabled=0' >> /etc/dgidgateway
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.6..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.6..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1399,7 +1399,7 @@ main_function() {
 		apt-get install -y debian-archive-keyring
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.7..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.7..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1494,7 +1494,7 @@ main_function() {
 		systemctl enable m17gateway.timer
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.1.8..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.8..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1506,8 +1506,8 @@ main_function() {
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.1.9..."
-		Message="You are already running the latest version..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.9..."
+		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
                 #exit 1
@@ -1564,8 +1564,8 @@ main_function() {
 		systemctl enable --now nextiondriver.service
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.2.1..."
-		#Message="You are already running the latest version..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.1..."
+		#Message="[✓] You are already running the latest version..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1577,8 +1577,8 @@ main_function() {
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.2.2..."
-		Message="You are already running the latest version..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.2..."
+		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
                 #exit 1
@@ -1608,8 +1608,8 @@ main_function() {
 		rm -rf /etc/modprobe.d/rfkill_default.conf
 
 		# OK we are done
-		Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
-		#Message="You are already running the latest version..."
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.1..."
+		#Message="[✓] You are already running the latest version..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
@@ -1621,19 +1621,44 @@ main_function() {
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
-		Message="You are already running the latest version..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.1..."
+		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
                 #exit 1
 	;;
 	*)
-		Message="Somthing went very wrong, I cant tell what version I am running"
+		Message="[!] ERROR: Somthing went very wrong - I cant tell what version I am running"
 	;;
 	esac
 
 	echo $Message
-	echo "Upgrade process complete, syncing disk cache before making the disk Read-Only"
+	echo "[✓] Upgrade process complete: syncing disk cache before making the disk Read-Only"
+
+	# RPi 4/5 EEPROM upgrade checks
+	if [[ "${pistarHardware}" == "RPi" ]] && dpkg --compare-versions "${pistarCurVersion}" ge "4.3.0"; then
+		piBoardModel=$(tr -d '\0' < /proc/device-tree/model)
+		if [[ "${piBoardModel}" == *"Raspberry Pi 4"* || "${piBoardModel}" == *"Raspberry Pi 5"* ]]; then
+			# Pi 4 / 5 Detected, with a current OS
+			echo "[INFO] Detected device: $MODEL"
+
+			# Make sure the rpi-eeprom package is installed
+			if ! command -v rpi-eeprom-update &> /dev/null; then
+				echo "[INFO] rpi-eeprom-update not found. Installing..."
+				sudo apt update && sudo apt install -y rpi-eeprom
+			fi
+
+			# Run the EEPROM update check
+			eepromUpdateStatus=$(rpi-eeprom-update)
+
+			if echo "$UPDATE_STATUS" | grep -q "UPDATE AVAILABLE"; then
+				echo "[!] RPi EEPROM update available! You should run: sudo rpi-eeprom-update -a && sudo reboot"
+			else
+				echo "[✓] RPi EEPROM is up to date."
+			fi
+		fi	
+	fi
+
 	# Make the disk read-only
 	/bin/sync
 	/bin/sync
@@ -1644,7 +1669,7 @@ main_function() {
 	  mount -o remount,ro /boot
 	  mount -o remount,ro /
 	fi
-	echo "Finished"
+	echo "[INFO] Finished"
 
 	}
 
