@@ -22,6 +22,7 @@ if ! flock -n 200 ; then
 fi
 
 main_function() {
+	echo "[INFO] Pi-Star Upgrade process starting..."
 	# Get the current Modem
 	if [ -f /etc/dstar-radio.mmdvmhost ]; then
 		pistarModem=$(awk -F "=" '/Hardware/ {print $2}' /etc/dstar-radio.mmdvmhost)
@@ -44,7 +45,7 @@ main_function() {
 	  mount -o remount,rw /
 	fi
 
-	echo "Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
+	echo "[INFO] Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
 
 	case ${pistarCurVersion} in
 	3.4.1)
