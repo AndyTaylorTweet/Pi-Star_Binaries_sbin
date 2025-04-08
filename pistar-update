@@ -4,20 +4,20 @@
 #                                                                             #
 #                        Pi-Star Auto Update Tool                             #
 #                                                                             #
-#    Version 3.6, Code, Design and Development by Andy Taylor (MW0MWZ).       #
+#    Version 3.7, Code, Design and Development by Andy Taylor (MW0MWZ).       #
 #                                                                             #
 #                     Make it simple to update the OS.                        #
 #                                                                             #
 ###############################################################################
 #
 if [ "$(id -u)" != "0" ]; then
-  echo -e "You need to be root to run this command...\n"
+  echo -e "[!] ERROR: You need to be root to run this command...\n"
   exit 1
 fi
 
 exec 200>/var/lock/pistar-update.lock || exit 1
 if ! flock -n 200 ; then
-  echo -e "Another instance is already running...\n"
+  echo -e "[!] ERROR: Another instance is already running...\n"
   exit 1
 fi
 
@@ -52,13 +52,13 @@ git_update() {
 
 	if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
 		# Show what we are doing
-		echo "Updating ${gitFolder} (Branch: ${gitBranch})..."
+		echo "[INFO] Updating ${gitFolder} (Branch: ${gitBranch})..."
 
 		# If this script is updated, re-run the update with the new version.
 		if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch origin ${gitBranch}
 			if [ "$(git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git diff --name-only origin/master 2>/dev/null | grep pistar-update 2>/dev/null)" = "pistar-update" ]; then
-                                echo "Found a new version of pistar-update..."
+                                echo "[✓] Found a new version of pistar-update..."
 				# Un-shallow Git Repo
 				if [ -f ${gitFolder}/.git/shallow ]; then
 					git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git fetch --unshallow
@@ -66,11 +66,11 @@ git_update() {
 				# Pull updates
                                 git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git pull origin ${gitBranch}
                                 if [[ $(git_checkUpdateRequired ${gitFolder}) -gt 0 ]]; then
-                                        echo "Update to new version of pistar-update was not successfull, forcing update..."
+                                        echo "[!] WARN: Update to new version of pistar-update was not successfull, forcing update..."
 					rm -rf ${gitFolder}/pistar-upnp.service
                                         git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/master
                                 fi
-                                echo "Restarting update process with the new version..."
+                                echo "[✓] Restarting update process with the new version..."
                                 exec "$0" "$@"
                                 exit 1
 			fi
@@ -88,11 +88,11 @@ git_update() {
 			if [[ ${gitFolder} == "/usr/local/sbin" ]]; then
 				rm -rf ${gitFolder}/pistar-upnp.service
 			fi
-			echo "Updates were not successfull, reverting to Pi-Star original files..."
+			echo "[!] WARN: Updates were not successfull, reverting to Pi-Star original files..."
 			git --work-tree=${gitFolder} --git-dir=${gitFolder}/.git reset --hard origin/${gitBranch}
 		fi
 	else
-		echo "No updates for ${gitFolder} (Branch: ${gitBranch}) available"
+		echo "[✓] No updates for ${gitFolder} (Branch: ${gitBranch}) available"
 	fi
 }
 
@@ -136,11 +136,11 @@ main_function() {
 
 	if [ -t 1 ]; then
 		# This is running from a terminal, so it should be safe to update the OS
-		echo -e "Updating OS...\n"
+		echo -e "[INFO] Updating OS...\n"
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
 		#apt-get clean
-		echo "Done"
+		echo "[✓] Done"
 
 		echo "Checking nginx config"
 		if ! [ -f /etc/systemd/system/nginx.service.d/override.conf ]; then
@@ -148,36 +148,36 @@ main_function() {
 				sed -i '\/PIDFile=\/run\/nginx.pid/a ExecStartPre=\/bin\/mkdir -p \/var\/log\/nginx' /lib/systemd/system/nginx.service
 				systemctl daemon-reload
 				systemctl restart nginx.service
-				echo "nginx config has been repaired - re-running pistar-update"
+				echo "[!] WARN: nginx config has been repaired - re-running pistar-update"
 	                        exec "$0" "$@"
 				exit 1
 			fi
 		fi
 	fi
 
-	echo "Stopping Services..."
+	echo "[INFO] Stopping Services..."
 	service_handle stop
-	echo "Done"
+	echo "[✓] Done"
 
-	echo "Updating DV Binaries..."
+	echo "[INFO] Updating DV Binaries..."
 	git_update /usr/local/bin
-	echo "Done"
+	echo "[✓] Done"
 
-	echo "Updating Pi-Star Binaries..."
+	echo "[INFO] Updating Pi-Star Binaries..."
 	git_update /usr/local/sbin
-	echo "Done"
+	echo "[✓] Done"
 
-	echo "Updating Hostfiles..."
+	echo "[INFO] Updating Hostfiles..."
 	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
-	echo "Done"
+	echo "[✓] Done"
 
-	echo "Updating Dashboard..."
+	echo "[INFO] Updating Dashboard..."
 	git_update /var/www/dashboard
-	echo "Done"
+	echo "[✓] Done"
 
-	echo "Updating PiStar-Firewall..."
+	echo "[INFO] Updating PiStar-Firewall..."
 	pistar-firewall > /dev/null 2>&1
-	echo "Done"
+	echo "[✓] Done"
 
 	# Pre-Fix some config in MMDVMHost for update purposes.
 	mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
@@ -223,33 +223,28 @@ main_function() {
 	fi
 
 	if [[ $(grep "\[Voice\]" /etc/p25gateway | wc -l) -eq 0 ]]; then
-		echo "Updating P25Gateway config..."
+		echo "[INFO] Updating P25Gateway config..."
 		echo "" >> /etc/p25gateway
 		sed -i '$a[Voice]\nEnabled=1\nLanguage=en_GB\nDirectory=/usr/local/etc/P25_Audio\n' /etc/p25gateway
-		echo "Done"
+		echo "[✓] Done"
 	fi
 
 	if [[ $(grep Version /etc/pistar-release | awk '{print $3}' | cut -c 1) -eq 4 ]]; then
         	if [[ $(cat /etc/ircddbgateway | grep -o "xlx" | wc -l) -eq 0 ]]; then
-        	        echo "Adding XLX Config to /etc/ircddbgateway"
+        	        echo "[INFO] Adding XLX Config to /etc/ircddbgateway"
         	        echo "xlxEnabled=0" >> /etc/ircddbgateway
         	        echo "xlxHostsFileUrl=http://xlxapi.rlx.lu/api.php?do=GetXLXDMRMaster" >> /etc/ircddbgateway
         	fi
 
-        	#if [[ $(cat /etc/ircddbgateway | grep -o "aprsPassword" | wc -l) -eq 0 ]]; then
-        	#        echo "Adding APRS Password to /etc/ircddbgateway"
-        	#        echo "aprsPassword=00000" >> /etc/ircddbgateway
-        	#fi
-
 		if [[ $(cat /etc/ircddbgateway | grep -o "mobileGPS" | wc -l) -eq 0 ]]; then
-                	echo "Adding MobileGPS Config to /etc/ircddbgateway"
+                	echo "[INFO] Adding MobileGPS Config to /etc/ircddbgateway"
                 	echo "mobileGPSEnabled=0" >> /etc/ircddbgateway
                 	echo "mobileGPSAddress=127.0.0.1" >> /etc/ircddbgateway
                 	echo "mobileGPSPort=7834" >> /etc/ircddbgateway
         	fi
 
 		if [[ $(cat /etc/dstarrepeater | grep -o "mmdvmRXInvert" | wc -l) -eq 0 ]]; then
-        	        echo "Adding better MMDVM Config to /etc/dstarrepeater"
+        	        echo "[INFO] Adding better MMDVM Config to /etc/dstarrepeater"
         	        echo "mmdvmRXInvert=0" >> /etc/dstarrepeater
         	        echo "mmdvmTXInvert=0" >> /etc/dstarrepeater
         	        echo "mmdvmPTTInvert=0" >> /etc/dstarrepeater
@@ -286,35 +281,35 @@ main_function() {
 	# Logic based on Pi-Star version
 	if dpkg --compare-versions "$pistarCurVersion" ge "4.3"; then
 		if [ "$shouldUpdateWiringPi" = true ]; then
-			echo "Downloading WiringPi 3.14 (armhf)..."
+			echo "[INFO] Downloading WiringPi 3.14 (armhf)..."
 			curl --fail -L -s -o /tmp/wiringpi_3.14_armhf.deb https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_armhf.deb --user-agent "Pi-Star_${pistarCurVersion}"
 			dpkg -i /tmp/wiringpi_3.14_armhf.deb
 			rm -rf /tmp/wiringpi_3.14_armhf.deb
 		fi
 		if ! dpkg -l | grep -q "python3-serial"; then
-			echo "python3-serial is not installed. Installing..."
+			echo "[INFO] python3-serial is not installed. Installing..."
 			apt-get update
 			apt-get install -y python3-serial
 		fi
 	elif dpkg --compare-versions "$pistarCurVersion" ge "4.2" && dpkg --compare-versions "$pistarCurVersion" lt "4.3"; then
 		if [ "$shouldUpdateWiringPi" = true ]; then
-			echo "Downloading WiringPi 3.14 (bullseye)..."
+			echo "[INFO] Downloading WiringPi 3.14 (bullseye)..."
 			curl --fail -L -s -o /tmp/wiringpi_3.14_bullseye_armhf.deb https://github.com/WiringPi/WiringPi/releases/download/3.14/wiringpi_3.14_bullseye_armhf.deb --user-agent "Pi-Star_${pistarCurVersion}"
 			dpkg -i /tmp/wiringpi_3.14_bullseye_armhf.deb
 			rm -rf /tmp/wiringpi_3.14_bullseye_armhf.deb
 		fi
 		if ! dpkg -l | grep -q "python3-serial"; then
-			echo "python3-serial is not installed. Installing..."
+			echo "[INFO] python3-serial is not installed. Installing..."
 			apt-get update
 			apt-get install -y python3-serial
 		fi
 	fi
 
-	echo "Starting Services..."
+	echo "[INFO] Starting Services..."
 	service_handle start
-	echo "Done"
+	echo "[✓] Done"
 
-	echo "Updates complete, syncing disk cache before making the disk Read-Only"
+	echo "[✓] Updates complete, syncing disk cache before making the disk Read-Only"
 	# Make the disk read-only
 	/bin/sync
 	/bin/sync
@@ -327,7 +322,7 @@ main_function() {
 	fi
 
 	# Tell the user we are done
-	echo "Finished"
+	echo "[INFO] Finished"
 	}
 
 if [ -t 1 ]; then
