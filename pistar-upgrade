@@ -1632,15 +1632,12 @@ main_function() {
 	;;
 	esac
 
-	echo $Message
-	echo "[✓] Upgrade process complete: syncing disk cache before making the disk Read-Only"
-
 	# RPi 4/5 EEPROM upgrade checks
 	if [[ "${pistarHardware}" == "RPi" ]] && dpkg --compare-versions "${pistarCurVersion}" ge "4.3.0"; then
 		piBoardModel=$(tr -d '\0' < /proc/device-tree/model)
 		if [[ "${piBoardModel}" == *"Raspberry Pi 4"* || "${piBoardModel}" == *"Raspberry Pi 5"* ]]; then
 			# Pi 4 / 5 Detected, with a current OS
-			echo "[INFO] Detected device: $MODEL"
+			echo "[INFO] Detected device: ${piBoardModel}"
 
 			# Make sure the rpi-eeprom package is installed
 			if ! command -v rpi-eeprom-update &> /dev/null; then
@@ -1658,6 +1655,10 @@ main_function() {
 			fi
 		fi	
 	fi
+
+	# OK We're done
+	echo $Message
+	echo "[✓] Upgrade process complete: syncing disk cache before making the disk Read-Only"
 
 	# Make the disk read-only
 	/bin/sync
