@@ -65,12 +65,6 @@ case "$1" in
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
-			if [ -f /usr/local/sbin/pistar-nextiontext.py ]; then
-				$SLEEP 1
-				/usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
-    				/usr/local/sbin/pistar-nextiontext.py t0 "MMDVMHost" 2>/dev/null &
-				/usr/local/sbin/pistar-nextiontext.py t2 "-Stopped-" 2>/dev/null &
-			fi
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
@@ -82,12 +76,6 @@ case "$1" in
 		if [ `$PGREP $DAEMON` ]; then
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
-			if [ -f /usr/local/sbin/pistar-nextiontext.py ]; then
-				$SLEEP 1
-				/usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
-    				/usr/local/sbin/pistar-nextiontext.py t0 "MMDVMHost" 2>/dev/null &
-				/usr/local/sbin/pistar-nextiontext.py t2 "-Stopped-" 2>/dev/null &
-			fi
 			$SLEEP 3
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
