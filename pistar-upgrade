@@ -618,29 +618,27 @@ main_function() {
 
 		# OK we are done
 		Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.1..."
-		#Message="[✓] You are already running the latest version..."
 		echo $Message
 		exec "$0" "$@"
                 exit 1
 	;;
 	4.2.1)
-		#sed -i 's/4.2.1/4.2.2/g' /etc/pistar-release
+		sed -i 's/4.2.1/4.2.2/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Remove the IPv6 Roadblocks
-		#rm -rf /etc/modprobe.d/ipv6.conf
+		rm -rf /etc/modprobe.d/ipv6.conf
 
 		# Fix the ifnames in cmdline.txt
-		#grep -q "net.ifnames=0" /boot/cmdline.txt || sed -i 's/rootwait/net.ifnames=0 rootwait/' /boot/cmdline.txt
+		grep -q "net.ifnames=0" /boot/cmdline.txt || sed -i 's/rootwait/net.ifnames=0 rootwait/' /boot/cmdline.txt
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.2..."
-		Message="[✓] You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.2..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.2.2)
 		#sed -i 's/4.2.2/4.2.3/g' /etc/pistar-release
@@ -668,7 +666,7 @@ main_function() {
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.2..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.3..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
