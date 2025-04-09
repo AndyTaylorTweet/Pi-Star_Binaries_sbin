@@ -530,23 +530,27 @@ main_function() {
                 exit 1
 	;;
 	4.1.8)
-		#sed -i 's/4.1.8/4.1.9/g' /etc/pistar-release
+		sed -i 's/4.1.8/4.1.9/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Remove the IPv6 Roadblocks
-		#rm -rf /etc/modprobe.d/ipv6.conf
+		rm -rf /etc/modprobe.d/ipv6.conf
 
 		# Clean /etc/sysctl.conf
-		#sed -i '/net\.ipv6\.conf\.all\.disable_ipv6/d' /etc/sysctl.conf
+		sed -i '/net\.ipv6\.conf\.all\.disable_ipv6/d' /etc/sysctl.conf
+
+		# Cleanup apt issues
+		rm -rf /etc/apt/sources.list.d/vscode.list
+		rm -rf /etc/apt/sources.list.d/stretch-backports.list
+		echo 'deb http://archive.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.9..."
-		Message="[✓] You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.9..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.1.9)
 		#sed -i 's/4.1.9/4.1.10/g' /etc/pistar-release
