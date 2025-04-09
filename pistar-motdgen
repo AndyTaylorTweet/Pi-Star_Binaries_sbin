@@ -4,7 +4,7 @@
 #                                                                            #
 #                         Pi-Star MOTD Generator.                            #
 #                                                                            #
-#     Version 0.9, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
 #                                                                            #
 #                   Make it simple to update the /etc/motd.                  #
 #                                                                            #
@@ -19,6 +19,9 @@ fi
 # Get the Pi-Star Version Info
 pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
 
+# Get the First IPv4 address that is not 127.0.0.1
+ipAddressV4=$(hostname -I | awk '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && $i != "127.0.0.1") {print $i; exit}}')
+
 echo -e "
 [0;31m╔═══════════════════════════════════════════════════════════════════════╗
 ║                                                                       ║
@@ -31,7 +34,7 @@ echo -e "
 ║                                                                       ║
 ╚═══════════════════════════════════════════════════════════════════════╝
 [0;0mThe Pi-Star Dashboard can be found at one of the following locations:
-[1;37mhttp://$(hostname)/  http://$(hostname).local/   http://$(hostname -I | awk '{print $1}')/
+[1;37mhttp://$(hostname)/  http://$(hostname).local/   http://${ipAddressV4}/
 
 [0;0mPi-Star's disk is read-only by default, enable read-write with \"rpi-rw\".
 Pi-Star built by Andy Taylor (MW0MWZ), pi-star tools all start \"pistar-\".
