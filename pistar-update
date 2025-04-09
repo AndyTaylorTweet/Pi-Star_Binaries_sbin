@@ -122,7 +122,19 @@ service_handle() {
 	systemctl ${doWhat} nxdn2dmr.service > /dev/null 2>&1
 	systemctl ${doWhat} nxdnparrot.service > /dev/null 2>&1
 	systemctl ${doWhat} dstarrepeater.service > /dev/null 2>&1
+	if [ -f /etc/systemd/system/NextionDriver.service ]; then
+            systemctl ${doWhat} NextionDriver.service > /dev/null 2>&1
+        fi
 	systemctl ${doWhat} mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
+}
+
+nextion_message() {
+	# Send Feedback to Nextion Screen
+	if [ -f /usr/local/sbin/pistar-nextiontext.py ]; then
+	    /usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
+	    /usr/local/sbin/pistar-nextiontext.py t0 $1 2>/dev/null
+	    /usr/local/sbin/pistar-nextiontext.py t2 $2 2>/dev/null
+	fi
 }
 
 main_function() {
@@ -134,9 +146,14 @@ main_function() {
 	  mount -o remount,rw /
 	fi
 
+	echo "[INFO] Stopping Services..."
+	service_handle stop
+	echo "[✓] Done"
+
 	if [ -t 1 ]; then
 		# This is running from a terminal, so it should be safe to update the OS
 		echo -e "[INFO] Updating OS...\n"
+		nextion_message "OS Upgrades" "in progress.."
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
 		#apt-get clean
@@ -154,10 +171,6 @@ main_function() {
 			fi
 		fi
 	fi
-
-	echo "[INFO] Stopping Services..."
-	service_handle stop
-	echo "[✓] Done"
 
 	echo "[INFO] Updating DV Binaries..."
 	git_update /usr/local/bin
