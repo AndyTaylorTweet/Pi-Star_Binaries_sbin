@@ -157,6 +157,7 @@ main_function() {
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
 		#apt-get clean
+		nextion_message "OS Upgrades" "done"
 		echo "[✓] Done"
 
 		echo "Checking nginx config"
@@ -166,6 +167,7 @@ main_function() {
 				systemctl daemon-reload
 				systemctl restart nginx.service
 				echo "[!] WARN: nginx config has been repaired - re-running pistar-update"
+				nextion_message "Webserver" "[!] Repaired"
 	                        exec "$0" "$@"
 				exit 1
 			fi
@@ -173,22 +175,27 @@ main_function() {
 	fi
 
 	echo "[INFO] Updating DV Binaries..."
+	nextion_message "DV Binaries" "updating.."
 	git_update /usr/local/bin
 	echo "[✓] Done"
 
 	echo "[INFO] Updating Pi-Star Binaries..."
+	nextion_message "CLI Tools" "updating.."
 	git_update /usr/local/sbin
 	echo "[✓] Done"
 
 	echo "[INFO] Updating Hostfiles..."
+	nextion_message "Host Files" "updating.."
 	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
 	echo "[✓] Done"
 
 	echo "[INFO] Updating Dashboard..."
+	nextion_message "Dashboard" "updating.."
 	git_update /var/www/dashboard
 	echo "[✓] Done"
 
 	echo "[INFO] Updating PiStar-Firewall..."
+	nextion_message "Firewall" "updating.."
 	pistar-firewall > /dev/null 2>&1
 	echo "[✓] Done"
 
@@ -319,6 +326,7 @@ main_function() {
 	fi
 
 	echo "[INFO] Starting Services..."
+	nextion_message "Updates" "Complete!"
 	service_handle start
 	echo "[✓] Done"
 
