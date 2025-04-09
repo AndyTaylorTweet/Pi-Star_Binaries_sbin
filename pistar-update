@@ -132,8 +132,8 @@ nextion_message() {
 	# Send Feedback to Nextion Screen
 	if [ -f /usr/local/sbin/pistar-nextiontext.py ]; then
 	    /usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
-	    /usr/local/sbin/pistar-nextiontext.py t0 $1 2>/dev/null
-	    /usr/local/sbin/pistar-nextiontext.py t2 $2 2>/dev/null
+	    /usr/local/sbin/pistar-nextiontext.py t0 "${1}" 2>/dev/null
+	    /usr/local/sbin/pistar-nextiontext.py t2 "${2}" 2>/dev/null
 	fi
 }
 
