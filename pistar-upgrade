@@ -667,6 +667,7 @@ main_function() {
 
 		# Create additional cmdline.txt file and link it
 		#cp /boot/firmware/cmdline.txt /boot/firmware/cmdline02w.txt
+		#(cd /boot && ln -s firmware/cmdline02w.txt ./)
 		#grep -q "brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000" /boot/firmware/cmdline02w.txt || sed -i 's/net.ifnames=0/brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000 net.ifnames=0/' /boot/firmware/cmdline02w.txt
 
 		# Modify config.txt
