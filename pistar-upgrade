@@ -729,7 +729,7 @@ main_function() {
 			else
 				echo "[✓] RPi EEPROM is up to date."
 			fi
-		fi	
+		fi
 	fi
 
 	# OK We're done
