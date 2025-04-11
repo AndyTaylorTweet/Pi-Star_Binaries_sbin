@@ -671,9 +671,9 @@ main_function() {
 		#grep -q "brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000" /boot/firmware/cmdline02w.txt || sed -i 's/net.ifnames=0/brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000 net.ifnames=0/' /boot/firmware/cmdline02w.txt
 
 		# Modify config.txt
-		#search_line="[pi02]"
+		#search_line="\[pi02\]"
 		#new_line="cmdline=cmdline02w.txt"
-		#if grep -q "$search_line" /boot/firmware/config.txt; then
+		#if grep -q "\[pi02\]" /boot/firmware/config.txt; then
 		#    sed -i "/$search_line/a $new_line" /boot/firmware/config.txt
 		#fi
 
