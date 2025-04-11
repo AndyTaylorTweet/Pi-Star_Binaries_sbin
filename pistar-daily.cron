@@ -51,7 +51,7 @@ git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin maste
 rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
 rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)
 
-# Shrink NxinX error log to stop it getting out of hand
+# Shrink NginX error log to stop it getting out of hand
 echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 
 # Pre-Fix some config in MMDVMHost for update purposes.
