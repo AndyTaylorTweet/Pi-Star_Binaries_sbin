@@ -678,10 +678,13 @@ main_function() {
 		#fi
 
 		# Modify /etc/rc.local
-		#search_line="        sed -i 's/ firstboot//' /boot/firmware/cmdline.txt"
-		#new_line="        sed -i 's/ firstboot//' /boot/firmware/cmdline02w.txt"
+		#search_line="sed -i 's/ firstboot//' /boot/firmware/cmdline.txt"
+		#new_line="sed -i 's/ firstboot//' /boot/firmware/cmdline02w.txt"
+		#search_line_escaped=$(echo "$search_line" | sed 's/[&/\]/\\&/g')
 		#if grep -q "$search_line" /etc/rc.local; then
-		#    sed -i "/$search_line/a $new_line" /etc/rc.local
+		#    if ! grep -q "$new_line" /etc/rc.local; then
+		#        sed -i "/$search_line_escaped/a \ \ \ \ \ \ \ \ $new_line" /etc/rc.local
+		#    fi
 		#fi
 
 		# OK we are done
