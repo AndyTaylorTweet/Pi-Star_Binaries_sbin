@@ -679,8 +679,8 @@ main_function() {
 		# Modify /etc/rc.local
 		#search_line="        sed -i 's/ firstboot//' /boot/firmware/cmdline.txt"
 		#new_line="        sed -i 's/ firstboot//' /boot/firmware/cmdline02w.txt"
-		#if grep -q "$search_line" /etc/rc.conf; then
-		#    sed -i "/$search_line/a $new_line" /etc/rc.conf
+		#if grep -q "$search_line" /etc/rc.local; then
+		#    sed -i "/$search_line/a $new_line" /etc/rc.local
 		#fi
 
 		# OK we are done
