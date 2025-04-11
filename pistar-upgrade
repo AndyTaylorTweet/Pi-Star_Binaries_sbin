@@ -665,8 +665,39 @@ main_function() {
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
+		# Create additional cmdline.txt file and link it
+		#cp /boot/firmware/cmdline.txt /boot/firmware/cmdline02w.txt
+		#grep -q "brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000" /boot/cmdline02w.txt || sed -i 's/net.ifnames=0/brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000 net.ifnames=0/' /boot/cmdline02w.txt
+
+		# Modify config.txt
+		#search_line="[pi02]"
+		#new_line="cmdline=cmdline02w.txt"
+		#if grep -q "$search_line" /boot/firmware/config.txt; then
+		#    sed -i "/$search_line/a $new_line" /boot/firmware/config.txt
+		#fi
+
+		# Modify /etc/rc.local
+		#search_line="        sed -i 's/ firstboot//' /boot/firmware/cmdline.txt"
+		#new_line="        sed -i 's/ firstboot//' /boot/firmware/cmdline02w.txt"
+		#if grep -q "$search_line" /etc/rc.conf; then
+		#    sed -i "/$search_line/a $new_line" /etc/rc.conf
+		#fi
+
 		# OK we are done
 		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.3..."
+		Message="[✓] You are already running the latest version..."
+		#echo $Message
+		#exec "$0" "$@"
+                #exit 1
+	;;
+	4.3.3)
+		#sed -i 's/4.3.3/4.3.4/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.4..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
