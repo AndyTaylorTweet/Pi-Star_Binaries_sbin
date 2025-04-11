@@ -660,39 +660,38 @@ main_function() {
 		Message="[!] ERROR: Please re-image this system with Pi-Star v4.3.2 when released."
 	;;
 	4.3.2)
-		#sed -i 's/4.3.2/4.3.3/g' /etc/pistar-release
+		sed -i 's/4.3.2/4.3.3/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
 		# Create additional cmdline.txt file and link it
-		#cp /boot/firmware/cmdline.txt /boot/firmware/cmdline02w.txt
-		#(cd /boot && ln -s firmware/cmdline02w.txt ./)
-		#grep -q "brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000" /boot/firmware/cmdline02w.txt || sed -i 's/net.ifnames=0/brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000 net.ifnames=0/' /boot/firmware/cmdline02w.txt
+		cp /boot/firmware/cmdline.txt /boot/firmware/cmdline02w.txt
+		(cd /boot && ln -s firmware/cmdline02w.txt ./)
+		grep -q "brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000" /boot/firmware/cmdline02w.txt || sed -i 's/net.ifnames=0/brcmfmac.roamoff=1 brcmfmac.feature_disable=0x82000 net.ifnames=0/' /boot/firmware/cmdline02w.txt
 
 		# Modify config.txt
-		#search_line="\[pi02\]"
-		#new_line="cmdline=cmdline02w.txt"
-		#if grep -q "\[pi02\]" /boot/firmware/config.txt; then
-		#    sed -i "/$search_line/a $new_line" /boot/firmware/config.txt
-		#fi
+		search_line="\[pi02\]"
+		new_line="cmdline=cmdline02w.txt"
+		if grep -q "\[pi02\]" /boot/firmware/config.txt; then
+		    sed -i "/$search_line/a $new_line" /boot/firmware/config.txt
+		fi
 
 		# Modify /etc/rc.local
-		#search_line="sed -i 's/ firstboot//' /boot/firmware/cmdline.txt"
-		#new_line="sed -i 's/ firstboot//' /boot/firmware/cmdline02w.txt"
-		#search_line_escaped=$(echo "$search_line" | sed 's/[&/\]/\\&/g')
-		#if grep -q "$search_line" /etc/rc.local; then
-		#    if ! grep -q "$new_line" /etc/rc.local; then
-		#        sed -i "/$search_line_escaped/a \ \ \ \ \ \ \ \ $new_line" /etc/rc.local
-		#    fi
-		#fi
+		search_line="sed -i 's/ firstboot//' /boot/firmware/cmdline.txt"
+		new_line="sed -i 's/ firstboot//' /boot/firmware/cmdline02w.txt"
+		search_line_escaped=$(echo "$search_line" | sed 's/[&/\]/\\&/g')
+		if grep -q "$search_line" /etc/rc.local; then
+		    if ! grep -q "$new_line" /etc/rc.local; then
+		        sed -i "/$search_line_escaped/a \ \ \ \ \ \ \ \ $new_line" /etc/rc.local
+		    fi
+		fi
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.3..."
-		Message="[✓] You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.3..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.3.3)
 		#sed -i 's/4.3.3/4.3.4/g' /etc/pistar-release
