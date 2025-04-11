@@ -151,6 +151,13 @@ update_dash() {
 }
 
 main_function() {
+	# check if we can update
+	base=$(sed -n 's/.*\/\/.*\/\(.*\)\/.*/\1/p' /var/www/dashboard/.git/config 2>/dev/null)
+	if [ ! "${base}" == "kn2tod" ]; then
+	  echo "improper GIT Hub base!"
+	  exit 1
+	fi
+
 	# Make the disk writable
 	xro=$(sed -n "s/\/dev\/.* \/ ext4 \(r[ow]\).*/\1/p" /proc/mounts)
 	if [ "$xro" == "ro" ]; then
