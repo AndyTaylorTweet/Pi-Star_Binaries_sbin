@@ -69,6 +69,13 @@ case "$1" in
 				sleep 10
 				ipVar=`hostname -I`
 			done
+			# Clear the screen
+			if [ -e /usr/local/sbin/pistar-nextiontext.py ]; then
+				/usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
+			fi
+			if [ -e /usr/local/sbin/pistar-oledtext.py ]; then
+				/usr/local/sbin/pistar-oledtext.py -c 2>/dev/null
+			fi
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
 			exit 0;
@@ -91,11 +98,25 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			$SLEEP 3
+			# Clear the screen
+			if [ -e /usr/local/sbin/pistar-nextiontext.py ]; then
+				/usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
+			fi
+			if [ -e /usr/local/sbin/pistar-oledtext.py ]; then
+				/usr/local/sbin/pistar-oledtext.py -c 2>/dev/null
+			fi
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
 		else
 			echo -e "$DAEMON is not running"
+			# Clear the screen
+			if [ -e /usr/local/sbin/pistar-nextiontext.py ]; then
+				/usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
+			fi
+			if [ -e /usr/local/sbin/pistar-oledtext.py ]; then
+				/usr/local/sbin/pistar-oledtext.py -c 2>/dev/null
+			fi
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
 			exit 0;
