@@ -553,13 +553,30 @@ main_function() {
                 exit 1
 	;;
 	4.1.9)
-		#sed -i 's/4.1.9/4.1.10/g' /etc/pistar-release
+		sed -i 's/4.1.9/4.1.10/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		CONF_FILE="/etc/nginx/sites-available/pi-star"
+		if [ ! -f /etc/modprobe.d/ipv6.conf ] && ! grep -q 'listen \[::\]:80 default_server;' "$CONF_FILE" 2>/dev/null; then
+			sed -i '/listen 80 default_server;/a\        listen [::]:80 default_server;' "$CONF_FILE"
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.10..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.1.10)
+		#sed -i 's/4.1.10/4.1.11/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.10..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.11..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
@@ -641,13 +658,30 @@ main_function() {
                 exit 1
 	;;
 	4.2.2)
-		#sed -i 's/4.2.2/4.2.3/g' /etc/pistar-release
+		sed -i 's/4.2.2/4.2.3/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		CONF_FILE="/etc/nginx/sites-available/pi-star"
+		if [ ! -f /etc/modprobe.d/ipv6.conf ] && ! grep -q 'listen \[::\]:80 default_server;' "$CONF_FILE" 2>/dev/null; then
+			sed -i '/listen 80 default_server;/a\        listen [::]:80 default_server;' "$CONF_FILE"
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.3..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.2.3)
+		#sed -i 's/4.2.3/4.2.4/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.3..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.4..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
@@ -694,13 +728,30 @@ main_function() {
                 exit 1
 	;;
 	4.3.3)
-		#sed -i 's/4.3.3/4.3.4/g' /etc/pistar-release
+		sed -i 's/4.3.3/4.3.4/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		CONF_FILE="/etc/nginx/sites-available/pi-star"
+		if [ ! -f /etc/modprobe.d/ipv6.conf ] && ! grep -q 'listen \[::\]:80 default_server;' "$CONF_FILE" 2>/dev/null; then
+			sed -i '/listen 80 default_server;/a\        listen [::]:80 default_server;' "$CONF_FILE"
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.4..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.3.4)
+		#sed -i 's/4.3.4/4.3.5/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.4..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.5..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
