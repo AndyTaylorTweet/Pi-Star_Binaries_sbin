@@ -29,9 +29,15 @@ test -r $CONFIG || exit 0
 
 # If we're unconfigured, put a message on the nextion screen
 if [[ ! -e /etc/dstar-radio.mmdvmhost && ! -e /etc/dstar-radio.dstarrepeater ]]; then
-  /usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
-  /usr/local/sbin/pistar-nextiontext.py t0 "Pi-Star" 2>/dev/null
-  /usr/local/sbin/pistar-nextiontext.py t2 "Unconfigured" 2>/dev/null
+  if [ -e /usr/local/sbin/pistar-nextiontext.py ]; then
+    /usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
+    /usr/local/sbin/pistar-nextiontext.py t0 "Pi-Star" 2>/dev/null
+    /usr/local/sbin/pistar-nextiontext.py t2 "Unconfigured" 2>/dev/null
+  fi
+  if [ -e /usr/local/sbin/pistar-oledtext.py ]; then
+    /usr/local/sbin/pistar-oledtext.py -c 2>/dev/null
+    /usr/local/sbin/pistar-oledtext.py "Pi-Star" "Unconfigured" 2>/dev/null
+  fi
   exit 0
 fi
 
