@@ -27,6 +27,14 @@ ipVar=`hostname -I | cut -d' ' -f1`
 test -x ${DAEMON_PATH}${DAEMON} || exit 0
 test -r $CONFIG || exit 0
 
+# If we're unconfigured, put a message on the nextion screen
+if [[ ! -e /etc/dstar-radio.mmdvmhost && ! -e /etc/dstar-radio.dstarrepeater ]]; then
+  /usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
+  /usr/local/sbin/pistar-nextiontext.py t0 "Pi-Star" 2>/dev/null
+  /usr/local/sbin/pistar-nextiontext.py t2 "Unconfigured" 2>/dev/null
+  exit 0
+fi
+
 # if dstarrepeater is configured or running, dont start this daemon!
 ! test -r /etc/dstar-radio.dstarrepeater || exit 0
 test -r /etc/dstar-radio.mmdvmhost || exit 0
