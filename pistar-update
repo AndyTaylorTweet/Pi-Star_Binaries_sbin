@@ -315,6 +315,11 @@ main_function() {
 			apt-get update
 			apt-get install -y python3-serial
 		fi
+		if ! dpkg -l | grep -q "python3-luma.oled"; then
+			echo "[INFO] python3-luma.oled is not installed. Installing..."
+			apt-get update
+			apt-get install -y python3-luma.oled
+		fi
 	elif dpkg --compare-versions "$pistarCurVersion" ge "4.2" && dpkg --compare-versions "$pistarCurVersion" lt "4.3"; then
 		if [ "$shouldUpdateWiringPi" = true ]; then
 			echo "[INFO] Downloading WiringPi 3.14 (bullseye)..."
