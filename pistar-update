@@ -128,12 +128,16 @@ service_handle() {
 	systemctl ${doWhat} mmdvmhost.service > /dev/null 2>&1 && sleep 2 > /dev/null 2>&1
 }
 
-nextion_message() {
+screen_message() {
 	# Send Feedback to Nextion Screen
 	if [ -f /usr/local/sbin/pistar-nextiontext.py ]; then
 	    /usr/local/sbin/pistar-nextiontext.py -c 2>/dev/null
 	    /usr/local/sbin/pistar-nextiontext.py t0 "${1}" 2>/dev/null
 	    /usr/local/sbin/pistar-nextiontext.py t2 "${2}" 2>/dev/null
+	fi
+	if [ -f /usr/local/sbin/pistar-oledtext.py ]; then
+	    /usr/local/sbin/pistar-oledtext.py -c 2>/dev/null
+	    /usr/local/sbin/pistar-oledtext.py "${1}" "${2}" 2>/dev/null
 	fi
 }
 
@@ -153,11 +157,11 @@ main_function() {
 	if [ -t 1 ]; then
 		# This is running from a terminal, so it should be safe to update the OS
 		echo -e "[INFO] Updating OS...\n"
-		nextion_message "OS Upgrades" "in progress.."
+		screen_message "OS Upgrades" "in progress.."
 		apt-get update
 		apt-get upgrade --fix-missing --fix-broken -y
 		#apt-get clean
-		nextion_message "OS Upgrades" "done"
+		screen_message "OS Upgrades" "done"
 		echo "[✓] Done"
 
 		echo "Checking nginx config"
@@ -167,7 +171,7 @@ main_function() {
 				systemctl daemon-reload
 				systemctl restart nginx.service
 				echo "[!] WARN: nginx config has been repaired - re-running pistar-update"
-				nextion_message "Webserver" "[!] Repaired"
+				screen_message "Webserver" "[!] Repaired"
 	                        exec "$0" "$@"
 				exit 1
 			fi
@@ -175,27 +179,27 @@ main_function() {
 	fi
 
 	echo "[INFO] Updating DV Binaries..."
-	nextion_message "DV Binaries" "updating.."
+	screen_message "DV Binaries" "updating.."
 	git_update /usr/local/bin
 	echo "[✓] Done"
 
 	echo "[INFO] Updating Pi-Star Binaries..."
-	nextion_message "CLI Tools" "updating.."
+	screen_message "CLI Tools" "updating.."
 	git_update /usr/local/sbin
 	echo "[✓] Done"
 
 	echo "[INFO] Updating Hostfiles..."
-	nextion_message "Host Files" "updating.."
+	screen_message "Host Files" "updating.."
 	/usr/local/sbin/HostFilesUpdate.sh > /dev/null 2>&1
 	echo "[✓] Done"
 
 	echo "[INFO] Updating Dashboard..."
-	nextion_message "Dashboard" "updating.."
+	screen_message "Dashboard" "updating.."
 	git_update /var/www/dashboard
 	echo "[✓] Done"
 
 	echo "[INFO] Updating PiStar-Firewall..."
-	nextion_message "Firewall" "updating.."
+	screen_message "Firewall" "updating.."
 	pistar-firewall > /dev/null 2>&1
 	echo "[✓] Done"
 
@@ -326,7 +330,7 @@ main_function() {
 	fi
 
 	echo "[INFO] Starting Services..."
-	nextion_message "Updates" "Complete!"
+	screen_message "Updates" "Complete!"
 	service_handle start
 	echo "[✓] Done"
 
