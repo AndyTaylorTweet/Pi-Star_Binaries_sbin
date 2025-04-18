@@ -16,17 +16,23 @@ try:
     from PIL import Image, ImageDraw, ImageFont
     from luma.core.interface.serial import i2c
     from luma.oled.device import ssd1306, sh1106
+    import configparser
 
 except ImportError:
     exit(0)
 
-def detect_screen_type():
+# MMDVMHost Config
+CONFIG_PATH = "/etc/mmdvmhost"
+
+def get_screen_type_from_config():
     try:
-        output = subprocess.check_output(['i2cdetect', '-y', '1']).decode()
-        if '3c' in output:
-            return 'type6', 0x3C  # SH1106
-        elif '3d' in output:
-            return 'type3', 0x3D  # SSD1306
+        config = configparser.ConfigParser()
+        config.read(CONFIG_PATH)
+        screen_type = config.getint("OLED", "Type")
+        if screen_type == 3:
+            return 'type3', 0x3C  # Adafruit SSD1306 I2C
+        elif screen_type == 6:
+            return 'type6', 0x3C  # SH1106 I2C
         else:
             return None, None
     except:
