@@ -84,7 +84,7 @@ def main():
     if not clear_screen and len(lines) != 2:
         exit(0)
 
-    screen_type, address = detect_screen_type()
+    screen_type, address = get_screen_type_from_config()
     if not screen_type:
         exit(0)
 
