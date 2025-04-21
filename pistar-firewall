@@ -115,11 +115,16 @@ iptables -t mangle -A POSTROUTING -p udp --dport 41500 -j DSCP --set-dscp 46
 iptables -A OUTPUT -p udp --sport 14050 -j ACCEPT #			NXDN Outbound Connections
 iptables -t mangle -A POSTROUTING -p udp --sport 14050 -j DSCP --set-dscp 46
 
-# Allow Outbound DAPNet ports
-iptables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connections
-
 # Allow Outbound M17Gateway Ports
-iptables -A OUTPUT -p udp --dport 17000 -j ACCEPT #			M17Gateway Outbound Connections
+iptables -A OUTPUT -p udp --dport 17000 -j ACCEPT #                     M17 Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 17000 -j DSCP --set-dscp 46
+iptables -A OUTPUT -p udp --dport 17724 -j ACCEPT #                     M17 Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 17724 -j DSCP --set-dscp 46
+iptables -A OUTPUT -p udp --dport 17777 -j ACCEPT #                     M17 Outbound Connections
+iptables -t mangle -A POSTROUTING -p udp --dport 17777 -j DSCP --set-dscp 46
+
+# Allow Outbound DAPNet ports
+iptables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #                     DAPNet Outbound Connections
 
 # Cloudflared Tunnel
 iptables -A OUTPUT -p tcp --dport 7844  -j ACCEPT #                     Cloudfare's Tunnel Connections
@@ -349,7 +354,12 @@ ip6tables -A OUTPUT -p tcp --dport 43434 -j ACCEPT #			DAPNet Outbound Connectio
 ip6tables -A OUTPUT -p tcp --dport 7844  -j ACCEPT #                    Cloudfare's Tunnel Connections
 
 # Allow Outbound M17Gateway Ports
-ip6tables -A OUTPUT -p udp --dport 17000 -j ACCEPT #			M17Gateway Outbound Connections
+ip6tables -A OUTPUT -p udp --dport 17000 -j ACCEPT #                    M17 Outbound Connections
+ip6tables -t mangle -A POSTROUTING -p udp --dport 17000 -j DSCP --set-dscp 46
+ip6tables -A OUTPUT -p udp --dport 17724 -j ACCEPT #                    M17 Outbound Connections
+ip6tables -t mangle -A POSTROUTING -p udp --dport 17724 -j DSCP --set-dscp 46
+ip6tables -A OUTPUT -p udp --dport 17777 -j ACCEPT #                    M17 Outbound Connections
+ip6tables -t mangle -A POSTROUTING -p udp --dport 17777 -j DSCP --set-dscp 46
 
 # Allow Inbound D-Star Voice Ports
 ip6tables -A INPUT -p udp --dport 20001:20007 -j ACCEPT # D-Plus Linking
