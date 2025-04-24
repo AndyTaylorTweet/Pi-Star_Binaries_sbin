@@ -39,9 +39,9 @@ fi
 if [[ ! -f /etc/mobilegps ]]; then
   # Mount the disk RW and download the base config from github
   if [ -d /boot/firmware ]; then
-    (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
+    $(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot/firmware >/dev/null 2>&1 </dev/null)
   else
-    (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
+    $(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot >/dev/null 2>&1 </dev/null)
   fi
   curl --fail -o /etc/mobilegps -s https://raw.githubusercontent.com/g4klx/MobileGPS/master/MobileGPS.ini
   if [[ -f /etc/mobilegps ]]; then
