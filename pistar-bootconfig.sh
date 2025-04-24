@@ -49,8 +49,7 @@ systemctl stop p25gateway.service 2>&1
 if [ -d /boot/firmware ]; then
   (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
 else
-  mount -o remount,rw /boot
-  mount -o remount,rw /
+  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
 fi
 
 # Overwrite the configs
