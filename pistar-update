@@ -11,14 +11,14 @@
 ###############################################################################
 #
 if [ "$(id -u)" != "0" ]; then
-  echo -e "[!] ERROR: You need to be root to run this command...\n"
-  exit 1
+	echo -e "[!] ERROR: You need to be root to run this command...\n"
+	exit 1
 fi
 
 exec 200>/var/lock/pistar-update.lock || exit 1
 if ! flock -n 200 ; then
-  echo -e "[!] ERROR: Another instance is already running...\n"
-  exit 1
+	echo -e "[!] ERROR: Another instance is already running...\n"
+	exit 1
 fi
 
 git_checkUpdateRequired() {
@@ -144,9 +144,9 @@ screen_message() {
 main_function() {
 	# Make the disk writable
 	if [ -d /boot/firmware ]; then
-	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot/firmware >/dev/null 2>&1 </dev/null)
 	else
-	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot >/dev/null 2>&1 </dev/null)
 	fi
 
 	echo "[INFO] Stopping Services..."
@@ -344,21 +344,24 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	if [ -d /boot/firmware ]; then
-	  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot/firmware 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot/firmware >/dev/null 2>&1 </dev/null)
 	else
-	  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot >/dev/null 2>&1 </dev/null)
 	fi
 
 	# Tell the user we are done
 	echo "[INFO] Finished"
-	}
+}
 
 if [ -t 1 ]; then
-  # run via terminal, only output to screen
-  main_function
+	# run via terminal, only output to screen
+	main_function
 else
-  # if not run via terminal, log everything into a log file
-  main_function >> /var/log/pi-star/pi-star_update.log 2>&1
+	# if not run via terminal, log everything into a log file
+	if [ ! -d /var/log/pi-star ]; then
+		mkdir -p /var/log/pi-star
+	fi
+	main_function >> /var/log/pi-star/pi-star_update.log 2>&1
 fi
 
 exit 0
