@@ -24,7 +24,7 @@ modemSpeed=$(grep -m 1 'UARTSpeed=' /etc/mmdvmhost | awk -F "=" '/UARTSpeed/ {pr
 echo "Stopping Pi-Star Services..."
 
 # Make the disk RW
-(sudo mount -o remount,rw / 2>/dev/null)
+$(mount -o remount,ro / >/dev/null 2>&1 </dev/null)
 
 # Stop the services
 systemctl stop pistar-watchdog.timer
@@ -52,7 +52,7 @@ killall MMDVMCal >/dev/null 2>&1
 echo "Starting Pi-Star Services..."
 
 # Set the disk back to RO on MMDVMCal exit
-(sudo mount -o remount,ro / 2>/dev/null)
+$(mount -o remount,ro / >/dev/null 2>&1 </dev/null)
 
 # Start the services
 systemctl start pistar-watchdog.timer
