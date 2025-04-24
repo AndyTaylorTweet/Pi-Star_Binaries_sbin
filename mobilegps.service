@@ -39,11 +39,10 @@ fi
 if [[ ! -f /etc/mobilegps ]]; then
   # Mount the disk RW and download the base config from github
   if [ -d /boot/firmware ]; then
-    mount -o remount,rw /boot/firmware
+    (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
   else
-    mount -o remount,rw /boot
+    (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
   fi
-  mount -o remount,rw /
   curl --fail -o /etc/mobilegps -s https://raw.githubusercontent.com/g4klx/MobileGPS/master/MobileGPS.ini
   if [[ -f /etc/mobilegps ]]; then
     # Make sure we were able to download the file
