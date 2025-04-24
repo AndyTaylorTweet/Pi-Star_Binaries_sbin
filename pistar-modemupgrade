@@ -225,6 +225,7 @@ if [ "$1" ]; then
       echo "hs_hat_generic_duplex"
       echo "hs_hat_generic_duplex-usb"
       echo "hs_hat_nano_hotspot"
+      echo "hs_hat_nano_hotspot-duplex"
       echo "nanodv_npi"
       echo "nanodv_usb"
       echo "hs_hat_lonestar-usb"
