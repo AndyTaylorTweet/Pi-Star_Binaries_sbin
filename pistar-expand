@@ -16,9 +16,9 @@ fi
 
 # Remount read-write
 if [ -d /boot/firmware ]; then
-  (sudo mount -o remount,rw / 2>&1>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>&1>/dev/null)
+	$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot/firmware >/dev/null 2>&1 </dev/null)
 else
-  (sudo mount -o remount,rw / 2>&1>/dev/null ; sudo mount -o remount,rw /boot 2>&1>/dev/null)
+	$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot >/dev/null 2>&1 </dev/null)
 fi
 
 # Figure out if this is a systemd system
@@ -110,9 +110,9 @@ update-rc.d resize2fs_once defaults &&
 
 # Remount read-only
 if [ -d /boot/firmware ]; then
-  (sudo mount -o remount,ro / 2>&1>/dev/null ; sudo mount -o remount,ro /boot/firmware 2>&1>/dev/null)
+	$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot/firmware >/dev/null 2>&1 </dev/null)
 else
-  (sudo mount -o remount,ro / 2>&1>/dev/null ; sudo mount -o remount,ro /boot 2>&1>/dev/null)
+	$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot >/dev/null 2>&1 </dev/null)
 fi
 
 # Finished, so tell the user
