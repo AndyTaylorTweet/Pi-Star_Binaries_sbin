@@ -39,9 +39,9 @@ main_function() {
 
 	# Make the disk writable
 	if [ -d /boot/firmware ]; then
-		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot/firmware 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot/firmware >/dev/null 2>&1 </dev/null)
 	else
-		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot >/dev/null 2>&1 </dev/null)
 	fi
 
 	echo "[INFO] Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
@@ -761,6 +761,9 @@ main_function() {
 	;;
 	esac
 
+	# OK We're done
+	echo $Message
+
 	# RPi 4/5 EEPROM upgrade checks
 	if [[ "${pistarHardware}" == "RPi" ]] && dpkg --compare-versions "${pistarCurVersion}" ge "4.3.0"; then
 		piBoardModel=$(tr -d '\0' < /proc/device-tree/model)
@@ -785,8 +788,7 @@ main_function() {
 		fi
 	fi
 
-	# OK We're done
-	echo $Message
+	# All Complete
 	echo "[✓] Upgrade process complete: syncing disk cache before making the disk Read-Only"
 
 	# Make the disk read-only
@@ -794,13 +796,12 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	if [ -d /boot/firmware ]; then
-		$(mount -o remount,ro / 2>/dev/null ; mount -o remount,ro /boot/firmware 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot/firmware >/dev/null 2>&1 </dev/null)
 	else
-		$(mount -o remount,ro / 2>/dev/null ; mount -o remount,ro /boot 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot >/dev/null 2>&1 </dev/null)
 	fi
 	echo "[INFO] Finished"
-
-	}
+}
 
 if [ -t 1 ]; then
   # run via terminal, only output to screen
