@@ -11,14 +11,14 @@
 ##############################################################################
 #
 if [ "$(id -u)" != "0" ]; then
-  echo -e "You need to be root to run this command...\n"
-  exit 1
+	echo -e "You need to be root to run this command...\n"
+	exit 1
 fi
 
 exec 200>/var/lock/pistar-upgrade.lock || exit 1
 if ! flock -n 200 ; then
-  echo -e "Another instance is already running...\n"
-  exit 1
+	echo -e "Another instance is already running...\n"
+	exit 1
 fi
 
 main_function() {
@@ -39,9 +39,9 @@ main_function() {
 
 	# Make the disk writable
 	if [ -d /boot/firmware ]; then
-	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
+		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot/firmware 2>/dev/null)
 	else
-	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
+		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot 2>/dev/null)
 	fi
 
 	echo "[INFO] Detected Pi-Star ${pistarCurVersion} running on ${pistarHardware} hardware, attached to ${pistarModem} modem..."
@@ -794,9 +794,9 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	if [ -d /boot/firmware ]; then
-	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
+		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot/firmware 2>/dev/null)
 	else
-	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
+		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot 2>/dev/null)
 	fi
 	echo "[INFO] Finished"
 
