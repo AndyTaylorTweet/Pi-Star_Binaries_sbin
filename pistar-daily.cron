@@ -2,15 +2,15 @@
 
 # Make sure we are root, if we cant stop the services, the results are a bit hit and miss.
 if [ "$(id -u)" != "0" ]; then
-  echo -e "You need to be root to run this command...\n"
-  exit 1
+	echo -e "You need to be root to run this command...\n"
+	exit 1
 fi
 
 # Make the disk RW
 if [ -d /boot/firmware ]; then
-  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
+	$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot/firmware >/dev/null 2>&1 </dev/null)
 else
-  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
+	$(mount -o remount,rw / >/dev/null 2>&1 </dev/null ; mount -o remount,rw /boot >/dev/null 2>&1 </dev/null)
 fi
 
 # Host Files Update
@@ -23,7 +23,7 @@ git --work-tree=/var/www/dashboard --git-dir=/var/www/dashboard/.git pull origin
 # Stop all the services...
 systemctl stop pistar-watchdog.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/nextiondriver.service ]; then
-  systemctl stop nextiondriver.service > /dev/null 2>&1
+	systemctl stop nextiondriver.service > /dev/null 2>&1
 fi
 systemctl stop mmdvmhost.service > /dev/null 2>&1
 systemctl stop dstarrepeater.service > /dev/null 2>&1
@@ -31,7 +31,7 @@ sleep 2
 systemctl stop ircddbgateway.service > /dev/null 2>&1
 systemctl stop dapnetgateway.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/m17gateway.service ]; then
-  systemctl stop m17gateway.service > /dev/null 2>&1
+	systemctl stop m17gateway.service > /dev/null 2>&1
 fi
 systemctl stop p25gateway.service > /dev/null 2>&1
 systemctl stop p25parrot.service > /dev/null 2>&1
@@ -47,7 +47,7 @@ systemctl stop dmr2nxdn.service > /dev/null 2>&1
 systemctl stop dmrgateway.service > /dev/null 2>&1
 systemctl stop timeserver.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/aprsgateway.service ]; then
-  systemctl stop aprsgateway.service > /dev/null 2>&1
+	systemctl stop aprsgateway.service > /dev/null 2>&1
 fi
 
 # Update the Binaries
@@ -69,9 +69,9 @@ echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
 mmdvmHostVer=`MMDVMHost -v | awk '{print $3}' | cut -c 1-8`
 needsUpdate=`grep -c Gwy /etc/mmdvmhost`
 if [ ${mmdvmHostVer} \> 20171031 ] && [ ${needsUpdate} \> 0 ]; then
-        # Config needs to be updated, add in the changes here
-        sed -i "/GwyAddress=/c\\GatewayAddress=127.0.0.1" /etc/mmdvmhost
-        sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
+	# Config needs to be updated, add in the changes here
+	sed -i "/GwyAddress=/c\\GatewayAddress=127.0.0.1" /etc/mmdvmhost
+	sed -i "/GwyPort=/c\\GatewayPort=4200" /etc/mmdvmhost
 fi
 
 # Fix up new P25Gateway Config Hostfile setup
@@ -155,7 +155,7 @@ systemctl start ircddbgateway.service > /dev/null 2>&1
 systemctl start dmrgateway.service > /dev/null 2>&1
 systemctl start dapnetgateway.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/m17gateway.service ]; then
-  systemctl start m17gateway.service > /dev/null 2>&1
+	systemctl start m17gateway.service > /dev/null 2>&1
 fi
 systemctl start p25gateway.service > /dev/null 2>&1
 systemctl start p25parrot.service > /dev/null 2>&1
@@ -170,10 +170,10 @@ systemctl start dmr2ysf.service > /dev/null 2>&1
 systemctl start dmr2nxdn.service > /dev/null 2>&1
 systemctl start timeserver.service > /dev/null 2>&1
 if [ -f /lib/systemd/system/aprsgateway.service ]; then
-  systemctl start aprsgateway.service > /dev/null 2>&1
+	systemctl start aprsgateway.service > /dev/null 2>&1
 fi
 if [ -f /lib/systemd/system/nextiondriver.service ]; then
-  systemctl start nextiondriver.service > /dev/null 2>&1
+	systemctl start nextiondriver.service > /dev/null 2>&1
 fi
 systemctl start mmdvmhost.service > /dev/null 2>&1
 systemctl start dstarrepeater.service > /dev/null 2>&1
