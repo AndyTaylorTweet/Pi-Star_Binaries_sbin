@@ -774,7 +774,7 @@ main_function() {
 			# Make sure the rpi-eeprom package is installed
 			if ! command -v rpi-eeprom-update &> /dev/null; then
 				echo "[INFO] rpi-eeprom-update not found. Installing..."
-				sudo apt update && sudo apt install -y rpi-eeprom
+				apt update && sudo apt install -y rpi-eeprom
 			fi
 
 			# Run the EEPROM update check
@@ -804,11 +804,14 @@ main_function() {
 }
 
 if [ -t 1 ]; then
-  # run via terminal, only output to screen
-  main_function
+	# run via terminal, only output to screen
+	main_function
 else
-  # if not run via terminal, log everything into a log file
-  main_function >> /var/log/pi-star/pi-star_upgrade.log 2>&1
+	# if not run via terminal, log everything into a log file
+	if [ ! -d /var/log/pi-star ]; then
+		mkdir -p /var/log/pi-star
+	fi
+	main_function >> /var/log/pi-star/pi-star_upgrade.log 2>&1
 fi
 
 exit 0
