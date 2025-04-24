@@ -146,8 +146,7 @@ main_function() {
 	if [ -d /boot/firmware ]; then
 	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
 	else
-	  mount -o remount,rw /boot
-	  mount -o remount,rw /
+	  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
 	fi
 
 	echo "[INFO] Stopping Services..."
@@ -347,8 +346,7 @@ main_function() {
 	if [ -d /boot/firmware ]; then
 	  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot/firmware 2>/dev/null)
 	else
-	  mount -o remount,ro /boot
-	  mount -o remount,ro /
+	  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot 2>/dev/null)
 	fi
 
 	# Tell the user we are done
