@@ -16,7 +16,7 @@ journalctl --vacuum-size=5M
 /bin/sync
 /bin/sync
 if [ -d /boot/firmware ]; then
-  $(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot/firmware >/dev/null 2>&1 </dev/null)
+	$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot/firmware >/dev/null 2>&1 </dev/null)
 else
 	$(mount -o remount,ro / >/dev/null 2>&1 </dev/null ; mount -o remount,ro /boot >/dev/null 2>&1 </dev/null)
 fi
