@@ -794,9 +794,9 @@ main_function() {
 	/bin/sync
 	/bin/sync
 	if [ -d /boot/firmware ]; then
-		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot/firmware 2>/dev/null)
+		$(mount -o remount,ro / 2>/dev/null ; mount -o remount,ro /boot/firmware 2>/dev/null)
 	else
-		$(mount -o remount,rw / 2>/dev/null ; mount -o remount,rw /boot 2>/dev/null)
+		$(mount -o remount,ro / 2>/dev/null ; mount -o remount,ro /boot 2>/dev/null)
 	fi
 	echo "[INFO] Finished"
 
