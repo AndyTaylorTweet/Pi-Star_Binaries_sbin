@@ -16,11 +16,10 @@ fi
 
 # Remount read-write
 if [ -d /boot/firmware ]; then
-  mount -o remount,rw /boot/firmware
+  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot/firmware 2>/dev/null)
 else
-  mount -o remount,rw /boot
+  (sudo mount -o remount,rw / 2>/dev/null ; sudo mount -o remount,rw /boot 2>/dev/null)
 fi
-mount -o remount,rw /
 
 # Figure out if this is a systemd system
 if command -v systemctl > /dev/null && systemctl | grep -q '\-\.mount'; then
@@ -111,11 +110,10 @@ update-rc.d resize2fs_once defaults &&
 
 # Remount read-only
 if [ -d /boot/firmware ]; then
-  mount -o remount,ro /boot/firmware
+  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot/firmware 2>/dev/null)
 else
-  mount -o remount,ro /boot
+  (sudo mount -o remount,ro / 2>/dev/null ; sudo mount -o remount,ro /boot 2>/dev/null)
 fi
-mount -o remount,ro /
 
 # Finished, so tell the user
 echo "Partition expansion has been completed, please reboot to expand the filesystem to fill it"
