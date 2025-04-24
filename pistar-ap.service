@@ -23,7 +23,7 @@ DNSMASQDAEMON=dnsmasq
 test -x ${DAEMON_PATH}${DAEMON} || exit 0
 test -f "/etc/hostapd/hostapd.conf" || exit 0
 if [ -f "/etc/hostap.off" ]; then
-    exit 0
+	exit 0
 fi
 
 # Check that WLAN0 exists
@@ -52,7 +52,7 @@ fi
 # Some cards need special attention
 if [ `grep -c -E '(8188eu )' /proc/modules` -gt "0" ]; then
 	if [ ! -d "/sys/class/net/wlan0_ap" ]; then
-		(sudo mount -o remount,rw / 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 		sed -i '/hwaddress ether b8:27:eb:00:00:01/d' /etc/network/interfaces
 		ifconfig wlan0 down
 		ip link set wlan0 name wlan0_ap
@@ -63,7 +63,7 @@ fi
 # FriendlyArm Nano Pi Neo Air
 if [ `grep -c -E '(dhd )' /proc/modules` -gt "0" ]; then
 	if [ ! -d "/sys/class/net/wlan0_ap" ]; then
-		(sudo mount -o remount,rw / 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 		sed -i '/hwaddress ether b8:27:eb:00:00:01/d' /etc/network/interfaces
 		ifconfig wlan0 down
 		rmmod dhd
@@ -76,7 +76,7 @@ fi
 # Orange Pi Zero XRadio Fixes
 if [ `grep -c -E '(xradio_wlan )' /proc/modules` -gt "0" ]; then
 	if [ ! -d "/sys/class/net/wlan0_ap" ]; then
-		(sudo mount -o remount,rw / 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 		sed -i '/hwaddress ether b8:27:eb:00:00:01/d' /etc/network/interfaces
 		${SLEEP} 2
 	fi
@@ -84,14 +84,13 @@ fi
 
 # Autofix DNSMASQ
 if [ `grep -c -E 'DNSMASQ_EXCEPT' /etc/default/dnsmasq` -eq "0" ]; then
-	(sudo mount -o remount,rw / 2>/dev/null)
+	$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 	echo "DNSMASQ_EXCEPT=lo" >> /etc/default/dnsmasq
 fi
 
 case "$1" in
 	start)
-		(sudo mount -o remount,rw / 2>/dev/null)
-
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 		if [ $(grep /var/lib/misc /proc/mounts | wc -l) -eq 0 ]; then
 			mount -t tmpfs -o nodev,noatime,nosuid,mode=1777,size=16k tmpfs /var/lib/misc
 		fi
@@ -110,11 +109,11 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
-		(sudo mount -o remount,ro / 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null)
 		exit 0
 		;;
 	stop)
-		(sudo mount -o remount,ro / 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
@@ -131,11 +130,11 @@ case "$1" in
 		fi
 		ifdown wlan0_ap
 		iw dev wlan0_ap del
-		(sudo mount -o remount,ro / 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null)
 		exit 0
 		;;
 	restart)
-		(sudo mount -o remount,ro / 2>/dev/null)
+		$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
 		sysctl net.ipv4.ip_forward=0
 		if [ `${PGREP} ${DNSMASQDAEMON}` ]; then
 			echo -e "Killing $DNSMASQDAEMON PID "`$PGREP $DNSMASQDAEMON`
@@ -170,7 +169,7 @@ case "$1" in
 			systemctl start dnsmasq
 			echo -e "$DNSMASQDAEMON started as PID "`$PGREP $DNSMASQDAEMON`
 		fi
-		(sudo mount -o remount,ro / 2>/dev/null)
+		$(mount -o remount,ro / >/dev/null 2>&1 </dev/null)
 		exit 0
 		;;
 	status)
