@@ -1714,6 +1714,42 @@ main_function() {
 		Message="Upgraded from ${pistarCurVersion} to 4.3.1..."
 	;;
 	4.3.1)
+		sed -i 's/4.3.1/4.3.2/g' /etc/pistar-release
+
+		#
+		# Patch WiringPi and add python3-serial
+		#
+		wpver=$(dpkg -s wiringpi 2>/dev/null | grep '^Version' | awk '{print $2}')
+		os=$(sed -n "s/VERSION_CODENAME=\(.*\)/\u\1/p" /etc/os-release)
+
+		sudo dpkg-query -l | grep -i "python3-serial\|wiringpi"
+		echo ${os}: ${wpver}
+
+		if [[ "${wpver}" < "3.14" ]]; then
+		   if [ "${os}" == "Bookworm" ]; then
+		      deb="wiringpi_3.14_armhf.deb"
+		      echo "[INFO] Downloading WiringPi 3.14 (armhf)..."
+		   fi
+		   if [ "${os}" == "Bullseye" ]; then
+		      deb="wiringpi_3.14_bullseye_armhf.deb"
+		      echo "[INFO] Downloading WiringPi 3.14 (bullseye)..."
+		   fi
+
+		   curl --fail -L -s -o /tmp/${deb} https://github.com/WiringPi/WiringPi/releases/download/3.14/${deb}
+		   sudo dpkg -i /tmp/${deb}
+		   rm -rf /tmp/${deb}
+
+		   if ! dpkg -l | grep -q "python3-serial"; then
+		      echo "[INFO] installing python3-serial..."
+		      #sudo apt install -y python3-serial
+		   fi
+
+		   sudo dpkg-query -l | grep -i "python3-serial\|wiringpi"
+		fi
+
+		Message="Upgraded from ${pistarCurVersion} to 4.3.2..."
+	;;
+	4.3.2)
 		Message="You are already running the latest version..."
 	;;
 	*)
