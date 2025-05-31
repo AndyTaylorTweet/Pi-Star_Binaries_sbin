@@ -48,8 +48,8 @@ git --work-tree=/usr/local/bin --git-dir=/usr/local/bin/.git pull origin master
 git --work-tree=/usr/local/sbin --git-dir=/usr/local/sbin/.git pull origin master
 
 # Purge the logs older than 2 days
-rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)
-rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)
+rm -f $(find /var/log/pi-star/*.log -type f -mtime +1 -print)
+rm -f $(find /var/log/ -type f -mtime +1 -print | grep .gz)
 
 # Shrink NginX error log to stop it getting out of hand
 echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log
