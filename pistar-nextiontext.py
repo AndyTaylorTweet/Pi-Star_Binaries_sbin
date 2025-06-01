@@ -56,6 +56,10 @@ def get_display_port():
         except (configparser.NoSectionError, configparser.NoOptionError):
             pass  # Leave as "modem" if we can't resolve it
 
+    # Check if the resolved port exists
+    if not os.path.exists(displayPort):
+        sys.exit(0)  # Exit silently
+
     return displayPort
 
 MODEM_BAUDRATE = 115200
