@@ -97,6 +97,10 @@ if __name__ == "__main__":
     # Use get_display_port() to get the port instead of command-line arguments
     port = get_display_port()
 
+    # Check if the resolved port exists
+    if not os.path.exists(port):
+        sys.exit(0)  # Exit silently
+
     if port is None:
         print(f"Failed to get the display port from configuration.")
         sys.exit(1)
