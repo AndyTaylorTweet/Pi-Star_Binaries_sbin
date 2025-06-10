@@ -224,6 +224,11 @@ if [ -f "/root/XLXHosts.txt" ]; then
         done < /root/XLXHosts.txt
 fi
 
+# Add local over-ride for APRSHosts
+if [ -f "/root/APRSHosts.txt" ]; then
+        cat /root/APRSHosts.txt >> ${APRSHOSTS}
+fi
+
 # Yaesu FT-70D radios only do upper case
 if [ -f "/etc/hostfiles.ysfupper" ]; then
 	sed -i 's/\(.*\)/\U\1/' ${YSFHOSTS}
