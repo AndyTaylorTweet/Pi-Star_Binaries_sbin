@@ -48,6 +48,7 @@ iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT #   HTTPS (Updates)
 iptables -A OUTPUT -p tcp --dport 9418 -j ACCEPT #  GIT Port (Used by GIT)
 iptables -A OUTPUT -p tcp --dport 11371 -j ACCEPT # Used for APT to obtain Keys
 iptables -A OUTPUT -p tcp --dport 8080 -j ACCEPT #  for Speedtest
+iptables -A OUTPUT -p tcp --dport 631 -j ACCEPT #   for CUPS
 
 # Allow Outbound D-Star Control Ports
 iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT #                      DNS (DNS Zone Transfer - Used by xreflector.net)
@@ -139,6 +140,7 @@ iptables -A INPUT -p tcp -s 10.0.0.0/8 --dport 445 -j ACCEPT #      SMB Access (
 iptables -A INPUT -p tcp --dport 8080 -j ACCEPT #                   HTTP Allow the Raspicontrol Portal Access
 iptables -A INPUT -p udp --dport 10022 -j ACCEPT #                  D-Star ircDDBGateway remote
 iptables -A INPUT -p udp --dport 2460 -j ACCEPT #                   AMBEServer Port (Used by DVCast / DR2G AMBE)
+iptables -A INPUT -p tcp --dport 631 -j ACCEPT #                    CUPS
 
 # Allow access to shellinabox - if installed
 if [ -f "/etc/default/shellinabox" ]
