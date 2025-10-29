@@ -11,12 +11,20 @@
 #                                                                             #
 ###############################################################################
 
-import datetime
-import time
-import linecache
-import os
 import subprocess
-
+import time
+import os
+import linecache
+import datetime
+from datetime import tzinfo, timedelta
+class UTC(tzinfo):
+	"""UTC timezone class."""
+	def utcoffset(self, dt):
+		return timedelta(0)
+	def tzname(self, dt):
+		return "UTC"
+	def dst(self, dt):
+		return timedelta(0)
 import sys					#
 if (sys.version_info.major > 2):		#
 	import configparser as ConfigParser	# python 3
@@ -30,6 +38,11 @@ from io import open				# python 2/3
 config = ConfigParser.RawConfigParser()
 config.read('/etc/pistar-remote')
 
+# If not enabled, die;
+isEnabled = config.get('enable', 'enabled')
+if (isEnabled != 'true'):
+	quit()
+
 # Read the MMDVMHost config;
 mmdvmConfig = ConfigParser.RawConfigParser()
 mmdvmConfig.read('/etc/mmdvmhost')
@@ -37,11 +50,6 @@ mmdvmConfig.read('/etc/mmdvmhost')
 # Read the YSFGateway config;
 ysfGatewayConfig = ConfigParser.RawConfigParser()
 ysfGatewayConfig.read('/etc/ysfgateway')
-
-# If not enabled, die;
-isEnabled = config.get('enable', 'enabled')
-if (isEnabled != 'true'):
-	quit()
 
 # Substitute variables from config
 mmdvmLogPath = mmdvmConfig.get('Log', 'FilePath')
@@ -206,11 +214,12 @@ while True:
 	if checkproc.stdout.readlines():
 
 		# This is the main loop that keeps waiting, we dont want to hammer the logs too often, every 30 secs should be enough.
-		utcnow = datetime.datetime.utcnow()
+		utc = UTC()
+		utcnow = datetime.datetime.now(utc)
 		datenow = utcnow.strftime('%Y-%m-%d')
-		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(seconds=30)
+		dateminus30sec = datetime.datetime.now(utc) - datetime.timedelta(seconds=30)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
-		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
+		logstampnowminus30sec = dateminus30sec.strftime('%Y-%m-%d %H:%M:%S')
 		currentLog = mmdvmLogPath + '/' + mmdvmFileRoot + '-' + datenow + '.log'
 		currentLogYSF = ysfGatewayLogPath + '/' + ysfGatewayFileRoot + '-' + datenow + '.log'
 
@@ -223,8 +232,8 @@ while True:
 
 		# Parse the log lines
 		for line in loglist:
-			# We only care about logs in the last 60 secs
-			if line[3:22] >= logstampnowminus60sec and line[3:22] <= logstampnow:
+			# We only care about logs in the last 30 secs
+			if line[3:22] >= logstampnowminus30sec and line[3:22] <= logstampnow:
 
 				# DMR Stop MMDVMHost
 				# M: 2017-07-03 09:39:38.208 DMR Slot 2, received RF voice header from M1ABC to 123456
@@ -456,7 +465,7 @@ while True:
 									os.system(r'/bin/mount -o remount,ro /')
 
 		# This is the 30 second sleep before the next pass.
-		time.sleep(30)
+		#time.sleep(30)
 
 
 	# Check that the process is running, if its not there is no point in trying to stop it.
@@ -464,9 +473,10 @@ while True:
 	if checkproc.stdout.readlines():
 
 		# This is the main loop that keeps waiting, we dont want to hammer the logs too often, every 30 secs should be enough.
-		utcnow = datetime.datetime.utcnow()
+		utc = UTC()
+		utcnow = datetime.datetime.now(utc)
 		datenow = utcnow.strftime('%Y-%m-%d')
-		dateminus60sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
+		dateminus60sec = datetime.datetime.now(utc) - datetime.timedelta(minutes=1)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		logstampnowminus60sec = dateminus60sec.strftime('%Y-%m-%d %H:%M:%S')
 		# Best figure out the log name now
@@ -581,4 +591,6 @@ while True:
 					os.system(txtTransmitBin + ' -text "' + magic8ballanswer + '" "' + dstarmodule + '"')
 
 		# This is the 30 second sleep before the next pass.
-		time.sleep(30)
+		#time.sleep(30)
+
+	time.sleep(30)

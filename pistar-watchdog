@@ -17,13 +17,20 @@ import time
 import os
 import linecache
 import datetime
-
+from datetime import tzinfo, timedelta
+class UTC(tzinfo):
+	"""UTC timezone class."""
+	def utcoffset(self, dt):
+		return timedelta(0)
+	def tzname(self, dt):
+		return "UTC"
+	def dst(self, dt):
+		return timedelta(0)
 import sys					#
 if (sys.version_info.major > 2):		#
 	import configparser as ConfigParser	# python 3
 else:						#
 	import ConfigParser			# python 2
-
 
 time.sleep(90) #Assumiing the Pi has just started up, let the services settle...
 
@@ -46,29 +53,31 @@ while True: #Main loop
 		os.system('rm -rf /var/log/*.1.gz')
 		os.system('rm -rf /var/log/*.1')
 		os.system('echo "$(tail -500 /var/log/nginx/error.log)" > /var/log/nginx/error.log')
-		os.system('rm -f $(find /var/log/pi-star/*.log -type f -mtime +0 -print)')
-		os.system('rm -f $(find /var/log/ -type f -mtime +0 -print | grep .gz)')
+		os.system('rm -f $(find /var/log/pi-star/*.log -type f -mtime +1 -print)')
+		os.system('rm -f $(find /var/log/ -type f -mtime +1 -print | grep .gz)')
 		time.sleep(60) # Give the service secs before we re-test
 	if disk_stat('/var/log') > 90:
 		# Shorten the Pi-Star logs
-		utcnow = datetime.datetime.utcnow()
+		utc = UTC()
+		utcnow = datetime.datetime.now(utc)
 		datenow = utcnow.strftime('%Y-%m-%d')
 		if os.path.isfile(dstarrepeater):
 			dstarLogOld = '/var/log/pi-star/DStarRepeater-' + datenow + '.log'
 			dstarLogNew = '/var/log/pi-star/dstarrepeaterd-' + datenow + '.log'
 			if os.path.isfile(dstarLogOld):
-				os.system('echo "$(tail -1500 /var/log/pi-star/DStarRepeater-$(date +%F).log)" > /var/log/pi-star/DStarRepeater-$(date +%F).log')
+				os.system('echo "$(tail -2500 /var/log/pi-star/DStarRepeater-$(date +%F).log)" > /var/log/pi-star/DStarRepeater-$(date +%F).log')
 			if os.path.isfile(dstarLogNew):
-				os.system('echo "$(tail -1500 /var/log/pi-star/dstarrepeaterd-$(date +%F).log)" > /var/log/pi-star/dstarrepeaterd-$(date +%F).log')
+				os.system('echo "$(tail -2500 /var/log/pi-star/dstarrepeaterd-$(date +%F).log)" > /var/log/pi-star/dstarrepeaterd-$(date +%F).log')
 			os.system('/bin/systemctl restart dstarrepeater.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 	if disk_stat('/var/log') > 90:
-		utcnow = datetime.datetime.utcnow()
+		utc = UTC()
+		utcnow = datetime.datetime.now(utc)
 		datenow = utcnow.strftime('%Y-%m-%d')
 		if os.path.isfile(mmdvmhost):
 			mmdvmLog = '/var/log/pi-star/MMDVM-' + datenow + '.log'
 			if os.path.isfile(mmdvmLog):
-				os.system('echo "$(tail -1500 /var/log/pi-star/MMDVM-$(date +%F).log)" > /var/log/pi-star/MMDVM-$(date +%F).log')
+				os.system('echo "$(tail -2500 /var/log/pi-star/MMDVM-$(date +%F).log)" > /var/log/pi-star/MMDVM-$(date +%F).log')
 			os.system('/bin/systemctl restart mmdvmhost.service')
 			time.sleep(60) # Give the service 60 secs before we re-test
 
@@ -83,9 +92,10 @@ while True: #Main loop
 		checkprocdstar.wait()
 
 		# At this point it's a safe bet that the service is running, now look for signs of DVAP failure.
-		utcnow = datetime.datetime.utcnow()
+		utc = UTC()
+		utcnow = datetime.datetime.now(utc)
 		datenow = utcnow.strftime('%Y-%m-%d')
-		dateminus300sec = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+		dateminus300sec = datetime.datetime.now(utc) - datetime.timedelta(minutes=5)
 		logstampnow = utcnow.strftime('%Y-%m-%d %H:%M:%S')
 		logstampnowminus300sec = dateminus300sec.strftime('%Y-%m-%d %H:%M:%S')
 		# Best figure out the log name now
