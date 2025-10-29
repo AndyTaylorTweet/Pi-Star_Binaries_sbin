@@ -447,6 +447,7 @@ if [ "$1" ] ; then
     systemctl stop pistar-watchdog.service >/dev/null 2>&1
     systemctl stop mmdvmhost.timer >/dev/null 2>&1
     systemctl stop mmdvmhost.service >/dev/null 2>&1
+    systemctl stop nextiondriver.service >/dev/null 2>&1
 
     # NanoPI GPIO handling
     if [[ ${pistarHardware} == "NanoPi" ]]; then
@@ -535,6 +536,7 @@ if [ "$1" ] ; then
 	systemctl start mmdvmhost.timer >/dev/null 2>&1
 	systemctl start pistar-watchdog.timer >/dev/null 2>&1
 	systemctl start pistar-watchdog.service >/dev/null 2>&1
+	systemctl start nextiondriver.service >/dev/null 2>&1
 	echo ""
         exit 0
     fi
@@ -573,6 +575,7 @@ if [ "$1" ] ; then
   	    systemctl start mmdvmhost.timer >/dev/null 2>&1
   	    systemctl start pistar-watchdog.timer >/dev/null 2>&1
 	    systemctl start pistar-watchdog.service >/dev/null 2>&1
+	    systemctl start nextiondriver.service >/dev/null 2>&1
   	    echo -e -n "    ${TICK} ${COMPL} Modem firmware flash successful!\n        Modem reinitialized.\n"
   	    echo ""
 	else
@@ -583,6 +586,7 @@ if [ "$1" ] ; then
 	    systemctl start mmdvmhost.timer >/dev/null 2>&1
 	    systemctl start pistar-watchdog.timer >/dev/null 2>&1
 	    systemctl start pistar-watchdog.service >/dev/null 2>&1
+	    systemctl start nextiondriver.service >/dev/null 2>&1
 	    echo ""
 	fi
     else
@@ -596,6 +600,7 @@ if [ "$1" ] ; then
 	systemctl start mmdvmhost.timer >/dev/null 2>&1
 	systemctl start pistar-watchdog.timer >/dev/null 2>&1
 	systemctl start pistar-watchdog.service >/dev/null 2>&1
+	systemctl start nextiondriver.service >/dev/null 2>&1
     fi
     exit 0
   }
