@@ -34,7 +34,8 @@ fi
 test -x ${DAEMON_PATH}${DAEMON} || exit 0
 test -r $CONFIG || exit 0
 
-if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
+if [[ $(sed -n "/^\[General\]$/,/^$/ p" ${CONFIG} | grep -h -i -E "(M1ABC|1234567)") ]]; then
+#if [[ $(egrep -h -i "1234567|M1ABC" ${CONFIG} | wc -l) -gt 0 ]]; then
   exit 0;
 fi
 
