@@ -76,7 +76,7 @@ sudo sed -i -e '1 d
                 s|^"",||g
                 s|,"","",""$||g'                   /tmp/xcontacts.csv
 #
-sudo sed -i    's|[[:cntrl:]]/-/g'                 /tmp/xcontacts.csv
+sudo sed -i    's/[[:cntrl:]]/-/g'                 /tmp/xcontacts.csv
 #
 echo "...abbreviating states"
 sudo sed -i -e 's|"Alabama"|"AL"|g
