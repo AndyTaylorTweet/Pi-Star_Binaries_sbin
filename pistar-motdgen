@@ -18,7 +18,8 @@ fi
 
 # Get the Pi-Star Version Info
 pistarCurVersion=$(awk -F "= " '/Version/ {print $2}' /etc/pistar-release)
-ipaddr=$(hostname -I | grep -v "127.0.0.1" | head -n 1)
+#ipaddr=$(hostname -I | grep -v "127.0.0.1" | head -n 1)
+ipaddr=$(hostname -I | grep -v "127.0.0.1" | head -n 1 | cut -d" " -f 1)
 ipaddr=${ipaddr// /}
 
 sudo mount -o remount,rw /
