@@ -36,7 +36,7 @@ pingTest() {
 		pingTestTotal=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} + ${pingTestMid} + ${pingTestLow} }")
 		pingTestAvg=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestTotal} / 3 }     ")
 		pingTestPeakDev=$(awk "BEGIN { printf \"%.2f\n\", ${pingTestHigh} - ${pingTestLow} }")
-		echo ${vanityName},${hostp} ${pingIP},Avg RTT: ${pingTestAvg}ms,Peak Deviation: ${pingTestPeakDev}ms | awk -F"," '{printf "%-35s %-53s %-20s %-20.30s\n", $1, $2, $3, $4}'
+		echo ${vanityName},${hostp} ${pingIP},Avg RTT: ${pingTestAvg}ms,Peak Dev: ${pingTestPeakDev}ms | awk -F"," '{printf "%-35s %-53s %-20s %-20.30s\n", $1, $2, $3, $4}'
 	else
 		echo ${vanityName},${hostp},unreachable...| awk -F"," '{printf "%-35s %-53s %-20s\n", $1, $2, $3}'
 	fi
