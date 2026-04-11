@@ -62,7 +62,7 @@ addtg () {
   req="https://api.brandmeister.network/v2/device/${dmrid}/talkgroup"
   sudo curl -X 'POST' -s "${req}" -d "${post}" -H 'accept: application/json' -H 'Content-Type: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: smal04YhQGHAyHPu5xXfTZPAYXDJm7iDGME8f6XF'
   echo -e "\n$?"
-  logger "BM Admin --> ${req} POST ${post}" 
+  logger -t "[$$]" "Pi-Star --> BM Admin: ${req} POST ${post}"
 }
 
 #alias deltg='curl "https://api.brandmeister.network/v2/device/311684718/talkgroup/2/98002" DELETE ts?
@@ -75,7 +75,7 @@ deltg () {
   req="https://api.brandmeister.network/v2/device/${dmrid}/talkgroup/${ts}/${tg}"
   sudo curl -X 'DELETE' -s "${req}" -d "${post}" -H 'accept: application/json' -H 'Content-Type: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: smal04YhQGHAyHPu5xXfTZPAYXDJm7iDGME8f6XF'
   echo -e "\n$?"
-  logger "BM Admin --> ${req} DELETE ${post}" 
+  logger -t "[$$]" "Pi-Star --> BM Admin: ${req} DELETE ${post}"
 }
 
 #alias dropqso='curl "https://api.brandmeister.network/v2/device/311684718/action/dropCallRoute/1"'      GET ts?
@@ -87,7 +87,7 @@ dropqso () {
   req="https://api.brandmeister.network/v2/device/${dmrid}/action/dropCallRoute/${ts}"
   sudo curl -X 'GET' -s "${req}" -H 'accept: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: LcZMFZ4YUnQQYtPCdZHqhP7edhoE6PNHZZtKYaTf'
   echo -e "\n$?"
-  logger "BM Admin --> ${req} GET" 
+  logger -t "[$$]" "Pi-Star --> BM Admin: ${req} GET"
 }
 
 #alias dropdyn='curl "https://api.brandmeister.network/v2/device/311684718/action/dropDynamicGroups/2"'  GET ts?
@@ -99,7 +99,7 @@ dropdyn () {
   req="https://api.brandmeister.network/v2/device/${dmrid}/action/dropDynamicGroups/${ts}"
   sudo curl -X 'GET' -s "${req}" -H 'accept: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: LcZMFZ4YUnQQYtPCdZHqhP7edhoE6PNHZZtKYaTf'
   echo -e "\n$?"
-  logger "BM Admin --> ${req} GET" 
+  logger -t "[$$]" "Pi-Star --> BM Admin: ${req} GET"
 }
 
 function setpos () {
@@ -110,7 +110,7 @@ function setpos () {
   req="https://api.brandmeister.network/v2/device/${dmrid}/"
   sudo curl -X 'PUT' -s "${req}" -d "${put}" -H 'accept: application/json' -H 'Content-Type: application/json' -H "Authorization: Bearer ${bmkey}" -H 'X-CSRF-TOKEN: smal04YhQGHAyHPu5xXfTZPAYXDJm7iDGME8f6XF'
   echo -e "\n$?"
-  logger "BM Admin --> ${req} POST ${post}"
+  logger -t "[$$]" "Pi-Star --> BM Admin: ${req} POST ${post}"
 }
 
 profile() {
@@ -134,7 +134,7 @@ profile() {
     sudo sed   's/{TG \([0-9]*\) .*/\1/g'              /tmp/tmp1                            > /tmp/tmp2
     sudo echo ""                                                                            > /tmp/tmp3
     for arg in $(< /tmp/tmp2)
-    do 
+    do
       tg=$(grep "TG${arg}$" /usr/local/etc/TGList_BM.txt | sed -n 's/.*;0;\([A-Z0-9-]*\);.*/\1/p')
       echo ${tg:- }
     done                                                                                   >> /tmp/tmp3
