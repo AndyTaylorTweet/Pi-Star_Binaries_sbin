@@ -17,14 +17,14 @@
 DAEMON=NextionDriver
 DAEMON_PATH=/usr/local/bin/
 CONFIG=/etc/mmdvmhost
-DAEMON_OPTS="-c $CONFIG -i"
+DAEMON_OPTS="-c $CONFIG -i -v"
 PGREP=/usr/bin/pgrep
 KILL=/bin/kill
 SLEEP=/bin/sleep
 USER=root
 GROUP=mmdvm
 LOGDIR=/var/log/pi-star
-ipVar=`hostname -I | cut -d' ' -f1`
+ipVar=$(hostname -I | cut -d' ' -f1)
 
 # Pre-flight checks...
 test -x ${DAEMON_PATH}${DAEMON} || exit 0
@@ -39,20 +39,27 @@ if [ ! -d $LOGDIR ]; then
   chmod 775 $LOGDIR
 fi
 
+if [ "$(sed -n '/^\[General\]/,/^\[/ s/^Display=\(.*\)/\1/p' /etc/mmdvmhost 2>/dev/null)" != "Nextion" ]; then
+	exit 0
+fi
+if [ "$(sed -n '/^\[Nextion\]/,/^\[/ s/^Port=\(.*\)/\1/p' /etc/mmdvmhost 2>/dev/null)" != "/dev/ttyNextionDriver" ]; then
+	exit 0
+fi
+
 case "$1" in
 	start)
 		if [ `${PGREP} ${DAEMON}` ]; then
 			echo -e "$DAEMON is already running as PID "`$PGREP $DAEMON`
-			exit 0;
+			exit 0
 		else
 			# Wait for an IP address
 			until [ "$ipVar" != "" ]; do
 				sleep 10
-				ipVar=`hostname -I | cut -d' ' -f1`
+				ipVar=$(hostname -I | cut -d' ' -f1)
 			done
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`$PGREP $DAEMON`
-			exit 0;
+			exit 0
 		fi
 		;;
 
@@ -61,10 +68,10 @@ case "$1" in
 			echo -e "Killing $DAEMON PID "`$PGREP $DAEMON`
 			$KILL `${PGREP} ${DAEMON}`
 			if [ `${PGREP} ${DAEMON}` ]; then killall ${DAEMON}; fi
-			exit 0;
+			exit 0
 		else
 			echo -e "$DAEMON is not running"
-			exit 0;
+			exit 0
 		fi
 		;;
 
@@ -75,12 +82,12 @@ case "$1" in
 			$SLEEP 3
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON re-started as PID "`${PGREP} ${DAEMON}`
-			exit 0;
+			exit 0
 		else
 			echo -e "$DAEMON is not running"
 			nice -n -10 ${DAEMON_PATH}${DAEMON} ${DAEMON_OPTS}
 			echo -e "$DAEMON started as PID "`${PGREP} ${DAEMON}`
-			exit 0;
+			exit 0
 		fi
 		;;
 
