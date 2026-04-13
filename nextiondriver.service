@@ -42,7 +42,7 @@ fi
 if [ "$(sed -n '/^\[General\]/,/^\[/ s/^Display=\(.*\)/\1/p' /etc/mmdvmhost 2>/dev/null)" != "Nextion" ]; then
 	exit 0
 fi
-if [ "$(sed -n '/^\[Nextion\]/,/^\[/ s/^Port=\(.*\)/\1/p' /etc/mmdvmhost 2>/dev/null)" != "/dev/ttyNextionDriver" ]; then
+if [ "$(sed -n '/^\[Nextion\]/,/^\[/ s/^Port=\(.*\)/\1/p' /etc/mmdvmhost 2>/dev/null)" !=~ "/dev/tty" ]; then
 	exit 0
 fi
 
