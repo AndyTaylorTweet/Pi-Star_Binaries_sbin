@@ -54,6 +54,7 @@ sudo mkdir $backupDir/Extra 2>&1
 sudo cp /etc/iptables.rules $backupDir/Extra 2>&1
 sudo cp /etc/ip6tables.rules $backupDir/Extra 2>&1
 sudo cp /etc/rc.local $backupDir/Extra 2>&1
+sudo cp /etc/NetworkManager/system-connections/*.nmconnection $backupDir/Extra 2>&1
 #
 hostNameInfo=$(cat /etc/hostname)
 hostNameInfo=${hostNameInfo^^}
