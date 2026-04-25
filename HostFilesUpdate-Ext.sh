@@ -5,17 +5,20 @@
 # Options: -u: update DMRids.xtd.dat file; -r: delete (reset) temp DMRIdx.dat file
 #          -s: use radio.net database
 #          -k: use kf5iw database (default)
+#          -x: use string.csv else radio.net
 #hmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhmhm
 #
 updt=0
 rst=0
 src=0
-while getopts ursk opt; do
+xrc=0
+while getopts urskx opt; do
   case $opt in
     u) updt=1;;
     r) rst=1;;
     s) src=1;;
     k) src=0;;
+    x) src=1; xrc=1;;
     *) ;;
   esac
 done
@@ -50,17 +53,17 @@ if [ $src == 0 ]; then
   fi
 else
   web="(RadioID.Net)"
-  if [ -f /usr/local/etc/stripped.csv ]; then
-     echo "...using internal contact file (STRIPPED.CSV)"
-     sudo cp /usr/local/etc/stripped.csv           /tmp/xcontacts.csv
-  else
-     logger -t "[$$]" "Pi-Star --> Start HostFiles Extension: using ${web}"
-     echo "...downloading latest contact file (RADIOID.NET)"
-     sudo curl --fail -o /tmp/xcontacts.csv -f https://database.radioid.net/static/user.csv
-  fi
+#  if [ -f /usr/local/etc/stripped.csv ]; then
+#     echo "...using internal contact file (STRIPPED.CSV)"
+#     sudo cp /usr/local/etc/stripped.csv           /tmp/xcontacts.csv
+# fi
+   logger -t "[$$]" "Pi-Star --> Start HostFiles Extension: using ${web}"
+   echo "...downloading latest contact file (RADIOID.NET)"
+   sudo curl --fail -o /tmp/xcontacts.csv -f https://database.radioid.net/static/user.csv
   if [ $? -eq 0 ]; then
      echo "...initial edits"
      sudo sed -i -e 's|\\n|\x0a|g
+                     s/\x0d$//g
                      s/,/ /3
                      s/, /,/g
                      s/^.*$/"&"/g
@@ -74,9 +77,10 @@ if [ "$ok" == 0 ]; then
 echo "...download completed. Beginning edits..."
 sudo sed -i -e '1 d
                 s|^"",||g
+                s|[[:cntrl:]]$||g
                 s|,"","",""$||g'                   /tmp/xcontacts.csv
 #
-sudo sed -i    's/[[:cntrl:]]/-/g'                 /tmp/xcontacts.csv
+sudo sed -i    's|[[:cntrl:]]|-|g'                 /tmp/xcontacts.csv
 #
 echo "...abbreviating states"
 sudo sed -i -e 's|"Alabama"|"AL"|g
