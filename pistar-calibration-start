@@ -28,11 +28,25 @@ calBin=/usr/local/sbin/pistar-mmdvmcal
 if [ "$1" = "stop" ]; then
   # Kill the UDP listener first so no further commands reach MMDVMCal
   fuser -k ${calPort}/udp >/dev/null 2>&1
-  # Then mop up any straggler MMDVMCal child left by the script(1) wrapper
+  # Kill the parent bash -c session that owns the pipeline. nc/script/
+  # MMDVMCal are children of that bash, but nothing in `killall` matches
+  # the bash itself - it shows up as just "bash" - so we have to match
+  # against the full cmdline. The setsid|nc|script|MMDVMCal pattern is
+  # uniquely ours. Doing this is what releases the flock fd 200 so a
+  # subsequent `start` invocation does not bounce off the lock guard.
+  pkill -f "nc -ulp ${calPort} -s ${calBind} | script -qfc" >/dev/null 2>&1
+  # Mop up any straggler MMDVMCal child left by the script(1) wrapper
   killall MMDVMCal >/dev/null 2>&1
-  # And any orphaned script(1)/nc parents owning the lock
+  # And any orphaned script(1)/nc parents
   killall -q script >/dev/null 2>&1
   killall -q nc >/dev/null 2>&1
+  # Block briefly until the flock is genuinely released. After SIGTERM
+  # the kernel reap of the parent bash takes a moment, during which fd
+  # 200 is still held - if the dashboard's stop+immediate-start path
+  # races, the start would bounce off the lock guard. flock -w 5 takes
+  # the lock as soon as the holding bash exits, then releases it (the
+  # /bin/true exits immediately), giving the next start a clean slate.
+  flock -w 5 /var/lock/pistar-calibration.lock /bin/true >/dev/null 2>&1 || true
   exit 0
 fi
 
