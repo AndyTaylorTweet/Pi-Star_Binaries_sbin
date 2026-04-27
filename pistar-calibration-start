@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                       Pi-Star Calibration Wrapper                          #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#       Wraps the dashboard's nc + script + MMDVMCal pipeline so it can      #
+#       be exposed as a single allowlisted entry in /etc/sudoers.d/ and      #
+#       backgrounded cleanly from PHP via system().                          #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Fixed paths / ports - kept in lockstep with calibration.php in the dashboard
+calLog=/tmp/pi-star_mmdvmcal.log
+calPort=33273
+calBind=127.0.0.1
+calBin=/usr/local/sbin/pistar-mmdvmcal
+
+# Stop sub-command: tear down a running calibration without needing a second
+# allowlisted sudo entry for fuser/killall in the dashboard.
+if [ "$1" = "stop" ]; then
+  # Kill the UDP listener first so no further commands reach MMDVMCal
+  fuser -k ${calPort}/udp >/dev/null 2>&1
+  # Then mop up any straggler MMDVMCal child left by the script(1) wrapper
+  killall MMDVMCal >/dev/null 2>&1
+  # And any orphaned script(1)/nc parents owning the lock
+  killall -q script >/dev/null 2>&1
+  killall -q nc >/dev/null 2>&1
+  exit 0
+fi
+
+# Single-instance guard - a second start while one is running is a no-op
+exec 200>/var/lock/pistar-calibration.lock || exit 1
+if ! flock -n 200 ; then
+  echo "Another instance is already running"
+  exit 1
+fi
+
+# Detached background pipeline. setsid drops the controlling tty so the parent
+# PHP system() call returns immediately even though the pipeline keeps running.
+# The flock fd 200 is intentionally NOT closed - it stays held for the lifetime
+# of the backgrounded shell, which is exactly the lock semantics we want.
+setsid bash -c "nc -ulp ${calPort} -s ${calBind} | script -qfc \"${calBin}\" ${calLog}" </dev/null >/dev/null 2>&1 &
+
+exit 0

@@ -1,0 +1,118 @@
+#!/bin/bash
+#
+##############################################################################
+#                                                                            #
+#                       Pi-Star Factory Reset Tool                           #
+#                                                                            #
+#     Version 1.0, Code, Design and Development by Andy Taylor (MW0MWZ).     #
+#                                                                            #
+#       Restores /etc, /usr/local/sbin, /usr/local/bin and the dashboard     #
+#       to their shipped state. Invoked from the Expert -> Edit Dashboard    #
+#       factory reset path after the operator has typed RESET to confirm.    #
+#                                                                            #
+##############################################################################
+#
+if [ "$(id -u)" != "0" ]; then
+  echo -e "You need to be root to run this command...\n"
+  exit 1
+fi
+
+# Defence in depth. The dashboard already gates this behind a typed RESET
+# confirmation, but a stray "sudo pistar-factory-reset" on the CLI must not
+# nuke the device by accident.
+if [ "$1" != "--really" ]; then
+  echo "This is a destructive operation. It will reset /etc, /usr/local/sbin,"
+  echo "/usr/local/bin and /var/www/dashboard to the shipped Pi-Star state."
+  echo ""
+  echo "If you really mean it, run: pistar-factory-reset --really"
+  exit 1
+fi
+
+exec 200>/var/lock/pistar-factory-reset.lock || exit 1
+if ! flock -n 200 ; then
+  echo "Another instance is already running"
+  exit 1
+fi
+
+# Fixed paths
+configZip=/usr/local/bin/config_clean.zip
+sbinTree=/usr/local/sbin
+binTree=/usr/local/bin
+dashTree=/var/www/dashboard
+
+# Track overall outcome - we want to continue past a missing rm target but
+# still exit non-zero if anything material failed.
+exitRc=0
+
+# Re-seal rootfs on every exit path - even if a git reset blew up halfway.
+cleanup() {
+  /bin/sync
+  /bin/sync
+  /bin/sync
+  $(mount -o remount,ro / >/dev/null 2>&1 </dev/null)
+}
+trap cleanup EXIT
+
+# Make the disk writable
+$(mount -o remount,rw / >/dev/null 2>&1 </dev/null)
+
+echo "==> Restoring /etc from clean zip..."
+if [ ! -f ${configZip} ]; then
+  echo "[!] WARN: ${configZip} not present - skipping /etc restore"
+  exitRc=1
+else
+  unzip -o ${configZip} -d /etc/
+  if [ $? -ne 0 ]; then
+    echo "[!] ERROR: unzip of ${configZip} failed"
+    exitRc=1
+  fi
+fi
+
+echo "==> Removing radio mode markers (/etc/dstar-radio.*)..."
+# rm -rf is intentionally not failure-checked - missing markers are fine
+rm -rf /etc/dstar-radio.*
+
+echo "==> Removing dashboard CSS override (/etc/pistar-css.ini)..."
+rm -rf /etc/pistar-css.ini
+
+echo "==> Resetting ${sbinTree} to origin/master..."
+if [ -d ${sbinTree}/.git ]; then
+  # pistar-upnp.service is locally modified on every device (UPnP toggle);
+  # mark it assume-unchanged so the reset does not stomp it.
+  git --work-tree=${sbinTree} --git-dir=${sbinTree}/.git update-index --assume-unchanged pistar-upnp.service
+  git --work-tree=${sbinTree} --git-dir=${sbinTree}/.git reset --hard origin/master
+  if [ $? -ne 0 ]; then
+    echo "[!] ERROR: git reset of ${sbinTree} failed"
+    exitRc=1
+  fi
+else
+  echo "[!] WARN: ${sbinTree}/.git not present - skipping"
+  exitRc=1
+fi
+
+echo "==> Resetting ${binTree} to origin/master..."
+if [ -d ${binTree}/.git ]; then
+  git --work-tree=${binTree} --git-dir=${binTree}/.git reset --hard origin/master
+  if [ $? -ne 0 ]; then
+    echo "[!] ERROR: git reset of ${binTree} failed"
+    exitRc=1
+  fi
+else
+  echo "[!] WARN: ${binTree}/.git not present - skipping"
+  exitRc=1
+fi
+
+echo "==> Resetting ${dashTree} to origin/master..."
+if [ -d ${dashTree}/.git ]; then
+  git --work-tree=${dashTree} --git-dir=${dashTree}/.git reset --hard origin/master
+  if [ $? -ne 0 ]; then
+    echo "[!] ERROR: git reset of ${dashTree} failed"
+    exitRc=1
+  fi
+else
+  echo "[!] WARN: ${dashTree}/.git not present - skipping"
+  exitRc=1
+fi
+
+echo "==> Factory reset complete (rc=${exitRc})"
+exit ${exitRc}
