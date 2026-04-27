@@ -21,6 +21,210 @@ if ! flock -n 200 ; then
 	exit 1
 fi
 
+deploy_sudoers_tightening() {
+	# Build /etc/sudoers.d/pistar-dashboard line by line and validate
+	# it via visudo -c against a /tmp staging file BEFORE installing.
+	# Order of operations is critical: the new file must be installed
+	# and validated before we remove the open "NOPASSWD: ALL" line
+	# from /etc/sudoers, so an interrupted run can never strand
+	# www-data without any sudo path. If anything fails visudo -c,
+	# both halves are rolled back before this function returns 1.
+
+	stage=/tmp/pistar-dashboard.sudoers
+	target=/etc/sudoers.d/pistar-dashboard
+
+	echo '#'                                                                                                                                                          >  ${stage}
+	echo '# Path-scoped allowlist for the Pi-Star Dashboard www-data process.'                                                                                        >> ${stage}
+	echo '# Replaces the previous "www-data ALL=(ALL) NOPASSWD: ALL" in /etc/sudoers.'                                                                                >> ${stage}
+	echo '# Deployed by pistar-upgrade.'                                                                                                                              >> ${stage}
+	echo '#'                                                                                                                                                          >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Defaults!PISTAR_DASH_ALL !requiretty'                                                                                                                       >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo '# ------------------------------------------------------------------'                                                                                       >> ${stage}
+	echo '# Service control'                                                                                                                                          >> ${stage}
+	echo '# ------------------------------------------------------------------'                                                                                       >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_SYSTEMCTL = \'                                                                                                                       >> ${stage}
+	echo '    /bin/systemctl daemon-reload, \'                                                                                                                        >> ${stage}
+	echo '    /bin/systemctl start  aprsgateway.service,    /bin/systemctl stop aprsgateway.service,    /bin/systemctl restart aprsgateway.service, \'                >> ${stage}
+	echo '    /bin/systemctl start  dapnetgateway.service,  /bin/systemctl stop dapnetgateway.service,  /bin/systemctl restart dapnetgateway.service, \'              >> ${stage}
+	echo '    /bin/systemctl start  dmrgateway.service,     /bin/systemctl stop dmrgateway.service,     /bin/systemctl restart dmrgateway.service, \'                 >> ${stage}
+	echo '    /bin/systemctl start  dstarrepeater.service,  /bin/systemctl stop dstarrepeater.service,  /bin/systemctl restart dstarrepeater.service, \'              >> ${stage}
+	echo '    /bin/systemctl start  ircddbgateway.service,  /bin/systemctl stop ircddbgateway.service,  /bin/systemctl restart ircddbgateway.service, \'              >> ${stage}
+	echo '    /bin/systemctl start  m17gateway.service,     /bin/systemctl stop m17gateway.service,     /bin/systemctl restart m17gateway.service, \'                 >> ${stage}
+	echo '    /bin/systemctl start  mmdvmhost.service,      /bin/systemctl stop mmdvmhost.service,      /bin/systemctl restart mmdvmhost.service, \'                  >> ${stage}
+	echo '    /bin/systemctl start  nxdngateway.service,    /bin/systemctl stop nxdngateway.service,    /bin/systemctl restart nxdngateway.service, \'                >> ${stage}
+	echo '    /bin/systemctl start  nxdnparrot.service,     /bin/systemctl stop nxdnparrot.service, \'                                                                >> ${stage}
+	echo '    /bin/systemctl start  p25gateway.service,     /bin/systemctl stop p25gateway.service,     /bin/systemctl restart p25gateway.service, \'                 >> ${stage}
+	echo '    /bin/systemctl start  pistar-remote.service,  /bin/systemctl stop pistar-remote.service, \'                                                             >> ${stage}
+	echo '    /bin/systemctl start  pistar-upnp.service,    /bin/systemctl stop pistar-upnp.service, \'                                                               >> ${stage}
+	echo '    /bin/systemctl start  pistar-watchdog.service,/bin/systemctl stop pistar-watchdog.service, \'                                                           >> ${stage}
+	echo '    /bin/systemctl start  starnetserver.service,  /bin/systemctl stop starnetserver.service,  /bin/systemctl restart starnetserver.service, \'              >> ${stage}
+	echo '    /bin/systemctl start  timeserver.service,     /bin/systemctl stop timeserver.service,     /bin/systemctl restart timeserver.service, \'                 >> ${stage}
+	echo '    /bin/systemctl start  ysfgateway.service,     /bin/systemctl stop ysfgateway.service,     /bin/systemctl restart ysfgateway.service, \'                 >> ${stage}
+	echo '    /bin/systemctl start  ysfparrot.service,      /bin/systemctl stop ysfparrot.service, \'                                                                 >> ${stage}
+	echo '    /bin/systemctl start  cron.service,           /bin/systemctl stop cron.service, \'                                                                      >> ${stage}
+	echo '    /bin/systemctl enable  pistar-upnp.timer,     /bin/systemctl disable pistar-upnp.timer'                                                                 >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_MOUNT = \'                                                                                                                           >> ${stage}
+	echo '    /bin/mount -o remount\,rw /, \'                                                                                                                         >> ${stage}
+	echo '    /bin/mount -o remount\,ro /'                                                                                                                            >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_INSTALL = \'                                                                                                                         >> ${stage}
+	echo '    /usr/bin/install -m 600 -o root     -g root     /tmp/* /etc/wpa_supplicant/wpa_supplicant.conf, \'                                                      >> ${stage}
+	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/bmapi.key, \'                                                                               >> ${stage}
+	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/dapnetapi.key, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/mmdvmhost, \'                                                                               >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ircddbgateway, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dstarrepeater, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/timeserver, \'                                                                              >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/starnetserver, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ysfgateway, \'                                                                              >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ysf2dmr, \'                                                                                 >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ysf2nxdn, \'                                                                                >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ysf2p25, \'                                                                                 >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dmrgateway, \'                                                                              >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/p25gateway, \'                                                                              >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/nxdngateway, \'                                                                             >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/m17gateway, \'                                                                              >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dgidgateway, \'                                                                             >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dmr2ysf, \'                                                                                 >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dmr2nxdn, \'                                                                                >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dapnetgateway, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/aprsgateway, \'                                                                             >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/pistar-css.ini, \'                                                                          >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/pistar-remote, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /usr/local/etc/RSSI.dat, \'                                                                      >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /var/www/.htpasswd'                                                                              >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_CP_STAGE = \'                                                                                                                        >> ${stage}
+	echo '    /bin/cp /etc/mmdvmhost      /tmp/*,  /bin/cp /etc/ircddbgateway /tmp/*,  /bin/cp /etc/dstarrepeater /tmp/*, \'                                          >> ${stage}
+	echo '    /bin/cp /etc/timeserver     /tmp/*,  /bin/cp /etc/starnetserver /tmp/*, \'                                                                              >> ${stage}
+	echo '    /bin/cp /etc/ysfgateway     /tmp/*,  /bin/cp /etc/dmrgateway    /tmp/*,  /bin/cp /etc/p25gateway    /tmp/*, \'                                          >> ${stage}
+	echo '    /bin/cp /etc/nxdngateway    /tmp/*,  /bin/cp /etc/m17gateway    /tmp/*,  /bin/cp /etc/dapnetgateway /tmp/*, \'                                          >> ${stage}
+	echo '    /bin/cp /etc/bmapi.key      /tmp/*,  /bin/cp /etc/dapnetapi.key /tmp/*, \'                                                                              >> ${stage}
+	echo '    /bin/cp /etc/pistar-remote  /tmp/*,  /bin/cp /etc/pistar-css.ini /tmp/*, \'                                                                             >> ${stage}
+	echo '    /bin/cp /usr/local/etc/RSSI.dat /tmp/*, \'                                                                                                              >> ${stage}
+	echo '    /bin/cp /etc/wpa_supplicant/wpa_supplicant.conf /tmp/*, \'                                                                                              >> ${stage}
+	echo '    /bin/cp /etc/crontab /tmp/*'                                                                                                                            >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_STAGE_PERMS = \'                                                                                                                     >> ${stage}
+	echo '    /bin/chown www-data\:www-data /tmp/*, \'                                                                                                                >> ${stage}
+	echo '    /bin/chmod 600 /tmp/*'                                                                                                                                  >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_LOGS = \'                                                                                                                            >> ${stage}
+	echo '    /bin/mkdir -p /var/log/pi-star/, \'                                                                                                                     >> ${stage}
+	echo '    /bin/chown root\:mmdvm /var/log/pi-star/, \'                                                                                                            >> ${stage}
+	echo '    /bin/chmod 775 /var/log/pi-star/, \'                                                                                                                    >> ${stage}
+	echo '    /usr/bin/truncate -s 0 /var/log/pi-star/*.log'                                                                                                          >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_MARKERS = \'                                                                                                                         >> ${stage}
+	echo '    /bin/touch /etc/dstar-radio.dstarrepeater, \'                                                                                                           >> ${stage}
+	echo '    /bin/touch /etc/dstar-radio.mmdvmhost, \'                                                                                                               >> ${stage}
+	echo '    /bin/touch /etc/hostap.off, \'                                                                                                                          >> ${stage}
+	echo '    /bin/touch /etc/timeserver.dissable, \'                                                                                                                 >> ${stage}
+	echo '    /bin/touch /etc/hostfiles.nodextra, \'                                                                                                                  >> ${stage}
+	echo '    /bin/touch /usr/local/etc/NXDNHostsLocal.txt, \'                                                                                                        >> ${stage}
+	echo '    /bin/rm -rf /etc/dstar-radio.*, \'                                                                                                                      >> ${stage}
+	echo '    /bin/rm -rf /etc/hostap.off, \'                                                                                                                         >> ${stage}
+	echo '    /bin/rm -rf /etc/timeserver.dissable, \'                                                                                                                >> ${stage}
+	echo '    /bin/rm -rf /etc/hostfiles.nodextra, \'                                                                                                                 >> ${stage}
+	echo '    /bin/rm -rf /etc/pistar-css.ini'                                                                                                                        >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_SED = \'                                                                                                                             >> ${stage}
+	echo '    /bin/sed -i ?* /lib/systemd/system/dstarrepeater.timer, \'                                                                                              >> ${stage}
+	echo '    /bin/sed -i ?* /lib/systemd/system/mmdvmhost.timer, \'                                                                                                  >> ${stage}
+	echo '    /bin/sed -i ?* /etc/network/interfaces, \'                                                                                                              >> ${stage}
+	echo '    /bin/sed -i ?* /etc/crontab, \'                                                                                                                         >> ${stage}
+	echo '    /bin/sed -i ?* /etc/hostname, \'                                                                                                                        >> ${stage}
+	echo '    /bin/sed -i ?* /etc/hosts, \'                                                                                                                           >> ${stage}
+	echo '    /bin/sed -i ?* /etc/motd, \'                                                                                                                            >> ${stage}
+	echo '    /bin/sed -i ?* /usr/local/sbin/pistar-upnp.service'                                                                                                     >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_READ_PRIV = \'                                                                                                                       >> ${stage}
+	echo '    /bin/cat /root/.Remote\ Control'                                                                                                                        >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_PASSWD = \'                                                                                                                          >> ${stage}
+	echo '    /usr/sbin/chpasswd'                                                                                                                                     >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_NETWORK = \'                                                                                                                         >> ${stage}
+	echo '    /sbin/ifdown wlan0,         /sbin/ifup wlan0, \'                                                                                                        >> ${stage}
+	echo '    /sbin/ip link set wlan0 up, /sbin/ip link set wlan0 down, \'                                                                                            >> ${stage}
+	echo '    /sbin/wpa_cli reconfigure,  /sbin/wpa_cli scan, /sbin/wpa_cli scan_results'                                                                             >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_TIME = /usr/bin/timedatectl set-timezone *'                                                                                          >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_POWER = \'                                                                                                                           >> ${stage}
+	echo '    /sbin/reboot, \'                                                                                                                                        >> ${stage}
+	echo '    /sbin/shutdown -h now'                                                                                                                                  >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_BACKUP = \'                                                                                                                          >> ${stage}
+	echo '    /usr/bin/zip *'                                                                                                                                         >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_MISC = \'                                                                                                                            >> ${stage}
+	echo '    /bin/sync, \'                                                                                                                                           >> ${stage}
+	echo '    /bin/grep ?* /etc/wpa_supplicant/wpa_supplicant.conf'                                                                                                   >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_SCRIPTS = \'                                                                                                                         >> ${stage}
+	echo '    /usr/local/sbin/pistar-update, \'                                                                                                                       >> ${stage}
+	echo '    /usr/local/sbin/pistar-upgrade, \'                                                                                                                      >> ${stage}
+	echo '    /usr/local/sbin/pistar-modemupgrade,           /usr/local/sbin/pistar-modemupgrade list, \'                                                             >> ${stage}
+	echo '    /usr/local/sbin/pistar-modemupgrade *, \'                                                                                                               >> ${stage}
+	echo '    /usr/local/sbin/pistar-jittertest *, \'                                                                                                                 >> ${stage}
+	echo '    /usr/local/sbin/pistar-calibration-start,      /usr/local/sbin/pistar-calibration-start stop, \'                                                        >> ${stage}
+	echo '    /usr/local/sbin/pistar-factory-reset --really'                                                                                                          >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'Cmnd_Alias PISTAR_DASH_ALL = \'                                                                                                                             >> ${stage}
+	echo '    PISTAR_DASH_SYSTEMCTL,    PISTAR_DASH_MOUNT,        PISTAR_DASH_INSTALL, \'                                                                             >> ${stage}
+	echo '    PISTAR_DASH_CP_STAGE,     PISTAR_DASH_STAGE_PERMS,  PISTAR_DASH_LOGS, \'                                                                                >> ${stage}
+	echo '    PISTAR_DASH_MARKERS,      PISTAR_DASH_SED,          PISTAR_DASH_READ_PRIV, \'                                                                           >> ${stage}
+	echo '    PISTAR_DASH_PASSWD,       PISTAR_DASH_NETWORK,      PISTAR_DASH_TIME, \'                                                                                >> ${stage}
+	echo '    PISTAR_DASH_POWER,        PISTAR_DASH_BACKUP,       PISTAR_DASH_MISC, \'                                                                                >> ${stage}
+	echo '    PISTAR_DASH_SCRIPTS'                                                                                                                                    >> ${stage}
+	echo ''                                                                                                                                                           >> ${stage}
+	echo 'www-data ALL=(root) NOPASSWD: PISTAR_DASH_ALL'                                                                                                              >> ${stage}
+
+	# Validate the staged spec before letting it anywhere near
+	# /etc/sudoers.d/. visudo -c parses and rejects bad syntax.
+	if ! visudo -c -f ${stage} >/dev/null 2>&1; then
+		echo "[!] ERROR: staged sudoers.d/pistar-dashboard failed visudo -c"
+		rm -f ${stage}
+		return 1
+	fi
+
+	# Install with the conventional sudoers mode 0440 root:root
+	install -m 440 -o root -g root ${stage} ${target}
+	rm -f ${stage}
+
+	# Re-validate the merged sudoers state with the new file in place
+	# but the open NOPASSWD: ALL line still present. Should pass; if it
+	# does not, the new file is malformed in a way visudo missed in -f
+	# mode (very unlikely) - roll back.
+	if ! visudo -c >/dev/null 2>&1; then
+		echo "[!] ERROR: merged sudoers state invalid after installing ${target}; rolling back"
+		rm -f ${target}
+		return 1
+	fi
+
+	# Remove the open www-data NOPASSWD: ALL line from /etc/sudoers.
+	# Pattern is anchored to start and end of line so it cannot
+	# accidentally remove a substring of another rule.
+	sed -i '/^www-data ALL=(ALL) NOPASSWD: ALL$/d' /etc/sudoers
+
+	# Validate again with the line removed. If the merged state somehow
+	# fails now, restore both halves so www-data is not stranded.
+	if ! visudo -c >/dev/null 2>&1; then
+		echo "[!] ERROR: sudoers state invalid after removing the NOPASSWD: ALL line; rolling back"
+		grep -q '^www-data ALL=(ALL) NOPASSWD: ALL$' /etc/sudoers || \
+			echo 'www-data ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+		rm -f ${target}
+		return 1
+	fi
+
+	return 0
+}
+
 main_function() {
 	echo "[INFO] Pi-Star Upgrade process starting..."
 	# Get the current Modem
@@ -569,13 +773,36 @@ main_function() {
                 exit 1
 	;;
 	4.1.10)
-		#sed -i 's/4.1.10/4.1.11/g' /etc/pistar-release
+		sed -i 's/4.1.10/4.1.11/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Tighten the www-data sudoers from NOPASSWD: ALL to a path-
+		# scoped allowlist. The dashboard at master @ 2f62bed6 has
+		# been adapted to invoke pistar-calibration-start and
+		# pistar-factory-reset wrappers (in this same repo at master
+		# @ 7e619a7) instead of the compound sudo -i / cross-tree
+		# git pipelines that could not be safely allowlisted.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers tightening failed; aborting upgrade to 4.1.11"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.11..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.1.11)
+		#sed -i 's/4.1.11/4.1.12/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.11..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.12..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
@@ -674,13 +901,32 @@ main_function() {
                 exit 1
 	;;
 	4.2.3)
-		#sed -i 's/4.2.3/4.2.4/g' /etc/pistar-release
+		sed -i 's/4.2.3/4.2.4/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Tighten the www-data sudoers from NOPASSWD: ALL to a path-
+		# scoped allowlist. See the 4.1.11 case for the full rationale.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers tightening failed; aborting upgrade to 4.2.4"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.4..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.2.4)
+		#sed -i 's/4.2.4/4.2.5/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.4..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.5..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
@@ -744,13 +990,32 @@ main_function() {
                 exit 1
 	;;
 	4.3.4)
-		#sed -i 's/4.3.4/4.3.5/g' /etc/pistar-release
+		sed -i 's/4.3.4/4.3.5/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Tighten the www-data sudoers from NOPASSWD: ALL to a path-
+		# scoped allowlist. See the 4.1.11 case for the full rationale.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers tightening failed; aborting upgrade to 4.3.5"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.5..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.3.5)
+		#sed -i 's/4.3.5/4.3.6/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.5..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.6..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
