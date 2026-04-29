@@ -49,19 +49,27 @@ deploy_sudoers_tightening() {
 	echo '    /bin/systemctl daemon-reload, \'                                                                                                                        >> ${stage}
 	echo '    /bin/systemctl start  aprsgateway.service,    /bin/systemctl stop aprsgateway.service,    /bin/systemctl restart aprsgateway.service, \'                >> ${stage}
 	echo '    /bin/systemctl start  dapnetgateway.service,  /bin/systemctl stop dapnetgateway.service,  /bin/systemctl restart dapnetgateway.service, \'              >> ${stage}
+	echo '    /bin/systemctl start  dmr2nxdn.service,       /bin/systemctl stop dmr2nxdn.service, \'                                                                  >> ${stage}
+	echo '    /bin/systemctl start  dmr2ysf.service,        /bin/systemctl stop dmr2ysf.service, \'                                                                   >> ${stage}
 	echo '    /bin/systemctl start  dmrgateway.service,     /bin/systemctl stop dmrgateway.service,     /bin/systemctl restart dmrgateway.service, \'                 >> ${stage}
 	echo '    /bin/systemctl start  dstarrepeater.service,  /bin/systemctl stop dstarrepeater.service,  /bin/systemctl restart dstarrepeater.service, \'              >> ${stage}
 	echo '    /bin/systemctl start  ircddbgateway.service,  /bin/systemctl stop ircddbgateway.service,  /bin/systemctl restart ircddbgateway.service, \'              >> ${stage}
 	echo '    /bin/systemctl start  m17gateway.service,     /bin/systemctl stop m17gateway.service,     /bin/systemctl restart m17gateway.service, \'                 >> ${stage}
 	echo '    /bin/systemctl start  mmdvmhost.service,      /bin/systemctl stop mmdvmhost.service,      /bin/systemctl restart mmdvmhost.service, \'                  >> ${stage}
+	echo '    /bin/systemctl start  mobilegps.service,      /bin/systemctl stop mobilegps.service, \'                                                                 >> ${stage}
+	echo '    /bin/systemctl start  nxdn2dmr.service,       /bin/systemctl stop nxdn2dmr.service, \'                                                                  >> ${stage}
 	echo '    /bin/systemctl start  nxdngateway.service,    /bin/systemctl stop nxdngateway.service,    /bin/systemctl restart nxdngateway.service, \'                >> ${stage}
 	echo '    /bin/systemctl start  nxdnparrot.service,     /bin/systemctl stop nxdnparrot.service, \'                                                                >> ${stage}
 	echo '    /bin/systemctl start  p25gateway.service,     /bin/systemctl stop p25gateway.service,     /bin/systemctl restart p25gateway.service, \'                 >> ${stage}
-	echo '    /bin/systemctl start  pistar-remote.service,  /bin/systemctl stop pistar-remote.service, \'                                                             >> ${stage}
+	echo '    /bin/systemctl start  p25parrot.service,      /bin/systemctl stop p25parrot.service, \'                                                                 >> ${stage}
+	echo '    /bin/systemctl start  pistar-remote.service,  /bin/systemctl stop pistar-remote.service,  /bin/systemctl restart pistar-remote.service, \'              >> ${stage}
 	echo '    /bin/systemctl start  pistar-upnp.service,    /bin/systemctl stop pistar-upnp.service, \'                                                               >> ${stage}
 	echo '    /bin/systemctl start  pistar-watchdog.service,/bin/systemctl stop pistar-watchdog.service, \'                                                           >> ${stage}
 	echo '    /bin/systemctl start  starnetserver.service,  /bin/systemctl stop starnetserver.service,  /bin/systemctl restart starnetserver.service, \'              >> ${stage}
 	echo '    /bin/systemctl start  timeserver.service,     /bin/systemctl stop timeserver.service,     /bin/systemctl restart timeserver.service, \'                 >> ${stage}
+	echo '    /bin/systemctl start  ysf2dmr.service,        /bin/systemctl stop ysf2dmr.service, \'                                                                   >> ${stage}
+	echo '    /bin/systemctl start  ysf2nxdn.service,       /bin/systemctl stop ysf2nxdn.service, \'                                                                  >> ${stage}
+	echo '    /bin/systemctl start  ysf2p25.service,        /bin/systemctl stop ysf2p25.service, \'                                                                   >> ${stage}
 	echo '    /bin/systemctl start  ysfgateway.service,     /bin/systemctl stop ysfgateway.service,     /bin/systemctl restart ysfgateway.service, \'                 >> ${stage}
 	echo '    /bin/systemctl start  ysfparrot.service,      /bin/systemctl stop ysfparrot.service, \'                                                                 >> ${stage}
 	echo '    /bin/systemctl start  cron.service,           /bin/systemctl stop cron.service, \'                                                                      >> ${stage}
@@ -150,7 +158,8 @@ deploy_sudoers_tightening() {
 	echo '    /bin/rm -rf /etc/pistar-css.ini, \'                                                                                                                     >> ${stage}
 	echo '    /bin/mkdir /tmp/config_backup, \'                                                                                                                       >> ${stage}
 	echo '    /bin/rm -rf /tmp/config_backup, \'                                                                                                                      >> ${stage}
-	echo '    /bin/rm -rf /tmp/config_backup.zip'                                                                                                                     >> ${stage}
+	echo '    /bin/rm -rf /tmp/config_backup.zip, \'                                                                                                                  >> ${stage}
+	echo '    /bin/rm -rf /tmp/config_restore'                                                                                                                        >> ${stage}
 	echo ''                                                                                                                                                           >> ${stage}
 	echo 'Cmnd_Alias PISTAR_DASH_SED = \'                                                                                                                             >> ${stage}
 	echo '    /bin/sed -i ?* /lib/systemd/system/dstarrepeater.timer, \'                                                                                              >> ${stage}
@@ -164,7 +173,8 @@ deploy_sudoers_tightening() {
 	echo ''                                                                                                                                                           >> ${stage}
 	echo 'Cmnd_Alias PISTAR_DASH_READ_PRIV = \'                                                                                                                       >> ${stage}
 	echo '    /bin/cat /root/.Remote\ Control, \'                                                                                                                     >> ${stage}
-	echo '    /bin/cat /etc/hostapd/hostapd.conf'                                                                                                                     >> ${stage}
+	echo '    /bin/cat /etc/hostapd/hostapd.conf, \'                                                                                                                  >> ${stage}
+	echo '    /bin/cat /etc/wpa_supplicant/wpa_supplicant.conf'                                                                                                       >> ${stage}
 	echo ''                                                                                                                                                           >> ${stage}
 	echo 'Cmnd_Alias PISTAR_DASH_PASSWD = \'                                                                                                                          >> ${stage}
 	echo '    /usr/sbin/chpasswd'                                                                                                                                     >> ${stage}
@@ -197,7 +207,8 @@ deploy_sudoers_tightening() {
 	echo '    /usr/local/sbin/pistar-jittertest *, \'                                                                                                                 >> ${stage}
 	echo '    /usr/local/sbin/pistar-calibration-start,      /usr/local/sbin/pistar-calibration-start stop, \'                                                        >> ${stage}
 	echo '    /usr/local/sbin/pistar-factory-reset --really, \'                                                                                                       >> ${stage}
-	echo '    /usr/local/bin/remotecontrold *'                                                                                                                        >> ${stage}
+	echo '    /usr/local/bin/remotecontrold *, \'                                                                                                                     >> ${stage}
+	echo '    /usr/local/bin/RemoteCommand *'                                                                                                                         >> ${stage}
 	echo ''                                                                                                                                                           >> ${stage}
 	echo 'Cmnd_Alias PISTAR_DASH_ALL = \'                                                                                                                             >> ${stage}
 	echo '    PISTAR_DASH_SYSTEMCTL,    PISTAR_DASH_MOUNT,        PISTAR_DASH_INSTALL, \'                                                                             >> ${stage}
@@ -846,13 +857,45 @@ main_function() {
                 exit 1
 	;;
 	4.1.12)
-		#sed -i 's/4.1.12/4.1.13/g' /etc/pistar-release
+		sed -i 's/4.1.12/4.1.13/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Re-deploy the path-scoped sudoers allowlist. The 4.1.12 ship
+		# still missed several call patterns the dashboard exercises:
+		# /usr/local/bin/RemoteCommand (the YSF/P25/NXDN/M17 reflector
+		# link/unlink helper - distinct binary from remotecontrold);
+		# eight bridge-daemon services (ysf2dmr, ysf2nxdn, ysf2p25,
+		# nxdn2dmr, dmr2ysf, dmr2nxdn, p25parrot, mobilegps) that
+		# every form Apply tries to start/stop; pistar-remote.service
+		# restart from expert/fulledit_pistar-remote.php; sudo cat of
+		# /etc/wpa_supplicant/wpa_supplicant.conf used by wifi.php's
+		# wpa_conf branch; and rm -rf /tmp/config_restore that
+		# config_backup.php's restore pipeline cleans up afterwards.
+		# This pass was driven by an empirical sudo -ln probe of every
+		# distinct command pattern in the dashboard rather than text
+		# reasoning over the alias spec, so I am confident this gap
+		# set is now complete.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.1.13"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.13..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.1.13)
+		#sed -i 's/4.1.13/4.1.14/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.13..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.1.14..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
@@ -989,13 +1032,32 @@ main_function() {
                 exit 1
 	;;
 	4.2.5)
-		#sed -i 's/4.2.5/4.2.6/g' /etc/pistar-release
+		sed -i 's/4.2.5/4.2.6/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Re-deploy the path-scoped sudoers allowlist. See the 4.1.13
+		# case for the full rationale.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.2.6"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.6..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.2.6)
+		#sed -i 's/4.2.6/4.2.7/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.6..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.2.7..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
@@ -1097,13 +1159,32 @@ main_function() {
                 exit 1
 	;;
 	4.3.6)
-		#sed -i 's/4.3.6/4.3.7/g' /etc/pistar-release
+		sed -i 's/4.3.6/4.3.7/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Re-deploy the path-scoped sudoers allowlist. See the 4.1.13
+		# case for the full rationale.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.7"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.7..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.3.7)
+		#sed -i 's/4.3.7/4.3.8/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.7..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.8..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
