@@ -107,6 +107,9 @@ deploy_sudoers_tightening() {
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dapnetgateway, \'                                                                           >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/aprsgateway, \'                                                                             >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/mobilegps, \'                                                                               >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dhcpcd.conf, \'                                                                             >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/hosts, \'                                                                                  >> ${stage}
+	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/hostname, \'                                                                               >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/pistar-css.ini, \'                                                                          >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/pistar-remote, \'                                                                           >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /usr/local/etc/RSSI.dat, \'                                                                      >> ${stage}
