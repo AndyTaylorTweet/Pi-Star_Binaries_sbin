@@ -30,9 +30,20 @@ else
 fi
 
 #
-# Non-interactive mode, pass "NP=1" env. var. E.g. `sudo NP=1 ./pistar-modemupgrade <foo>`
+# Non-interactive mode: pass "NP=1" env. var. E.g. `sudo NP=1 ./pistar-modemupgrade <foo>`.
+# Auto-detected when stdin is not a TTY — required for the dashboard's
+# Modem FW Upgrade page, which backgrounds us with no controlling
+# terminal and cannot pass NP=1 through the path-scoped sudoers
+# (sudo refuses env-var pass-through without a SETENV: tag, and we
+# do not want to broaden the sudo posture for that). Explicit
+# `NP=1 sudo …` still works; this just makes it implicit when
+# there is genuinely no human to read the prompt at line 396.
+#
 # Verbose mode, pass "VERBOSE=1" env. var. E.g. `sudo VERBOSE=1 ./pistar-modemupgrade <bar>`
 #
+if [ ! -t 0 ]; then
+    NP=1
+fi
 
 #
 # Check CLI arguments and determine the modem type and its respective FW file...
