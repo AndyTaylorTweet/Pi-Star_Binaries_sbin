@@ -1187,9 +1187,12 @@ main_function() {
 		/usr/local/sbin/pistar-motdgen
 
 		# Icom terminal-mode udev rules. The FT232 (Icom TA 4100) rule
-		# ships in the image, the ID-52 rule is new in 4.3.8. Each block
-		# is appended only when missing, so a re-run cannot duplicate a
-		# rule and any operator additions to this file are preserved.
+		# ships in the image, the ID-52 and IC-705 rules are new in
+		# 4.3.8. Note 0c26 is Prolific's vendor ID, not Icom's - Icom
+		# devices are OEM product IDs under it - so always match on the
+		# full vendor/product pair, never on the vendor alone. Each
+		# block is appended only when missing, so a re-run cannot
+		# duplicate a rule and operator additions here are preserved.
 		udevRules=/etc/udev/rules.d/100-pistar.rules
 		if [ ! -f ${udevRules} ]; then
 			touch ${udevRules}
@@ -1210,6 +1213,11 @@ main_function() {
 		if ! grep -qF 'ATTRS{idVendor}=="0c26", ATTRS{idProduct}=="003a", SYMLINK+="icom_ta"' ${udevRules}; then
 			echo '# Icom ID-52 Terminal Mode' >> ${udevRules}
 			echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0c26", ATTRS{idProduct}=="003a", SYMLINK+="icom_ta"' >> ${udevRules}
+		fi
+
+		if ! grep -qF 'ATTRS{idVendor}=="0c26", ATTRS{idProduct}=="0036", SYMLINK+="icom_ta"' ${udevRules}; then
+			echo '# Icom IC-705 Terminal/AP Mode' >> ${udevRules}
+			echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0c26", ATTRS{idProduct}=="0036", SYMLINK+="icom_ta"' >> ${udevRules}
 		fi
 
 		chown root:root ${udevRules}
