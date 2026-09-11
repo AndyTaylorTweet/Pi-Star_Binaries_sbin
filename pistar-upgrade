@@ -1217,7 +1217,7 @@ main_function() {
 			# Run the EEPROM update check
 			eepromUpdateStatus=$(rpi-eeprom-update)
 
-			if echo "$UPDATE_STATUS" | grep -q "UPDATE AVAILABLE"; then
+			if echo "${eepromUpdateStatus}" | grep -qi "UPDATE AVAILABLE"; then
 				echo "[!] RPi EEPROM update available! You should run: sudo rpi-eeprom-update -a && sudo reboot"
 			else
 				echo "[✓] RPi EEPROM is up to date."
