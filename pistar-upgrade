@@ -1186,8 +1186,53 @@ main_function() {
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
+		# Icom terminal-mode udev rules. The FT232 (Icom TA 4100) rule
+		# ships in the image, the ID-52 rule is new in 4.3.8. Each block
+		# is appended only when missing, so a re-run cannot duplicate a
+		# rule and any operator additions to this file are preserved.
+		#udevRules=/etc/udev/rules.d/100-pistar.rules
+		#if [ ! -f ${udevRules} ]; then
+		#	touch ${udevRules}
+		#fi
+
+		# If the file does not end in a newline, the first appended line
+		# would be glued onto the last existing one - add the newline.
+		#if [ -s ${udevRules} ] && [ -n "$(tail -c 1 ${udevRules})" ]; then
+		#	echo '' >> ${udevRules}
+		#fi
+
+		#if ! grep -qF 'ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="icom_ta"' ${udevRules}; then
+		#	echo '#Icom TA 4100' >> ${udevRules}
+		#	echo '# "Bus 001 Device 008: ID 0403:6001 Future Technology Devices International, Ltd FT232 USB-Serial (UART) IC"' >> ${udevRules}
+		#	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="icom_ta"' >> ${udevRules}
+		#fi
+
+		#if ! grep -qF 'ATTRS{idVendor}=="0c26", ATTRS{idProduct}=="003a", SYMLINK+="icom_ta"' ${udevRules}; then
+		#	echo '# Icom ID-52 Terminal Mode' >> ${udevRules}
+		#	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0c26", ATTRS{idProduct}=="003a", SYMLINK+="icom_ta"' >> ${udevRules}
+		#fi
+
+		#chown root:root ${udevRules}
+		#chmod 644 ${udevRules}
+
+		# Load the new rules - they apply to devices attached from now on.
+		#udevadm control --reload-rules
+
 		# OK we are done
 		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.8..."
+		Message="[✓] You are already running the latest version..."
+		#echo $Message
+		#exec "$0" "$@"
+                #exit 1
+	;;
+	4.3.8)
+		#sed -i 's/4.3.8/4.3.9/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		#/usr/local/sbin/pistar-motdgen
+
+		# OK we are done
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.9..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
