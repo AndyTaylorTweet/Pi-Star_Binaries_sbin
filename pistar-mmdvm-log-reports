@@ -16,6 +16,8 @@
 #           -x?             exclude ?                                   (not implemented yet)
 #           -r              reverse ordering (similar to LH dashboard)  (not implemented yet)
 #           -z              special net log
+#           -b              use batcat for display
+#           -e              use nano for display
 #
 # examples:
 #   sudo bash editlog.sh                 # list's all TG/CS in log order
@@ -44,6 +46,7 @@ cs=          # callsign?
 ul=0         # summary list of users
 nt=0         # net time start
 z=0          # special net?
+bat=1        # batcat or nano? (default: batcat)
 #
 # Process long options:
 dx=0
@@ -60,7 +63,7 @@ for arg in "$@"; do
 done
 #
 # Process short options:
-while getopts sx:f:dnutrlc:hz opt; do
+while getopts sx:f:dnutrlc:hzbe opt; do
   case $opt in
     s) srt=1;;
     x) excl=$OPTARG;;
@@ -74,6 +77,8 @@ while getopts sx:f:dnutrlc:hz opt; do
     c) cs=$OPTARG;;
     h) nt=1;;
     z) z=1;;
+    b) bat=1;;
+    e) bat=0;;
   esac
 done
 shift $(($OPTIND - 1))
@@ -246,6 +251,9 @@ if [ "$1" ]; then
   rptname=$(echo "${banner:0:$n} $title ${banner:0:$n+1-(${#title}%2)}")
 fi
 #
+bat=${bat//0/nano}
+dsply=${bat//1/batcat -p --color=never}
+#
 # sorting/selecting
 if [ $srt == 1 ]; then
 #       CS:        TG:       yyyymmdd:  hhmmss:
@@ -325,7 +333,7 @@ if [ $srt == 1 ]; then
       echo -e "\n $(wc -l /tmp/atmpfile7 | sed 's/^\([0-9]*\) .*/\1/g') users logged" >> /tmp/MMDVM-$x-sorted-$tg.log
       sudo rm -f /tmp/atmpfile7
     fi
-    sudo nano /tmp/MMDVM-$x-sorted-$tg.log
+    sudo ${dsply} /tmp/MMDVM-$x-sorted-$tg.log
     sudo rm -f /tmp/MMDVM-$x-sorted.log
     if [ $z == 1 ]; then
       y=$(date '+%m-%d-%y')
@@ -359,7 +367,7 @@ if [ $srt == 1 ]; then
       echo -e "\n $(wc -l /tmp/atmpfile7 | sed 's/^\([0-9]*\) .*/\1/g') users logged" >> /tmp/MMDVM-$x-sorted.log
       sudo rm -f /tmp/atmpfile7
     fi
-    sudo nano /tmp/MMDVM-$x-sorted.log
+    sudo ${dsply} /tmp/MMDVM-$x-sorted.log
   fi
   sudo rm -f /tmp/atmpfile4
   sudo rm -f /tmp/atmpfile6
@@ -373,10 +381,10 @@ else
 #   cat /tmp/MMDVM-$x-editted.log >> /tmp/MMDVM-$x-editted-$tg.log
 #   echo -e "\n$rptname" >> /tmp/MMDVM-$x-editted-$tg.log
     cat <(echo -e "$rptname\n") /tmp/MMDVM-$x-editted.log <(echo -e "\n$rptname") > /tmp/MMDVM-$x-editted-$tg.log
-    sudo nano /tmp/MMDVM-$x-editted-$tg.log
+    sudo ${dsply} /tmp/MMDVM-$x-editted-$tg.log
     sudo rm -f /tmp/MMDVM-$x-editted.log
   else
-    sudo nano /tmp/MMDVM-$x-editted.log
+    sudo ${dsply} /tmp/MMDVM-$x-editted.log
   fi
 fi
 #
