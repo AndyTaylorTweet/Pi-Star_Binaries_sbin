@@ -85,6 +85,7 @@ deploy_sudoers_tightening() {
 	echo '    /usr/bin/install -m 600 -o root     -g root     /tmp/* /root/.Remote\ Control, \'                                                                       >> ${stage}
 	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/bmapi.key, \'                                                                               >> ${stage}
 	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/dapnetapi.key, \'                                                                           >> ${stage}
+	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/tgifapi.key, \'                                                                             >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/mmdvmhost, \'                                                                               >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ircddbgateway, \'                                                                           >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dstarrepeater, \'                                                                           >> ${stage}
@@ -1186,6 +1187,17 @@ main_function() {
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
+		# Re-deploy the path-scoped sudoers allowlist. See the 4.1.13
+		# case for the full rationale. The call lives here, and not only
+		# in a later arm, because the allowlist is rebuilt from scratch
+		# by the function - so any device climbing to 4.3.8 picks up the
+		# current spec, rather than only devices that happen to pass
+		# through the 4.3.4/4.3.5/4.3.6 arms.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.8"
+			exit 1
+		fi
+
 		# Icom terminal-mode udev rules. The FT232 (Icom TA 4100) rule
 		# ships in the image, the ID-52 and IC-705 rules are new in
 		# 4.3.8. Note 0c26 is Prolific's vendor ID, not Icom's - Icom
@@ -1237,6 +1249,15 @@ main_function() {
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
+
+		# Re-deploy the path-scoped sudoers allowlist. See the 4.1.13
+		# case for the full rationale. Placeholder - activate with the
+		# rest of this arm when 4.3.9 is cut, so a device sitting at
+		# 4.3.8 also picks up any later allowlist change.
+		#if ! deploy_sudoers_tightening; then
+		#	echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.9"
+		#	exit 1
+		#fi
 
 		# OK we are done
 		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.9..."
