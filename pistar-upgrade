@@ -86,7 +86,6 @@ deploy_sudoers_tightening() {
 	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/bmapi.key, \'                                                                               >> ${stage}
 	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/dapnetapi.key, \'                                                                           >> ${stage}
 	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/tgifapi.key, \'                                                                             >> ${stage}
-	echo '    /usr/bin/install -m 600 -o www-data -g www-data /tmp/* /etc/tgif-static-api.conf, \'                                                                           >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/mmdvmhost, \'                                                                               >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/ircddbgateway, \'                                                                           >> ${stage}
 	echo '    /usr/bin/install -m 644 -o root     -g root     /tmp/* /etc/dstarrepeater, \'                                                                           >> ${stage}
