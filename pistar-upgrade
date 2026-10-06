@@ -1245,22 +1245,47 @@ main_function() {
                 exit 1
 	;;
 	4.3.8)
-		#sed -i 's/4.3.8/4.3.9/g' /etc/pistar-release
+		sed -i 's/4.3.8/4.3.9/g' /etc/pistar-release
+
+		# Re-create the MOTD
+		/usr/local/sbin/pistar-motdgen
+
+		# Re-deploy the path-scoped sudoers allowlist. See the 4.1.13
+		# case for the full rationale. Required here, not just in the
+		# 4.3.7 arm: a device that reached 4.3.8 before the allowlist
+		# gained /etc/tgifapi.key would otherwise never pick it up.
+		# With this call every route to 4.3.9 has run the function, so
+		# 4.3.9 is the first release where the dashboard can rely on
+		# that entry being present - which is what the TGIF Static
+		# Talkgroups panel and its Expert editor gate on.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.9"
+			exit 1
+		fi
+
+		# OK we are done
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.9..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
+	;;
+	4.3.9)
+		#sed -i 's/4.3.9/4.3.10/g' /etc/pistar-release
 
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
 		# Re-deploy the path-scoped sudoers allowlist. See the 4.1.13
 		# case for the full rationale. Placeholder - activate with the
-		# rest of this arm when 4.3.9 is cut, so a device sitting at
-		# 4.3.8 also picks up any later allowlist change.
+		# rest of this arm when 4.3.10 is cut, so a device sitting at
+		# 4.3.9 also picks up any later allowlist change.
 		#if ! deploy_sudoers_tightening; then
-		#	echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.9"
+		#	echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.10"
 		#	exit 1
 		#fi
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.9..."
+		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.10..."
 		Message="[✓] You are already running the latest version..."
 		#echo $Message
 		#exec "$0" "$@"
