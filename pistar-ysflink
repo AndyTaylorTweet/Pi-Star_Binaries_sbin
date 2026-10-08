@@ -52,7 +52,11 @@ unlink)
     echo -e "Invalid target ${1}"
     exit 1
   fi
-  (cd /var/log/pi-star/; ${cmd} ${port} Link${1^^})
+  REF=${1^^}
+  PREFIX=${REF: 0:3}
+  SUFFIX=${REF: 3}
+  NEWREF=${PREFIX}0${SUFFIX}
+  (cd /var/log/pi-star/; ${cmd} ${port} Link${NEWREF})
   exit 0
 ;;
 esac
