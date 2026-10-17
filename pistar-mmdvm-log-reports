@@ -38,7 +38,7 @@
 t1=$SECONDS
 srt=0        # sort by callsign
 f=""         # use alternate input file
-excl=""
+#excl=""
 dt=0         # today's entries only
 nl=0         # include full name/locations
 ts=          # time slot
@@ -66,7 +66,7 @@ done
 while getopts sx:f:dnutrlc:hzbe opt; do
   case $opt in
     s) srt=1;;
-    x) excl=$OPTARG;;
+    x) ;;     # excl=$OPTARG;; not implemented yet
     f) f=$OPTARG;;
     d) dt=1; dtx=$(date --date "-$dx day" +%Y-%m-%d);;
     n) nl=1; srt=1;;                # -n implies -s
@@ -79,6 +79,7 @@ while getopts sx:f:dnutrlc:hzbe opt; do
     z) z=1;;
     b) bat=1;;
     e) bat=0;;
+    *) ;;
   esac
 done
 shift $(($OPTIND - 1))
@@ -174,8 +175,12 @@ if [ "$1" ]; then
 fi
 #
 # select for callsign?
+if [ "$2" ]; then
+  cs=${2^^[a-z]}
+fi
+#
 if [ "$cs" ]; then
-  cs=$(echo $cs | tr [a-z] [A-Z])
+  cs=${cs^^[a-z]}
   sudo sed -i -e "/, $cs /!d" /tmp/atmpfile2
 fi
 #
@@ -246,7 +251,11 @@ sudo mv /tmp/atmpfile2d /tmp/MMDVM-$x-editted.log
 #
 banner="==========================================================================================="
 if [ "$1" ]; then
-  title=$(echo "TG ${1^^[a-z]}:" $(sed -n "s/^.*;.*;\(.*\);[PT].$1$/\1/p" /usr/local/etc/TGList_BM.txt))
+  tgx=${1^^[a-z]}
+  if [[ -z "${tgx//[0-9]}" ]]; then
+    tgx=$(($tgx % 1000000))
+  fi
+  title=$(echo "TG ${tgx}:" $(sed -n "s/^.*;.*;\(.*\);[PT].${tgx}$/\1/p" /usr/local/etc/TGList_BM.txt))
   n=$((( 89 - "${#title}" ) / 2))
   rptname=$(echo "${banner:0:$n} $title ${banner:0:$n+1-(${#title}%2)}")
 fi
