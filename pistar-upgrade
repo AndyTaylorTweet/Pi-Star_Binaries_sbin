@@ -1308,7 +1308,10 @@ main_function() {
 			# is on screen; the hardening takes effect on that restart. It
 			# survives the exec chain below because it is a separate process.
 			echo "[INFO] PHP will restart shortly after this upgrade completes to apply a change - a brief dashboard pause afterwards is normal."
-			( sleep 5; systemctl restart ${phpHardenRestart} >/dev/null 2>&1 ) >/dev/null 2>&1 </dev/null &
+			# 200>&- closes the flock fd in the child so the deferred restart
+			# does not hold the upgrade lock; otherwise the exec chain's
+			# re-run aborts with "Another instance is already running".
+			( sleep 5; systemctl restart ${phpHardenRestart} >/dev/null 2>&1 ) 200>&- >/dev/null 2>&1 </dev/null &
 		fi
 
 		# OK we are done
