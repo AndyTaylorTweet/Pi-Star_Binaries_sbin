@@ -1288,6 +1288,7 @@ main_function() {
 		# version where it is already off (however applied), so a re-run neither
 		# rewrites the file nor needlessly restarts FPM. Best-effort - a failure
 		# here must not abort the upgrade.
+		phpHardenRestart=""
 		for phpFpmDir in /etc/php/*/fpm; do
 			[ -d "${phpFpmDir}" ] || continue
 			phpVer=$(basename "$(dirname "${phpFpmDir}")")
@@ -1297,8 +1298,18 @@ main_function() {
 			dropIn="/etc/php/${phpVer}/fpm/conf.d/99-pistar-hardening.ini"
 			echo '; Pi-Star PHP hardening. Managed by pistar-upgrade.' >  "${dropIn}"
 			echo 'session.upload_progress.enabled = 0' >> "${dropIn}"
-			systemctl restart "php${phpVer}-fpm" >/dev/null 2>&1
+			phpHardenRestart="${phpHardenRestart} php${phpVer}-fpm"
 		done
+		if [ -n "${phpHardenRestart}" ]; then
+			# Defer the PHP-FPM restart. Restarting it inline would drop the
+			# dashboard's live upgrade log (that log is served through PHP-FPM),
+			# making the upgrade look like it stopped. Run it detached a few
+			# seconds after this script finishes, by which point the completion
+			# is on screen; the hardening takes effect on that restart. It
+			# survives the exec chain below because it is a separate process.
+			echo "[INFO] PHP will restart shortly after this upgrade completes to apply a change - a brief dashboard pause afterwards is normal."
+			( sleep 5; systemctl restart ${phpHardenRestart} >/dev/null 2>&1 ) >/dev/null 2>&1 </dev/null &
+		fi
 
 		# OK we are done
 		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.10..."
