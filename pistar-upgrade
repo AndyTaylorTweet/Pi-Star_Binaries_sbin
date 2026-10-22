@@ -1270,43 +1270,41 @@ main_function() {
                 exit 1
 	;;
 	4.3.9)
-		#sed -i 's/4.3.9/4.3.10/g' /etc/pistar-release
+		sed -i 's/4.3.9/4.3.10/g' /etc/pistar-release
 
 		# Re-create the MOTD
-		#/usr/local/sbin/pistar-motdgen
+		/usr/local/sbin/pistar-motdgen
 
-		# Mitigate CVE-2026-109619 (PHP session.upload_progress use-after-free).
-		# The dashboard uses no file uploads, so disabling the feature costs
-		# nothing. This is a MITIGATION, not a patch: the fixed interpreter
-		# (PHP >= 8.2.35) is not yet in the Raspbian armhf archive, so remove
-		# this drop-in once a patched PHP is installed.
-		#
-		# Idempotent: for each installed PHP version, skip if upload_progress
-		# is already disabled - however the admin applied it (our drop-in, the
-		# Expert editor, php.ini) - so a re-run neither rewrites the file nor
-		# needlessly restarts FPM. Only a version still reporting it enabled
-		# gets the drop-in written and that one FPM pool reloaded. Best-effort:
-		# a failure here must not abort the upgrade.
-		#for phpFpmDir in /etc/php/*/fpm; do
-		#	[ -d "${phpFpmDir}" ] || continue
-		#	phpVer=$(basename "$(dirname "${phpFpmDir}")")
-		#	# already off (by any means)? leave it alone
-		#	if php-fpm${phpVer} -i 2>/dev/null | grep -q 'session.upload_progress.enabled => Off'; then
-		#		continue
-		#	fi
-		#	dropIn="/etc/php/${phpVer}/fpm/conf.d/99-pistar-cve-109619.ini"
-		#	echo '; Pi-Star: mitigation for CVE-2026-109619 (session.upload_progress UAF).' >  "${dropIn}"
-		#	echo '; Dashboard uses no uploads. Remove once a patched PHP (>= 8.2.35) is installed.' >> "${dropIn}"
-		#	echo 'session.upload_progress.enabled = 0' >> "${dropIn}"
-		#	systemctl restart "php${phpVer}-fpm" >/dev/null 2>&1
-		#done
+		# Re-deploy the path-scoped sudoers allowlist on every upgrade as a
+		# defensive baseline - see the 4.1.13 case for the full rationale.
+		if ! deploy_sudoers_tightening; then
+			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.10"
+			exit 1
+		fi
+
+		# Disable PHP's session.upload_progress in the FPM pool. The dashboard
+		# uses no file uploads, so the feature is unused; turning it off removes
+		# an attack surface in the PHP session handler. Idempotent: skip any PHP
+		# version where it is already off (however applied), so a re-run neither
+		# rewrites the file nor needlessly restarts FPM. Best-effort - a failure
+		# here must not abort the upgrade.
+		for phpFpmDir in /etc/php/*/fpm; do
+			[ -d "${phpFpmDir}" ] || continue
+			phpVer=$(basename "$(dirname "${phpFpmDir}")")
+			if php-fpm${phpVer} -i 2>/dev/null | grep -q 'session.upload_progress.enabled => Off'; then
+				continue
+			fi
+			dropIn="/etc/php/${phpVer}/fpm/conf.d/99-pistar-hardening.ini"
+			echo '; Pi-Star PHP hardening. Managed by pistar-upgrade.' >  "${dropIn}"
+			echo 'session.upload_progress.enabled = 0' >> "${dropIn}"
+			systemctl restart "php${phpVer}-fpm" >/dev/null 2>&1
+		done
 
 		# OK we are done
-		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.10..."
-		Message="[✓] You are already running the latest version..."
-		#echo $Message
-		#exec "$0" "$@"
-                #exit 1
+		Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.10..."
+		echo $Message
+		exec "$0" "$@"
+                exit 1
 	;;
 	4.3.10)
 		#sed -i 's/4.3.10/4.3.11/g' /etc/pistar-release
@@ -1314,11 +1312,17 @@ main_function() {
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
-		# Placeholder for the 4.3.11 upgrade: add its payload above this
-		# block and activate (uncomment) when 4.3.11 is cut. If the
-		# CVE-2026-109619 drop-in from 4.3.10 is still present and a patched
-		# PHP (>= 8.2.35) has since been installed, 4.3.11 is the place to
-		# remove it (rm /etc/php/*/fpm/conf.d/99-pistar-cve-109619.ini).
+		# Re-deploy the path-scoped sudoers allowlist on every upgrade. Keep
+		# this in the 4.3.11 arm when it is cut - see the 4.1.13 case.
+		#if ! deploy_sudoers_tightening; then
+		#	echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.11"
+		#	exit 1
+		#fi
+
+		# Placeholder for the 4.3.11 upgrade: add its payload above and activate
+		# (uncomment) when 4.3.11 is cut. Once a patched PHP ships, 4.3.11 is the
+		# place to drop the session.upload_progress workaround if no longer
+		# wanted (rm /etc/php/*/fpm/conf.d/99-pistar-hardening.ini).
 
 		# OK we are done
 		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.11..."
