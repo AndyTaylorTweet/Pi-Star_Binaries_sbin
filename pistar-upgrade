@@ -1275,19 +1275,14 @@ main_function() {
 		# Re-create the MOTD
 		/usr/local/sbin/pistar-motdgen
 
-		# Re-deploy the path-scoped sudoers allowlist on every upgrade as a
-		# defensive baseline - see the 4.1.13 case for the full rationale.
+		# Re-deploy the sudoers allowlist on every upgrade (see 4.1.13).
 		if ! deploy_sudoers_tightening; then
 			echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.10"
 			exit 1
 		fi
 
-		# Disable PHP's session.upload_progress in the FPM pool. The dashboard
-		# uses no file uploads, so the feature is unused; turning it off removes
-		# an attack surface in the PHP session handler. Idempotent: skip any PHP
-		# version where it is already off (however applied), so a re-run neither
-		# rewrites the file nor needlessly restarts FPM. Best-effort - a failure
-		# here must not abort the upgrade.
+		# Disable PHP session.upload_progress (unused by the dashboard).
+		# Idempotent: skip versions already off. Best-effort, non-fatal.
 		phpHardenRestart=""
 		for phpFpmDir in /etc/php/*/fpm; do
 			[ -d "${phpFpmDir}" ] || continue
@@ -1301,16 +1296,10 @@ main_function() {
 			phpHardenRestart="${phpHardenRestart} php${phpVer}-fpm"
 		done
 		if [ -n "${phpHardenRestart}" ]; then
-			# Defer the PHP-FPM restart. Restarting it inline would drop the
-			# dashboard's live upgrade log (that log is served through PHP-FPM),
-			# making the upgrade look like it stopped. Run it detached a few
-			# seconds after this script finishes, by which point the completion
-			# is on screen; the hardening takes effect on that restart. It
-			# survives the exec chain below because it is a separate process.
-			echo "[INFO] PHP will restart shortly after this upgrade completes to apply a change - a brief dashboard pause afterwards is normal."
-			# 200>&- closes the flock fd in the child so the deferred restart
-			# does not hold the upgrade lock; otherwise the exec chain's
-			# re-run aborts with "Another instance is already running".
+			# Restart deferred ~5s so it doesn't freeze the dashboard's live log
+			# (served via FPM). 200>&- drops the flock fd so the exec re-run can
+			# still take the lock.
+			echo "[INFO] PHP will restart shortly after this upgrade completes - a brief dashboard pause is normal."
 			( sleep 5; systemctl restart ${phpHardenRestart} >/dev/null 2>&1 ) 200>&- >/dev/null 2>&1 </dev/null &
 		fi
 
@@ -1326,17 +1315,15 @@ main_function() {
 		# Re-create the MOTD
 		#/usr/local/sbin/pistar-motdgen
 
-		# Re-deploy the path-scoped sudoers allowlist on every upgrade. Keep
-		# this in the 4.3.11 arm when it is cut - see the 4.1.13 case.
+		# Keep the sudoers redeploy in the 4.3.11 arm too (see 4.1.13).
 		#if ! deploy_sudoers_tightening; then
 		#	echo "[!] ERROR: sudoers re-deployment failed; aborting upgrade to 4.3.11"
 		#	exit 1
 		#fi
 
-		# Placeholder for the 4.3.11 upgrade: add its payload above and activate
-		# (uncomment) when 4.3.11 is cut. Once a patched PHP ships, 4.3.11 is the
-		# place to drop the session.upload_progress workaround if no longer
-		# wanted (rm /etc/php/*/fpm/conf.d/99-pistar-hardening.ini).
+		# Placeholder: add the 4.3.11 payload above and uncomment when cut.
+		# Once PHP is patched, drop the hardening workaround here
+		# (rm /etc/php/*/fpm/conf.d/99-pistar-hardening.ini).
 
 		# OK we are done
 		#Message="[✓] Upgraded from ${pistarCurVersion} to 4.3.11..."
