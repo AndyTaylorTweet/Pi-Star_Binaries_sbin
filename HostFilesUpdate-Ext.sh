@@ -33,12 +33,12 @@ if [ $src == 0 ]; then
   web="(KF5IW)"
   logger -t "[$$]" "Pi-Star --> Start HostFiles Extension: using ${web}"
   echo "...downloading latest contact file (KF5IW)"
-  curl --fail -o /tmp/contactdb.php -s http://www.kf5iw.com/contactdb.php
+  curl -L --fail -o /tmp/contactdb.php -s http://www.kf5iw.com/contactdb.php
 # x=$(sed -n 's|\(.*\)STD/contacts_STD_\(.*\).zip\(.*\)|contacts_STD_\2|p' /tmp/contactdb.php)
 # xx="http://www.kf5iw.com/data/Anytone/D868UV/STD/"$x".zip"
   x=$(sed -n 's|\(.*\)ALL/contacts_ALL_\(.*\).zip\(.*\)|contacts_ALL_\2|p' /tmp/contactdb.php)
   xx="http://www.kf5iw.com/data/Anytone/D868UV/ALL/${x}.zip"
-  curl --fail -o /tmp/extendedx.zip -f $xx
+  curl -L --fail -o /tmp/extendedx.zip -f $xx
   if [ $? -eq 0 ]; then
      rm /tmp/contactdb.php
      rm -f                                         /tmp/contacts_*.csv
